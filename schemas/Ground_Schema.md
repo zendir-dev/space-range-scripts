@@ -1,4 +1,4 @@
-# [SPACE RANGE] Ground Command Schema
+# Ground Command Schema
 
 Each team is provided access to **one ground controller**, which may be connected to multiple **ground stations**.
 

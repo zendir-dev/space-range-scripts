@@ -1,4 +1,4 @@
-# [SPACE RANGE] Teams Configuration Schema
+# Teams Configuration Schema
 
 This document describes the structure of the team configuration used to define game instances and team configurations for Space Range scenarios.
 

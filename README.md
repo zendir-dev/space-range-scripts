@@ -1,6 +1,6 @@
 # 🛰️ Space Range Scripts
 
-A Python scripting framework for automating spacecraft operations in **Space Range** — a simulated space operations environment used for training spacecraft operators. Scripts con## 🖨️ Coloured Output (`printer`)ect## 📖 Command Referenceto the Space Range MQTT broker, listen to the simulation clock, and fire pre-scheduled commands at precise simulation times.
+A Python scripting framework for automating spacecraft operations in **Space Range** — a simulated space operations environment used for training spacecraft operators. Scripts connect to the Space Range MQTT broker, listen to the simulation clock, and fire pre-scheduled commands at precise simulation times.
 
 ---
 
@@ -206,7 +206,7 @@ client.connect_and_run()    # blocks until Ctrl+C
 
 ---
 
-## �️ Coloured Output (`printer`)
+## 🖨️ Coloured Output (`printer`)
 
 The `src.printer` module provides coloured ANSI terminal output helpers used throughout the framework. You can use the same helpers in your own scenario scripts for consistent, readable output. Colours are automatically disabled when the output stream is not a TTY (e.g. when piping to a file or running in CI), and the `NO_COLOR` environment variable is respected.
 

@@ -1,4 +1,4 @@
-# [SPACE RANGE] Spacecraft Command Schema
+# Spacecraft Command Schema
 
 This document contains the structure for the commands used for the spacecraft within Space Range, including all parameters for each of the commands. Commands are sent over the **uplink** MQTT topic and follow a particular JSON packet structure. The structure for the packet, along with all arguments for the commands are outlined in this document. The data is read by the **ground controller** associated with a particular team and then uplinked by the transmitter of the ground station network to the target spacecraft’s receiver.
 

@@ -1,4 +1,4 @@
-# [SPACE RANGE] Session Information Schema
+# Session Information Schema
 
 The scenario, when running, will consistently output data over a particular topic for any entity to listen to. This will include the simulation time, epoch and instance information about the current session. This data is outputted **3** times every real-time second of simulation run. It requires no actioning and no response from any entity and will publish as long as the simulation is running.
 
