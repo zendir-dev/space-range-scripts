@@ -16,6 +16,7 @@ from .event_scheduler import EventScheduler
 from .ground_client import GroundRequestClient
 from .admin_client import AdminRequestClient
 from .mqtt_client import SpaceRangeClient, xor_encrypt, prompt_game_name, prompt_credentials
+from .scenario import Scenario
 from . import commands
 from . import printer
 from .utils import decode_payload
@@ -30,6 +31,7 @@ __all__ = [
     "GroundRequestClient",
     "AdminRequestClient",
     "SpaceRangeClient",
+    "Scenario",
     "xor_encrypt",
     "decode_payload",
     "prompt_game_name",

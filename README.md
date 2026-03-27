@@ -10,6 +10,7 @@ A Python scripting framework for automating spacecraft operations in **Space Ran
 - [Project Structure](#project-structure)
 - [Getting Started](#getting-started)
 - [Writing a Scenario Script](#writing-a-scenario-script)
+  - [The `Scenario` Class (recommended)](#-the-scenario-class-recommended)
   - [Configuration](#configuration)
   - [Scheduling Commands](#scheduling-commands)
   - [Ground Requests](#ground-requests)
@@ -62,6 +63,7 @@ space-range-scripts/
 │
 ├── src/                        # Reusable framework library
 │   ├── __init__.py
+│   ├── scenario.py             # Scenario — high-level base class for scenario scripts
 │   ├── config.py               # Scenario JSON loader & typed config dataclasses
 │   ├── commands.py             # Command builder helpers (guidance, camera, jammer…)
 │   ├── event_scheduler.py      # Time-based event queue (asset name → live ID resolution)
@@ -118,6 +120,86 @@ Press **Enter** to accept the saved defaults, or type new values. Both are saved
 ---
 
 ## ✍️ Writing a Scenario Script
+
+### 🚀 The `Scenario` Class (recommended)
+
+The `Scenario` class is the fastest way to write a new scenario. It handles every piece of boilerplate automatically — credentials, config loading, team/asset lookup, enemy enumeration, scheduler creation, client setup, and the startup banner — so your script only needs to define the event schedule and any custom logic.
+
+```python
+import sys, os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+
+from src import Scenario, commands
+
+# All setup in one line: prompts for credentials, loads the JSON config,
+# resolves your team and its primary asset, enumerates enemy teams.
+scenario = Scenario(team_name="RED")
+
+scheduler = scenario.scheduler
+scheduler.add_event("Sun Point", trigger_time=100.0, **commands.guidance_sun("Solar Panel"))
+scheduler.add_event("Nadir",     trigger_time=500.0, **commands.guidance_nadir("Camera"))
+
+if __name__ == "__main__":
+    scenario.run()   # creates the client, prints the banner, connects and runs
+```
+
+That's a complete, working scenario script. The `Scenario` object exposes everything you need:
+
+| Attribute | Type | Description |
+|---|---|---|
+| `scenario.config` | `ScenarioConfig` | Full parsed scenario configuration |
+| `scenario.team` | `TeamConfig` | The controlling team (e.g. RED) |
+| `scenario.asset` | `AssetConfig` | Primary asset from the team's collection |
+| `scenario.scheduler` | `EventScheduler` | Pre-built scheduler for the asset |
+| `scenario.enemy_teams` | `list[TeamConfig]` | All other enabled teams |
+| `scenario.enemy_fallback_freqs` | `list[float]` | Their frequencies from config (MHz) |
+| `scenario.enemy_asset_ids` | `list[str]` | Live IDs resolved on connect (empty until then) |
+| `scenario.client` | `SpaceRangeClient` | Available after `scenario.run()` is called |
+
+#### Live frequency lookups in `pre_trigger` hooks
+
+`scenario.live_enemy_frequencies()` is a ready-made helper for jammer scenarios. It waits for enemy IDs to be resolved on connect, queries each asset's current frequency via the admin API, and falls back to config values if the query fails — all in one call:
+
+```python
+def live_jammer_args(default_args: dict) -> dict:
+    freqs = scenario.live_enemy_frequencies()   # blocks briefly if IDs not yet ready
+    return {**default_args, "frequencies": freqs}
+
+scheduler.add_event(
+    name="Start Jamming",
+    trigger_time=700.0,
+    pre_trigger=live_jammer_args,
+    **commands.jammer_start(frequencies=scenario.enemy_fallback_freqs, power=3.0),
+)
+```
+
+#### Custom `on_connect` work
+
+Enemy asset IDs are resolved automatically on connect. If you need to do additional setup (e.g. extra admin queries) once the connection is live, pass an `on_connect` callback to `run()`. Call `scenario.resolve_enemy_ids()` from within it if you still need live IDs:
+
+```python
+def on_connected():
+    scenario.resolve_enemy_ids()          # keep built-in ID resolution
+    result = scenario.client.admin.get_simulation()
+    printer.info(f"Sim speed: {result['args']['speed']}×")
+
+scenario.run(on_connect=on_connected)
+```
+
+#### Optional callbacks
+
+All four `SpaceRangeClient` callbacks are forwarded through `scenario.run()`:
+
+```python
+scenario.run(
+    on_connect=on_connected,         # called once after subscriptions are live
+    on_session=handle_session,       # called on every session clock tick
+    on_event=handle_event,           # called for unsolicited ground notifications
+    on_admin_event=handle_admin,     # called for unsolicited admin push messages
+)
+```
+
+---
 
 ### ⚙️ Configuration
 

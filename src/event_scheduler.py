@@ -95,7 +95,22 @@ class EventScheduler:
 
     def process(self, sim_time: float, send_func: Callable[[dict], None]):
         """
-        Check all pending events against *sim_time* and fire any that are due.
+        Check pending events against *sim_time* and fire the next due event.
+
+        Only **one** event is fired per call.  This preserves strict
+        trigger-time ordering even when multiple tick threads run concurrently
+        (e.g. when the script connects mid-simulation and several session
+        messages arrive before the first event has finished firing).
+
+        The sequence for each event is:
+          1. ``event.firing`` is set to ``True`` — all other tick threads skip it.
+          2. ``pre_trigger`` runs (may block for admin/ground responses).
+          3. The command is sent.
+          4. ``event.executed`` is set to ``True``.
+
+        Because we stop after claiming one event, the *next* event in the
+        sorted list is never touched until the current one is fully executed,
+        so "Stop Jamming" can never fire before "Start Jamming".
 
         Parameters
         ----------
@@ -105,8 +120,13 @@ class EventScheduler:
             Callable that accepts a fully-formed command packet dict and sends it.
         """
         for event in self.events:
-            if event.executed or event.firing:
+            if event.executed:
                 continue
+
+            # An event that is already firing is mid-execution on another
+            # thread.  Stop here — don't skip over it to fire later events.
+            if event.firing:
+                return
 
             if sim_time >= event.trigger_time:
                 if self.live_asset_id is None:
@@ -114,7 +134,8 @@ class EventScheduler:
                     return
 
                 # Claim the event immediately — before pre_trigger blocks —
-                # so concurrent tick threads skip it and never double-fire.
+                # so concurrent tick threads stop at this event and never
+                # advance past it to fire a later event out of order.
                 event.firing = True
 
                 printer.event(sim_time, event.name, event.description)
@@ -139,6 +160,10 @@ class EventScheduler:
                 send_func(command_packet)
                 event.executed = True
                 printer.complete(event.name)
+
+                # Stop after firing one event — the next tick will advance to
+                # the following event, preserving strict ordering.
+                return
 
         # Log once when all events are done
         if self.all_complete and not self._all_complete_logged:

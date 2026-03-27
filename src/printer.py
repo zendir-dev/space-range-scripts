@@ -81,12 +81,19 @@ class _LogFile:
         os.makedirs(os.path.dirname(path), exist_ok=True)
         self._f = open(path, mode, encoding="utf-8", buffering=1)  # line-buffered
         self.path = path
+        self._closed = False
 
     def write(self, line: str) -> None:
+        if self._closed:
+            return
         plain = _ANSI_ESCAPE.sub("", line)
-        self._f.write(plain + "\n")
+        try:
+            self._f.write(plain + "\n")
+        except ValueError:
+            pass  # file was closed between the guard check and the write
 
     def close(self) -> None:
+        self._closed = True
         try:
             self._f.close()
         except OSError:
