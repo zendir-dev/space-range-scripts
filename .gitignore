@@ -205,3 +205,10 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Space Range — local operator defaults (game name + admin password)
+# Never commit this file — it contains sensitive credentials
+.space-range-defaults
+
+# Session log files (generated at runtime, one per simulation instance)
+logs/

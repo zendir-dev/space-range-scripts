@@ -13,6 +13,7 @@ A Python scripting framework for automating spacecraft operations in **Space Ran
   - [Configuration](#configuration)
   - [Scheduling Commands](#scheduling-commands)
   - [Ground Requests](#ground-requests)
+  - [Admin Requests](#admin-requests)
   - [Running a Script](#running-a-script)
 - [Coloured Output (`printer`)](#️-coloured-output-printer)
 - [Command Reference](#command-reference)
@@ -32,9 +33,11 @@ Session Clock (MQTT)
       ▼
  SpaceRangeClient
       │
-      ├──► EventScheduler ──► send_command() ──► Uplink topic (XOR encrypted)
+      ├──► EventScheduler ──► send_command() ──► Uplink topic     (XOR encrypted, team password)
       │
-      └──► Ground Requests ──► Request topic  ──► Response topic (blocking)
+      ├──► Ground Requests ──► Request topic  ──► Response topic  (blocking, team password)
+      │
+      └──► Admin Requests  ──► Admin/Request  ──► Admin/Response  (blocking, admin password)
 ```
 
 Key behaviours:
@@ -43,6 +46,8 @@ Key behaviours:
 - 🔄 **Simulation reset detection** — if the simulation restarts mid-session (new `instance` ID), all scheduled events are automatically reset and will re-execute.
 - 🔐 **Encrypted uplink** — every command is XOR-encrypted with the team's unique password before being published.
 - 📡 **Blocking ground requests** — query the ground controller synchronously (e.g. list assets, get telemetry) with a configurable timeout; returns `None` if no response arrives in time.
+- 🕵️ **Admin requests** — constructive agents and instructors can query live telemetry, events, and simulation state for all teams simultaneously via a separate admin channel encrypted with a dedicated admin password.
+- 📝 **Automatic session logging** — every line printed to the terminal is also written in plain text to `logs/YYYY-MM-DD_HH-MM-SS_<instance>.log`. A new log file is opened each time a new simulation instance is detected (including resets).
 
 ---
 
@@ -52,24 +57,30 @@ Key behaviours:
 space-range-scripts/
 │
 ├── scenarios/                  # One script + one JSON config per scenario
-│   ├── orbit_sentinel.py       # Example scenario script
-│   └── orbit_sentinel.json     # Scenario configuration (simulation, teams, assets)
+│   ├── orbital_sentinel.py     # Example scenario script
+│   └── orbital_sentinel.json   # Scenario configuration (simulation, teams, assets)
 │
 ├── src/                        # Reusable framework library
 │   ├── __init__.py
 │   ├── config.py               # Scenario JSON loader & typed config dataclasses
 │   ├── commands.py             # Command builder helpers (guidance, camera, jammer…)
 │   ├── event_scheduler.py      # Time-based event queue (asset name → live ID resolution)
-│   ├── scheduled_event.py      # ScheduledEvent dataclass
+│   ├── scheduled_event.py      # ScheduledEvent dataclass (supports pre_trigger hooks)
 │   ├── mqtt_client.py          # SpaceRangeClient — MQTT connection & routing
 │   ├── ground_client.py        # GroundRequestClient — blocking request/response calls
-│   └── printer.py              # Coloured terminal output helpers (ANSI)
+│   ├── admin_client.py         # AdminRequestClient — instructor/agent admin API
+│   ├── printer.py              # Coloured terminal output + session log file writer
+│   └── utils.py                # decode_payload — robust JSON decoding helpers
+│
+├── logs/                       # Auto-generated session logs (git-ignored)
+│   └── YYYY-MM-DD_HH-MM-SS_<instance>.log
 │
 ├── schemas/                    # Reference documentation for all data structures
 │   ├── Command_Schema.md       # Uplink command packet format & all command types
 │   ├── Ground_Schema.md        # Ground controller request/response API
 │   ├── Session_Schema.md       # Session clock message format
-│   └── Teams_Schema.md         # Team & collection configuration structure
+│   ├── Teams_Schema.md         # Team & collection configuration structure
+│   └── Admin_Schema.md         # Admin API — telemetry, events, simulation control
 │
 ├── requirements.txt
 └── README.md
@@ -87,21 +98,22 @@ pip install -r requirements.txt
 
 **2. Configure your scenario**
 
-Each scenario has a paired `.json` file (e.g. `scenarios/orbit_sentinel.json`) that defines the simulation parameters, teams, assets, and ground stations. Update the team IDs, passwords, frequencies, and asset IDs to match your Space Range instance.
+Each scenario has a paired `.json` file (e.g. `scenarios/orbital_sentinel.json`) that defines the simulation parameters, teams, assets, and ground stations. Update the team IDs, passwords, frequencies, and asset IDs to match your Space Range instance.
 
 **3. Run a scenario script**
 
 ```bash
-python scenarios/orbit_sentinel.py
+python scenarios/orbital_sentinel.py
 ```
 
-On startup you will be prompted for the game/instance name:
+On startup you will be prompted for the game/instance name and admin password:
 
 ```
 Game name [ZENDIR]:
+Admin password [      ]:
 ```
 
-Press **Enter** to use the default (`ZENDIR`), or type the name of your specific game instance. This name is used to construct the MQTT topic paths.
+Press **Enter** to accept the saved defaults, or type new values. Both are saved to `.space-range-defaults` at the project root for convenience on subsequent runs — this file is excluded from version control. The game name is used to construct all MQTT topic paths. The admin password unlocks the admin API for querying live telemetry across all teams.
 
 ---
 
@@ -109,13 +121,13 @@ Press **Enter** to use the default (`ZENDIR`), or type the name of your specific
 
 ### ⚙️ Configuration
 
-`load_config()` automatically finds the scenario JSON by matching the calling script's filename. No path argument is needed:
+`load_config()` automatically finds the scenario JSON by matching the calling script's filename. Use `prompt_credentials()` to collect both the game name and admin password at startup — previously entered values are offered as defaults:
 
 ```python
-from src import load_config, prompt_game_name
+from src import load_config, prompt_credentials
 
-game   = prompt_game_name()          # prompts operator at runtime
-config = load_config(game=game)      # auto-loads scenarios/<script_name>.json
+game, admin_password = prompt_credentials()   # prompts for game name + admin password
+config = load_config(game=game)               # auto-loads scenarios/<script_name>.json
 
 red_team   = config.get_team("RED")
 red_assets = config.get_assets_for_team(red_team)
@@ -140,14 +152,38 @@ from src import commands
 
 scheduler = EventScheduler(asset_name=ASSET_NAME)   # name matched live against ground controller
 
-scheduler.add_event("Sun Pointing",       trigger_time=100.0,  **commands.guidance_sun("Solar Panel"))
-scheduler.add_event("Nadir Pointing",     trigger_time=300.0,  **commands.guidance_nadir("Camera"))
-scheduler.add_event("Point Jammer",       trigger_time=600.0,  **commands.guidance_ground("Jammer", station="Dubai"))
-scheduler.add_event("Start Jamming",      trigger_time=700.0,  **commands.jammer_start([blue_team.frequency], power=3.0))
-scheduler.add_event("Stop Jamming",       trigger_time=800.0,  **commands.jammer_stop())
+scheduler.add_event("Sun Pointing",   trigger_time=100.0, **commands.guidance_sun("Solar Panel"))
+scheduler.add_event("Nadir Pointing", trigger_time=300.0, **commands.guidance_nadir("Camera"))
+scheduler.add_event("Point Jammer",   trigger_time=600.0, **commands.guidance_ground("Jammer", station="Dubai"))
+scheduler.add_event("Start Jamming",  trigger_time=700.0, **commands.jammer_start([500.0], power=3.0))
+scheduler.add_event("Stop Jamming",   trigger_time=800.0, **commands.jammer_stop())
 ```
 
 Events are always executed in trigger-time order regardless of the order they are added.
+
+#### ⚡ Live `pre_trigger` hooks
+
+For events where the arguments need to be resolved at the **moment of firing** rather than at schedule-build time, pass a `pre_trigger` callable. It receives the event's default `args` dict and must return the final `args` dict to use:
+
+```python
+def live_jammer_args(default_args: dict) -> dict:
+    # Called at t=700s, just before the command is sent.
+    # Query current enemy frequencies from the admin API.
+    live_freqs = client.admin.get_live_frequencies(
+        asset_ids=enemy_asset_ids,
+        fallback_frequencies=[500.0, 510.0],  # used if a query fails
+    )
+    return {**default_args, "frequencies": live_freqs}
+
+scheduler.add_event(
+    name="Start Jamming",
+    trigger_time=700.0,
+    pre_trigger=live_jammer_args,   # runs just before the command fires
+    **commands.jammer_start(frequencies=[500.0, 510.0], power=3.0),
+)
+```
+
+If `pre_trigger` raises an exception it is caught, logged, and the event fires with its default args — so the jammer always fires even if the admin query fails.
 
 ### 📡 Ground Requests
 
@@ -185,9 +221,62 @@ def handle_event(evt: dict):
 client = SpaceRangeClient(..., on_event=handle_event)
 ```
 
+### 🕵️ Admin Requests
+
+`SpaceRangeClient` holds an `AdminRequestClient` instance at `client.admin`. It uses the separate `Admin/Request` and `Admin/Response` MQTT topics, encrypted with the **admin password**, and gives constructive agents read access to live data for every team simultaneously.
+
+> **⚠️ The admin password must not be shared with participant teams** — it provides full read access to all team telemetry, frequencies, and passwords.
+
+```python
+# Fetch all team names, IDs, and passwords; and all ground stations
+entities = client.admin.list_entities()
+
+# Fetch full details (asset IDs, components) for a specific team
+team_info = client.admin.list_team("Blue Team")
+asset_ids = [a["asset_id"] for a in team_info["args"]["assets"]["space"]]
+
+# Query the most-recent telemetry data point for a spacecraft
+data = client.admin.query_data("fb345a0c", recent=True)
+freq = data["args"]["data"][-1]["communications.frequency"]
+
+# Convenience helper — query live frequency for one asset
+freq = client.admin.get_live_frequency("fb345a0c")   # returns float MHz or None
+
+# Query live frequencies for multiple enemy assets (with fallbacks)
+freqs = client.admin.get_live_frequencies(
+    asset_ids=["fb345a0c", "2d708e04"],
+    fallback_frequencies=[500.0, 510.0],
+)
+
+# Resolve all space asset IDs for a list of enemy team names
+# (safe to call once at connect — IDs are stable within a running scenario)
+mapping = client.admin.resolve_enemy_asset_ids(["Blue Team", "Green Team"])
+# → {"Blue Team": ["fb345a0c"], "Green Team": ["2d708e04"]}
+
+# Query historical events for an asset
+events = client.admin.query_events(asset_id="fb345a0c")
+
+# Get current simulation state and speed
+sim = client.admin.get_simulation()
+# → {"state": "Running", "speed": 5.0}
+
+# Get all predefined scenario events (instructor-configured failures, etc.)
+scenario_events = client.admin.get_scenario_events()
+```
+
+**Unsolicited `admin_event_triggered` notifications** (fired whenever any team sends a command or a scenario event triggers) arrive on the same `Admin/Response` topic and are routed to an optional callback:
+
+```python
+def handle_admin_event(evt: dict):
+    args = evt["args"]
+    print(f"[ADMIN] t={args['simulation_time']}s  {args['name']}  (team {args['team_id']})")
+
+client = SpaceRangeClient(..., on_admin_event=handle_admin_event)
+```
+
 ### ▶️ Running a Script
 
-Pass the client a config, team, and scheduler, then call `connect_and_run()`. There is no `asset_id` argument — the live ID is resolved automatically from the ground controller using the asset name set on the scheduler:
+Pass the client a config, team, scheduler, and admin password, then call `connect_and_run()`. The live asset ID is resolved automatically from the ground controller using the asset name set on the scheduler:
 
 ```python
 from src import SpaceRangeClient
@@ -196,7 +285,9 @@ client = SpaceRangeClient(
     config=config,
     team=red_team,
     scheduler=scheduler,
-    on_event=handle_event,   # optional
+    admin_password=admin_password,   # from prompt_credentials()
+    on_event=handle_event,           # optional — ground unsolicited notifications
+    on_admin_event=handle_admin_event,  # optional — admin push notifications
 )
 
 client.print_banner()
@@ -241,9 +332,27 @@ printer.divider()                               # grey separator line
 | `resolve(msg)` | Cyan | Asset name→ID resolution status |
 | `divider(width)` | Grey | Section separator |
 
+### 📝 Session log files
+
+Every line printed to the terminal is **also written in plain text** (ANSI codes stripped) to a log file under `logs/`. A new file is opened automatically each time a new simulation instance is detected — including on simulation reset — so each run produces a separate, self-contained log:
+
+```
+logs/
+└── 2026-03-27_14-32-05_29920346.log   ← real datetime + instance ID
+```
+
+The `logs/` directory is excluded from version control. Log files can be opened manually at any time using `printer.open_log(path)`:
+
+```python
+from src import printer
+printer.open_log("logs/my_custom_run.log")   # all subsequent output also goes here
+printer.close_log()                          # flush and close
+printer.current_log_path()                  # returns path or None
+```
+
 ---
 
-## �📖 Command Reference
+## 📖 Command Reference
 
 All command helpers live in `src/commands.py` and return a dict that unpacks directly into `scheduler.add_event()`.
 
@@ -343,3 +452,4 @@ Detailed reference documentation for all data structures used in Space Range:
 | [Ground Schema](schemas/Ground_Schema.md) | Ground controller request/response API — all request types, response formats, and unsolicited notifications |
 | [Session Schema](schemas/Session_Schema.md) | Session clock message format broadcast by the simulation |
 | [Teams Schema](schemas/Teams_Schema.md) | Team and collection configuration structure within the scenario JSON |
+| [Admin Schema](schemas/Admin_Schema.md) | Admin API — live telemetry, event history, simulation state, and scenario events for all teams |

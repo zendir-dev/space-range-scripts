@@ -29,6 +29,7 @@ import random
 import threading
 from typing import Callable, Optional
 from . import printer
+from .utils import decode_payload
 
 
 # ---------------------------------------------------------------------------
@@ -251,11 +252,13 @@ class GroundRequestClient:
         - If ``type`` is ``"event_triggered"`` or ``"chat_response"`` (unsolicited),
           route to ``on_event`` callback if registered.
         """
+        decrypted = b""
         try:
             decrypted = self._xor_encrypt(payload, self._team.password)
-            data = json.loads(decrypted.decode("utf-8"))
+            data = decode_payload(decrypted)
         except (UnicodeDecodeError, json.JSONDecodeError) as e:
             printer.error(f"Failed to decode response message: {e}")
+            printer.error(f"Raw decrypted bytes (first 256): {decrypted[:256]!r}")
             return
         except Exception as e:
             printer.error(f"Unexpected error decoding response: {e}")

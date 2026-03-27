@@ -5,7 +5,9 @@
 EventScheduler — manages and fires ScheduledEvents based on simulation time.
 """
 
-from typing import Callable
+from __future__ import annotations
+
+from typing import Callable, Optional
 
 from .scheduled_event import ScheduledEvent
 from . import printer
@@ -46,14 +48,36 @@ class EventScheduler:
         command: str,
         args: dict = None,
         description: str = "",
+        pre_trigger: Optional[Callable[[dict], dict]] = None,
     ) -> "EventScheduler":
-        """Add a new scheduled event. Returns *self* for method chaining."""
+        """
+        Add a new scheduled event. Returns *self* for method chaining.
+
+        Parameters
+        ----------
+        name:
+            Human-readable label for the event.
+        trigger_time:
+            Simulation time (seconds) at which to fire.
+        command:
+            Command type string (e.g. ``"guidance"``).
+        args:
+            Default arguments dict for the command.
+        description:
+            Optional detail shown in log output alongside the event name.
+        pre_trigger:
+            Optional callable ``(args: dict) -> dict`` called just before the
+            command is sent.  Its return value replaces ``args`` at fire time.
+            Use this for live data lookups (e.g. fetching current enemy
+            frequencies from the admin API) that must be as fresh as possible.
+        """
         event = ScheduledEvent(
             name=name,
             trigger_time=trigger_time,
             command=command,
             args=args or {},
             description=description or f"{command} at t={trigger_time}s",
+            pre_trigger=pre_trigger,
         )
         self.events.append(event)
         # Keep events sorted by trigger time
@@ -81,7 +105,7 @@ class EventScheduler:
             Callable that accepts a fully-formed command packet dict and sends it.
         """
         for event in self.events:
-            if event.executed:
+            if event.executed or event.firing:
                 continue
 
             if sim_time >= event.trigger_time:
@@ -89,13 +113,27 @@ class EventScheduler:
                     printer.warn(f"t={sim_time:.1f}s — skipping '{event.name}': live asset ID not yet resolved.")
                     return
 
+                # Claim the event immediately — before pre_trigger blocks —
+                # so concurrent tick threads skip it and never double-fire.
+                event.firing = True
+
                 printer.event(sim_time, event.name, event.description)
+
+                # Run the pre_trigger hook if one is registered.
+                # It receives the default args and returns the final args to use.
+                args = event.args
+                if event.pre_trigger is not None:
+                    try:
+                        args = event.pre_trigger(args)
+                    except Exception as e:
+                        printer.error(f"pre_trigger for '{event.name}' raised an exception: {e}")
+                        printer.warn(f"Falling back to default args for '{event.name}'.")
 
                 command_packet = {
                     "id": self.live_asset_id,
                     "command": event.command,
                     "time": 0,  # execute immediately
-                    "args": event.args,
+                    "args": args,
                 }
 
                 send_func(command_packet)
@@ -119,8 +157,8 @@ class EventScheduler:
 
     @property
     def pending_count(self) -> int:
-        """Number of events that have not yet been executed."""
-        return sum(1 for event in self.events if not event.executed)
+        """Number of events that have not yet been claimed or executed."""
+        return sum(1 for event in self.events if not event.firing and not event.executed)
 
     # ------------------------------------------------------------------
     # Display helpers
