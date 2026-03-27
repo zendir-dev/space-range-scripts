@@ -1,0 +1,732 @@
+{
+    "simulation": {
+        "epoch": "2025/04/15 07:30:00",
+        "speed": 8.0,
+        "step_size": 0.12,
+        "integrator": "Euler",
+        "end_time": 0.0
+    },
+    "universe": {
+        "atmosphere": false,
+        "magnetosphere": true,
+        "gps": true,
+        "cloud_opacity": 0.6,
+        "cloud_contrast": 2.5,
+        "ambient_light": 0.25
+    },
+    "ground_stations": {
+        "locations": [
+            "Madrid",
+            "Dubai",
+            "Singapore",
+            "Auckland",
+            "Easter Island",
+            "Salvador"
+        ],
+        "min_elevation": 0,
+        "max_range": 0,
+        "scale":10
+    },
+    "teams": [
+    {
+        "enabled": true,
+        "id": 111111,
+        "password": "AAAAAA",
+        "name": "RED",
+        "key": 1,
+        "frequency": 500,
+        "collection": "RED",
+        "color": "#FF0000"
+    },
+        {
+        "enabled": true,
+        "id": 584203,
+        "password": "Q7X9PL",
+        "name": "Team Blue",
+        "key": 42,
+        "frequency": 612,
+        "collection": "Main",
+        "color": "#020CF1"
+    },
+    {
+        "enabled": true,
+        "id": 917462,
+        "password": "M3K8ZT",
+        "name": "Team Green",
+        "key": 87,
+        "frequency": 745,
+        "collection": "Main",
+        "color": "#00FF00"
+    },
+    {
+        "enabled": true,
+        "id": 263891,
+        "password": "X9L2QA",
+        "name": "Team Yellow",
+        "key": 154,
+        "frequency": 889,
+        "collection": "Main",
+        "color": "#FFFF00"
+    },
+    {
+        "enabled": true,
+        "id": 748105,
+        "password": "T6W3HY",
+        "name": "Team Violet",
+        "key": 201,
+        "frequency": 523,
+        "collection": "Main",
+        "color": "#8000FF"
+    },
+    {
+        "enabled": true,
+        "id": 390572,
+        "password": "R4N8UC",
+        "name": "Team Cyan",
+        "key": 12,
+        "frequency": 468,
+        "collection": "Main",
+        "color": "#00CED1"
+    },
+    {
+        "enabled": true,
+        "id": 671284,
+        "password": "V2P7DS",
+        "name": "Team Pink",
+        "key": 233,
+        "frequency": 901,
+        "collection": "Main",
+        "color": "#FF0080"
+    },
+    {
+        "enabled": true,
+        "id": 845319,
+        "password": "Z5G7XB",
+        "name": "Team Orange",
+        "key": 99,
+        "frequency": 777,
+        "collection": "Main",
+        "color": "#F23E05"
+    },
+    {
+        "enabled": true,
+        "id": 529678,
+        "password": "H8J4LK",
+        "name": "Team White",
+        "key": 176,
+        "frequency": 655,
+        "collection": "Main",
+        "color": "#FFFFFF"
+    }
+],
+    "assets": {
+        "space": [
+            {
+                "id": "SC_001",
+                "name": "Microsat",
+                "orbit": {
+                    "planet": "Earth",
+                    "values": [8129.0, 0.0, 41.0, 288.0, 0, 349.9198],
+                    "offset": [0.0, 0.0, 0.0, 0.0, 0.0, 0.01]
+                },
+                "physics": {
+                    "override_mass": true,
+                    "mass": 100.0,
+                    "center_of_mass": [ 0.0, 0.0, 0.0 ],
+                    "inertia_tensor": [ [ 10.0, 0.0, 0.0 ], [ 0.0, 10.0, 0.0 ], [ 0.0, 0.0, 10.0 ] ]
+                },
+                "visualization": {
+                    "mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/ZenSat/BP_Z_SC_ZenSat_Chassis",
+                    "scale": 1.0,
+                    "offset": [ 0.0, 0.0, 0.12 ]
+                },
+                "controller": {
+                    "safe_fraction": 0.1,
+                    "capture_tax": 0.001,
+                    "downlink_tax": 0.005,
+                    "ping_interval": 20.0,
+                    "reset_interval": 60.0,
+                    "jamming_multiplier": 100.0,
+                    "enable_rpo": true
+                },
+                "components": [
+                    {
+                        "class": "Solar Panel",
+                        "name": "Solar Panel +X",
+                        "mesh": "None",
+                        "enabled": true,
+                        "position": [ 0.8, 0.276313, -0.2 ],
+                        "rotation": [ 35.0, 0.0, 0.0 ],
+                        "scale": 1.0,
+                        "data": {
+                            "Area": 0.3,
+                            "Efficiency": 0.4,
+                            "Mass": 10.0
+                        }
+                    },
+                    {
+                        "class": "Solar Panel",
+                        "name": "Solar Panel -X",
+                        "mesh": "None",
+                        "enabled": true,
+                        "position": [ -0.8, 0.276313, -0.2 ],
+                        "rotation": [ 35.0, 0.0, 0.0 ],
+                        "data": {
+                            "Area": 0.3,
+                            "Efficiency": 0.4,
+                            "Mass": 10.0
+                        }
+                    },
+                    {
+                        "class": "Reaction Wheels",
+                        "name": "Reaction Wheels",
+                        "mesh": "None",
+                        "enabled": true,
+                        "position": [ 0.0, 0.0, 0.2 ],
+                        "data": {
+                            "Mass": 9.0
+                        }
+                    },
+                    {
+                        "class": "Computer",
+                        "name": "Computer",
+                        "mesh": "None",
+                        "enabled": true,
+                        "position": [ 0.0, 0.0, 0.2 ],
+                        "data": {
+                            "Mass": 2.0
+                        }
+                    },
+                    {
+                        "class": "Battery",
+                        "name": "Battery",
+                        "mesh": "None",
+                        "enabled": true,
+                        "position": [ 0.0, 0.0, 0.2 ],
+                        "data": {
+                            "Nominal Capacity": 125.0,
+                            "Charge Fraction": 0.5,
+                            "Mass": 5.0
+                        }
+                    },
+                    {
+                        "class": "Camera",
+                        "name": "Optical Camera",
+                        "mesh": "None",
+                        "enabled": true,
+                        "position": [ 0.0, -0.36, -0.16 ],
+                        "rotation": [ 90.0, 0.0, 0.0 ],
+                        "data": {
+                            "Mass": 5.0
+                        }
+                    },
+                    {
+                        "class": "GPS Sensor",
+                        "name": "GPS Sensor",
+                        "mesh": "None",
+                        "enabled": true,
+                        "position": [ 0.0, 0.0, 0.2 ],
+                        "data": {
+                            "Mass": 2.0
+                        }
+                    },
+                    {
+                        "class": "Receiver",
+                        "name": "Receiver",
+                        "mesh": "None",
+                        "enabled": true,
+                        "position": [ 0.0, -0.36, -0.16 ],
+                        "rotation": [ 90.0, 0.0, 0.0 ],
+                        "data": {
+                            "Antenna Gain": 3.0,
+                            "Mass": 2.0
+                        }
+                    },
+                    {
+                        "class": "Transmitter",
+                        "name": "Transmitter",
+                        "mesh": "None",
+                        "enabled": true,
+                        "position": [ 0.0, -0.36, -0.16 ],
+                        "rotation": [ 90.0, 0.0, 0.0 ],
+                        "data": {
+                            "Mass": 1.0
+                        }
+                    },
+                    {
+                        "class": "Storage",
+                        "name": "Storage",
+                        "mesh": "None",
+                        "enabled": true,
+                        "position": [ 0.0, 0.0, -0.2 ],
+                        "data": {
+                            "Mass": 4.0
+                        }
+                    }
+                ]
+            },
+            {
+                "id": "SC_002",
+                "name": "Recon",
+                "orbit": {
+                    "planet": "Earth",
+                    "values": [8130.0, 0.0, 41.0, 288.0, 0, 349.9198],
+                    "offset": [0.0, 0.0, 0.0, 0.0, 0.0, 0.001]
+                },
+                "physics": {
+                    "override_mass": true,
+                    "mass": 100.0,
+                    "center_of_mass": [ 0.0, 0.0, 0.0 ],
+                    "inertia_tensor": [ [ 10.0, 0.0, 0.0 ], [ 0.0, 10.0, 0.0 ], [ 0.0, 0.0, 10.0 ] ]
+                },
+                "visualization": {
+                    "mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/MRO/BP_Z_SC_MRO_Chassis",
+                    "scale": 1.0,
+                    "offset": [ 0.0, 0.0, 0.0 ],
+                    "hide": true
+                },
+                "controller": {
+                    "safe_fraction": 0.1,
+                    "capture_tax": 0.001,
+                    "downlink_tax": 0.005,
+                    "ping_interval": 20.0,
+                    "reset_interval": 60.0,
+                    "jamming_multiplier": 100.0,
+                    "enable_rpo": true
+                },
+                "components": [
+                    {
+                        "class": "Computer",
+                        "name": "Computer",
+                        "mesh": "None",
+                        "enabled": true,
+                        "position": [ 0.0, 0.0, 0.2 ],
+                        "data": {
+                            "Mass": 2.0
+                        }
+                    },
+                    {
+                        "class": "External Force Torque",
+                        "name": "Reaction Wheels",
+                        "mesh": "None",
+                        "enabled": true,
+                        "position": [ 0.0, 0.0, 0.2 ],
+                        "data": {
+                            "Mass": 9.0
+                        }
+                    },
+                    {
+                        "class": "Receiver",
+                        "name": "Receiver",
+                        "mesh": "None",
+                        "enabled": true,
+                        "position": [ 0.0, -0.36, -0.16 ],
+                        "rotation": [ 90.0, 0.0, 0.0 ],
+                        "data": {
+                            "Antenna Gain": 3.0,
+                            "Mass": 2.0
+                        }
+                    },
+                    {
+                        "class": "Transmitter",
+                        "name": "Transmitter",
+                        "mesh": "None",
+                        "enabled": true,
+                        "position": [ 0.0, -0.36, -0.16 ],
+                        "rotation": [ 90.0, 0.0, 0.0 ],
+                        "data": {
+                            "Mass": 1.0
+                        }
+                    },
+                    {
+                        "class": "Jammer",
+                        "name": "Jammer",
+                        "mesh": "None",
+                        "enabled": true,
+                        "position": [ 0.0, -0.36, -0.16 ],
+                        "rotation": [ 90.0, 0.0, 0.0 ],
+                        "data": {
+                            "Power": 100.0,
+                            "Antenna Gain": 15.0,
+                            "Lookup": "RFPattern.csv"
+                        }
+                    }
+
+                ]
+            }
+        ],
+        "collections": [
+            {
+                "id": "Main",
+                "space_assets": ["SC_001"]
+            },
+            {
+                "id": "RED",
+                "space_assets":["SC_002"]
+            }
+        ]
+    },
+    "objects": {
+        "ground": [
+            {
+                "id": "GO_001",
+                "type": "vessel",
+                "name": "EG01",
+                "planet": "Earth",
+                "latitude": 25.823813, 
+                "longitude": 56.858125,
+                "altitude": 1,
+                "scale": 80,
+                "color":"#00FF00",
+                "data": {
+                    "heading" : 130.0,
+                    "speed" : 10.0
+                }
+            },
+                        {
+                "id": "GO_002",
+                "type": "vessel",
+                "name": "EG02",
+                "planet": "Earth",
+                "latitude": 25.7, 
+                "longitude": 57.3,
+                "altitude": 1,
+                "scale": 80,
+                "color":"#00FF00",
+                "data": {
+                    "heading" : 130.0,
+                    "speed" : 10.0
+                }
+            },
+                        {
+                "id": "GO_003",
+                "type": "vessel",
+                "name": "EG03",
+                "planet": "Earth",
+                "latitude": 25.5, 
+                "longitude": 56.9,
+                "altitude": 1,
+                "scale": 80,
+                "color":"#00FF00",
+                "data": {
+                    "heading" : 130.0,
+                    "speed" : 10.0
+                }
+            },
+                        {
+                "id": "GO_004",
+                "type": "vessel",
+                "name": "EG04",
+                "planet": "Earth",
+                "latitude": 24.823813, 
+                "longitude": 56.858125,
+                "altitude": 1,
+                "scale": 80,
+                "color":"#00FF00",
+                "data": {
+                    "heading" : 110.0,
+                    "speed" : 7.0
+                }
+            },            {
+                "id": "GO_005",
+                "type": "vessel",
+                "name": "EG05",
+                "planet": "Earth",
+                "latitude": 26.6, 
+                "longitude": 56.1,
+                "altitude": 1,
+                "scale": 80,
+                "color":"#00FF00",
+                "data": {
+                    "heading" : 90.0,
+                    "speed" : 0.0
+                }
+            },
+                        {
+                "id": "GO_006",
+                "type": "vessel",
+                "name": "EG06",
+                "planet": "Earth",
+                "latitude": 25.3, 
+                "longitude": 54.8,
+                "altitude": 1,
+                "scale": 80,
+                "color":"#00FF00",
+                "data": {
+                    "heading" : 30.0,
+                    "speed" : 8.0
+                }
+            },
+            {
+                "id": "GO_007",
+                "type": "vessel",
+                "name": "EG05",
+                "planet": "Earth",
+                "latitude": 26.3, 
+                "longitude": 56.1,
+                "altitude": 1,
+                "scale": 80,
+                "color":"#00FF00",
+                "data": {
+                    "heading" : 120.0,
+                    "speed" : 0.0
+                }
+            },
+            {
+                "id": "GO_008",
+                "type": "vessel",
+                "name": "IR01",
+                "planet": "Earth",
+                "latitude": 26.4, 
+                "longitude": 56.0,
+                "altitude": 1,
+                "scale": 40,
+                "color":"#FF6700",
+                "data": {
+                    "heading" : 270.0,
+                    "speed" : 10.0
+                }
+            },
+            {
+                "id": "GO_009",
+                "type": "vessel",
+                "name": "US01",
+                "planet": "Earth",
+                "latitude": 26.4, 
+                "longitude": 56.8,
+                "altitude": 1,
+                "scale": 40,
+                "color":"#Ff0000",
+                "data": {
+                    "heading" : 180.0,
+                    "speed" : 10.0
+                }
+            },
+            {
+                "id": "GO_010",
+                "type": "vessel",
+                "name": "US02",
+                "planet": "Earth",
+                "latitude": 25.6, 
+                "longitude": 54.8,
+                "altitude": 1,
+                "scale": 40,
+                "color":"#0000ff",
+                "data": {
+                    "heading" : 55.0,
+                    "speed" : 7.0
+                }
+            },
+            {
+                "id": "GO_011",
+                "type": "vessel",
+                "name": "US03",
+                "planet": "Earth",
+                "latitude": 25.2, 
+                "longitude": 56.8,
+                "altitude": 1,
+                "scale": 40,
+                "color":"#ffffff",
+                "data": {
+                    "heading" : 90.0,
+                    "speed" : 10.0
+                }
+            },
+            {
+                "id": "GO_012",
+                "type": "vessel",
+                "name": "SC01",
+                "planet": "Earth",
+                "latitude": 16.1, 
+                "longitude": 112.1,
+                "altitude": 1,
+                "scale": 5,
+                "color":"#000000",
+                "data": {
+                    "heading" : 90.0,
+                    "speed" : 0.0
+                }
+            },
+            {
+                "id": "GO_013",
+                "type": "vessel",
+                "name": "SC02",
+                "planet": "Earth",
+                "latitude": 16.2, 
+                "longitude": 112.1,
+                "altitude": 1,
+                "scale": 5,
+                "color":"#000000",
+                "data": {
+                    "heading" : 90.0,
+                    "speed" : 0.0
+                }
+            },
+            {
+                "id": "GO_014",
+                "type": "vessel",
+                "name": "SC03",
+                "planet": "Earth",
+                "latitude": 16.2, 
+                "longitude": 112.0,
+                "altitude": 1,
+                "scale": 5,
+                "color":"#000000",
+                "data": {
+                    "heading" : 180.0,
+                    "speed" : 0.1
+                }
+            },
+            {
+                "id": "GO_015",
+                "type": "vessel",
+                "name": "SC04",
+                "planet": "Earth",
+                "latitude": 16.1, 
+                "longitude": 112.0,
+                "altitude": 1,
+                "scale": 5,
+                "color":"#000000",
+                "data": {
+                    "heading" : 270.0,
+                    "speed" : 0.5
+                }
+            },
+            {
+                "id": "GO_016",
+                "type": "vessel",
+                "name": "SC05",
+                "planet": "Earth",
+                "latitude": 16.1, 
+                "longitude": 111.9,
+                "altitude": 1,
+                "scale": 5,
+                "color":"#000000",
+                "data": {
+                    "heading" : 30.0,
+                    "speed" : 1.0
+                }
+            },
+            {
+                "id": "TX_01",
+                "type": "text",
+                "name": "tx01",
+                "planet": "Earth",
+                "latitude": 16.2, 
+                "longitude": 112,
+                "altitude": 3,
+                "scale": 81500,
+                "color":"#00094B",
+                "data": {
+                    "text": ","
+                }
+            },
+            {
+                "id": "GO_017",
+                "type": "vessel",
+                "name": "Iron Horizon",
+                "planet": "Earth",
+                "latitude": 11.932, 
+                "longitude": -63.547,
+                "altitude": 1,
+                "scale": 100,
+                "color":"#ff0000",
+                "data": {
+                    "heading" : 85.0,
+                    "speed" : 4.4
+                }
+            },
+                        {
+                "id": "GO_018",
+                "type": "vessel",
+                "name": "Ocean Tribute",
+                "planet": "Earth",
+                "latitude": 14.471, 
+                "longitude": -62.871,
+                "altitude": 1,
+                "scale": 100,
+                "color":"#800080",
+                "data": {
+                    "heading" : 120.0,
+                    "speed" : 6.6
+                }
+            },
+            {
+                "id": "GO_019",
+                "type": "vessel",
+                "name": "Harbor Sentinel",
+                "planet": "Earth",
+                "latitude": 13.390, 
+                "longitude": -60.362,
+                "altitude": 1,
+                "scale": 100,
+                "color":"#FFFF00",
+                "data": {
+                    "heading" : 290.0,
+                    "speed" : 5.5
+                }
+            },
+            {
+                "id": "GO_020",
+                "type": "vessel",
+                "name": "Golden Ballast",
+                "planet": "Earth",
+                "latitude": 12.793, 
+                "longitude": -65.922,
+                "altitude": 1,
+                "scale": 100,
+                "color":"#00FF00",
+                "data": {
+                    "heading" : 185.0,
+                    "speed" : 3.9
+                }
+            },
+            {
+                "id": "GO_021",
+                "type": "vessel",
+                "name": "Titan Manifest",
+                "planet": "Earth",
+                "latitude": 15.517, 
+                "longitude": -57.367,
+                "altitude": 1,
+                "scale": 100,
+                "color":"#00FFFF",
+                "data": {
+                    "heading" : 219.0,
+                    "speed" : 5.7
+                }
+            },
+            {
+                "id": "GO_022",
+                "type": "vessel",
+                "name": "Steel Voyager",
+                "planet": "Earth",
+                "latitude": 16.952, 
+                "longitude": -67.196,
+                "altitude": 1,
+                "scale": 100,
+                "color":"#FFFFFF",
+                "data": {
+                    "heading" : 340.0,
+                    "speed" : 3.9
+                }
+            }
+            
+            
+        ]
+    },
+    "events": [
+        {
+            "enabled": true,
+            "name": "Broken Storage",
+            "type": "Spacecraft",
+            "time": 4500.0,
+            "repeat": false,
+            "interval": 1.0,
+            "target": "Storage",
+            "data": {
+                "Capacity": 30000
+            }
+        }
+    ]
+}
