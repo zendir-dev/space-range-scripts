@@ -1,7 +1,7 @@
 {
     "simulation": {
         "epoch": "2025/04/15 07:30:00",
-        "speed": 8.0,
+        "speed": 6.0,
         "step_size": 0.12,
         "integrator": "Euler",
         "end_time": 0.0
@@ -10,7 +10,7 @@
         "atmosphere": false,
         "magnetosphere": true,
         "gps": true,
-        "cloud_opacity": 0.6,
+        "cloud_opacity": 0.9,
         "cloud_contrast": 2.5,
         "ambient_light": 0.25
     },
@@ -21,11 +21,12 @@
             "Singapore",
             "Auckland",
             "Easter Island",
-            "Salvador"
+            "Salvador",
+            "Miami"
         ],
         "min_elevation": 0,
         "max_range": 0,
-        "scale":10
+        "scale":100
     },
     "teams": [
     {
@@ -126,7 +127,7 @@
                 "name": "Microsat",
                 "orbit": {
                     "planet": "Earth",
-                    "values": [8129.0, 0.0, 41.0, 288.0, 0, 349.9198],
+                    "values": [8200.0, 0.02, 41.0, 288.0, 0, 349.9198],
                     "offset": [0.0, 0.0, 0.0, 0.0, 0.0, 0.01]
                 },
                 "physics": {
@@ -211,7 +212,7 @@
                     },
                     {
                         "class": "Camera",
-                        "name": "Optical Camera",
+                        "name": "Camera",
                         "mesh": "None",
                         "enabled": true,
                         "position": [ 0.0, -0.36, -0.16 ],
@@ -270,18 +271,18 @@
                 "name": "Recon",
                 "orbit": {
                     "planet": "Earth",
-                    "values": [8130.0, 0.0, 41.0, 288.0, 0, 349.9198],
+                    "values": [8190, 0.0, 41, 288.0, 0, 349],
                     "offset": [0.0, 0.0, 0.0, 0.0, 0.0, 0.001]
                 },
                 "physics": {
                     "override_mass": true,
-                    "mass": 100.0,
+                    "mass": 750.0,
                     "center_of_mass": [ 0.0, 0.0, 0.0 ],
-                    "inertia_tensor": [ [ 10.0, 0.0, 0.0 ], [ 0.0, 10.0, 0.0 ], [ 0.0, 0.0, 10.0 ] ]
+                    "inertia_tensor": [ [ 900.0, 0.0, 0.0 ], [ 0.0, 800.0, 0.0 ], [ 0.0, 0.0, 600.0 ] ]
                 },
                 "visualization": {
                     "mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/MRO/BP_Z_SC_MRO_Chassis",
-                    "scale": 1.0,
+                    "scale": 10.0,
                     "offset": [ 0.0, 0.0, 0.0 ],
                     "hide": true
                 },
@@ -300,7 +301,6 @@
                         "name": "Computer",
                         "mesh": "None",
                         "enabled": true,
-                        "position": [ 0.0, 0.0, 0.2 ],
                         "data": {
                             "Mass": 2.0
                         }
@@ -310,9 +310,8 @@
                         "name": "Reaction Wheels",
                         "mesh": "None",
                         "enabled": true,
-                        "position": [ 0.0, 0.0, 0.2 ],
                         "data": {
-                            "Mass": 9.0
+                            "Mass": 2.0
                         }
                     },
                     {
@@ -320,8 +319,7 @@
                         "name": "Receiver",
                         "mesh": "None",
                         "enabled": true,
-                        "position": [ 0.0, -0.36, -0.16 ],
-                        "rotation": [ 90.0, 0.0, 0.0 ],
+                        "rotation": [ 90.0, 90.0, 0.0 ],
                         "data": {
                             "Antenna Gain": 3.0,
                             "Mass": 2.0
@@ -332,8 +330,7 @@
                         "name": "Transmitter",
                         "mesh": "None",
                         "enabled": true,
-                        "position": [ 0.0, -0.36, -0.16 ],
-                        "rotation": [ 90.0, 0.0, 0.0 ],
+                        "rotation": [ 90.0, 90.0, 0.0 ],
                         "data": {
                             "Mass": 1.0
                         }
@@ -343,8 +340,7 @@
                         "name": "Jammer",
                         "mesh": "None",
                         "enabled": true,
-                        "position": [ 0.0, -0.36, -0.16 ],
-                        "rotation": [ 90.0, 0.0, 0.0 ],
+                        "rotation": [ 90.0, 90.0, 0.0 ],
                         "data": {
                             "Power": 100.0,
                             "Antenna Gain": 15.0,
@@ -460,7 +456,7 @@
             {
                 "id": "GO_007",
                 "type": "vessel",
-                "name": "EG05",
+                "name": "EG07",
                 "planet": "Earth",
                 "latitude": 26.3, 
                 "longitude": 56.1,
@@ -481,7 +477,7 @@
                 "longitude": 56.0,
                 "altitude": 1,
                 "scale": 40,
-                "color":"#FF6700",
+                "color":"#FFFF00",
                 "data": {
                     "heading" : 270.0,
                     "speed" : 10.0
@@ -496,7 +492,7 @@
                 "longitude": 56.8,
                 "altitude": 1,
                 "scale": 40,
-                "color":"#Ff0000",
+                "color":"#FF0000",
                 "data": {
                     "heading" : 180.0,
                     "speed" : 10.0
@@ -629,7 +625,7 @@
                 "latitude": 11.932, 
                 "longitude": -63.547,
                 "altitude": 1,
-                "scale": 100,
+                "scale": 150,
                 "color":"#ff0000",
                 "data": {
                     "heading" : 85.0,
@@ -644,7 +640,7 @@
                 "latitude": 14.471, 
                 "longitude": -62.871,
                 "altitude": 1,
-                "scale": 100,
+                "scale": 150,
                 "color":"#800080",
                 "data": {
                     "heading" : 120.0,
@@ -659,7 +655,7 @@
                 "latitude": 13.390, 
                 "longitude": -60.362,
                 "altitude": 1,
-                "scale": 100,
+                "scale": 150,
                 "color":"#FFFF00",
                 "data": {
                     "heading" : 290.0,
@@ -674,7 +670,7 @@
                 "latitude": 12.793, 
                 "longitude": -65.922,
                 "altitude": 1,
-                "scale": 100,
+                "scale": 150,
                 "color":"#00FF00",
                 "data": {
                     "heading" : 185.0,
@@ -689,7 +685,7 @@
                 "latitude": 15.517, 
                 "longitude": -57.367,
                 "altitude": 1,
-                "scale": 100,
+                "scale": 150,
                 "color":"#00FFFF",
                 "data": {
                     "heading" : 219.0,
@@ -704,7 +700,7 @@
                 "latitude": 16.952, 
                 "longitude": -67.196,
                 "altitude": 1,
-                "scale": 100,
+                "scale": 150,
                 "color":"#FFFFFF",
                 "data": {
                     "heading" : 340.0,
@@ -725,7 +721,7 @@
             "interval": 1.0,
             "target": "Storage",
             "data": {
-                "Capacity": 30000
+                "Capacity": 150000
             }
         }
     ]

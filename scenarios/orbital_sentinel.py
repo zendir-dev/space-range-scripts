@@ -43,11 +43,6 @@ scenario = Scenario(team_name="RED")
 
 scheduler = scenario.scheduler
 
-scheduler.add_event(
-    name="Point Jammer to Salvador",
-    trigger_time=50.0,
-    **commands.guidance_ground("Jammer", station="Salvador"),
-)
 
 
 def live_jammer_args(default_args: dict) -> dict:
@@ -65,16 +60,59 @@ def live_jammer_args(default_args: dict) -> dict:
 
 
 scheduler.add_event(
+    name="Point Jammer to Easter Island",
+    trigger_time=5550.0,
+    **commands.guidance_ground("Jammer", station="Easter Island"),
+)
+
+scheduler.add_event(
     name="Start Jamming All Enemy Teams",
-    trigger_time=80.0,
+    trigger_time=5559.0,
     pre_trigger=live_jammer_args,
-    # Default args used only if pre_trigger fails completely
     **commands.jammer_start(frequencies=scenario.enemy_fallback_freqs, power=3.0),
 )
 
 scheduler.add_event(
     name="Stop Jamming",
-    trigger_time=1500.0,
+    trigger_time=7251.0,
+    **commands.jammer_stop(),
+)
+
+scheduler.add_event(
+    name="Point Jammer to Dubai",
+    trigger_time=8900.0,
+    **commands.guidance_ground("Jammer", station="Dubai"),
+)
+
+scheduler.add_event(
+    name="Start Jamming All Enemy Teams",
+    trigger_time=9160.0,
+    pre_trigger=live_jammer_args,
+    **commands.jammer_start(frequencies=scenario.enemy_fallback_freqs, power=3.0),
+)
+
+scheduler.add_event(
+    name="Stop Jamming",
+    trigger_time=10800.0,
+    **commands.jammer_stop(),
+)
+
+scheduler.add_event(
+    name="Point Jammer to Dubai",
+    trigger_time=16850.0,
+    **commands.guidance_ground("Jammer", station="Dubai"),
+)
+
+scheduler.add_event(
+    name="Start Jamming All Enemy Teams",
+    trigger_time=16980.0,
+    pre_trigger=live_jammer_args,
+    **commands.jammer_start(frequencies=scenario.enemy_fallback_freqs, power=3.0),
+)
+
+scheduler.add_event(
+    name="Stop Jamming",
+    trigger_time=18635.0,
     **commands.jammer_stop(),
 )
 
