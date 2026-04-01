@@ -271,7 +271,7 @@
                 "name": "Recon",
                 "orbit": {
                     "planet": "Earth",
-                    "values": [8190, 0.0, 41, 288.0, 0, 349],
+                    "values": [8190, 0.02, 41, 288.0, 0, 349.1],
                     "offset": [0.0, 0.0, 0.0, 0.0, 0.0, 0.001]
                 },
                 "physics": {
@@ -729,22 +729,11 @@
         {
 			"title": "How many vessels are currently damaged?",
 			"description": "From the fleet, identified by the large green fleet of ships located in the Straight of Hurmuz, how many have been stationary for at least one orbit?",
-			"type": "select",
+			"type": "number",
 			"answer": {
-				"options": [
-					"1",
-					"2",
-					"4",
-                    "5"
-				],
-				"value": 1,
-				"reason": [
-					"The two ships at the narrowest part is stationary throughout",
-					"The two ships at the narrowest part is stationary throughout",
-					"The two ships at the narrowest part is stationary throughout",
-                    "The two ships at the narrowest part is stationary throughout"
-				],
-				"score": 3
+				"value": 2,
+				"reason": "The two ships at the narrowest part is stationary throughout",
+				"score": 10
 			}
 		},
         {
@@ -753,80 +742,69 @@
 			"type": "select",
 			"answer": {
 				"options": [
-					"Yellow",
-					"Blue",
-					"White",
-                    "Red"
+                    "Blue",
+                    "Red",
+                    "White",
+                    "Yellow"
 				],
-				"value": 0,
+				"value": 3,
 				"reason": [
 					"Its Yellow, the only ship moving away from the damaged ships and in the opposite direction along the straight to the rest",
 					"Its Yellow, the only ship moving away from the damaged ships and in the opposite direction along the straight to the rest",
 					"Its Yellow, the only ship moving away from the damaged ships and in the opposite direction along the straight to the rest",
                     "Its Yellow, the only ship moving away from the damaged ships and in the opposite direction along the straight to the rest"
 				],
-				"score": 3
+				"score": 10
 			}
 		},
         {
-			"title": "There exists a new island in the South China Sea, relative to the reference photo provided. Give the location of the newest island to the nearest 0.1 degree in latitude",
-			"description": "",
+			"title": "New Island Latitude",
+			"description": "There exists a new island in the South China Sea, relative to the reference photo provided. Give the location of the newest island to the nearest 0.1 degree in latitude",
 			"type": "number",
 			"answer": {
-				"unit": "degrees",
+				"unit": "Degrees",
 				"value": 16.2,
-				"tolerance": 0.1,
+				"tolerance": 0.2,
 				"reason": "16.2. This can be found in the Paracel Island group.",
-				"score": 5
+				"score": 8
 			}
 		},
         {
-			"title": "There exists a new island in the South China Sea, relative to the reference photo provided. Give the location of the newest island to the nearest 0.1 degree in longitude.",
-			"description": "",
+			"title": "New Island Longitude",
+			"description": "There exists a new island in the South China Sea, relative to the reference photo provided. Give the location of the newest island to the nearest 0.1 degree in longitude.",
 			"type": "number",
 			"answer": {
-				"unit": "degrees",
+				"unit": "Degrees",
 				"value": 112.0,
-				"tolerance": 0.1,
+				"tolerance": 0.2,
 				"reason": "112.0. This can be found in the Paracel Island group.",
-				"score": 5
+				"score": 8
 			}
 		},
         {
 			"title": "How many construction vessels can you count that are located in close proximity to the island?",
 			"description": "Use a narrow FOV for identification",
-			"type": "select",
+			"type": "number",
 			"answer": {
-				"options": [
-					"1",
-					"2",
-					"4",
-                    "5"
-				],
-				"value": 3,
-				"reason": [
-					"There are small vessels that can be seen near the island if a small enough FOV is set on the camera, with the correct pointing algorithm.",
-					"There are small vessels that can be seen near the island if a small enough FOV is set on the camera, with the correct pointing algorithm.",
-					"There are small vessels that can be seen near the island if a small enough FOV is set on the camera, with the correct pointing algorithm.",
-                    "There are small vessels that can be seen near the island if a small enough FOV is set on the camera, with the correct pointing algorithm."
-				],
-				"score": 3
+				"value": 5,
+				"reason": "There are 5 small vessels that can be seen near the island if a small enough FOV is set on the camera, with the correct pointing algorithm.",
+				"score": 4
 			}
 		},
         {
 			"title": "Which vessel, as per the AIS data provided located near Venezuela, is lying about its position?",
-			"description": "Reffer to the AIS data provided in your mission brief",
+			"description": "Refer to the AIS data provided in your mission brief",
 			"type": "select",
 			"answer": {
 				"options": [
-					"HARBOR SENTINEL(YELLOW)",
-					"GOLDEN BALLAST(GREEN)",
-					"IRON HORIZON(RED)",
-                    "OCEAN TRIBUTE(VIOLET)",
-                    "TITAN MANIFEST(CYAN)",
-                    "STEEL VOYAGER(WHITE)"
+					"Cyan",
+                    "Green",
+                    "Red",
+                    "Violet",
+                    "White",
+                    "Yellow"
 				],
-				"value": 4,
+				"value": 0,
 				"reason": [
 					"It is lying about its longitude. All other variables match the broadcasted data for ‘Titan Manifest’, the cyan vessel.",
 					"It is lying about its longitude. All other variables match the broadcasted data for ‘Titan Manifest’, the cyan vessel.",
@@ -835,21 +813,21 @@
                     "It is lying about its longitude. All other variables match the broadcasted data for ‘Titan Manifest’, the cyan vessel.",
                     "It is lying about its longitude. All other variables match the broadcasted data for ‘Titan Manifest’, the cyan vessel."
 				],
-				"score": 5
+				"score": 7
 			}
 		},
         {
 			"title": "Which vessel, as per the AIS data provided located near Venezuela, is lying about its heading direction?",
-			"description": "Reffer to the AIS data provided in your mission brief",
+			"description": "Refer to the AIS data provided in your mission brief",
 			"type": "select",
 			"answer": {
 				"options": [
-					"HARBOR SENTINEL(YELLOW)",
-					"GOLDEN BALLAST(GREEN)",
-					"IRON HORIZON(RED)",
-                    "OCEAN TRIBUTE(VIOLET)",
-                    "TITAN MANIFEST(CYAN)",
-                    "STEEL VOYAGER(WHITE)"
+					"Cyan",
+                    "Green",
+                    "Red",
+                    "Violet",
+                    "White",
+                    "Yellow"
 				],
 				"value": 1,
 				"reason": [
@@ -860,7 +838,7 @@
                     "Golden Ballast. It is lying about its rotation, it is actually heading south instead of north-east.",
                     "Golden Ballast. It is lying about its rotation, it is actually heading south instead of north-east."
 				],
-				"score": 5
+				"score": 7
 			}
 		},
         {
@@ -869,14 +847,14 @@
 			"type": "select",
 			"answer": {
 				"options": [
-					"HARBOR SENTINEL(YELLOW)",
-					"GOLDEN BALLAST(GREEN)",
-					"IRON HORIZON(RED)",
-                    "OCEAN TRIBUTE(VIOLET)",
-                    "TITAN MANIFEST(CYAN)",
-                    "STEEL VOYAGER(WHITE)"
+                    "Cyan",
+                    "Green",
+                    "Red",
+                    "Violet",
+                    "White",
+                    "Yellow"
 				],
-				"value": 5,
+				"value": 4,
 				"reason": [
 					"White. This vessel is not associated with any AIS data stream provided",
 					"White. This vessel is not associated with any AIS data stream provided",
@@ -885,61 +863,48 @@
                     "White. This vessel is not associated with any AIS data stream provided",
                     "White. This vessel is not associated with any AIS data stream provided"
 				],
+				"score": 6
+			}
+		},
+        {
+			"title": "What interferance anomaly occurred that disrupted routine space operations?",
+			"description": "Select all that apply",
+			"type": "select",
+			"answer": {
+				"options": [
+                    "Command Injection",
+                    "Downlink Jamming",
+                    "Spoofing of GPS signals",
+                    "Uplink Jamming",
+                    "None of the above"
+				],
+				"value": 1,
+				"reason": [
+				],
 				"score": 5
 			}
 		},
         {
-			"title": "What anomaly(s) occurred that disrupted routine space operations?",
+			"title": "What is the root cause of the the interference anomaly that disrupted routine space operations?",
 			"description": "Select all that apply",
-			"type": "checkbox",
+			"type": "select",
 			"answer": {
 				"options": [
-					"Spoofing of GPS signals",
-					"Downlink Jamming",
-					"Component Failure",
-                    "Command Inkection",
-                    "None of the above"
-				],
-				"value": [
-					1,
-                    2
-				],
-				"reason": [
-					"This is correct cos spacecraft float",
-					"Option 2 is stupid",
-					"Option 3 is obvious"
-				],
-				"score": 4
-			}
-		},
-        {
-			"title": "What is the root cause of the the anomaly(s) that disrupted routine space operations?",
-			"description": "Select all that apply",
-			"type": "checkbox",
-			"answer": {
-				"options": [
-                    "Rogue Spacecraft",
 					"Ephemeris Tampering",
 					"Replay Attack",
-					"Software Bug",
+                    "Rogue Spacecraft",
                     "None of the above"
 				],
-				"value": [
-					0,
-                    3
-				],
+				"value":2,
 				"reason": [
-					"This is correct cos spacecraft float",
-					"Option 2 is stupid",
-					"Option 3 is obvious"
 				],
-				"score": 4
+				"score": 5
 			}
 		},
         {
-			"title": "What is the mitigating action to resolve the space-based anomaly(s)?",
+			"title": "What is the mitigating action to resolve the inteference anomaly?",
 			"description": "Select all that apply",
-			"type": "checkbox",
+			"type": "select",
 			"answer": {
 				"options": [
                     "Authentication Change ",
@@ -948,20 +913,14 @@
 					"Frequency Hopping",
                     "None of the above"
 				],
-				"value": [
-					1,
-                    3
-				],
+				"value": 3,
 				"reason": [
-					"This is correct cos spacecraft float",
-					"Option 2 is stupid",
-					"Option 3 is obvious"
 				],
-				"score": 4
+				"score": 5
 			}
 		},
         {
-			"title": "What is the minimum signal-to-noise ratio experienced by the ground station during the space-based anomaly?",
+			"title": "What is the minimum signal-to-noise ratio experienced by the ground station during the inteference anomaly?",
 			"description": "Nearest integer in dB",
 			"type": "number",
 			"answer": {
@@ -969,6 +928,63 @@
 				"value": 15.0,
 				"tolerance": 1.0,
 				"reason": "15.0. Signal to noise during the anomally.",
+				"score": 5
+			}
+		},
+        {
+			"title": "During operations a component failure occurred on the spacecraft, what component failed?",
+			"description": "Select all that apply",
+			"type": "select",
+            "answer":{
+            "options": [
+                    "Battery",
+                    "Computer",
+                    "GPS Sensor",
+                    "Reaction Wheels",
+                    "Reciever",
+                    "Solar Panel",
+                    "Storage",
+                    "Transmitter" 
+				],
+				"value":6,
+				"reason": [
+				],
+				"score": 5
+			}
+		},
+        {
+			"title": "What is the Semi Major Axis of your spacecraft's orbit?",
+			"description": "Nearest 100km",
+			"type": "number",
+			"answer": {
+				"unit": "km",
+				"value": 8200.0,
+				"tolerance": 100.0,
+				"reason": "8200.0 km. This can be found in the telemetry data of the spacecraft.",
+				"score": 5
+			}
+		},
+        {
+			"title": "What is the eccentricity of your spacecraft's orbit?",
+			"description": "Nearest 0.01",
+			"type": "number",
+			"answer": {
+				"unit": "",
+				"value": 0.02,
+				"tolerance": 0.01,
+				"reason": "0.02. This can be found in the telemetry data of the spacecraft.",
+				"score": 5
+			}
+		},
+        {
+			"title": "What is the inclination of your spacecraft's orbit?",
+			"description": "Nearest degree",
+			"type": "number",
+			"answer": {
+				"unit": "degree",
+				"value": 41.0,
+				"tolerance": 1.0,
+				"reason": "41.0 degrees. This can be found in the telemetry data of the spacecraft.",
 				"score": 5
 			}
 		}
