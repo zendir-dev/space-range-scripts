@@ -399,9 +399,18 @@ def prompt_credentials(
         game_input = input(f"Game name [{saved_game}]: ").strip()
         game = game_input if game_input else saved_game
 
-        pw_prompt = f"Admin password [{saved_password}]: " if saved_password else "Admin password: "
-        pw_input  = input(pw_prompt).strip()
-        admin_password = pw_input if pw_input else saved_password
+        if saved_password:
+            pw_prompt = f"Admin password [{saved_password}] (- for none): "
+        else:
+            pw_prompt = "Admin password (- for none): "
+        pw_input = input(pw_prompt).strip()
+
+        if pw_input == "-":
+            admin_password = ""
+        elif pw_input:
+            admin_password = pw_input
+        else:
+            admin_password = saved_password  # Enter keeps the saved value
     except (EOFError, KeyboardInterrupt):
         return saved_game, saved_password
 

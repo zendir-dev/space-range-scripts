@@ -58,6 +58,11 @@ def live_jammer_args(default_args: dict) -> dict:
     freqs = scenario.live_enemy_frequencies()
     return {**default_args, "frequencies": freqs}
 
+scheduler.add_event(
+    name="Point Nadir",
+    trigger_time=100.0,
+    **commands.guidance_nadir("Jammer"),
+)
 
 scheduler.add_event(
     name="Point Jammer to Easter Island",

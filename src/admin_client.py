@@ -439,6 +439,8 @@ class AdminRequestClient:
     @staticmethod
     def _xor_encrypt(data: bytes, password: str) -> bytes:
         """XOR-encrypt/decrypt *data* with a repeating *password* key."""
+        if not password:
+            return data
         password_bytes = password.encode()
         result = bytearray(len(data))
         for i in range(len(data)):

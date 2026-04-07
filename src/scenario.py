@@ -259,6 +259,11 @@ class Scenario:
             self._ids_ready.set()
             return
 
+        if not self._admin_password:
+            printer.warn("resolve_enemy_ids: no admin password set — skipping enemy ID resolution.")
+            self._ids_ready.set()
+            return
+
         enemy_team_names = [t.name for t in self.enemy_teams]
         if not enemy_team_names:
             printer.info("resolve_enemy_ids: no enemy teams configured — skipping.")
