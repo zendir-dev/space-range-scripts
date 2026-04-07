@@ -1,7 +1,7 @@
 {
     "simulation": {
         "epoch": "2025/04/15 07:30:00",
-        "speed": 6.0,
+        "speed": 5.0,
         "step_size": 0.12,
         "integrator": "Euler",
         "end_time": 0.0
@@ -127,8 +127,8 @@
                 "name": "Microsat",
                 "orbit": {
                     "planet": "Earth",
-                    "values": [8200.0, 0.02, 41.0, 288.0, 0, 349.9198],
-                    "offset": [0.0, 0.0, 0.0, 0.0, 0.0, 0.01]
+                    "values": [8200.0, 0.02, 41.0, 288.0, 0, 350],
+                    "offset": [0.0, 0.0, 0.0, 0.0, 0.0, 0.001]
                 },
                 "physics": {
                     "override_mass": true,
@@ -144,7 +144,7 @@
                 "controller": {
                     "safe_fraction": 0.1,
                     "capture_tax": 0.001,
-                    "downlink_tax": 0.005,
+                    "downlink_tax": 0.01,
                     "ping_interval": 20.0,
                     "reset_interval": 60.0,
                     "jamming_multiplier": 100.0,
@@ -205,7 +205,7 @@
                         "enabled": true,
                         "position": [ 0.0, 0.0, 0.2 ],
                         "data": {
-                            "Nominal Capacity": 125.0,
+                            "Nominal Capacity": 80.0,
                             "Charge Fraction": 0.5,
                             "Mass": 5.0
                         }
@@ -263,6 +263,17 @@
                         "data": {
                             "Mass": 4.0
                         }
+                    },
+                    {
+                        "class": "EM Sensor",
+                        "name": "EM Sensor",
+                        "mesh": "None",
+                        "enabled": true,
+                        "position": [ 0.0, -0.36, -0.16 ],
+                        "rotation": [ 90.0, 0.0, 0.0 ],
+                        "data": {
+                            "Mass": 2.0
+                        }
                     }
                 ]
             },
@@ -271,7 +282,7 @@
                 "name": "Recon",
                 "orbit": {
                     "planet": "Earth",
-                    "values": [8190, 0.02, 41, 288.0, 0, 349.1],
+                    "values": [8200, 0.0199, 41, 288.0, 0, 350.004],
                     "offset": [0.0, 0.0, 0.0, 0.0, 0.0, 0.001]
                 },
                 "physics": {
@@ -321,7 +332,7 @@
                         "enabled": true,
                         "rotation": [ 90.0, 90.0, 0.0 ],
                         "data": {
-                            "Antenna Gain": 3.0,
+                            "Antenna Gain": 500.0,
                             "Mass": 2.0
                         }
                     },
@@ -346,8 +357,31 @@
                             "Antenna Gain": 15.0,
                             "Lookup": "RFPattern.csv"
                         }
+                    },
+                    {
+                        "class": "Text",
+                        "name": "Text Front",
+                        "enabled": true,
+                        "position": [ 13.418, 40.162, -8.064 ],
+                        "rotation": [ -1.4, 77.7, -97.2 ],
+                        "data": {
+                            "Text": "RECON",
+                            "Color": "#FFFF0D",
+                            "Scale": 50.0
+                        }
+                    },
+                    {
+                        "class": "Text",
+                        "name": "Text Back",
+                        "enabled": true,
+                        "position": [ 12.061, 40.155, -8.36 ],
+                        "rotation": [ 178.6, -77.7, -82.6 ],
+                        "data": {
+                            "Text": "RECON",
+                            "Color": "#FFFF0D",
+                            "Scale": 50.0
+                        }
                     }
-
                 ]
             }
         ],
@@ -372,7 +406,7 @@
                 "latitude": 25.823813, 
                 "longitude": 56.858125,
                 "altitude": 1,
-                "scale": 80,
+                "scale": 120,
                 "color":"#00FF00",
                 "data": {
                     "heading" : 130.0,
@@ -387,7 +421,7 @@
                 "latitude": 25.7, 
                 "longitude": 57.3,
                 "altitude": 1,
-                "scale": 80,
+                "scale": 120,
                 "color":"#00FF00",
                 "data": {
                     "heading" : 130.0,
@@ -402,7 +436,7 @@
                 "latitude": 25.5, 
                 "longitude": 56.9,
                 "altitude": 1,
-                "scale": 80,
+                "scale":120,
                 "color":"#00FF00",
                 "data": {
                     "heading" : 130.0,
@@ -417,7 +451,7 @@
                 "latitude": 24.823813, 
                 "longitude": 56.858125,
                 "altitude": 1,
-                "scale": 80,
+                "scale": 120,
                 "color":"#00FF00",
                 "data": {
                     "heading" : 110.0,
@@ -431,7 +465,7 @@
                 "latitude": 26.6, 
                 "longitude": 56.1,
                 "altitude": 1,
-                "scale": 80,
+                "scale": 120,
                 "color":"#00FF00",
                 "data": {
                     "heading" : 90.0,
@@ -446,11 +480,11 @@
                 "latitude": 25.3, 
                 "longitude": 54.8,
                 "altitude": 1,
-                "scale": 80,
+                "scale": 120,
                 "color":"#00FF00",
                 "data": {
                     "heading" : 30.0,
-                    "speed" : 8.0
+                    "speed" : 3.0
                 }
             },
             {
@@ -461,7 +495,7 @@
                 "latitude": 26.3, 
                 "longitude": 56.1,
                 "altitude": 1,
-                "scale": 80,
+                "scale": 120,
                 "color":"#00FF00",
                 "data": {
                     "heading" : 120.0,
@@ -476,11 +510,11 @@
                 "latitude": 26.4, 
                 "longitude": 56.0,
                 "altitude": 1,
-                "scale": 40,
+                "scale": 60,
                 "color":"#FFFF00",
                 "data": {
                     "heading" : 270.0,
-                    "speed" : 10.0
+                    "speed" : 0.1
                 }
             },
             {
@@ -491,7 +525,7 @@
                 "latitude": 26.4, 
                 "longitude": 56.8,
                 "altitude": 1,
-                "scale": 40,
+                "scale": 60,
                 "color":"#FF0000",
                 "data": {
                     "heading" : 180.0,
@@ -506,11 +540,11 @@
                 "latitude": 25.6, 
                 "longitude": 54.8,
                 "altitude": 1,
-                "scale": 40,
+                "scale": 60,
                 "color":"#0000ff",
                 "data": {
-                    "heading" : 55.0,
-                    "speed" : 7.0
+                    "heading" : 300.0,
+                    "speed" : 6.0
                 }
             },
             {
@@ -521,7 +555,7 @@
                 "latitude": 25.2, 
                 "longitude": 56.8,
                 "altitude": 1,
-                "scale": 40,
+                "scale": 60,
                 "color":"#ffffff",
                 "data": {
                     "heading" : 90.0,
@@ -536,7 +570,7 @@
                 "latitude": 16.1, 
                 "longitude": 112.1,
                 "altitude": 1,
-                "scale": 5,
+                "scale": 8,
                 "color":"#000000",
                 "data": {
                     "heading" : 90.0,
@@ -551,11 +585,11 @@
                 "latitude": 16.2, 
                 "longitude": 112.1,
                 "altitude": 1,
-                "scale": 5,
+                "scale": 8,
                 "color":"#000000",
                 "data": {
-                    "heading" : 90.0,
-                    "speed" : 0.0
+                    "heading" : 220.0,
+                    "speed" : 3.0
                 }
             },
             {
@@ -566,7 +600,7 @@
                 "latitude": 16.2, 
                 "longitude": 112.0,
                 "altitude": 1,
-                "scale": 5,
+                "scale": 8,
                 "color":"#000000",
                 "data": {
                     "heading" : 180.0,
@@ -581,7 +615,7 @@
                 "latitude": 16.1, 
                 "longitude": 112.0,
                 "altitude": 1,
-                "scale": 5,
+                "scale": 8,
                 "color":"#000000",
                 "data": {
                     "heading" : 270.0,
@@ -596,7 +630,7 @@
                 "latitude": 16.1, 
                 "longitude": 111.9,
                 "altitude": 1,
-                "scale": 5,
+                "scale": 8,
                 "color":"#000000",
                 "data": {
                     "heading" : 30.0,
@@ -611,8 +645,8 @@
                 "latitude": 16.2, 
                 "longitude": 112,
                 "altitude": 3,
-                "scale": 81500,
-                "color":"#00094B",
+                "scale": 160000,
+                "color":"#011A01",
                 "data": {
                     "text": ","
                 }
@@ -625,7 +659,7 @@
                 "latitude": 11.932, 
                 "longitude": -63.547,
                 "altitude": 1,
-                "scale": 150,
+                "scale": 225,
                 "color":"#ff0000",
                 "data": {
                     "heading" : 85.0,
@@ -640,7 +674,7 @@
                 "latitude": 14.471, 
                 "longitude": -62.871,
                 "altitude": 1,
-                "scale": 150,
+                "scale": 225,
                 "color":"#800080",
                 "data": {
                     "heading" : 120.0,
@@ -655,7 +689,7 @@
                 "latitude": 13.390, 
                 "longitude": -60.362,
                 "altitude": 1,
-                "scale": 150,
+                "scale": 225,
                 "color":"#FFFF00",
                 "data": {
                     "heading" : 290.0,
@@ -670,7 +704,7 @@
                 "latitude": 12.793, 
                 "longitude": -65.922,
                 "altitude": 1,
-                "scale": 150,
+                "scale": 225,
                 "color":"#00FF00",
                 "data": {
                     "heading" : 185.0,
@@ -685,7 +719,7 @@
                 "latitude": 15.517, 
                 "longitude": -57.367,
                 "altitude": 1,
-                "scale": 150,
+                "scale": 225,
                 "color":"#00FFFF",
                 "data": {
                     "heading" : 219.0,
@@ -700,7 +734,7 @@
                 "latitude": 16.952, 
                 "longitude": -67.196,
                 "altitude": 1,
-                "scale": 150,
+                "scale": 225,
                 "color":"#FFFFFF",
                 "data": {
                     "heading" : 340.0,
@@ -723,12 +757,39 @@
             "data": {
                 "Capacity": 150000
             }
+        },
+        {
+            "Enabled": true,
+            "Name": "Battery Power Spikes",
+            "Time": 500.0,
+            "Repeat": false,
+            "Interval": 1.0,
+            "Type": "Spacecraft",
+            "Target": "Battery-IntermittentConnectionErrorModel",
+            "Assets": [],
+            "Data": {
+                "Intermittent Mean": 1,
+                "Intermittent Std": 2
+            }
+        },
+        {
+            "enabled": true,
+            "name": "Reaction Wheels Stuck",
+            "type": "Spacecraft",
+            "time": 10000.0,
+            "repeat": false,
+            "interval": 1.0,
+            "target": "Reaction Wheels",
+            "data": {
+                "Stuck Index": 1
+            }
         }
     ],
     "questions": [
         {
-			"title": "How many vessels are currently damaged?",
-			"description": "From the fleet, identified by the large green fleet of ships located in the Straight of Hurmuz, how many have been stationary for at least one orbit?",
+			"section": "Stright of Hormuz",
+            "title": "How many vessels are currently damaged?",
+			"description": "From the fleet, identified by the large green fleet of ships located in the Straight of Hormuz, how many have been stationary for at least one orbit?",
 			"type": "number",
 			"answer": {
 				"value": 2,
@@ -737,8 +798,9 @@
 			}
 		},
         {
-			"title": "Identify the bad actor",
-			"description": "Which non-green colored vessel, located in the Straight of Hurmuz, what color of ship do you suspect to be a bad actor that may have caused the damage to the green shipping line?",
+			"section": "Stright of Hormuz",
+            "title": "Identify the bad actor",
+			"description": "Which non-green colored ship do you suspect to be a bad actor that may have caused the damage to the green shipping line in the straight?",
 			"type": "select",
 			"answer": {
 				"options": [
@@ -749,28 +811,30 @@
 				],
 				"value": 3,
 				"reason": [
-					"Its Yellow, the only ship moving away from the damaged ships and in the opposite direction along the straight to the rest",
-					"Its Yellow, the only ship moving away from the damaged ships and in the opposite direction along the straight to the rest",
-					"Its Yellow, the only ship moving away from the damaged ships and in the opposite direction along the straight to the rest",
-                    "Its Yellow, the only ship moving away from the damaged ships and in the opposite direction along the straight to the rest"
+					"Its Yellow, the only ship hovering near the damaged ships in the straight",
+					"Its Yellow, the only ship hovering near the damaged ships in the straight",
+					"Its Yellow, the only ship hovering near the damaged ships in the straight",
+                    "Its Yellow, the only ship hovering near the damaged ships in the straight"
 				],
 				"score": 10
 			}
 		},
         {
-			"title": "New Island Latitude",
+			"section": "South China Sea",
+            "title": "New Island Latitude",
 			"description": "There exists a new island in the South China Sea, relative to the reference photo provided. Give the location of the newest island to the nearest 0.1 degree in latitude",
 			"type": "number",
 			"answer": {
 				"unit": "Degrees",
-				"value": 16.2,
+				"value": 16.1,
 				"tolerance": 0.2,
-				"reason": "16.2. This can be found in the Paracel Island group.",
+				"reason": "16.1. This can be found in the Paracel Island group.",
 				"score": 8
 			}
 		},
         {
-			"title": "New Island Longitude",
+			"section": "South China Sea",
+            "title": "New Island Longitude",
 			"description": "There exists a new island in the South China Sea, relative to the reference photo provided. Give the location of the newest island to the nearest 0.1 degree in longitude.",
 			"type": "number",
 			"answer": {
@@ -782,7 +846,8 @@
 			}
 		},
         {
-			"title": "How many construction vessels can you count that are located in close proximity to the island?",
+			"section": "South China Sea",
+            "title": "How many construction vessels can you count that are located in close proximity to the island?",
 			"description": "Use a narrow FOV for identification",
 			"type": "number",
 			"answer": {
@@ -792,7 +857,8 @@
 			}
 		},
         {
-			"title": "Which vessel, as per the AIS data provided located near Venezuela, is lying about its position?",
+			"section": "Venezuela",
+            "title": "Which vessel, as per the AIS data provided located near Venezuela, is lying about its position?",
 			"description": "Refer to the AIS data provided in your mission brief",
 			"type": "select",
 			"answer": {
@@ -817,7 +883,8 @@
 			}
 		},
         {
-			"title": "Which vessel, as per the AIS data provided located near Venezuela, is lying about its heading direction?",
+			"section": "Venezuela",
+            "title": "Which vessel, as per the AIS data provided located near Venezuela, is lying about its heading direction?",
 			"description": "Refer to the AIS data provided in your mission brief",
 			"type": "select",
 			"answer": {
@@ -842,7 +909,8 @@
 			}
 		},
         {
-			"title": "What colored vessel, located near Venezuela, has disabled their AIS transponder and not broadcasting any data, compared to the AIS data provided?",
+			"section": "Venezuela",
+            "title": "What colored vessel, located near Venezuela, has disabled their AIS transponder and not broadcasting any data, compared to the AIS data provided?",
 			"description": "Reffer to the AIS data provided in your mission brief",
 			"type": "select",
 			"answer": {
@@ -867,7 +935,8 @@
 			}
 		},
         {
-			"title": "What interferance anomaly occurred that disrupted routine space operations?",
+			"section": "Spacecraft Anomaly",
+            "title": "What interferance anomaly occurred that disrupted routine space operations?",
 			"description": "Select all that apply",
 			"type": "select",
 			"answer": {
@@ -885,7 +954,8 @@
 			}
 		},
         {
-			"title": "What is the root cause of the the interference anomaly that disrupted routine space operations?",
+			"section": "Spacecraft Anomaly",
+            "title": "What is the root cause of the the interference anomaly that disrupted routine space operations?",
 			"description": "Select all that apply",
 			"type": "select",
 			"answer": {
@@ -902,7 +972,8 @@
 			}
 		},
         {
-			"title": "What is the mitigating action to resolve the inteference anomaly?",
+			"section": "Spacecraft Anomaly",
+            "title": "What is the mitigating action to resolve the inteference anomaly?",
 			"description": "Select all that apply",
 			"type": "select",
 			"answer": {
@@ -920,7 +991,8 @@
 			}
 		},
         {
-			"title": "What is the minimum signal-to-noise ratio experienced by the ground station during the inteference anomaly?",
+			"section": "Spacecraft Anomaly",
+            "title": "What is the minimum signal-to-noise ratio experienced by the ground station during the inteference anomaly?",
 			"description": "Nearest integer in dB",
 			"type": "number",
 			"answer": {
@@ -932,7 +1004,8 @@
 			}
 		},
         {
-			"title": "During operations a component failure occurred on the spacecraft, what component failed?",
+			"section": "Spacecraft Anomaly",
+            "title": "During operations a component failure occurred on the spacecraft, what component failed?",
 			"description": "Select all that apply",
 			"type": "select",
             "answer":{
@@ -946,14 +1019,15 @@
                     "Storage",
                     "Transmitter" 
 				],
-				"value":6,
+				"value":0,
 				"reason": [
 				],
 				"score": 5
 			}
 		},
         {
-			"title": "What is the Semi Major Axis of your spacecraft's orbit?",
+			"section": "Orbital Calibration",
+            "title": "What is the Semi Major Axis of your spacecraft's orbit?",
 			"description": "Nearest 100km",
 			"type": "number",
 			"answer": {
@@ -965,7 +1039,8 @@
 			}
 		},
         {
-			"title": "What is the eccentricity of your spacecraft's orbit?",
+			"section": "Orbital Calibration",
+            "title": "What is the eccentricity of your spacecraft's orbit?",
 			"description": "Nearest 0.01",
 			"type": "number",
 			"answer": {
@@ -977,7 +1052,8 @@
 			}
 		},
         {
-			"title": "What is the inclination of your spacecraft's orbit?",
+			"section": "Orbital Calibration",
+            "title": "What is the inclination of your spacecraft's orbit?",
 			"description": "Nearest degree",
 			"type": "number",
 			"answer": {
