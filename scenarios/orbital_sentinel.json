@@ -541,7 +541,7 @@
                 "longitude": 54.8,
                 "altitude": 1,
                 "scale": 60,
-                "color":"#0000ff",
+                "color":"#00ffff",
                 "data": {
                     "heading" : 300.0,
                     "speed" : 6.0
@@ -612,7 +612,7 @@
                 "type": "vessel",
                 "name": "SC04",
                 "planet": "Earth",
-                "latitude": 16.1, 
+                "latitude": 16, 
                 "longitude": 112.0,
                 "altitude": 1,
                 "scale": 8,
@@ -675,7 +675,7 @@
                 "longitude": -62.871,
                 "altitude": 1,
                 "scale": 225,
-                "color":"#800080",
+                "color":"#8000ff",
                 "data": {
                     "heading" : 120.0,
                     "speed" : 6.6
@@ -747,7 +747,7 @@
     },
     "events": [
         {
-            "enabled": true,
+            "enabled": false,
             "name": "Broken Storage",
             "type": "Spacecraft",
             "time": 4500.0,
@@ -773,7 +773,7 @@
             }
         },
         {
-            "enabled": true,
+            "enabled": false,
             "name": "Reaction Wheels Stuck",
             "type": "Spacecraft",
             "time": 10000.0,
@@ -788,18 +788,29 @@
     "questions": [
         {
 			"section": "Stright of Hormuz",
-            "title": "How many vessels are currently damaged?",
-			"description": "From the fleet, identified by the large green fleet of ships located in the Straight of Hormuz, how many have been stationary for at least one orbit?",
+            "title": "How many commercial vessels in the Straight?",
+			"description": "The commercial vessels are represented by the large green ships located in the Straight of Hormuz. How many commercial vessels can you count in the straight?",
 			"type": "number",
 			"answer": {
-				"value": 2,
-				"reason": "The two ships at the narrowest part is stationary throughout",
-				"score": 10
+				"value": 7,
+				"reason": "There are 7 large green ships in the straight, representing the commercial vessels.",
+				"score": 4
 			}
 		},
         {
 			"section": "Stright of Hormuz",
-            "title": "Identify the bad actor",
+            "title": "How many vessels are currently damaged?",
+			"description": "From the fleet, identified by the large green ships located in the Straight of Hormuz, how many have been stationary for at least one orbit?",
+			"type": "number",
+			"answer": {
+				"value": 2,
+				"reason": "The two ships at the narrowest part are stationary throughout.",
+				"score": 8
+			}
+		},
+        {
+			"section": "Stright of Hormuz",
+            "title": "Identify the destructive vessel",
 			"description": "Which non-green colored ship do you suspect to be a bad actor that may have caused the damage to the green shipping line in the straight?",
 			"type": "select",
 			"answer": {
@@ -816,33 +827,33 @@
 					"Its Yellow, the only ship hovering near the damaged ships in the straight",
                     "Its Yellow, the only ship hovering near the damaged ships in the straight"
 				],
-				"score": 10
+				"score": 8
 			}
 		},
         {
 			"section": "South China Sea",
             "title": "New Island Latitude",
-			"description": "There exists a new island in the South China Sea, relative to the reference photo provided. Give the location of the newest island to the nearest 0.1 degree in latitude",
+			"description": "There exists a new island in the South China Sea, relative to the reference photo provided. Give the location of the newest island to the nearest 1 degree in latitude.",
 			"type": "number",
 			"answer": {
 				"unit": "Degrees",
 				"value": 16.1,
-				"tolerance": 0.2,
-				"reason": "16.1. This can be found in the Paracel Island group.",
-				"score": 8
+				"tolerance": 0.7,
+				"reason": "This can be found in the Paracel Island group.",
+				"score": 7
 			}
 		},
         {
 			"section": "South China Sea",
             "title": "New Island Longitude",
-			"description": "There exists a new island in the South China Sea, relative to the reference photo provided. Give the location of the newest island to the nearest 0.1 degree in longitude.",
+			"description": "There exists a new island in the South China Sea, relative to the reference photo provided. Give the location of the newest island to the nearest 1 degree in longitude.",
 			"type": "number",
 			"answer": {
 				"unit": "Degrees",
 				"value": 112.0,
-				"tolerance": 0.2,
-				"reason": "112.0. This can be found in the Paracel Island group.",
-				"score": 8
+				"tolerance": 0.99,
+				"reason": "This can be found in the Paracel Island group.",
+				"score": 7
 			}
 		},
         {
@@ -853,7 +864,7 @@
 			"answer": {
 				"value": 5,
 				"reason": "There are 5 small vessels that can be seen near the island if a small enough FOV is set on the camera, with the correct pointing algorithm.",
-				"score": 4
+				"score": 6
 			}
 		},
         {
@@ -911,7 +922,7 @@
         {
 			"section": "Venezuela",
             "title": "What colored vessel, located near Venezuela, has disabled their AIS transponder and not broadcasting any data, compared to the AIS data provided?",
-			"description": "Reffer to the AIS data provided in your mission brief",
+			"description": "Refer to the AIS data provided in your mission brief",
 			"type": "select",
 			"answer": {
 				"options": [
@@ -935,78 +946,104 @@
 			}
 		},
         {
-			"section": "Spacecraft Anomaly",
-            "title": "What interferance anomaly occurred that disrupted routine space operations?",
-			"description": "Select all that apply",
+			"section": "Rogue Spacecraft",
+            "title": "What interference anomaly occurred that disrupted routine space operations?",
+			"description": "A rogue spacecraft has been detected in the vicinity of your spacecraft, and you have observed interference with your spacecraft's communication systems. What type of interference anomaly occured?",
 			"type": "select",
 			"answer": {
 				"options": [
                     "Command Injection",
                     "Downlink Jamming",
+                    "Kinetic Attack",
                     "Spoofing of GPS signals",
-                    "Uplink Jamming",
-                    "None of the above"
+                    "Uplink Jamming"
 				],
 				"value": 1,
-				"reason": [
+				"reason": ["The downlink communication link has a low signal to noise ratio causing data loss, which is consistent with a jamming attack on the downlink frequency."
 				],
-				"score": 5
+				"score": 2
 			}
 		},
         {
-			"section": "Spacecraft Anomaly",
-            "title": "What is the root cause of the the interference anomaly that disrupted routine space operations?",
-			"description": "Select all that apply",
-			"type": "select",
+			"section": "Rogue Spacecraft",
+            "title": "What location(s) were affected by the interference anomaly that disrupted routine space operations?",
+			"description": "Above Which ground station(s) did the interference anomaly occur that disrupted routine space operations?",
+            "type": "checkbox",
 			"answer": {
 				"options": [
-					"Ephemeris Tampering",
-					"Replay Attack",
-                    "Rogue Spacecraft",
-                    "None of the above"
+                    "Auckland",
+                    "Dubai",
+                    "Easter Island",
+                    "Madrid",
+                    "Miami",
+                    "Salvador",
+                    "Singapore"
 				],
-				"value":2,
-				"reason": [
+				"value": [1,2],
+				"reason": ["Downlink jamming occured over the Dubai and Easter Island ground stations, as evidenced by the low signal to noise ratio and data loss observed in the telemetry data received from those stations."
 				],
-				"score": 5
+				"score": 4
 			}
 		},
         {
-			"section": "Spacecraft Anomaly",
+			"section": "Rogue Spacecraft",
             "title": "What is the mitigating action to resolve the inteference anomaly?",
-			"description": "Select all that apply",
+			"description": "What action can be taken to resolve the interference anomaly and restore normal operations of the spacecraft?",
 			"type": "select",
 			"answer": {
 				"options": [
                     "Authentication Change ",
 					"Component Reset",
 					"Ephemeris Rollback",
-					"Frequency Hopping",
-                    "None of the above"
+					"Frequency Hopping"
 				],
 				"value": 3,
-				"reason": [
+				"reason": ["Frequency hopping can be used to mitigate the effects of downlink jamming by rapidly switching the communication frequency to avoid the interference, allowing the spacecraft to restore normal operations and maintain communication with ground stations."
 				],
-				"score": 5
+				"score": 2
 			}
 		},
         {
-			"section": "Spacecraft Anomaly",
+			"section": "Rogue Spacecraft",
             "title": "What is the minimum signal-to-noise ratio experienced by the ground station during the inteference anomaly?",
 			"description": "Nearest integer in dB",
 			"type": "number",
 			"answer": {
 				"unit": "dB",
 				"value": 15.0,
-				"tolerance": 1.0,
+				"tolerance": 2.0,
 				"reason": "15.0. Signal to noise during the anomally.",
-				"score": 5
+				"score": 4
 			}
 		},
         {
-			"section": "Spacecraft Anomaly",
+			"section": "Rogue Spacecraft",
+            "title": "Identify the rogue spacecraft name",
+			"description": "Capture an image of the spacecraft responsible for the interference anomaly using the onboard camera to identify the name of the rogue spacecraft.",
+			"type": "text",
+			"answer": {
+				"value": "RECON",
+				"reason": "This word can be spotted on the solar panels of the rogue spacecraft in the image data captured by the onboard camera.",
+				"score": 4
+			}
+		},
+        {
+			"section": "Rogue Spacecraft",
+            "title": "Frequency of the rogue spacecraft",
+			"description": "Using your EM sensor onboard, identify the frequency of the rogue spacecraft's transmitter that is causing interference with your spacecraft's communication systems.",
+			"type": "number",
+			"answer": {
+				"unit": "MHz",
+				"value": 500,
+				"tolerance": 10,
+				"reason": "This can be found by analyzing the EM spectrum data collected by the onboard sensor, where a strong signal is observed at this frequency corresponding to the rogue spacecraft's transmitter.",
+				"score": 4
+			}
+		},
+        {
+			"section": "Orbital Operations",
             "title": "During operations a component failure occurred on the spacecraft, what component failed?",
-			"description": "Select all that apply",
+			"description": "Using the telemetry data, identify which component on the spacecraft experienced a failure during operations.",
 			"type": "select",
             "answer":{
             "options": [
@@ -1026,9 +1063,9 @@
 			}
 		},
         {
-			"section": "Orbital Calibration",
+			"section": "Orbital Operations",
             "title": "What is the Semi Major Axis of your spacecraft's orbit?",
-			"description": "Nearest 100km",
+			"description": "Using the telemetry data calculate the semi major axis of your spacecraft's orbit. Nearest 100 km.",
 			"type": "number",
 			"answer": {
 				"unit": "km",
@@ -1039,9 +1076,9 @@
 			}
 		},
         {
-			"section": "Orbital Calibration",
+			"section": "Orbital Operations",
             "title": "What is the eccentricity of your spacecraft's orbit?",
-			"description": "Nearest 0.01",
+			"description": "Using the telemetry data calculate the eccentricity of your spacecraft's orbit. Nearest 0.01.",
 			"type": "number",
 			"answer": {
 				"unit": "",
@@ -1052,9 +1089,9 @@
 			}
 		},
         {
-			"section": "Orbital Calibration",
+			"section": "Orbital Operations",
             "title": "What is the inclination of your spacecraft's orbit?",
-			"description": "Nearest degree",
+			"description": "Using the telemetery data calculate the inclination of your spacecraft's orbit. Nearest 1 degree.",
 			"type": "number",
 			"answer": {
 				"unit": "degree",
