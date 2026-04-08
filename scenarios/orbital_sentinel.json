@@ -127,7 +127,7 @@
                 "name": "Microsat",
                 "orbit": {
                     "planet": "Earth",
-                    "values": [8200.0, 0.02, 41.0, 288.0, 0, 350],
+                    "values": [8200.0, 0.02, 17.3, 283.0, 0, 360],
                     "offset": [0.0, 0.0, 0.0, 0.0, 0.0, 0.001]
                 },
                 "physics": {
@@ -282,7 +282,7 @@
                 "name": "Recon",
                 "orbit": {
                     "planet": "Earth",
-                    "values": [8200, 0.0199, 41, 288.0, 0, 350.004],
+                    "values": [8200.0, 0.0199, 17.3, 283.0, 0, 0.004],
                     "offset": [0.0, 0.0, 0.0, 0.0, 0.0, 0.001]
                 },
                 "physics": {
@@ -403,13 +403,13 @@
                 "type": "vessel",
                 "name": "EG01",
                 "planet": "Earth",
-                "latitude": 25.823813, 
-                "longitude": 56.858125,
+                "latitude": 12.1, 
+                "longitude": 44.2,
                 "altitude": 1,
                 "scale": 120,
                 "color":"#00FF00",
                 "data": {
-                    "heading" : 130.0,
+                    "heading" : 76,
                     "speed" : 10.0
                 }
             },
@@ -418,13 +418,13 @@
                 "type": "vessel",
                 "name": "EG02",
                 "planet": "Earth",
-                "latitude": 25.7, 
-                "longitude": 57.3,
+                "latitude": 11.5, 
+                "longitude": 44.2,
                 "altitude": 1,
                 "scale": 120,
                 "color":"#00FF00",
                 "data": {
-                    "heading" : 130.0,
+                    "heading" : 86.0,
                     "speed" : 10.0
                 }
             },
@@ -433,13 +433,13 @@
                 "type": "vessel",
                 "name": "EG03",
                 "planet": "Earth",
-                "latitude": 25.5, 
-                "longitude": 56.9,
+                "latitude": 12, 
+                "longitude": 45,
                 "altitude": 1,
                 "scale":120,
                 "color":"#00FF00",
                 "data": {
-                    "heading" : 130.0,
+                    "heading" : 77.0,
                     "speed" : 10.0
                 }
             },
@@ -448,13 +448,13 @@
                 "type": "vessel",
                 "name": "EG04",
                 "planet": "Earth",
-                "latitude": 24.823813, 
-                "longitude": 56.858125,
+                "latitude": 12.5, 
+                "longitude": 45,
                 "altitude": 1,
                 "scale": 120,
                 "color":"#00FF00",
                 "data": {
-                    "heading" : 110.0,
+                    "heading" : 81.0,
                     "speed" : 7.0
                 }
             },            {
@@ -462,13 +462,13 @@
                 "type": "vessel",
                 "name": "EG05",
                 "planet": "Earth",
-                "latitude": 26.6, 
-                "longitude": 56.1,
+                "latitude": 13.6, 
+                "longitude": 43,
                 "altitude": 1,
                 "scale": 120,
                 "color":"#00FF00",
                 "data": {
-                    "heading" : 90.0,
+                    "heading" : 178.0,
                     "speed" : 0.0
                 }
             },
@@ -477,14 +477,14 @@
                 "type": "vessel",
                 "name": "EG06",
                 "planet": "Earth",
-                "latitude": 25.3, 
-                "longitude": 54.8,
+                "latitude": 13.5, 
+                "longitude": 42.5,
                 "altitude": 1,
                 "scale": 120,
                 "color":"#00FF00",
                 "data": {
-                    "heading" : 30.0,
-                    "speed" : 3.0
+                    "heading" : 134,
+                    "speed" : 0.0
                 }
             },
             {
@@ -492,14 +492,14 @@
                 "type": "vessel",
                 "name": "EG07",
                 "planet": "Earth",
-                "latitude": 26.3, 
-                "longitude": 56.1,
+                "latitude": 14, 
+                "longitude": 42,
                 "altitude": 1,
                 "scale": 120,
                 "color":"#00FF00",
                 "data": {
-                    "heading" : 120.0,
-                    "speed" : 0.0
+                    "heading" : 330.0,
+                    "speed" : 6.0
                 }
             },
             {
@@ -507,14 +507,14 @@
                 "type": "vessel",
                 "name": "IR01",
                 "planet": "Earth",
-                "latitude": 26.4, 
-                "longitude": 56.0,
+                "latitude": 13, 
+                "longitude": 43.1,
                 "altitude": 1,
                 "scale": 60,
                 "color":"#FFFF00",
                 "data": {
                     "heading" : 270.0,
-                    "speed" : 0.1
+                    "speed" : 0.0
                 }
             },
             {
@@ -522,13 +522,13 @@
                 "type": "vessel",
                 "name": "US01",
                 "planet": "Earth",
-                "latitude": 26.4, 
-                "longitude": 56.8,
+                "latitude": 12.4, 
+                "longitude": 43.5,
                 "altitude": 1,
                 "scale": 60,
                 "color":"#FF0000",
                 "data": {
-                    "heading" : 180.0,
+                    "heading" : 90.0,
                     "speed" : 10.0
                 }
             },
@@ -537,13 +537,13 @@
                 "type": "vessel",
                 "name": "US02",
                 "planet": "Earth",
-                "latitude": 25.6, 
-                "longitude": 54.8,
+                "latitude": 14, 
+                "longitude": 42.2,
                 "altitude": 1,
                 "scale": 60,
                 "color":"#00ffff",
                 "data": {
-                    "heading" : 300.0,
+                    "heading" : 350.0,
                     "speed" : 6.0
                 }
             },
@@ -552,8 +552,8 @@
                 "type": "vessel",
                 "name": "US03",
                 "planet": "Earth",
-                "latitude": 25.2, 
-                "longitude": 56.8,
+                "latitude": 11.9, 
+                "longitude": 43.5,
                 "altitude": 1,
                 "scale": 60,
                 "color":"#ffffff",

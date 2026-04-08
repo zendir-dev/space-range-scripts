@@ -65,59 +65,70 @@ scheduler.add_event(
 )
 
 scheduler.add_event(
-    name="Point Jammer to Easter Island",
-    trigger_time=5550.0,
-    **commands.guidance_ground("Jammer", station="Easter Island"),
+    name="Point Jammer to Singapore",
+    trigger_time=2610.0,
+    **commands.guidance_ground("Jammer", station="Singapore"),
 )
 
 scheduler.add_event(
     name="Start Jamming All Enemy Teams",
-    trigger_time=5559.0,
+    trigger_time=2620.0,
     pre_trigger=live_jammer_args,
     **commands.jammer_start(frequencies=scenario.enemy_fallback_freqs, power=3.0),
 )
 
 scheduler.add_event(
     name="Stop Jamming",
-    trigger_time=7251.0,
+    trigger_time=4458.0,
+    **commands.jammer_stop(),
+)
+scheduler.add_event(
+    name="Point Nadir",
+    trigger_time=4459.0,
+    **commands.guidance_nadir("Jammer"),
+)
+
+scheduler.add_event(
+    name="Point Jammer to Singapore",
+    trigger_time=10680.0,
+    **commands.guidance_ground("Jammer", station="Singapore"),
+)
+
+scheduler.add_event(
+    name="Start Jamming All Enemy Teams",
+    trigger_time=10689.0,
+    pre_trigger=live_jammer_args,
+    **commands.jammer_start(frequencies=scenario.enemy_fallback_freqs, power=3.0),
+)
+
+scheduler.add_event(
+    name="Stop Jamming",
+    trigger_time=12530.0,
     **commands.jammer_stop(),
 )
 
 scheduler.add_event(
-    name="Point Jammer to Dubai",
-    trigger_time=8900.0,
-    **commands.guidance_ground("Jammer", station="Dubai"),
+    name="Point Nadir",
+    trigger_time=12532.0,
+    **commands.guidance_nadir("Jammer"),
+)
+
+scheduler.add_event(
+    name="Point Jammer to Singapore",
+    trigger_time=18846.0,
+    **commands.guidance_ground("Jammer", station="Singapore"),
 )
 
 scheduler.add_event(
     name="Start Jamming All Enemy Teams",
-    trigger_time=9160.0,
+    trigger_time=18847.0,
     pre_trigger=live_jammer_args,
     **commands.jammer_start(frequencies=scenario.enemy_fallback_freqs, power=3.0),
 )
 
 scheduler.add_event(
     name="Stop Jamming",
-    trigger_time=10800.0,
-    **commands.jammer_stop(),
-)
-
-scheduler.add_event(
-    name="Point Jammer to Dubai",
-    trigger_time=16850.0,
-    **commands.guidance_ground("Jammer", station="Dubai"),
-)
-
-scheduler.add_event(
-    name="Start Jamming All Enemy Teams",
-    trigger_time=16980.0,
-    pre_trigger=live_jammer_args,
-    **commands.jammer_start(frequencies=scenario.enemy_fallback_freqs, power=3.0),
-)
-
-scheduler.add_event(
-    name="Stop Jamming",
-    trigger_time=18635.0,
+    trigger_time=20590.0,
     **commands.jammer_stop(),
 )
 
