@@ -34,7 +34,7 @@ from src import Scenario, commands
 # Prompts for game name and admin password (saves/restores defaults),
 # loads scenarios/orbital_sentinel.json, resolves Red Team and its assets,
 # and enumerates all other enabled teams as enemies.
-scenario = Scenario(team_name="RED")
+scenario = Scenario(team_name="Rogue")
 
 
 # =============================================================================
