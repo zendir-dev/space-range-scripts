@@ -747,21 +747,9 @@
     },
     "events": [
         {
-            "enabled": false,
-            "name": "Broken Storage",
-            "type": "Spacecraft",
-            "time": 4500.0,
-            "repeat": false,
-            "interval": 1.0,
-            "target": "Storage",
-            "data": {
-                "Capacity": 150000
-            }
-        },
-        {
             "Enabled": true,
             "Name": "Battery Power Spikes",
-            "Time": 500.0,
+            "Time": 6000.0,
             "Repeat": false,
             "Interval": 1.0,
             "Type": "Spacecraft",
@@ -770,18 +758,6 @@
             "Data": {
                 "Intermittent Mean": 1,
                 "Intermittent Std": 2
-            }
-        },
-        {
-            "enabled": false,
-            "name": "Reaction Wheels Stuck",
-            "type": "Spacecraft",
-            "time": 10000.0,
-            "repeat": false,
-            "interval": 1.0,
-            "target": "Reaction Wheels",
-            "data": {
-                "Stuck Index": 1
             }
         }
     ],
