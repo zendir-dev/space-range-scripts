@@ -418,7 +418,7 @@ No arguments.
 | --- | --- |
 | `events[].enabled` | Whether the event will fire. Disabled events stay in the list for visibility. |
 | `events[].name` | Display name. |
-| `events[].type` | Event type, e.g. `Spacecraft`, `Ground`, `Scenario`. Determines how `assets` and `target` are interpreted. |
+| `events[].type` | Event type, e.g. `Spacecraft`, `GPS`, `Cyber`. Determines how `assets` and `target` are interpreted. |
 | `events[].time` | Trigger time in sim seconds. |
 | `events[].repeat` | If `true`, fires periodically at `interval` after the first trigger. |
 | `events[].interval` | Repeat interval in sim seconds. Ignored when `repeat = false`. |

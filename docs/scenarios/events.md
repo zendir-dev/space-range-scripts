@@ -2,14 +2,15 @@
 
 The `events[]` array is the timeline of "things that happen" once the simulation starts. Each entry is an `FScenarioEvent` (`studio/Plugins/SpaceRange/Source/SpaceRange/Public/Structs/ScenarioEvent.h`) parsed by `FScenarioEvent::LoadFromJson` and dispatched by `USpaceRangeSubsystem` once `simulation.time` reaches the event's `Time`.
 
-Two event types exist:
+Three event types exist:
 
 | `Type` | Purpose |
 | --- | --- |
 | `Spacecraft` | Inject a fault, mode change or property change on one or more spacecraft components. |
 | `GPS` | Add/remove a GPS spoofing region or jamming source on the global GPS subsystem. |
+| `Cyber` | Apply packet-level telemetry tampering overlays (APID-targeted byte patching in CCSDS user data). |
 
-There is no `Ground` or `Scenario` event type — older docs may mention them, but the current `EScenarioEventType` enum (`studio/.../Enums/ScenarioEventType.h`) only lists `Spacecraft` and `GPS`. Anything else falls back to `Spacecraft` with a warning.
+There is no `Ground` or `Scenario` event type — older docs may mention them, but the current `EScenarioEventType` enum (`studio/.../Enums/ScenarioEventType.h`) lists `Spacecraft`, `GPS`, and `Cyber`. Anything else falls back to `Spacecraft` with a warning.
 
 ## Common fields
 
@@ -22,9 +23,9 @@ Every event uses the same outer shape. Field names parse case-insensitively (`UJ
 | `Time` | `number` (s) | `0.0` | Simulation seconds (since epoch) at which the event fires. |
 | `Repeat` | `boolean` | `false` | If `true`, the event fires again every `Interval` seconds. |
 | `Interval` | `number` (s) | `1.0` | Repeat period when `Repeat: true`. Ignored otherwise. |
-| `Type` | `string` | `"Spacecraft"` | One of `Spacecraft`, `GPS` (case-insensitive). The string `"failure"` is also accepted as an alias for `Spacecraft`. |
-| `Assets` | `string[]` | `[]` | Asset IDs the event applies to (matches `assets.space[].id`). Empty `[]` means **all** spacecraft. Only relevant for `Spacecraft` events; ignored for `GPS`. |
-| `Target` | `string` | `""` | (Spacecraft only) Component to act on, optionally with an error model. See [Target syntax](#spacecraft-event-target-syntax). |
+| `Type` | `string` | `"Spacecraft"` | One of `Spacecraft`, `GPS`, `Cyber` (case-insensitive). The string `"failure"` is also accepted as an alias for `Spacecraft`. |
+| `Assets` | `string[]` | `[]` | Asset IDs the event applies to (matches `assets.space[].id`). Empty `[]` means **all** spacecraft. Used by `Spacecraft` and `Cyber`; ignored by `GPS`. |
+| `Target` | `string` | `""` | `Spacecraft`: component/error-model target. `Cyber`: currently must be `Spacecraft` (case-insensitive). `GPS`: ignored. |
 | `Data` | `object` | `{}` | A flat map of keys to string-or-number values. Schema depends on `Type` — see sections below. |
 
 > The runtime stores `Data` as a `TMap<FString, FString>`. Internally, `.` in keys is rewritten to `$.` to prevent `UJSONLibrary` from interpreting them as nested lookups. Keep your JSON keys flat — do not nest objects inside `Data`.
@@ -412,6 +413,100 @@ Common fields (used by `add` and `update`):
 }
 ```
 
+## Cyber events
+
+`Cyber` events apply byte overlays to telemetry payload bytes for selected spacecraft. The patch runs **after** normal packet serialization and **before** downlink encryption/transmit, so packet headers remain valid while user-data contents are tampered.
+
+Current target support:
+
+- `Target: "Spacecraft"` (case-insensitive) is supported.
+- Other targets are currently ignored with a warning.
+
+`Assets` works the same way as `Spacecraft` events: empty means all spacecraft, otherwise only listed asset IDs are affected.
+
+### `Cyber` `Data` keys
+
+| `Data` key | Type | Default | Description |
+| --- | --- | --- | --- |
+| `APID` | `integer` | _(required)_ | CCSDS APID to match (`0..2047`). |
+| `SubType` | `integer` | `-1` | Secondary-header subtype filter. `-1` means "any subtype". |
+| `Offset Bytes` | `integer` | `0` | Byte offset from the start of CCSDS **user data** (not packet start). |
+| `Payload` | `string` | _(required)_ | Source text to encode/decode into overlay bytes. |
+| `Encoding` | `string` | `ascii` | One of `ascii`, `utf8`, `hex`, `base64` (case-insensitive). |
+| `Expiry Seconds` | `number` | `0.0` | Lifetime after event trigger. `0` means never expires. |
+| `Clear On Reset` | `boolean` | `false` | If true, reset can clear the overlay (see reset behavior below). |
+
+Notes:
+
+- If `Encoding` is unknown, runtime falls back to `ascii` and logs a warning.
+- If `hex`/`base64` decoding fails, the event no-ops for that asset and logs a warning.
+- If the payload would run past the packet end, bytes are truncated to fit.
+- Overlapping overlays resolve by apply order (later overlays win on overlapping bytes).
+
+### Reset behavior (`Clear On Reset`)
+
+When `Clear On Reset` is `true`:
+
+- Resetting `Computer` clears all resettable cyber overlays on that asset.
+- Resetting another component clears only resettable overlays whose `SubType` matches that component subtype.
+
+### Canonical `Cyber` examples
+
+Templates are shipped in `Plugins/SpaceRange/Resources/Events/Cyber.json`.
+
+#### ASCII patch on Ping (APID 100)
+
+```json
+{
+  "Enabled": true, "Name": "Ping ASCII", "Time": 100.0,
+  "Type": "Cyber", "Target": "Spacecraft", "Assets": [],
+  "Data": {
+    "APID": 100,
+    "SubType": 0,
+    "Offset Bytes": 0,
+    "Payload": "HELLO",
+    "Encoding": "ascii",
+    "Expiry Seconds": 120.0,
+    "Clear On Reset": true
+  }
+}
+```
+
+#### Hex patch on Ping
+
+```json
+{
+  "Enabled": true, "Name": "Ping Hex", "Time": 220.0,
+  "Type": "Cyber", "Target": "Spacecraft", "Assets": [],
+  "Data": {
+    "APID": 100,
+    "Offset Bytes": 12,
+    "Payload": "46 4C 41 47 7B 48 45 58 5F 48 49 4E 54 7D",
+    "Encoding": "hex",
+    "Expiry Seconds": 0.0,
+    "Clear On Reset": false
+  }
+}
+```
+
+#### Base64 patch (any subtype)
+
+```json
+{
+  "Enabled": true, "Name": "Ping Base64", "Time": 340.0,
+  "Type": "Cyber", "Target": "Spacecraft", "Assets": [],
+  "Data": {
+    "APID": 100,
+    "SubType": -1,
+    "Offset Bytes": 24,
+    "Payload": "Q09ERS0xMjM0NQ==",
+    "Encoding": "base64",
+    "Expiry Seconds": 90.0,
+    "Clear On Reset": true
+  }
+}
+```
+
 ## Authoring tips
 
 - **Order events in the array by `Time`** for readability. The runtime sorts them internally, but it's much easier to spot mistakes when the JSON is in chronological order.
@@ -427,3 +522,4 @@ Common fields (used by `add` and `update`):
 - [`components.md`](./components.md) — class-alias table for `Target` strings.
 - `studio/Plugins/SpaceRange/Resources/Events/Spacecraft.json` — canonical Spacecraft event templates (also surfaced in admin UI).
 - `studio/Plugins/SpaceRange/Resources/Events/GPS.json` — canonical GPS event templates.
+- `studio/Plugins/SpaceRange/Resources/Events/Cyber.json` — canonical Cyber telemetry tamper templates.

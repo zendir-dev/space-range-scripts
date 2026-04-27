@@ -326,10 +326,10 @@ Studio fires these on the simulation timeline. They're how an instructor injects
 | `Time` | `number` (sim s) | First trigger time. |
 | `Repeat` | `bool` | If `true`, fires every `Interval` seconds after the first trigger. |
 | `Interval` | `number` (sim s) | Repeat period. Ignored when `Repeat` is `false`. |
-| `Type` | `string` | `Spacecraft` or `GPS` (case-insensitive; `failure` is accepted as an alias for `Spacecraft`). Selects the action handler. |
-| `Target` | `string` | (Spacecraft only.) Component / error-model the event acts on. The form is `"<ComponentName>-<ErrorModel>"`, or just `"<ComponentName>"` to set properties directly. Ignored by `GPS` events. |
-| `Assets` | `string[]` | (Spacecraft only.) Spacecraft IDs to target. Empty array = "every spacecraft". |
-| `Data` | `object` | Type/target-specific parameters. For `Spacecraft` events, keys are property names on the component or its error model (with whitespace stripped). For `GPS` events, `Data.Type` selects `Spoofing` vs `Jamming`, and `Data.Action` selects `add`/`update`/`remove` for jamming. |
+| `Type` | `string` | `Spacecraft`, `GPS`, or `Cyber` (case-insensitive; `failure` is accepted as an alias for `Spacecraft`). Selects the action handler. |
+| `Target` | `string` | `Spacecraft`: component / error-model target (`"<ComponentName>-<ErrorModel>"` or `"<ComponentName>"`). `Cyber`: currently `Spacecraft`. `GPS`: ignored. |
+| `Assets` | `string[]` | Spacecraft IDs to target (`Spacecraft`/`Cyber`). Empty array = "every spacecraft". Ignored by `GPS`. |
+| `Data` | `object` | Type/target-specific parameters. `Spacecraft`: component/error-model properties. `GPS`: `Data.Type`=`Spoofing`/`Jamming`, with `Action` for jamming. `Cyber`: telemetry tamper schema (`APID`, optional `SubType`, `Offset Bytes`, `Payload`, `Encoding`, `Expiry Seconds`, `Clear On Reset`). |
 
 The most useful Spacecraft `Target` forms:
 
@@ -343,6 +343,8 @@ The most useful Spacecraft `Target` forms:
 | `Computer-GuidanceComputerNoiseErrorModel` | Pointing error (`Noise Factor`, `Randomize`). |
 
 GPS events configure spoofing regions and jamming sources on the global GPS subsystem; see [Scenario reference → events](../scenarios/events.md#gps-events) for the full schema.
+
+Cyber events configure APID-targeted telemetry byte overlays (for packet-forensics/cyber scenarios); see [Scenario reference → events](../scenarios/events.md#cyber-events) for full schema and examples.
 
 When you're authoring events, fire one at a time during testing — failure cascades are easy to write and hard to debug. To list every event in the loaded scenario at runtime, an admin can call [`admin_get_scenario_events`](../api-reference/admin-requests.md#admin_get_scenario_events).
 
