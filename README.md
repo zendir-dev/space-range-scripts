@@ -17,8 +17,8 @@ A Python scripting framework for automating spacecraft operations in **Space Ran
   - [Admin Requests](#admin-requests)
   - [Running a Script](#running-a-script)
 - [Coloured Output (`printer`)](#️-coloured-output-printer)
-- [Command Reference](#command-reference)
-- [Schemas](#schemas)
+- [Command helpers (`src/commands.py`)](#-command-helpers-srccommandspy)
+- [Documentation](#-documentation)
 
 ---
 
@@ -77,12 +77,15 @@ space-range-scripts/
 ├── logs/                       # Auto-generated session logs (git-ignored)
 │   └── YYYY-MM-DD_HH-MM-SS_<instance>.log
 │
-├── schemas/                    # Reference documentation for all data structures
-│   ├── Command_Schema.md       # Uplink command packet format & all command types
-│   ├── Ground_Schema.md        # Ground controller request/response API
-│   ├── Session_Schema.md       # Session clock message format
-│   ├── Teams_Schema.md         # Team & collection configuration structure
-│   └── Admin_Schema.md         # Admin API — telemetry, events, simulation control
+├── docs/                       # User documentation (start here)
+│   ├── README.md               # Documentation hub
+│   ├── introduction/           # Overview, architecture, glossary
+│   ├── concepts/               # Teams, simulation clock, encryption, telemetry
+│   ├── getting-started/        # Prerequisites, connecting, first command, Operator UI
+│   ├── api-reference/          # MQTT topics, commands, ground & admin requests
+│   ├── guides/                 # Encryption, decoding telemetry, scenarios, instructor, UI, troubleshooting
+│   ├── scenarios/              # Scenario JSON authoring reference (per-block deep dive)
+│   └── reference/              # Packet formats, data types
 │
 ├── requirements.txt
 └── README.md
@@ -434,104 +437,38 @@ printer.current_log_path()                  # returns path or None
 
 ---
 
-## 📖 Command Reference
+## 📖 Command helpers (`src/commands.py`)
 
-All command helpers live in `src/commands.py` and return a dict that unpacks directly into `scheduler.add_event()`.
+Every helper in `src/commands.py` returns a `dict` that unpacks directly into `scheduler.add_event(...)`. They are thin convenience wrappers around the underlying `command_request` MQTT messages — see [API Reference → Spacecraft commands](docs/api-reference/spacecraft-commands.md) for the wire format, every parameter, valid ranges, and units.
 
-### 🧭 Guidance & Pointing
+| Group | Helpers | Purpose |
+|---|---|---|
+| Guidance & pointing | `guidance_sun`, `guidance_nadir`, `guidance_velocity`, `guidance_inertial`, `guidance_ground`, `guidance_location`, `guidance_spacecraft`, `guidance_idle` | Orient a named component (camera, antenna, panel, jammer…) toward the Sun, nadir, velocity vector, a fixed inertial attitude, a ground station, an arbitrary lat/lon/alt, or another spacecraft. |
+| Jammer | `jammer_start(frequencies, power)`, `jammer_stop()` | Activate / deactivate the on-board RF jammer on one or more frequencies. |
+| Downlink | `downlink(ping)`, `downlink_ping_on()`, `downlink_ping_off()` | Trigger an immediate downlink of stored data, or toggle automatic per-ping downlinks. |
+| Camera | `camera_configure(...)`, `camera_capture(target, name)` | Configure FOV / resolution / focal length / aperture / focusing distance, then capture a full-resolution image into on-board storage. |
+| Telemetry | `telemetry_configure(frequency, key)` | Update RF link frequency (MHz) and Caesar key (0–255) on the spacecraft and the ground network together. |
+| Thruster | `thruster_fire(target, duration)`, `thruster_stop(target)` | Fire / stop a named thruster for a delta-V manoeuvre. |
+| Rendezvous | `rendezvous_start(target_id, dx, dy, dz)`, `rendezvous_stop(target_id)` | Hold an LVLH offset (m) from another spacecraft. Requires `enable_rpo: true`. |
+| Docking | `docking_dock(target_id, component)`, `docking_undock(target_id, component)` | Physically dock / undock with a named component on another spacecraft. |
+| Reset | `component_reset(target)` | Reboot a single component (or the whole bus, if you reset `Computer`). |
 
-Controls the spacecraft's ADCS (Attitude Determination and Control System) to orient a named component in a particular direction. The `target` is the component name (e.g. `"Camera"`, `"Solar Panel"`, `"Jammer"`) and `alignment` is the component axis to point (default `+z`).
-
-| Function | Description |
-|---|---|
-| `guidance_sun(target, alignment)` | Points the target component's axis toward the Sun. Commonly used to maximise solar power generation by aligning solar panels face-on. |
-| `guidance_nadir(target, alignment, planet)` | Points the target component down toward the surface of a planet (nadir direction). Ideal for Earth observation — align the camera downward before a capture. |
-| `guidance_velocity(target, alignment)` | Aligns the target component's axis with the spacecraft's velocity vector. Useful for ram-facing sensors or aerodynamic attitude modes. |
-| `guidance_inertial(target, alignment, pitch, roll, yaw)` | Holds a fixed inertial attitude defined by pitch, roll, and yaw angles. Useful for star tracking, deep-space imaging, or holding a known orientation. |
-| `guidance_ground(target, alignment, station)` | Points the target component toward a named ground station. Use this to pre-point a directional antenna or jammer at a specific station before operating. |
-| `guidance_location(target, lat, lon, alt, alignment, planet)` | Points the target component toward an arbitrary latitude, longitude, and altitude on a planet's surface. Useful for imaging specific ground targets or objects of interest. |
-| `guidance_spacecraft(target, spacecraft_id, alignment)` | Points the target component toward another spacecraft identified by its asset ID. Required for RPO (Rendezvous and Proximity Operations) and inter-spacecraft imaging. |
-| `guidance_idle()` | Stops all ADCS torque output — the reaction wheels cease commanding and the spacecraft drifts. Saves power when attitude control is not required. |
-
-### 📻 Jammer
-
-Controls the on-board RF jamming transmitter. The jammer outputs interference on one or more frequencies to disrupt another team's uplink or downlink channel. Higher power increases jamming effectiveness but drains the battery faster.
-
-| Function | Description |
-|---|---|
-| `jammer_start(frequencies, power)` | Activates the jammer on the specified list of frequencies (MHz) at the given power level (W). Supports multi-band barrage jamming by supplying multiple frequencies. The spacecraft must first be pointed toward the target using a guidance command. |
-| `jammer_stop()` | Deactivates the jammer immediately, ceasing all RF interference output and stopping the associated power draw. |
-
-### 📥 Downlink
-
-Manages the transfer of stored sensor data and images from the spacecraft's on-board storage down to the ground station network via the telecommunication system.
-
-| Function | Description |
-|---|---|
-| `downlink(ping)` | Triggers an immediate downlink of all data currently cached in on-board storage. Set `ping=True` to also enable automatic downlink on every subsequent spacecraft ping (approximately every 20 simulation seconds). |
-| `downlink_ping_on()` | Enables automatic downlink on every ping cycle. Keeps the storage cache clear and data continuously flowing to the ground, at the cost of increased transmitter power usage. |
-| `downlink_ping_off()` | Disables automatic ping-triggered downlinks. Data will only be sent when a manual downlink command is issued. |
-
-### 📷 Camera
-
-Configures and operates the on-board imaging system. Camera configuration should be performed before capture to ensure the correct field of view, resolution, and focus settings are applied.
-
-| Function | Description |
-|---|---|
-| `camera_configure(target, fov, resolution, focal_length, aperture, monochromatic, sample, focusing_distance, pixel_pitch, coc)` | Configures all optical and sensor parameters for the named camera component. Key parameters include `fov` (field of view in degrees), `resolution` (image size in pixels, square), `focal_length` (mm), `aperture` (mm), and `focusing_distance` (m) for close-range targets. Set `sample=True` to downlink a 32×32 preview on the next ping. Set `monochromatic=True` to reduce downlink data size at the cost of colour information. |
-| `camera_capture(target, name)` | Captures a full-resolution image from the named camera and stores it in on-board storage with the given name. The image is not transmitted until a downlink command is issued. The name is stored in the first 50 bytes of the image data. |
-
-### 📶 Telemetry
-
-Updates the communication parameters of the spacecraft and ground station network. This affects the frequency and encryption key used on the RF link between the spacecraft and the ground station — not the MQTT broker connection.
-
-| Function | Description |
-|---|---|
-| `telemetry_configure(frequency, key)` | Sets the uplink and downlink frequency (MHz) and Caesar cipher key (0–255) for the spacecraft's communication channel. Use this to change frequency if another team is interfering, or to rotate the encryption key if it may have been compromised. Both the spacecraft receiver/transmitter and the ground station network are updated together. |
-
-### 🔥 Thruster
-
-Commands the spacecraft's propulsion system to perform orbital manoeuvres. Thrust is applied in the spacecraft body frame, so attitude should be set correctly before firing.
-
-| Function | Description |
-|---|---|
-| `thruster_fire(target, duration)` | Fires the named thruster for the specified duration in seconds. Used for delta-V manoeuvres such as orbit raising, lowering, or plane changes. Ensure the spacecraft is correctly pointed before firing to achieve the desired orbital effect. |
-| `thruster_stop(target)` | Immediately cuts thrust from the named thruster, regardless of any remaining scheduled burn duration. |
-
-### 🤝 Rendezvous
-
-Commands the spacecraft to autonomously navigate to and hold position relative to another space asset using RPO (Rendezvous and Proximity Operations) guidance. The offset is specified in the target's LVLH (Local Vertical Local Horizontal) frame: X = radial, Y = along-track, Z = cross-track.
-
-| Function | Description |
-|---|---|
-| `rendezvous_start(target_id, offset_x, offset_y, offset_z)` | Initiates autonomous rendezvous with the spacecraft identified by `target_id`, manoeuvring to and holding at the specified LVLH offset (metres). Used for inspection, formation flying, or pre-docking proximity holds. Requires `enable_rpo: true` in the spacecraft controller configuration. |
-| `rendezvous_stop(target_id)` | Cancels the active rendezvous manoeuvre with the specified target, halting autonomous proximity navigation. The spacecraft will retain its current attitude and velocity at the time of cancellation. |
-
-### 🔗 Docking
-
-Commands the spacecraft to physically dock with or undock from a component on another spacecraft. The spacecraft must be in close proximity (typically via a rendezvous hold) before docking can succeed.
-
-| Function | Description |
-|---|---|
-| `docking_dock(target_id, component)` | Commands the spacecraft to dock with the named component (e.g. a docking adapter) on the target spacecraft. Once docked, the two spacecraft move as a single rigid body. |
-| `docking_undock(target_id, component)` | Commands the spacecraft to release from the named docking component on the target spacecraft, separating the two vehicles. |
-
-### 🔁 Component Reset
-
-| Function | Description |
-|---|---|
-| `component_reset(target)` | Reboots the named component on the spacecraft. If a component has become corrupted or non-functional (due to an error model or scenario event), a reset may restore it to an operational state. Note that resetting certain components (e.g. the computer) will cause the entire spacecraft to reboot, which may take up to a minute of simulation time before commands can be received again. |
+> All helpers accept the same `target` argument as the underlying commands — the **component name** (as configured in your scenario JSON), not a class alias. `alignment` defaults to `+z` for guidance helpers.
 
 ---
 
-## 📚 Schemas
+## 📚 Documentation
 
-Detailed reference documentation for all data structures used in Space Range:
+Full user documentation lives in [`docs/`](docs/README.md). Quick index:
 
-| Schema | Description |
+| What you want | Where to look |
 |---|---|
-| [Command Schema](schemas/Command_Schema.md) | Full specification for uplink command packets — all commands, arguments, ranges, and units |
-| [Ground Schema](schemas/Ground_Schema.md) | Ground controller request/response API — all request types, response formats, and unsolicited notifications |
-| [Session Schema](schemas/Session_Schema.md) | Session clock message format broadcast by the simulation |
-| [Teams Schema](schemas/Teams_Schema.md) | Team and collection configuration structure within the scenario JSON |
-| [Admin Schema](schemas/Admin_Schema.md) | Admin API — live telemetry, event history, simulation state, and scenario events for all teams |
+| Spacecraft uplink commands (wire format, every arg, ranges, units) | [API Reference → Spacecraft commands](docs/api-reference/spacecraft-commands.md) |
+| Ground controller request/response API | [API Reference → Ground requests](docs/api-reference/ground-requests.md) |
+| Admin API (telemetry, events, simulation control) | [API Reference → Admin requests](docs/api-reference/admin-requests.md) |
+| Session clock message format | [API Reference → Session stream](docs/api-reference/session-stream.md) |
+| MQTT topic map and encryption | [API Reference → MQTT topics](docs/api-reference/mqtt-topics.md) |
+| **Authoring a brand-new scenario JSON** (teams, assets, events, questions) | [Scenarios → README](docs/scenarios/README.md) |
+| Tour of an existing scenario JSON file | [Guides → Scenario configuration](docs/guides/scenario-config.md) |
+| CCSDS / XTCE packet binary layouts | [Reference → Packet formats](docs/reference/packet-formats.md) |
+| Units, ranges, and JSON conventions | [Reference → Data types](docs/reference/data-types.md) |
