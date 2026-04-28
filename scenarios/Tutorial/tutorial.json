@@ -1,0 +1,568 @@
+{
+	"simulation": {
+		"epoch": "2025/04/15 07:30:00",
+		"speed": 5.0,
+		"step_size": 0.12,
+		"integrator": "Euler",
+		"end_time": 0.0
+	},
+	"universe": {
+		"atmosphere": false,
+		"magnetosphere": true,
+		"gps": true,
+		"cloud_opacity": 0.9,
+		"cloud_contrast": 2.5,
+		"ambient_light": 0.25
+	},
+	"ground_stations": {
+		"locations": [
+			"Madrid",
+			"Dubai",
+			"Singapore",
+			"Auckland",
+			"Easter Island",
+			"Salvador",
+			"Miami"
+		],
+		"min_elevation": 0,
+		"max_range": 0,
+		"scale": 100
+	},
+	"teams": [
+		{
+			"enabled": true,
+			"id": 212997,
+			"password": "2EM6DF",
+			"name": "Rogue",
+			"key": 1,
+			"frequency": 500,
+			"collection": "Rogue",
+			"color": "#FF0000"
+		},
+		{
+			"enabled": true,
+			"id": 584203,
+			"password": "Q7X9PL",
+			"name": "Team Blue",
+			"key": 42,
+			"frequency": 612,
+			"collection": "Main",
+			"color": "#020CF1"
+		},
+		{
+			"enabled": true,
+			"id": 917462,
+			"password": "M3K8ZT",
+			"name": "Team Green",
+			"key": 87,
+			"frequency": 745,
+			"collection": "Main",
+			"color": "#00FF00"
+		},
+		{
+			"enabled": true,
+			"id": 263891,
+			"password": "X9L2QA",
+			"name": "Team Yellow",
+			"key": 154,
+			"frequency": 889,
+			"collection": "Main",
+			"color": "#FFFF00"
+		},
+		{
+			"enabled": true,
+			"id": 748105,
+			"password": "T6W3HY",
+			"name": "Team Violet",
+			"key": 201,
+			"frequency": 523,
+			"collection": "Main",
+			"color": "#8000FF"
+		},
+		{
+			"enabled": true,
+			"id": 390572,
+			"password": "R4N8UC",
+			"name": "Team Cyan",
+			"key": 12,
+			"frequency": 468,
+			"collection": "Main",
+			"color": "#00CED1"
+		},
+		{
+			"enabled": true,
+			"id": 671284,
+			"password": "V2P7DS",
+			"name": "Team Pink",
+			"key": 233,
+			"frequency": 901,
+			"collection": "Main",
+			"color": "#FF0080"
+		},
+		{
+			"enabled": true,
+			"id": 845319,
+			"password": "Z5G7XB",
+			"name": "Team Orange",
+			"key": 99,
+			"frequency": 777,
+			"collection": "Main",
+			"color": "#F23E05"
+		},
+		{
+			"enabled": true,
+			"id": 529678,
+			"password": "H8J4LK",
+			"name": "Team White",
+			"key": 176,
+			"frequency": 655,
+			"collection": "Main",
+			"color": "#FFFFFF"
+		}
+	],
+	"assets": {
+		"space": [
+			{
+				"id": "SC_001",
+				"name": "Microsat",
+				"orbit": {
+					"planet": "Earth",
+					"values": [
+						8200.0,
+						0.02,
+						17.3,
+						283.0,
+						0,
+						360
+					],
+					"offset": [
+						0.0,
+						0.0,
+						0.0,
+						0.0,
+						0.0,
+						0.001
+					]
+				},
+				"physics": {
+					"override_mass": true,
+					"mass": 100.0,
+					"center_of_mass": [
+						0.0,
+						0.0,
+						0.0
+					],
+					"inertia_tensor": [
+						[
+							10.0,
+							0.0,
+							0.0
+						],
+						[
+							0.0,
+							10.0,
+							0.0
+						],
+						[
+							0.0,
+							0.0,
+							10.0
+						]
+					]
+				},
+				"visualization": {
+					"mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/ZenSat/BP_Z_SC_ZenSat_Chassis",
+					"scale": 1.0,
+					"offset": [
+						0.0,
+						0.0,
+						0.12
+					]
+				},
+				"controller": {
+					"safe_fraction": 0.1,
+					"capture_tax": 0.001,
+					"downlink_tax": 0.01,
+					"ping_interval": 20.0,
+					"reset_interval": 60.0,
+					"jamming_multiplier": 100.0,
+					"enable_rpo": false
+				},
+				"components": [
+					{
+						"class": "Solar Panel",
+						"name": "Solar Panel +X",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.8,
+							0.276313,
+							-0.2
+						],
+						"rotation": [
+							35.0,
+							0.0,
+							0.0
+						],
+						"scale": 1.0,
+						"data": {
+							"Area": 0.3,
+							"Efficiency": 0.4,
+							"Mass": 10.0
+						}
+					},
+					{
+						"class": "Solar Panel",
+						"name": "Solar Panel -X",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							-0.8,
+							0.276313,
+							-0.2
+						],
+						"rotation": [
+							35.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Area": 0.3,
+							"Efficiency": 0.4,
+							"Mass": 10.0
+						}
+					},
+					{
+						"class": "Reaction Wheels",
+						"name": "Reaction Wheels",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Mass": 9.0
+						}
+					},
+					{
+						"class": "Computer",
+						"name": "Computer",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Battery",
+						"name": "Battery",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Nominal Capacity": 80.0,
+							"Charge Fraction": 1.0,
+							"Mass": 5.0
+						}
+					},
+					{
+						"class": "Camera",
+						"name": "Camera",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							-0.36,
+							-0.16
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Mass": 5.0
+						}
+					},
+					{
+						"class": "GPS Sensor",
+						"name": "GPS Sensor",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Receiver",
+						"name": "Receiver",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							-0.36,
+							-0.16
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Antenna Gain": 3.0,
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Transmitter",
+						"name": "Transmitter",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							-0.36,
+							-0.16
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Mass": 1.0
+						}
+					},
+					{
+						"class": "Storage",
+						"name": "Storage",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							-0.2
+						],
+						"data": {
+							"Mass": 4.0
+						}
+					},
+					{
+						"class": "EM Sensor",
+						"name": "EM Sensor",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							-0.36,
+							-0.16
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Mass": 2.0
+						}
+					}
+				]
+			},
+			{
+				"id": "SC_002",
+				"name": "Recon",
+				"orbit": {
+					"planet": "Earth",
+					"values": [
+						8200.0,
+						0.0199,
+						17.3,
+						283.0,
+						0,
+						0.004
+					],
+					"offset": [
+						0.0,
+						0.0,
+						0.0,
+						0.0,
+						0.0,
+						0.001
+					]
+				},
+				"physics": {
+					"override_mass": true,
+					"mass": 750.0,
+					"center_of_mass": [
+						0.0,
+						0.0,
+						0.0
+					],
+					"inertia_tensor": [
+						[
+							900.0,
+							0.0,
+							0.0
+						],
+						[
+							0.0,
+							800.0,
+							0.0
+						],
+						[
+							0.0,
+							0.0,
+							600.0
+						]
+					]
+				},
+				"visualization": {
+					"mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/MRO/BP_Z_SC_MRO_Chassis",
+					"scale": 10.0,
+					"offset": [
+						0.0,
+						0.0,
+						0.0
+					],
+					"hide": true
+				},
+				"controller": {
+					"safe_fraction": 0.1,
+					"capture_tax": 0.001,
+					"downlink_tax": 0.005,
+					"ping_interval": 20.0,
+					"reset_interval": 60.0,
+					"jamming_multiplier": 100.0,
+					"enable_rpo": true
+				},
+				"components": [
+					{
+						"class": "Computer",
+						"name": "Computer",
+						"mesh": "None",
+						"enabled": true,
+						"data": {
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "External Force Torque",
+						"name": "Reaction Wheels",
+						"mesh": "None",
+						"enabled": true,
+						"data": {
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Receiver",
+						"name": "Receiver",
+						"mesh": "None",
+						"enabled": true,
+						"rotation": [
+							90.0,
+							90.0,
+							0.0
+						],
+						"data": {
+							"Antenna Gain": 500.0,
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Transmitter",
+						"name": "Transmitter",
+						"mesh": "None",
+						"enabled": true,
+						"rotation": [
+							90.0,
+							90.0,
+							0.0
+						],
+						"data": {
+							"Mass": 1.0
+						}
+					},
+					{
+						"class": "Jammer",
+						"name": "Jammer",
+						"mesh": "None",
+						"enabled": true,
+						"rotation": [
+							90.0,
+							90.0,
+							0.0
+						],
+						"data": {
+							"Power": 100.0,
+							"Antenna Gain": 15.0,
+							"Lookup": "RFPattern.csv"
+						}
+					}
+				]
+			}
+		],
+		"collections": [
+			{
+				"id": "Main",
+				"space_assets": [
+					"SC_001"
+				]
+			},
+			{
+				"id": "Rogue",
+				"space_assets": [
+					"SC_002"
+				]
+			}
+		]
+	
+	},
+	"events": [
+		{
+			"Enabled": true,
+			"Name": "Battery Leak",
+			"Time": 0.0,
+			"Repeat": false,
+			"Interval": 1.0,
+			"Type": "Spacecraft",
+			"Target": "Battery-BatteryLeakageErrorModel",
+			"Assets": [
+
+			],
+			"Data": {
+				"Power Leakage Rate": 0.02
+			}
+		}
+	],
+	"questions": [
+		{
+			"section": "Example Question",
+			"title": "What is the semi-major axis (km) of your spacecraft's orbit?",
+			"description": "Using the telemetry data calculate the semi major axis of your spacecraft's orbit. Nearest 100 km.",
+			"type": "number",
+			"answer": {
+				"unit": "km",
+				"value": 7500.0,
+				"tolerance": 100.0,
+				"reason": "7500.0 km. This can be calculated by the GPS data.",
+				"score": 10
+			}
+		}
+	]
+}

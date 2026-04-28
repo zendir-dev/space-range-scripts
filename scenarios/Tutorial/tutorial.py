@@ -21,10 +21,37 @@ Run from the project root:
 
 import sys
 import os
+import argparse
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+_SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+_PROJECT_ROOT = os.path.abspath(os.path.join(_SCRIPT_DIR, "../.."))
+
+if _PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, _PROJECT_ROOT)
 
 from src import Scenario, commands
+
+
+# ---------------------------------------------------------------------------
+# CLI: optional config file override
+# ---------------------------------------------------------------------------
+_parser = argparse.ArgumentParser(description="Tutorial scenario")
+_parser.add_argument(
+    "config",
+    nargs="?",
+    default=os.path.join(_SCRIPT_DIR, "tutorial.json"),
+    help=(
+        "Path to the scenario JSON config file. "
+        "Defaults to tutorial.json in the same directory as this script. "
+        "A bare filename (no path separators) is resolved relative to this script's directory."
+    ),
+)
+_args = _parser.parse_args()
+
+_config_path = _args.config
+if not os.path.isabs(_config_path) and os.sep not in _config_path and "/" not in _config_path:
+    _config_path = os.path.join(_SCRIPT_DIR, _config_path)
+_config_path = os.path.abspath(_config_path)
 
 
 # =============================================================================
@@ -34,7 +61,7 @@ from src import Scenario, commands
 # Prompts for game name and admin password (saves/restores defaults),
 # loads scenarios/orbital_sentinel.json, resolves Red Team and its assets,
 # and enumerates all other enabled teams as enemies.
-scenario = Scenario(team_name="Rogue")
+scenario = Scenario(team_name="Rogue", config_path=_config_path)
 
 
 # =============================================================================
@@ -65,72 +92,24 @@ scheduler.add_event(
 )
 
 scheduler.add_event(
-    name="Point Jammer to Singapore",
-    trigger_time=2610.0,
-    **commands.guidance_ground("Jammer", station="Singapore"),
+    name="Point Jammer to Dubai",
+    trigger_time=1081.0,
+    **commands.guidance_ground("Jammer", station="Dubai"),
 )
 
 scheduler.add_event(
     name="Start Jamming All Enemy Teams",
-    trigger_time=2620.0,
+    trigger_time=1100.0,
     pre_trigger=live_jammer_args,
     **commands.jammer_start(frequencies=scenario.enemy_fallback_freqs, power=3.0),
 )
 
 scheduler.add_event(
     name="Stop Jamming",
-    trigger_time=4458.0,
-    **commands.jammer_stop(),
-)
-scheduler.add_event(
-    name="Point Nadir",
-    trigger_time=4459.0,
-    **commands.guidance_nadir("Jammer"),
-)
-
-scheduler.add_event(
-    name="Point Jammer to Singapore",
-    trigger_time=10680.0,
-    **commands.guidance_ground("Jammer", station="Singapore"),
-)
-
-scheduler.add_event(
-    name="Start Jamming All Enemy Teams",
-    trigger_time=10689.0,
-    pre_trigger=live_jammer_args,
-    **commands.jammer_start(frequencies=scenario.enemy_fallback_freqs, power=3.0),
-)
-
-scheduler.add_event(
-    name="Stop Jamming",
-    trigger_time=12530.0,
+    trigger_time=2806.0,
     **commands.jammer_stop(),
 )
 
-scheduler.add_event(
-    name="Point Nadir",
-    trigger_time=12532.0,
-    **commands.guidance_nadir("Jammer"),
-)
-
-scheduler.add_event(
-    name="Point Jammer to Singapore",
-    trigger_time=18846.0,
-    **commands.guidance_ground("Jammer", station="Singapore"),
-)
-
-scheduler.add_event(
-    name="Start Jamming All Enemy Teams",
-    trigger_time=18847.0,
-    pre_trigger=live_jammer_args,
-    **commands.jammer_start(frequencies=scenario.enemy_fallback_freqs, power=3.0),
-)
-
-scheduler.add_event(
-    name="Stop Jamming",
-    trigger_time=20590.0,
-    **commands.jammer_stop(),
-)
 
 
 # =============================================================================
