@@ -179,6 +179,35 @@ class GroundRequestClient:
         """
         return self._ground_request("get_packet_schemas", {}, timeout=timeout)
 
+    def transmit_bytes(
+        self,
+        frequency_mhz: float,
+        data: str,
+        encoding: str = "base64",
+        timeout: float = 5.0,
+    ) -> Optional[dict]:
+        """
+        Transmit arbitrary bytes from the ground transmitter at *frequency_mhz*,
+        bypassing normal uplink encryption.
+
+        Parameters
+        ----------
+        frequency_mhz:
+            Carrier frequency in MHz (must be ``> 0``).
+        data:
+            Payload interpreted per *encoding*.
+        encoding:
+            One of ``base64``, ``hex``, ``utf8``, ``ascii`` — same as the API.
+
+        Returns the full response dict (``args`` may contain ``bytes_sent``),
+        or ``None`` on timeout / failure.
+        """
+        return self._ground_request(
+            "transmit_bytes",
+            {"frequency": frequency_mhz, "encoding": encoding, "data": data},
+            timeout=timeout,
+        )
+
     # ------------------------------------------------------------------
     # Core send/wait logic
     # ------------------------------------------------------------------

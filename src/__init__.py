@@ -7,6 +7,7 @@ Space Range — src package
 Exposes all public classes and helpers so scenario scripts can use a single import:
 
     from src import load_config, EventScheduler, SpaceRangeClient, commands
+    from src import uplink_envelope, rf_catalog, replay, cyber_replay, downlink_codec
     from src import prompt_credentials
 """
 
@@ -19,6 +20,11 @@ from .mqtt_client import SpaceRangeClient, xor_encrypt, prompt_game_name, prompt
 from .scenario import Scenario
 from . import commands
 from . import printer
+from . import uplink_envelope
+from . import rf_catalog
+from . import replay
+from . import cyber_replay
+from . import downlink_codec
 from .utils import decode_payload
 
 __all__ = [
@@ -37,5 +43,10 @@ __all__ = [
     "prompt_game_name",
     "prompt_credentials",
     "commands",
+    "uplink_envelope",
+    "rf_catalog",
+    "replay",
+    "cyber_replay",
+    "downlink_codec",
     "printer",
 ]

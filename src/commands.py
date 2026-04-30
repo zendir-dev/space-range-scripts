@@ -24,7 +24,7 @@ so it can be unpacked with ``**`` into :meth:`add_event`.
 
 from __future__ import annotations
 
-from typing import Literal
+from typing import Literal, Optional
 
 
 # ---------------------------------------------------------------------------
@@ -371,3 +371,67 @@ def docking_undock(target_id: str, component: str) -> dict:
         {"target": target_id, "component": component, "dock": False},
         f"Undock from '{component}' on '{target_id}'",
     )
+
+
+# ---------------------------------------------------------------------------
+# Encryption (spacecraft-side credential rotation)
+# ---------------------------------------------------------------------------
+
+
+def encryption_rotate(password: str, frequency: float, key: int) -> dict:
+    """Rotate team RF identity from the spacecraft (requires team MQTT password in Args)."""
+    return _cmd(
+        "encryption",
+        {"password": password, "frequency": frequency, "key": key},
+        f"encryption rotate → {frequency} MHz, key={key}",
+    )
+
+
+# ---------------------------------------------------------------------------
+# Schedule management
+# ---------------------------------------------------------------------------
+
+
+def get_schedule() -> dict:
+    """Request the pending command queue (reply arrives as Schedule Report telemetry)."""
+    return _cmd("get_schedule", {}, "Request on-board schedule (Schedule Report telemetry)")
+
+
+def remove_command_by_id(command_id: int) -> dict:
+    """Remove a pending command by spacecraft-assigned ``ID``."""
+    return _cmd("remove_command", {"ID": command_id}, f"remove_command ID={command_id}")
+
+
+def remove_command_by_time_command(sim_time: float, command_name: str) -> dict:
+    """Remove the first pending command matching simulation time and command type."""
+    return _cmd(
+        "remove_command",
+        {"Time": sim_time, "Command": command_name},
+        f"remove_command Time={sim_time} Command={command_name}",
+    )
+
+
+def update_command(
+    command_id: int,
+    *,
+    new_time: Optional[float] = None,
+    args_json: Optional[str] = None,
+    target_time: Optional[float] = None,
+    target_command: Optional[str] = None,
+) -> dict:
+    """
+    Update a pending command's time and/or Args.
+
+    Prefer *command_id* (non-zero). When resolving by schedule row, pass
+    *target_time* + *target_command* for fallback matching (see API docs).
+    """
+    payload: dict = {"ID": command_id}
+    if new_time is not None:
+        payload["Time"] = new_time
+    if args_json is not None:
+        payload["Args"] = args_json
+    if target_time is not None:
+        payload["TargetTime"] = target_time
+    if target_command is not None:
+        payload["TargetCommand"] = target_command
+    return _cmd("update_command", payload, f"update_command ID={command_id}")

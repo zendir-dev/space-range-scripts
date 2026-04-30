@@ -62,8 +62,8 @@ class SpaceRangeClient(GroundRequestClient):
     Inherits blocking ground request helpers from
     :class:`~src.ground_client.GroundRequestClient`:
     ``list_assets()``, ``list_entity()``, ``list_stations()``,
-    ``get_telemetry()``, ``set_telemetry()``, ``chat_query()``,
-    ``get_packet_schemas()``.
+    ``get_telemetry()``, ``set_telemetry()``, ``transmit_bytes()``,
+    ``chat_query()``, ``get_packet_schemas()``.
 
     Also exposes an :class:`~src.admin_client.AdminRequestClient` as
     ``self.admin`` for instructor/agent use, available once connected.
@@ -117,6 +117,7 @@ class SpaceRangeClient(GroundRequestClient):
         self._on_session  = on_session
         self.on_event     = on_event
         self._on_connect_cb = on_connect   # called in a background thread after subscriptions are live
+        self.on_downlink: Optional[Callable[[bytes], None]] = None
 
         game = config.game
 
@@ -124,6 +125,7 @@ class SpaceRangeClient(GroundRequestClient):
         self._uplink_topic   = f"Zendir/SpaceRange/{game}/{team.id}/Uplink"
         self._request_topic  = f"Zendir/SpaceRange/{game}/{team.id}/Request"
         self._response_topic = f"Zendir/SpaceRange/{game}/{team.id}/Response"
+        self._downlink_topic = f"Zendir/SpaceRange/{game}/{team.id}/Downlink"
 
         self._admin_request_topic  = f"Zendir/SpaceRange/{game}/Admin/Request"
         self._admin_response_topic = f"Zendir/SpaceRange/{game}/Admin/Response"
@@ -156,6 +158,22 @@ class SpaceRangeClient(GroundRequestClient):
         encrypted = xor_encrypt(json_data.encode(), self._team.password)
         self._client.publish(self._uplink_topic, encrypted)
         printer.sent(command["command"], asset=command.get("id", "?"), args=command.get("args", {}))
+
+    def register_downlink_handler(self, handler: Optional[Callable[[bytes], None]]):
+        """
+        Subscribe to this team's ``Downlink`` topic and deliver raw MQTT payloads.
+
+        Pass ``None`` to detach. Used by :mod:`src.cyber_replay` to decode
+        Uplink Intercept frames. Requires the team's **Caesar key** from config
+        when decoding (see :mod:`src.downlink_codec`).
+
+        If the client is already connected, subscribes immediately; otherwise
+        :meth:`_on_connect` subscribes when a handler is registered.
+        """
+        self.on_downlink = handler
+        if handler is not None and getattr(self._client, "is_connected", lambda: False)():
+            self._client.subscribe(self._downlink_topic)
+            printer.info(f"Subscribing to {self._downlink_topic}")
 
     def connect_and_run(self):
         """Connect to the broker and block in the network loop (Ctrl+C to exit)."""
@@ -244,6 +262,9 @@ class SpaceRangeClient(GroundRequestClient):
             client.subscribe(self._session_topic)
             printer.info(f"Subscribing to {self._response_topic}")
             client.subscribe(self._response_topic)
+            if self.on_downlink:
+                printer.info(f"Subscribing to {self._downlink_topic}")
+                client.subscribe(self._downlink_topic)
             if self.admin._password:
                 printer.info(f"Subscribing to {self._admin_response_topic}")
                 client.subscribe(self._admin_response_topic)
@@ -261,6 +282,12 @@ class SpaceRangeClient(GroundRequestClient):
             self._handle_session_message(msg.payload)
         elif msg.topic == self._response_topic:
             self._handle_response_message(msg.payload)
+        elif msg.topic == self._downlink_topic:
+            if self.on_downlink:
+                try:
+                    self.on_downlink(msg.payload)
+                except Exception as e:
+                    printer.error(f"on_downlink handler raised: {e}")
         elif msg.topic == self._admin_response_topic:
             self.admin.handle_message(msg.payload)
 
