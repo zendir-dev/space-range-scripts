@@ -251,7 +251,7 @@ After parsing the user-data field, `Commands` is a UTF-8 string whose contents a
 
 | Field | Type | Description |
 | --- | --- | --- |
-| `ID` | int | Unique command identifier (matches the ID echoed in `command_executed` events). |
+| `ID` | int | Spacecraft-assigned command identifier from the on-board queue (not supplied on uplink; assigned when the command is accepted). Matches the ID used in `command_executed` events and schedule-management `Args`. |
 | `Command` | string | Command type (one of the [spacecraft commands](../api-reference/spacecraft-commands.md)). |
 | `Time` | float | Simulation time at which it was scheduled to execute. |
 | `Success` | bool | Whether execution succeeded. |
@@ -280,7 +280,6 @@ Each entry:
 {
   "Asset":   "A3F2C014",
   "ID":      123456,
-  "Index":   3,
   "Time":    825.0,
   "Command": "capture",
   "Args":    "{\"target\":\"Camera\"}"
@@ -289,9 +288,8 @@ Each entry:
 
 | Field | Type | Description |
 | --- | --- | --- |
-| `Asset` | string | Asset ID the command targets. |
-| `ID` | int | Unique command identifier. |
-| `Index` | int | Insertion index within the queue (used as a tie-breaker). Pass this to [`update_command`](../api-reference/spacecraft-commands.md#update_command) and [`remove_command`](../api-reference/spacecraft-commands.md#remove_command). |
+| `Asset` | string | Asset ID from the original uplink ([`Asset`](../api-reference/spacecraft-commands.md#envelope)); echoes which spacecraft owns the queue entry. |
+| `ID` | int | Spacecraft-assigned command identifier (same semantics as Ping [`Commands`](#commands-json-shape)); use this in [`remove_command`](../api-reference/spacecraft-commands.md#remove_command) / [`update_command`](../api-reference/spacecraft-commands.md#update_command) `Args`. |
 | `Time` | float | Simulation time at which it will execute. |
 | `Command` | string | Command type. |
 | `Args` | string (JSON) | Arguments, redacted of sensitive keys. |

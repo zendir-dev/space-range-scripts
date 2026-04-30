@@ -29,6 +29,8 @@ Every uplink command — whatever its type — uses the same outer JSON shape:
 | `Time` | number (seconds) | no (default `0.0`) | Simulation time at which to execute. `≤ 0` means "as soon as possible". A future value queues the command. |
 | `Args` | object | no | Command-specific arguments. Empty `{}` if the command takes no arguments. |
 
+The uplink envelope does **not** include a command `ID`. **`Asset`** is the only targeting field the operator sets — it selects which spacecraft on the team should accept the command. After acceptance, the spacecraft controller assigns a unique integer **`ID`** to that queued command (see [Validation](#3-validation)); that ID is what appears in Ping executed-command lists, Schedule Reports, and in `Args` for [`remove_command`](../api-reference/spacecraft-commands.md#remove_command) / [`update_command`](../api-reference/spacecraft-commands.md#update_command).
+
 > **Heads up on capitalisation.** The envelope keys are **PascalCase** (`Asset`, `Command`, `Time`, `Args`). The keys *inside* `Args` and the keys used in **ground requests** are typically **lowercase** (e.g. `pointing`, `alignment`, `asset_id`, `req_id`). Earlier versions of the schemas used lowercase outer keys; current Studio uses PascalCase and that is what these docs reflect.
 
 ---
@@ -49,7 +51,7 @@ client                      broker                       Studio
   │                            │      │                    │       intercept,
   │                            │      └─Yes─┐               │       drop.
   │                            │            ▼               │
-  │                            │      assign random ID       │
+  │                            │      assign command ID      │
   │                            │      append to schedule     │
   │                            │      sort by Time           │
   │                            │                            │
@@ -86,13 +88,13 @@ Studio's per-team listener decrypts the payload and dispatches it to **every** s
 
 - If the `Asset` field is empty, the command is dropped silently.
 - If the `Asset` is non-empty but does not match this controller's ID, the command is dropped at this controller (a different controller on the team may still accept it).
-- If `Asset` matches, the controller accepts the command, assigns a random non-zero **schedule ID** (a 32-bit integer), records an `UplinkIntercept` flag bit, and appends the command to its **command buffer**.
+- If `Asset` matches, the controller accepts the command and assigns a unique integer **command ID**. The ID comes from an internal counter (`CommandBufferID`): each new command initially uses the current counter value; if that ID is already present in the buffer (a rare collision guard), the counter is advanced until the ID is free. The command is then appended and the counter increments so the next uplink gets a fresh ID. After a scenario reset the counter returns to **1** with an empty buffer. An `UplinkIntercept` flag bit records successful parse and addressing.
 
 This check happens *before* any argument validation. An ill-formed `Args` will not be detected until the command is actually executed; at that point the corresponding handler simply returns failure and the command is logged as "executed with success=false".
 
 ### 4. Scheduling
 
-Every accepted command is stored in the controller's command buffer along with its target `Time`, an `Index` (insertion order), and the assigned schedule `ID`. The buffer is kept **sorted by `Time` ascending**, with ties broken by `Index` so that two commands queued for the same time still execute in the order they arrived.
+Every accepted command is stored in the controller's command buffer along with its target `Time` and the assigned command `ID`. The buffer is kept **sorted by `Time` ascending**, with ties broken by **`ID` ascending** so that two commands queued for the same simulation time execute in the order they were accepted (successive IDs reflect arrival order).
 
 A command with `Time ≤ current sim time` is eligible to run on the next tick.
 
@@ -115,8 +117,8 @@ The controller does **not** push a per-command success/failure response on the t
 
 If you need to know whether a particular command succeeded, the typical approach is:
 
-1. Note the schedule `ID` you uplinked (you can compute it client-side, but Studio assigns its own random ID — use the `(Time, Command)` pair to correlate when the response shows up).
-2. Watch incoming Pings for an executed-commands entry matching your `(Time, Command)`.
+1. Learn the spacecraft-assigned **`ID`** from a Schedule Report ([`get_schedule`](../api-reference/spacecraft-commands.md#get_schedule)) or from an earlier Ping — you cannot set this field on uplink; it exists only after the command is accepted.
+2. Watch incoming Pings for an executed-commands entry matching that **`ID`**, or fall back to correlating by **`(Time, Command)`** if you never captured the ID.
 3. Examine the `Success` flag.
 
 ---

@@ -10,7 +10,7 @@ This page is a working catalogue of complete scenario patterns derived from the 
 | --- | --- | --- |
 | Imagery / detection exercise on Earth | `Maritime_Surveillance.json` | Many ground vessels (`objects.ground[]`), two teams sharing one collection. |
 | Telemetry-loss / packet-corruption exercise | `Telemetry_Drop.json` | Single transmitter packet-corruption event with paired recovery context. |
-| Unresponsive-spacecraft / command-rejection exercise | `Unresponsive_Satellite.json`, `Command_Rejection.json` | Show how to use `enable_rpo`, `record_uplink_intercept` and computer fault models. |
+| Unresponsive-spacecraft / command-rejection exercise | `Unresponsive_Satellite.json`, `Command_Rejection.json` | Show how to use `enable_rpo`, `enable_intercept` and computer fault models. |
 | Docking / RPO exercise | `Docking_Procedure.json` | Two spacecraft with `Docking Adapter` components; `enable_rpo: true` on the controller. |
 | Pointing / attitude error | `Payload_Misalignment.json` | Reaction-wheel `Stuck Index` event and guidance noise model. |
 | GPS denial | (see GPS event recipes in [`events.md`](./events.md)) | No shipped scenario uses GPS jamming end-to-end yet — combine the events template with a `Maritime_Surveillance` shell. |

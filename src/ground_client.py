@@ -82,7 +82,7 @@ class GroundRequestClient:
 
             {
                 "space": [
-                    {"asset_id": "SC_002", "name": "Recon", "rpo_enabled": True},
+                    {"asset_id": "SC_002", "name": "Recon", "rpo_enabled": True, "intercept_enabled": True},
                     ...
                 ]
             }

@@ -99,7 +99,7 @@ A Schedule Report is a one-shot dump of the spacecraft's current pending command
 | Field | Type | Description |
 | --- | --- | --- |
 | `Count` | int | Number of pending commands. |
-| `Commands` | string (JSON) | Pending commands as a JSON array. Each entry has `Asset`, `ID`, `Index`, `Time`, `Command`, `Args` (redacted). Defaults to `"[]"`. |
+| `Commands` | string (JSON) | Pending commands as a JSON array. Each entry has `Asset`, `ID`, `Time`, `Command`, `Args` (redacted). Defaults to `"[]"`. |
 
 A Schedule Report is generated only in direct response to [`get_schedule`](../api-reference/spacecraft-commands.md#get_schedule). It is not periodic.
 

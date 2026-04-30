@@ -162,7 +162,7 @@ Schedule Report is the response to [`get_schedule`](../api-reference/spacecraft-
 | Field | Type | Meaning |
 | --- | --- | --- |
 | `Count` | int | Number of pending commands. |
-| `Commands` | string (JSON) | JSON array of pending commands; each has `Asset`, `ID`, `Index`, `Time`, `Command`, `Args` (redacted). |
+| `Commands` | string (JSON) | JSON array of pending commands; each has `Asset`, `ID`, `Time`, `Command`, `Args` (redacted). |
 
 Same JSON-string-of-array trick. Same `json.loads` after parse.
 

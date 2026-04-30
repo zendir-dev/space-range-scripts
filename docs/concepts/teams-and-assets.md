@@ -134,7 +134,7 @@ ground.request("list_assets")
 #     "req_id": ...,
 #     "args": {
 #       "space": [
-#         {"asset_id": "A3F2C014", "name": "Microsat", "rpo_enabled": false},
+#         {"asset_id": "A3F2C014", "name": "Microsat", "rpo_enabled": false, "intercept_enabled": true},
 #         ...
 #       ]
 #     }

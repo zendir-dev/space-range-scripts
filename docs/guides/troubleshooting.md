@@ -161,9 +161,9 @@ cmd["Time"] = session["time"] + 60.0
 **Likely causes**:
 
 1. The command has already executed (you can only update *pending* commands).
-2. The `index` argument doesn't match a slot in the queue.
+2. The `ID` in `Args` doesn't match any pending command (it may have executed already, or the ID is stale).
 
-**Fix.** Re-fetch the schedule with [`get_schedule`](../api-reference/spacecraft-commands.md#get_schedule) and use the `Index` from the freshly-returned report.
+**Fix.** Re-fetch the schedule with [`get_schedule`](../api-reference/spacecraft-commands.md#get_schedule) and use the spacecraft-assigned `ID` from the freshly returned report (or correlate by `TargetTime` / `TargetCommand` as documented for [`update_command`](../api-reference/spacecraft-commands.md#update_command)).
 
 ---
 

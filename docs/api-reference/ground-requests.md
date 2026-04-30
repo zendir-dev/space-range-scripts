@@ -105,7 +105,7 @@ No arguments.
   "req_id": 0,
   "args": {
     "space": [
-      { "asset_id": "A3F2C014", "name": "Microsat", "rpo_enabled": true }
+      { "asset_id": "A3F2C014", "name": "Microsat", "rpo_enabled": true, "intercept_enabled": true }
     ]
   },
   "success": true
@@ -118,6 +118,7 @@ No arguments.
 | `space[].asset_id` | 8-character hex ID. Use this in the `Asset` field of any uplink command. |
 | `space[].name` | Friendly name, with the team prefix stripped. |
 | `space[].rpo_enabled` | `true` if rendezvous/proximity-ops is enabled for this asset (required for [`rendezvous`](spacecraft-commands.md#rendezvous) and [`docking`](spacecraft-commands.md#docking)). |
+| `space[].intercept_enabled` | `true` if this spacecraft is configured to record raw uplink intercepts (pre-decode RF payloads into on-board storage for SIGINT / replay). Mirrors scenario `enable_intercept` on the controller. When `false`, no new intercept records are retained. |
 
 ---
 

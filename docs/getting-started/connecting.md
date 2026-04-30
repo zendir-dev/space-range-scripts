@@ -215,7 +215,7 @@ Within ~1 second you should see a response like:
   "req_id": 1,
   "args": {
     "space": [
-      {"asset_id": "A3F2C014", "name": "Microsat", "rpo_enabled": false}
+      {"asset_id": "A3F2C014", "name": "Microsat", "rpo_enabled": false, "intercept_enabled": true}
     ]
   }
 }

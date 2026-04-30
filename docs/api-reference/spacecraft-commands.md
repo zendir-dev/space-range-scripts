@@ -32,6 +32,8 @@ with the payload:
 | `Time` | `number` | Simulation seconds at which to execute. `0` (or any value `≤ current sim time`) means "execute immediately". A future value schedules the command. |
 | `Args` | `object` | Command-specific arguments. Keys are case-insensitive. Missing keys fall back to documented defaults. |
 
+There is **no** top-level `ID` on uplink. **`Asset`** is how you target a spacecraft on the shared team topic. After the controller accepts the message, it assigns a monotonic **command `ID`** on board; that value is returned in Ping executed-command arrays and Schedule Reports, and is what you pass in `Args` for schedule edits ([`remove_command`](#remove_command), [`update_command`](#update_command)).
+
 ### Notes about the envelope
 
 - Uplink keys are **PascalCase** (`Asset`, `Command`, `Time`, `Args`). The keys *inside* `Args` are typically lowercase. The historical schema used lowercase top-level keys; that form is no longer accepted by the current backend — use the PascalCase form documented here.

@@ -137,6 +137,7 @@ Detailed configuration of a single team: identity, password, and every asset's c
           "asset_id": "A3F2C014",
           "name": "Microsat",
           "rpo_enabled": true,
+          "intercept_enabled": true,
           "components": [
             { "name": "Solar Panel +X", "class": "Solar Panel", "component_id": 5, "is_imager": false },
             { "name": "Camera",         "class": "Camera",       "component_id": 12, "is_imager": true }
@@ -156,6 +157,7 @@ Detailed configuration of a single team: identity, password, and every asset's c
 | `assets.space[].asset_id` | 8-character hex asset ID. |
 | `assets.space[].name` | Friendly asset name. |
 | `assets.space[].rpo_enabled` | Whether RPO functionality is available on this asset. |
+| `assets.space[].intercept_enabled` | Whether this asset records uplink intercepts (`enable_intercept` in scenario JSON). Same semantics as [`list_assets`](ground-requests.md#list_assets) `intercept_enabled`. |
 | `assets.space[].components[]` | Component list, identical in shape to the team-side [`list_entity`](ground-requests.md#list_entity) response. |
 
 If `team` doesn't match any team, the response succeeds with mostly-empty data (Studio doesn't currently fail-fast on this). Always validate against the `teams[]` list first.
@@ -197,6 +199,7 @@ Pulls historical telemetry snapshots from Studio's on-disk database. The simulat
   "args": {
     "asset_id": "A3F2C014",
     "team":     "Red Team",
+    "intercept_enabled": true,
     "data": [
       {
         "time": 10.7,
@@ -217,6 +220,9 @@ Pulls historical telemetry snapshots from Studio's on-disk database. The simulat
 
 | Field | Description |
 | --- | --- |
+| `asset_id` | Echo of the queried asset. |
+| `team` | Display name of the team that owns the asset. |
+| `intercept_enabled` | Whether this spacecraft records uplink intercepts at query time (scenario `enable_intercept`). Included when the asset exists, before `data` is populated. |
 | `data[]` | Array of sample objects, ordered by `time`. Each sample is a flat dictionary keyed by `<category>.<property>`. |
 
 The full set of `<category>.<property>` keys available in each sample:
@@ -269,6 +275,7 @@ Returns historical tracking events. Filters can be combined (or both omitted to 
   "type": "admin_query_events",
   "req_id": 0,
   "args": {
+    "intercept_enabled": true,
     "events": [
       {
         "event_id":        1,
@@ -287,8 +294,11 @@ Returns historical tracking events. Filters can be combined (or both omitted to 
 }
 ```
 
+`intercept_enabled` is included **only when** `args.asset_id` is set in the request (filtering events for one spacecraft). It echoes whether that asset currently has uplink intercept recording enabled. Omitted when querying all events or filtering by team name alone.
+
 | Field | Description |
 | --- | --- |
+| `intercept_enabled` | _(optional)_ Present when `asset_id` was supplied in the request. `true` if that spacecraft records uplink intercepts (scenario `enable_intercept`). |
 | `events[].event_id` | Monotonically increasing event index, starting at 0 each scenario run. |
 | `events[].simulation_time` | Sim seconds when the event occurred. |
 | `events[].simulation_utc` | Simulation UTC time. |

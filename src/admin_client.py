@@ -128,6 +128,7 @@ class AdminRequestClient:
                             "asset_id": "fb345a0c",
                             "name": "Microsat",
                             "rpo_enabled": True,
+                            "intercept_enabled": True,
                             "components": [...]
                         }
                     ]
@@ -189,7 +190,10 @@ class AdminRequestClient:
         Provide at least one of *asset_id* or *team*.
 
         Returns the full response dict on success (the ``"args"`` key contains
-        an ``"events"`` list), or ``None`` on timeout.
+        an ``"events"`` list). When *asset_id* is provided, ``args`` may also
+        include ``intercept_enabled`` for that spacecraft.
+
+        Returns ``None`` on timeout.
         """
         args: dict = {}
         if asset_id is not None:

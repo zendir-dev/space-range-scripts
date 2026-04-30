@@ -42,8 +42,8 @@ Every entity in Space Range has at least one identifier. They have specific shap
 | **Ground station name** | string, exact match | `"Madrid"`, `"Easter Island"` | Returned by [`list_stations`](../api-reference/ground-requests.md#list_stations); referenced in scenario JSON. |
 | **Caesar key** | integer `0–255` | `17` | RF-layer cipher key. Per team. |
 | **Frequency** | float MHz | `500.0`, `2230.5` | `frequency` field across commands and requests. |
-| **Command ID** | integer | `123456` | `ID` in Ping/Schedule Report `Commands` arrays; matches `command_executed` events. |
-| **Schedule index** | integer ≥ 0 | `3` | `Index` in Schedule Report; pass to [`update_command`](../api-reference/spacecraft-commands.md#update_command) / [`remove_command`](../api-reference/spacecraft-commands.md#remove_command). |
+| **Command ID** | integer | `123456` | Spacecraft-assigned; `ID` in Ping/Schedule Report `Commands` arrays and in `Args` for [`update_command`](../api-reference/spacecraft-commands.md#update_command) / [`remove_command`](../api-reference/spacecraft-commands.md#remove_command); matches `command_executed` events. |
+| **Intercept enabled** | boolean | `true` / `false` | Scenario/controller flag `enable_intercept`. Surfaced in API responses as `intercept_enabled` on [`list_assets`](../api-reference/ground-requests.md#list_assets), [`admin_list_team`](../api-reference/admin-requests.md#admin_list_team), [`admin_query_data`](../api-reference/admin-requests.md#admin_query_data), and (when filtering by asset) [`admin_query_events`](../api-reference/admin-requests.md#admin_query_events). When `true`, the spacecraft retains raw uplink intercept records for SIGINT / replay. |
 | **Request ID** | integer (echoed) | `42` | `req_id` field. Free for the client to use to correlate requests with responses. |
 | **Instance** | integer, monotonic | `3` | `instance` field of Session topic; increments on simulation reset. |
 
