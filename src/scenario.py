@@ -232,6 +232,71 @@ class Scenario:
         printer.success(f"live_enemy_frequencies: {live} MHz")
         return live
 
+    def live_enemy_frequencies_by_team(
+        self,
+        fallback: Optional[list[float]] = None,
+        timeout: float = 10.0,
+    ) -> dict[int, float]:
+        """
+        Same data as :meth:`live_enemy_frequencies` but as a dict keyed by
+        ``team.id``.
+
+        Convenient for per-team lookups in scenario scripts that don't want to
+        carry an enemy-list index around::
+
+            target = scenario.enemy_teams[-1]
+            live = scenario.live_enemy_frequencies_by_team()
+            target_freq = live.get(target.id, target.frequency)
+
+        Returns
+        -------
+        dict[int, float]
+            Mapping from ``team.id`` to live carrier frequency (MHz). Empty if
+            nothing could be resolved (admin unavailable, no enemy IDs, etc.).
+        """
+        freqs = self.live_enemy_frequencies(fallback=fallback, timeout=timeout)
+        if not freqs:
+            return {}
+        return {team.id: float(freq) for team, freq in zip(self.enemy_teams, freqs)}
+
+    def live_enemy_frequency_for(
+        self,
+        team: TeamConfig,
+        fallback: Optional[float] = None,
+        timeout: float = 10.0,
+    ) -> float:
+        """
+        Live carrier frequency (MHz) for a single enemy *team*.
+
+        Useful for ``pre_trigger`` hooks that need just one team's frequency::
+
+            def jam_target_args(default_args):
+                freq = scenario.live_enemy_frequency_for(target_team)
+                return {**default_args, "frequencies": [freq]}
+
+        Falls back to *fallback* (or ``team.frequency`` if *fallback* is
+        ``None``) if the admin lookup fails or *team* is not an enemy.
+
+        Parameters
+        ----------
+        team:
+            A :class:`TeamConfig` from :attr:`enemy_teams`.
+        fallback:
+            Frequency to return if admin lookup fails. Defaults to
+            ``team.frequency``.
+        timeout:
+            Admin request timeout in seconds.
+        """
+        fb = float(fallback) if fallback is not None else float(team.frequency)
+        if team not in self.enemy_teams:
+            printer.warn(
+                f"live_enemy_frequency_for: '{team.name}' is not an enemy team — "
+                f"returning fallback {fb} MHz"
+            )
+            return fb
+        live = self.live_enemy_frequencies_by_team(timeout=timeout)
+        return live.get(team.id, fb)
+
     # ------------------------------------------------------------------
     # on_connect helper
     # ------------------------------------------------------------------

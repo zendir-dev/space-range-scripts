@@ -54,18 +54,20 @@ By the end of the workshop, an operator should be able to:
 ```text
 SMA           = 10 000 km   (alt ~3 622 km, classified MEO)
 Eccentricity  = 0.015
-Inclination   = 28.5°
-RAAN          = 200°
+Inclination   = 37.5°
+RAAN          = 242°
 ArgPerigee    = 0°
-TrueAnomaly   = 0° (defender) / 25° (rogue)
+TrueAnomaly   = 0° (defender) / 0.01° (rogue — co-located so PHANTOM is in-frame next to Watchtower)
 ```
 
 | Property | Value | Rationale |
 | --- | --- | --- |
 | Orbital period | **~2.77 h** | `T = 2π√(a³/μ)` with `a = 10 000 km` ≈ 9 952 s. |
 | Orbits per workshop | **~1.8** | 5 sim h / 2.77 h. Enough to see ~3 ground passes per station, not so few that the orbit is a curiosity. |
-| Inclination | 28.5° | Covers tropical/subtropical AOIs (Hormuz, Malacca, Caribbean) and most shipped ground stations. |
+| Inclination | 37.5° | Tuned (with RAAN = 242°) so the ground track passes Madrid → Doha → Singapore → Perth → Auckland → Miami within visibility, while still crossing directly over the Hormuz / Arabian Sea AOI on the orbit-1 descending leg. |
+| RAAN | 242° | Phase-aligns the ground track with the chosen ground-station chain so coverage is ~100% throughout the workshop. |
 | Eccentricity | 0.015 | Light variation in altitude makes apoapsis/periapsis a worthwhile telemetry question without distorting the timeline. |
+| Rogue placement | `ν₀ = 0.01°` | Same-orbit, essentially co-located with the defender — keeps PHANTOM visible in the same camera/3D viewport so teams can answer the call-sign question and watch the rogue's behaviour live. |
 
 > **Why not LEO?** Three orbits in 5 sim hours is fine for a flight-ops scenario, but cyber effects (replay capture, jamming windows) want **longer dwell** over the AOI. MEO gives ~12-minute uninterrupted contacts versus ~5-minute LEO passes — much friendlier for scripted multi-step attacks.
 
@@ -94,7 +96,7 @@ A **globally-distributed, US/EU/5-Eyes-aligned set** with near-100% coverage acr
 "ground_stations": {
   "locations": [
     "Madrid", "Doha", "Singapore", "Perth",
-    "Auckland", "Honolulu", "Miami"
+    "Auckland", "Miami"
   ],
   "min_elevation": 5,
   "max_range": 0,
@@ -111,8 +113,7 @@ Why this set (`min_elevation: 5°` adds a realistic horizon mask so passes feel 
 | **Singapore** | Indo-Pacific equatorial. | US partner; hosts US Navy Logistics Group Western Pacific. |
 | **Perth** | Southern hemisphere / Indian Ocean. | Australia (5 Eyes; long-standing US/UK signals-intel cooperation). |
 | **Auckland** | SW Pacific + southern leg of the orbit. | New Zealand (5 Eyes). |
-| **Honolulu** | Central Pacific. **Closes the 130°-wide Pacific hole** between Auckland and Miami. | US (Pacific Fleet HQ). |
-| **Miami** | Western Atlantic / Caribbean. **Closes the Atlantic hole** between Auckland (via Honolulu) and Madrid. | US east coast. |
+| **Miami** | Western Atlantic / Caribbean. **Picks up the orbit-2 ascending lat-26.5° pass** which is one of the AOI-band imaging passes the rogue jams. | US east coast. |
 
 #### 4.3.1 Coverage check
 
@@ -122,7 +123,7 @@ At MEO (`alt ≈ 3 622 km`) with `min_elevation = 5°`, each station's visibilit
 Δ = arccos(R / r · cos ε) − ε  ≈  45.4°
 ```
 
-(`R = 6 378 km`, `r = 10 000 km`, `ε = 5°`). Footprint longitudes (the spacecraft's `±28.5°` latitude range fits inside every station's latitude visibility window):
+(`R = 6 378 km`, `r = 10 000 km`, `ε = 5°`). Footprint longitudes (the spacecraft's `±37.5°` latitude range fits inside every station's latitude visibility window):
 
 ```text
 Madrid    [ -49°,  +37°]
@@ -130,11 +131,10 @@ Doha      [  +7°,  +96°]
 Singapore [ +59°, +149°]
 Perth     [ +71°, +161°]
 Auckland  [+130°, -140°]   (wraps the antimeridian)
-Honolulu  [+157°, -113°]   (wraps the antimeridian)
 Miami     [-125°,  -35°]
 ```
 
-Every adjacent pair overlaps; worst-case overlap between **Auckland → Honolulu** is ~27°, which is comfortable. No dead longitudes, no dead latitudes — the spacecraft is in view of at least one station for ~100% of the orbit.
+The orbit's RAAN (242°) and inclination (37.5°) are tuned so the ground track threads this chain with no large coverage gaps over the workshop window. Honolulu was originally in the catalogue but the new ground track stays north of its visibility cone for the orbits this scenario covers, so it has been removed. **If you change the orbit, re-check coverage against the catalog in `docs/scenarios/ground-stations.md` before the dry-run.**
 
 #### 4.3.2 Cities deliberately not used
 
@@ -177,7 +177,7 @@ We **start with `N = 2` blue teams** to keep the first end-to-end test simple, b
 | Blue Alpha | Duty crew #1 | Human (Operator UI) | `Main` |
 | Blue Bravo | Duty crew #2 | Human (Operator UI) | `Main` |
 | _… up to Blue Hotel for 8-team mode_ | | | |
-| Phantom | Rogue | **Scripted** (`cyber_defender.py`) | `Rogue` |
+| Rogue | Adversary (`PHANTOM` callsign) | **Scripted** (`cyber_defender.py`) | `Rogue` |
 
 ### 6.2 Why all blue teams share the spacecraft
 
@@ -197,7 +197,7 @@ This means the rogue's replay attack has to **target a specific team's frequency
     "key":  73, "frequency": 612, "collection": "Main", "color": "#1E90FF" },
   { "enabled": true, "id": 100413, "password": "BR4MK7", "name": "Blue Bravo",
     "key": 119, "frequency": 745, "collection": "Main", "color": "#4FC3F7" },
-  { "enabled": true, "id": 200733, "password": "PH7K1P", "name": "Phantom",
+  { "enabled": true, "id": 200733, "password": "PH7K1P", "name": "Rogue",
     "key":  11, "frequency": 905, "collection": "Rogue", "color": "#FF1744" }
 ]
 ```
@@ -380,7 +380,7 @@ This is dressing only; the ground-truth questions are about **cyber**, not count
 #### A8. Downlink jamming over AOI imaging Pass #1
 
 - **Type**: active (broadcast jammer across all blue freqs, fired during an AOI overhead pass).
-- **Window**: **`T_AOI_1 ± 90 s`** (~180 s total) — placeholder `T_AOI_1 ≈ 8 700 s`, **lock the exact value from a dry-run** (see note below).
+- **Window**: **`T_AOI_1 ± 90 s`** (~180 s total) — placeholder `T_AOI_1 ≈ 11 200 s` (orbit-2 ascending pass through the lat-26.5° band, longitude ≈ Caribbean/Miami arc), **lock the exact value from a dry-run** (see note below).
 - **Design intent**: the *narrative* effect — "you can't downlink your imagery from this pass". Teams are most likely to be capturing during AOI overhead, so jamming the downlink at exactly that moment makes the imagery they want most expensive to retrieve. They have to wait for a non-AOI pass over a different ground station, or hop frequency.
 - **Mechanism**:
 
@@ -400,13 +400,13 @@ This is dressing only; the ground-truth questions are about **cyber**, not count
 - **Mitigation**: frequency hop via `telemetry` for each team independently before the next AOI pass.
 - **Forensic question target**: "During which imaging pass did downlink fail?" / "Which ground station(s) saw the jammed downlink?" — both answers depend on `T_AOI_1`'s actual value once the orbit is dry-run.
 
-> **Locking AOI pass times**: with `SMA = 10 000 km, e = 0.015, i = 28.5°, RAAN = 200°, ω = 0°, ν₀ = 0°` and a non-trivial Earth rotation rate, the exact sim-time at which the ground track reaches `(26.5° N, 56° E)` is sensitive to the `simulation.epoch` and integrator. **Run the JSON once, watch `admin_query_data` for the spacecraft's GPS lat/lon, and capture the two AOI overhead times.** Patch them into `cyber_defender.py` as `T_AOI_1`, `T_AOI_2` constants. Until then, leave the placeholders (`8 700 s`, `13 600 s`) and treat them as approximate.
+> **Locking AOI pass times**: with `SMA = 10 000 km, e = 0.015, i = 37.5°, RAAN = 242°, ω = 0°, ν₀ = 0°` and the `2026/02/02 12:00 UTC` epoch, the analytic geometry puts the orbit-1 descending lat-26.5° pass at `t ≈ 3 730 s, lon ≈ 54° E` (≈ Hormuz, **phase 1** — landing inside the GPS-spoof / GPS-jam windows so operators take a baseline Hormuz image while their GPS is being attacked), the orbit-2 ascending pass at `t ≈ 11 200 s, lon ≈ -80° E` (Caribbean / Miami arc), and the orbit-2 descending pass at `t ≈ 13 700 s, lon ≈ 13° E` (Mediterranean / Madrid arc). The phase-2b jams (A8/A11) target the two orbit-2 passes — both are in the same lat-26.5° imaging band as Hormuz even though they cross different longitudes. Exact sim-times still depend on integrator drift, so **run the JSON once, watch `admin_query_data` for the spacecraft's GPS lat/lon, and capture the two AOI overhead times.** Patch them into `cyber_defender.py` as `T_AOI_1`, `T_AOI_2` constants. Until then, leave the placeholders (`11 200 s`, `13 700 s`) and treat them as approximate.
 
 #### A11. Downlink jamming over AOI imaging Pass #2
 
 - **Type**: active (same mechanism as A8, second AOI overhead).
-- **Window**: **`T_AOI_2 ± 90 s`** — placeholder `T_AOI_2 ≈ 13 600 s` (one orbital period after `T_AOI_1`), again **lock from dry-run**.
-- **Design intent**: a second hit at the *same* AOI but a different ground station (the spacecraft is over a different segment of the network 2.77 h later). Lets teams realise the jam is **AOI-locked, not station-locked**, and that frequency-hopping after Pass #1 actually pays off if they did it.
+- **Window**: **`T_AOI_2 ± 90 s`** — placeholder `T_AOI_2 ≈ 13 700 s` (the orbit-2 descending lat-26.5° pass over the Mediterranean / Madrid arc, ~2 500 s after `T_AOI_1`), again **lock from dry-run**.
+- **Design intent**: a second hit on the *same* lat-26.5° imaging band but on the descending leg — and over a different ground station 2 500 s later. Lets teams realise the jam is **band-locked, not station-locked**, and that frequency-hopping after Pass #1 actually pays off if they did it. (Operators have already seen lat-26.5° cleanly during the orbit-1 descending pass over Hormuz at `t ≈ 3 730 s` in phase 1, so they know what an *unjammed* AOI-band downlink should look like.)
 - **Mechanism**: identical to A8 — `T_AOI_2 ± 90 s`, all blue freqs, `power=3.0 W`.
 - **Signature**: same as A8 but on a different ground station's pass. Teams who hopped frequency after Pass #1 should see either reduced impact (rogue is jamming the *old* freq) or none (rogue is jamming a freq nobody listens on any more).
 - **Mitigation**: confirms the A8 mitigation worked. Otherwise: hop now.
@@ -505,7 +505,7 @@ When this spec is approved, three artefacts get produced (all in this folder):
 ### 11.1 `cyber_defender.json`
 
 - `simulation`, `universe`, `ground_stations` per §3, §4.
-- `teams[]`: 2 blue + 1 Phantom (§ 6.3).
+- `teams[]`: 2 blue + 1 Rogue (§ 6.3).
 - `assets.space[]`: `SC_OPS`, `SC_ROGUE` (§7).
 - `assets.collections[]`: `Main: ["SC_OPS"]`, `Rogue: ["SC_ROGUE"]`.
 - `objects.ground[]`: minimal Hormuz cluster (§8).
@@ -521,7 +521,7 @@ from src import Scenario, commands, replay, rf_catalog
 from src.cyber_replay import MultiTeamCaptureSequence, MultiTeamReplaySequence
                              # ↑ NEW helpers — to be added in src/cyber_replay.py
 
-scenario = Scenario(team_name="Phantom", config_path=_config_path)
+scenario = Scenario(team_name="Rogue", config_path=_config_path)
 scheduler = scenario.scheduler
 
 capture = MultiTeamCaptureSequence(scenario.client,
@@ -580,7 +580,7 @@ These need a quick decision before implementation kicks off:
 3. **Hide PHANTOM until first attack?** *Orbital Sentinel* keeps the rogue visible from `t=0`. Hiding it (`visualization.hide: true`) until ~6 000 s would force operators to use the EM sensor for discovery — more authentic but adds workshop friction. *Recommendation*: keep visible.
 4. **A10 GPS tamper offset.** Confirm against XTCE that the GPS user-data begins with the position `Vector3`. If preceded by a header field, shift `Offset Bytes`. *Action*: dry-run, fetch schema, lock offset before ship.
 5. **Per-team replay quota X.** `X = 2` per team gives 4 captures with 2 blues → small pool, every replay distinguishable. With 8 blues, raise to `X = 3` for ~24-capture pool. *Recommendation*: parameterise on `len(enemies)`.
-6. **AOI overhead times `T_AOI_1` / `T_AOI_2`** (used by A8 and A11). Cannot be predicted from JSON alone — depends on `simulation.epoch`, integrator, and Earth rotation. *Action*: dry-run, log GPS lat/lon, find the two sim-times where the ground track is closest to `(26.5° N, 56° E)`, patch into `cyber_defender.py`. Until then, placeholder values `8 700 s` / `13 600 s` are good-enough approximations for sequencing checks.
+6. **AOI overhead times `T_AOI_1` / `T_AOI_2`** (used by A8 and A11). Cannot be predicted exactly from JSON alone — depends on `simulation.epoch`, integrator drift, and Earth rotation. The chosen orbit (`i = 37.5°, RAAN = 242°`) and `2026/02/02 12:00 UTC` epoch put the orbit-1 descending Hormuz pass inside the phase-1 GPS-attack windows (`t ≈ 3 730 s`), and the two phase-2b lat-26.5° passes over the Caribbean / Miami arc (`t ≈ 11 200 s`) and Mediterranean / Madrid arc (`t ≈ 13 700 s`). *Action*: dry-run, log GPS lat/lon, find the two phase-2b sim-times where the ground track is in the lat-26.5°N band, patch into `cyber_defender.py`. Until then, placeholder values `11 200 s` / `13 700 s` are good-enough approximations for sequencing checks.
 7. **Uplink-jam duty cycle.** `8 s ON / 32 s OFF` (20%) is the design target for A7 and gives the cleanest "~80% success rate" question. If the jammer's effective radius / power means a single ON pulse only damages a smaller fraction of attempts, raise `on_seconds` (e.g. 12/40 = 30%) after the dry-run. *Action*: tune from observed command-success rate.
 
 ---

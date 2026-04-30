@@ -1,6 +1,6 @@
 {
 	"simulation": {
-		"epoch": "2026/04/15 07:30:00",
+		"epoch": "2026/02/02 12:00:00",
 		"speed": 5.0,
 		"step_size": 0.12,
 		"integrator": "Euler",
@@ -21,7 +21,6 @@
 			"Singapore",
 			"Perth",
 			"Auckland",
-			"Honolulu",
 			"Miami"
 		],
 		"min_elevation": 5,
@@ -33,7 +32,7 @@
 			"enabled": true,
 			"id": 200733,
 			"password": "PH7K1P",
-			"name": "Phantom",
+			"name": "Rogue",
 			"key": 11,
 			"frequency": 905,
 			"collection": "Rogue",
@@ -41,8 +40,8 @@
 		},
 		{
 			"enabled": true,
-			"id": 100412,
-			"password": "AL9XQ2",
+			"id": 111111,
+			"password": "AAAAAA",
 			"name": "Blue Alpha",
 			"key": 73,
 			"frequency": 612,
@@ -51,8 +50,8 @@
 		},
 		{
 			"enabled": true,
-			"id": 100413,
-			"password": "BR4MK7",
+			"id": 222222,
+			"password": "BBBBBB",
 			"name": "Blue Bravo",
 			"key": 119,
 			"frequency": 745,
@@ -70,8 +69,8 @@
 					"values": [
 						10000.0,
 						0.015,
-						28.5,
-						200.0,
+						37.5,
+						242.0,
 						0.0,
 						0.0
 					],
@@ -345,10 +344,10 @@
 					"values": [
 						10000.0,
 						0.015,
-						28.5,
-						200.0,
+						37.5,
+						242.0,
 						0.0,
-						25.0
+						0.01
 					],
 					"offset": [
 						0.0,
@@ -845,9 +844,9 @@
 			"type": "number",
 			"answer": {
 				"unit": "deg",
-				"value": 28.5,
+				"value": 37.5,
 				"tolerance": 1.0,
-				"reason": "The orbit was designed to cover the Hormuz / Arabian Sea AOI from a 28.5° inclination.",
+				"reason": "The orbit was tuned for ground-station coverage across the Madrid → Doha → Singapore → Perth → Auckland → Miami chain; the resulting 37.5° inclination still passes directly over the Hormuz / Arabian Sea AOI on the descending leg of orbit 1.",
 				"score": 5
 			}
 		},
@@ -963,7 +962,7 @@
 				"unit": "MHz",
 				"value": 905,
 				"tolerance": 10,
-				"reason": "The Phantom team is configured at 905 MHz; the EM sensor will resolve a strong carrier at that frequency during replay/jam phases.",
+				"reason": "The Rogue team / PHANTOM spacecraft is configured at 905 MHz; the EM sensor will resolve a strong carrier at that frequency during replay/jam phases.",
 				"score": 5
 			}
 		},
@@ -976,23 +975,22 @@
 				"options": [
 					"Auckland",
 					"Doha",
-					"Honolulu",
 					"Madrid",
 					"Miami",
 					"Perth",
 					"Singapore"
 				],
 				"value": [
-					1
+					2,
+					3
 				],
 				"reason": [
-					"The two AOI passes occur over the Hormuz Strait — the in-view ground station for both is Doha. Update this answer post-dry-run with the actual stations observed; jamming is broadcast across all blue frequencies.",
-					"The two AOI passes occur over the Hormuz Strait — the in-view ground station for both is Doha. Update this answer post-dry-run with the actual stations observed; jamming is broadcast across all blue frequencies.",
-					"The two AOI passes occur over the Hormuz Strait — the in-view ground station for both is Doha. Update this answer post-dry-run with the actual stations observed; jamming is broadcast across all blue frequencies.",
-					"The two AOI passes occur over the Hormuz Strait — the in-view ground station for both is Doha. Update this answer post-dry-run with the actual stations observed; jamming is broadcast across all blue frequencies.",
-					"The two AOI passes occur over the Hormuz Strait — the in-view ground station for both is Doha. Update this answer post-dry-run with the actual stations observed; jamming is broadcast across all blue frequencies.",
-					"The two AOI passes occur over the Hormuz Strait — the in-view ground station for both is Doha. Update this answer post-dry-run with the actual stations observed; jamming is broadcast across all blue frequencies.",
-					"The two AOI passes occur over the Hormuz Strait — the in-view ground station for both is Doha. Update this answer post-dry-run with the actual stations observed; jamming is broadcast across all blue frequencies."
+					"The two phase-2b AOI passes are at lat 26.5°N — orbit-2 ascending crosses near the Caribbean (in view of Miami) and orbit-2 descending crosses the Mediterranean band (in view of Madrid). Update this answer post-dry-run with the actual stations observed; jamming is broadcast across all blue frequencies.",
+					"The two phase-2b AOI passes are at lat 26.5°N — orbit-2 ascending crosses near the Caribbean (in view of Miami) and orbit-2 descending crosses the Mediterranean band (in view of Madrid). Update this answer post-dry-run with the actual stations observed; jamming is broadcast across all blue frequencies.",
+					"The two phase-2b AOI passes are at lat 26.5°N — orbit-2 ascending crosses near the Caribbean (in view of Miami) and orbit-2 descending crosses the Mediterranean band (in view of Madrid). Update this answer post-dry-run with the actual stations observed; jamming is broadcast across all blue frequencies.",
+					"The two phase-2b AOI passes are at lat 26.5°N — orbit-2 ascending crosses near the Caribbean (in view of Miami) and orbit-2 descending crosses the Mediterranean band (in view of Madrid). Update this answer post-dry-run with the actual stations observed; jamming is broadcast across all blue frequencies.",
+					"The two phase-2b AOI passes are at lat 26.5°N — orbit-2 ascending crosses near the Caribbean (in view of Miami) and orbit-2 descending crosses the Mediterranean band (in view of Madrid). Update this answer post-dry-run with the actual stations observed; jamming is broadcast across all blue frequencies.",
+					"The two phase-2b AOI passes are at lat 26.5°N — orbit-2 ascending crosses near the Caribbean (in view of Miami) and orbit-2 descending crosses the Mediterranean band (in view of Madrid). Update this answer post-dry-run with the actual stations observed; jamming is broadcast across all blue frequencies."
 				],
 				"score": 5
 			}

@@ -19,13 +19,20 @@ effect in this scenario:
   See :class:`src.cyber_replay.MultiTeamReplaySequence`.
 
 * **A7 — Light pulsed uplink jam (10 200 → 10 800 s).**
-  20 % duty-cycle pulse jam on Blue Bravo's frequency only.
-  See :func:`src.jamming.schedule_jammer_pulses`.
+  20 % duty-cycle pulse jam on **one** blue team's frequency. The target is
+  picked dynamically from :attr:`Scenario.enemy_teams` (the last enemy team
+  in config order), so renaming or extending the team roster requires no
+  changes here. See :func:`src.jamming.schedule_jammer_pulses`.
 
 * **A8 / A11 — Broadcast downlink jam over AOI imaging passes.**
   Saturating jam on every blue frequency for 180 s centred on each AOI
   overhead. ``T_AOI_1`` / ``T_AOI_2`` are placeholder constants — lock from
   a dry-run (see ``cyber_defender.spec.md`` § 12.6).
+
+Team identity is **never hard-coded** in this script — every blue-team
+detail is read from :attr:`Scenario.enemy_teams` (loaded from the JSON
+config) and refreshed live via :meth:`Scenario.live_enemy_frequencies_by_team`
+through admin queries.
 
 Phases 0 / 1 / 3 are passive — they fire from ``events[]`` in the JSON.
 
@@ -75,10 +82,14 @@ _config_path = os.path.abspath(_config_path)
 
 
 # ---------------------------------------------------------------------------
-# Scenario context — Phantom is the controlling team
+# Scenario context — the "Rogue" team owns the PHANTOM spacecraft
+# ---------------------------------------------------------------------------
+# The team name and asset name are intentionally distinct: in the Operator
+# UI / 3D view the spacecraft is rendered as "[team_name] [asset_name]", so
+# "Rogue Phantom" reads cleanly while "Phantom Phantom" would not.
 # ---------------------------------------------------------------------------
 
-scenario = Scenario(team_name="Phantom", config_path=_config_path)
+scenario = Scenario(team_name="Rogue", config_path=_config_path)
 scheduler = scenario.scheduler
 
 
@@ -158,96 +169,121 @@ def _build_active_sequences() -> None:
 
 
 # ---------------------------------------------------------------------------
-# Live-frequency resolvers (per-team, used by jamming pre_triggers)
+# Live-frequency resolvers (used by jammer pre_trigger hooks)
 # ---------------------------------------------------------------------------
-
-def _team_index(team_name: str) -> int:
-    """Return the index of *team_name* within ``scenario.enemy_teams``."""
-    name_lower = team_name.lower()
-    for i, t in enumerate(scenario.enemy_teams):
-        if t.name.lower() == name_lower:
-            return i
-    raise KeyError(f"No enemy team named '{team_name}'")
-
-
-def live_team_frequencies(team_name: str) -> list[float]:
-    """Live frequency list (single-element) for one named blue team."""
-    try:
-        idx = _team_index(team_name)
-    except KeyError:
-        return []
-    freqs = scenario.live_enemy_frequencies()
-    if idx < len(freqs):
-        return [float(freqs[idx])]
-    return [float(scenario.enemy_teams[idx].frequency)]
-
-
-def live_all_blue_frequencies() -> list[float]:
-    """Live frequency list across every blue team — used for broadcast jams."""
-    return [float(f) for f in scenario.live_enemy_frequencies()]
+# All resolvers operate on team **objects** from ``scenario.enemy_teams``
+# (loaded from the JSON config) and ``scenario.live_enemy_frequencies_by_team``
+# (live admin lookup). No team names are hard-coded.
+# ---------------------------------------------------------------------------
 
 
 def live_jammer_args_all(default_args: dict) -> dict:
     """``pre_trigger`` for broadcast (all-blue) jammer events."""
-    freqs = live_all_blue_frequencies()
+    freqs = [float(f) for f in scenario.live_enemy_frequencies()]
     if not freqs:
         return default_args
     return {**default_args, "frequencies": freqs}
 
 
+def live_jammer_args_for(team):
+    """Build a ``pre_trigger`` that resolves a single team's live frequency."""
+    def _hook(default_args: dict) -> dict:
+        freq = scenario.live_enemy_frequency_for(team)
+        return {**default_args, "frequencies": [float(freq)]}
+    return _hook
+
+
 # ---------------------------------------------------------------------------
 # Defender's static asset id (for guidance_spacecraft pointing).
-# Matches ``assets.space[].id`` in cyber_defender.json.
+# Resolved dynamically via the first enemy team's collection so a rename of
+# the config id (e.g. SC_OPS → DEFENDER) requires no script changes.
 # ---------------------------------------------------------------------------
 
-DEFENDER_ASSET_ID = "SC_OPS"
+_defender_assets = (
+    scenario.config.get_assets_for_team(scenario.enemy_teams[0])
+    if scenario.enemy_teams
+    else []
+)
+DEFENDER_ASSET_ID = _defender_assets[0].id if _defender_assets else "SC_OPS"
+printer.info(
+    f"cyber: defender asset resolved → '{DEFENDER_ASSET_ID}' "
+    f"({_defender_assets[0].name if _defender_assets else 'fallback'})"
+)
 
 
 # ---------------------------------------------------------------------------
-# A7 — Light pulsed uplink jam on Blue Bravo (10 200 → 10 800 s)
+# A7 — Light pulsed uplink jam on a single blue team (10 200 → 10 800 s)
+# ---------------------------------------------------------------------------
+# The target team is picked dynamically — the **last** enemy team in config
+# order. Adjust the index below to single out a different team; the rest of
+# the script (and the question framework) follows automatically.
 # ---------------------------------------------------------------------------
 
-UPLINK_JAM_TARGET = "Blue Bravo"
 UPLINK_JAM_START = 10_200.0
 UPLINK_JAM_END = 10_800.0
 UPLINK_JAM_ON = 8.0
 UPLINK_JAM_PERIOD = 40.0       # 20 % duty cycle
 UPLINK_JAM_POWER = 0.8          # well below A8/A11 saturating power
 
-scheduler.add_event(
-    name=f"Point Jammer at {DEFENDER_ASSET_ID} (uplink jam prep)",
-    trigger_time=UPLINK_JAM_START - 10.0,
-    **commands.guidance_spacecraft("Jammer", DEFENDER_ASSET_ID),
-)
+UPLINK_JAM_TARGET = scenario.enemy_teams[-1] if scenario.enemy_teams else None
 
-_uplink_jam_fallback = [
-    float(scenario.enemy_teams[_team_index(UPLINK_JAM_TARGET)].frequency)
-] if any(t.name == UPLINK_JAM_TARGET for t in scenario.enemy_teams) else [0.0]
+if UPLINK_JAM_TARGET is None:
+    printer.warn(
+        "A7: no enemy teams configured — pulsed uplink jam will be skipped"
+    )
+else:
+    printer.info(
+        f"A7: uplink-jam target picked dynamically → '{UPLINK_JAM_TARGET.name}' "
+        f"(team_id={UPLINK_JAM_TARGET.id}, config_freq={UPLINK_JAM_TARGET.frequency} MHz)"
+    )
 
-schedule_jammer_pulses(
-    scheduler,
-    name=f"Uplink Pulse Jam ({UPLINK_JAM_TARGET})",
-    start=UPLINK_JAM_START,
-    end=UPLINK_JAM_END,
-    on_seconds=UPLINK_JAM_ON,
-    period_seconds=UPLINK_JAM_PERIOD,
-    power=UPLINK_JAM_POWER,
-    fallback_frequencies=_uplink_jam_fallback,
-    frequencies_resolver=lambda name=UPLINK_JAM_TARGET: live_team_frequencies(name),
-)
+    scheduler.add_event(
+        name=f"Point Jammer at {DEFENDER_ASSET_ID} (uplink jam prep)",
+        trigger_time=UPLINK_JAM_START - 10.0,
+        **commands.guidance_spacecraft("Jammer", DEFENDER_ASSET_ID),
+    )
+
+    schedule_jammer_pulses(
+        scheduler,
+        name=f"Uplink Pulse Jam ({UPLINK_JAM_TARGET.name})",
+        start=UPLINK_JAM_START,
+        end=UPLINK_JAM_END,
+        on_seconds=UPLINK_JAM_ON,
+        period_seconds=UPLINK_JAM_PERIOD,
+        power=UPLINK_JAM_POWER,
+        fallback_frequencies=[float(UPLINK_JAM_TARGET.frequency)],
+        frequencies_resolver=lambda t=UPLINK_JAM_TARGET: [
+            float(scenario.live_enemy_frequency_for(t))
+        ],
+    )
 
 
 # ---------------------------------------------------------------------------
 # A8 / A11 — Broadcast downlink jam centred on AOI imaging passes
 #
 # These two times must be **locked from a dry-run** (see spec § 12.6).
-# The placeholder values below assume one orbital period (~9 952 s) between
-# AOI passes, with the first pass landing ~half-way through the second
-# orbit.
+# Placeholders below are derived from the analytic geometry of the chosen
+# orbit (SMA=10 000 km, e=0.015, i=37.5°, RAAN=242°, ω=0°, ν=0°) and the
+# 2026/02/02 12:00 UTC epoch:
+#   * Orbit-1 descending pass at lat 26.5° N hits geographic lon ≈ 54° E
+#     (≈ Hormuz) at t ≈ 3 730 s — this falls in **phase 1** (passive),
+#     overlapping the GPS spoof + jam events so operators take a baseline
+#     Hormuz image while their GPS is being spoofed/jammed (great pedagogy
+#     for the GPS-attribution questions).
+#   * Orbit-2 ascending pass at t ≈ 11 200 s lands at lon ≈ -80° E
+#     (Caribbean band, lat 26.5° N).
+#   * Orbit-2 descending pass at t ≈ 13 700 s lands at lon ≈ 13° E
+#     (Mediterranean band, lat 26.5° N).
+#   Both orbit-2 passes fall inside phase 2b (9 000 – 15 000 s), giving the
+#   rogue a clean window to broadcast-jam the imagery downlink. They are in
+#   the same imaging lat-band as Hormuz even though they cross different
+#   longitudes — operators are still capturing/downlinking high-priority
+#   imagery during these passes.
+# Lock both values to the actual GPS trace once the scenario is dry-run.
 # ---------------------------------------------------------------------------
 
-T_AOI_1 = 8_700.0
-T_AOI_2 = 13_600.0
+T_AOI_1 = 11_200.0      # ≈ orbit-2 ascending pass (Caribbean band)
+T_AOI_2 = 13_700.0      # ≈ orbit-2 descending pass (Mediterranean band)
 AOI_HALF = 90.0                 # 180 s window each (T ± 90 s)
 AOI_JAM_POWER = 3.0             # saturating — clean broadcast outage
 
