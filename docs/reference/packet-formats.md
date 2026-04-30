@@ -170,6 +170,45 @@ Notes:
 
 If a scenario customises the secondary header config, the XTCE schema you fetch will reflect the new layout — always trust the schema over this table.
 
+### APID catalog
+
+Studio ships with the following APIDs already registered for telemetry. Each appears in the XTCE schema you fetch via [`get_packet_schemas`](../api-reference/ground-requests.md#get_packet_schemas). APIDs are grouped by subsystem; ranges are reserved for future expansion.
+
+Source: `USpaceRangeSubsystem::InitializeSpacePacketDefinitions` (`studio/Plugins/SpaceRange/Source/SpaceRange/Private/Subsystems/SpaceRangeSubsystem.cpp`).
+
+| APID | Name | XTCE struct | Subsystem | Emitted when |
+| ---: | --- | --- | --- | --- |
+| **System (100-199)** | | | | |
+| 100 | Ping | `PingMessage` | `System` | Periodic; every `controller.ping_interval`. |
+| 101 | Schedule Report | `ScheduleReportMessage` | `System` | Reply to [`get_schedule`](../api-reference/spacecraft-commands.md#get_schedule). |
+| **Power (200-299)** | | | | |
+| 200 | Battery | `BatteryMessage` | `PowerSystem` | Has a `Battery` component. |
+| 201 | Power Source | `PowerMessage` | `PowerSystem` | Per-source power (`Solar Panel`, etc.). |
+| 202 | Power Node | `PowerNodeMessage` | `PowerSystem` | Per-consumer node breakdown. |
+| **Sensors (300-399)** | | | | |
+| 300 | Magnetometer | `TAMDataMessage` | `Sensors` | Has a `Magnetometer` component. |
+| 301 | GPS | `GPSDataMessage` | `Sensors` | Has a `GPS Sensor` component. |
+| 302 | EM Sensor | `ElectromagneticSensorMessage` | `Sensors` | Has an `EM Sensor` component (and it's enabled — see [components.md § EM Sensor](../scenarios/components.md)). |
+| 303 | CCD | `CCDDataMessage` | `Sensors` | Has a `Charge Coupled Device` (or `Camera`) component. |
+| 304 | Gyroscope | `GyroscopeDataMessage` | `Sensors` | Has a `Gyroscope` component. |
+| **ADCS (400-499)** | | | | |
+| 400 | Computer | `ComputerMessage` | `ADCS` | Has a `Computer` component. |
+| 401 | Reaction Wheels | `ReactionWheelsMessage` | `ADCS` | Has a `Reaction Wheels` component. |
+| 402 | Dynamics | `DynamicsMessage` | `ADCS` | Always (covers attitude / body rates). |
+| 403 | Thruster | `ThrusterOperationMessage` | `ADCS` | Has a `Cold Gas Thruster` or `Ion Thruster`. |
+| 404 | Formation Flying | `FormationFlyingMessage` | `ADCS` | Active during a [`rendezvous`](../api-reference/spacecraft-commands.md#rendezvous). |
+| **Telemetry / RF (500-599)** | | | | |
+| 500 | Receiver | `ReceiverMessage` | `Telemetry` | Has a `Receiver`. |
+| 501 | Transmitter | `TransmitterMessage` | `Telemetry` | Has a `Transmitter`. |
+| 502 | Jammer | `JammerMessage` | `Telemetry` | Has a `Jammer`. |
+| 503 | Storage | `StorageMessage` | `Telemetry` | Has a `Storage`. |
+
+Notes for authoring **Cyber events** (telemetry tamper overlays, see [scenarios/events.md § Cyber](../scenarios/events.md#cyber-events)):
+
+- Pick an APID **whose component is actually present** on the targeted spacecraft. Tampering APID 502 on a spacecraft with no `Jammer` is a no-op because the packet is never emitted in the first place.
+- The byte offsets you patch are **relative to the start of CCSDS user data**, not the packet start. The first 30 bytes (6 primary + 24 secondary header) are not patchable from a Cyber event.
+- The full byte layout for Ping (APID 100) is documented below; for any other APID, fetch the live XTCE schema with [`get_packet_schemas`](../api-reference/ground-requests.md#get_packet_schemas) and offset against the field of interest.
+
 ### User Data Field (XTCE-defined)
 
 The user data field's bytes follow the order and types declared in the XTCE schema for the matching APID. Encoding rules are uniform:

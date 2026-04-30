@@ -8,6 +8,7 @@ Exposes all public classes and helpers so scenario scripts can use a single impo
 
     from src import load_config, EventScheduler, SpaceRangeClient, commands
     from src import uplink_envelope, rf_catalog, replay, cyber_replay, downlink_codec
+    from src import jamming
     from src import prompt_credentials
 """
 
@@ -25,6 +26,7 @@ from . import rf_catalog
 from . import replay
 from . import cyber_replay
 from . import downlink_codec
+from . import jamming
 from .utils import decode_payload
 
 __all__ = [
@@ -48,5 +50,6 @@ __all__ = [
     "replay",
     "cyber_replay",
     "downlink_codec",
+    "jamming",
     "printer",
 ]

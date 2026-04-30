@@ -1,0 +1,1145 @@
+{
+	"simulation": {
+		"epoch": "2026/04/15 07:30:00",
+		"speed": 5.0,
+		"step_size": 0.12,
+		"integrator": "Euler",
+		"end_time": 0.0
+	},
+	"universe": {
+		"atmosphere": false,
+		"magnetosphere": true,
+		"gps": true,
+		"cloud_opacity": 0.85,
+		"cloud_contrast": 2.5,
+		"ambient_light": 0.25
+	},
+	"ground_stations": {
+		"locations": [
+			"Madrid",
+			"Doha",
+			"Singapore",
+			"Perth",
+			"Auckland",
+			"Honolulu",
+			"Miami"
+		],
+		"min_elevation": 5,
+		"max_range": 0,
+		"scale": 100
+	},
+	"teams": [
+		{
+			"enabled": true,
+			"id": 200733,
+			"password": "PH7K1P",
+			"name": "Phantom",
+			"key": 11,
+			"frequency": 905,
+			"collection": "Rogue",
+			"color": "#FF1744"
+		},
+		{
+			"enabled": true,
+			"id": 100412,
+			"password": "AL9XQ2",
+			"name": "Blue Alpha",
+			"key": 73,
+			"frequency": 612,
+			"collection": "Main",
+			"color": "#1E90FF"
+		},
+		{
+			"enabled": true,
+			"id": 100413,
+			"password": "BR4MK7",
+			"name": "Blue Bravo",
+			"key": 119,
+			"frequency": 745,
+			"collection": "Main",
+			"color": "#4FC3F7"
+		}
+	],
+	"assets": {
+		"space": [
+			{
+				"id": "SC_OPS",
+				"name": "Watchtower",
+				"orbit": {
+					"planet": "Earth",
+					"values": [
+						10000.0,
+						0.015,
+						28.5,
+						200.0,
+						0.0,
+						0.0
+					],
+					"offset": [
+						0.0,
+						0.0,
+						0.0,
+						0.0,
+						0.0,
+						0.001
+					]
+				},
+				"physics": {
+					"override_mass": true,
+					"mass": 120.0,
+					"center_of_mass": [
+						0.0,
+						0.0,
+						0.0
+					],
+					"inertia_tensor": [
+						[
+							12.0,
+							0.0,
+							0.0
+						],
+						[
+							0.0,
+							12.0,
+							0.0
+						],
+						[
+							0.0,
+							0.0,
+							12.0
+						]
+					]
+				},
+				"visualization": {
+					"mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/ZenSat/BP_Z_SC_ZenSat_Chassis",
+					"scale": 1.0,
+					"offset": [
+						0.0,
+						0.0,
+						0.12
+					]
+				},
+				"controller": {
+					"safe_fraction": 0.1,
+					"capture_tax": 0.001,
+					"downlink_tax": 0.005,
+					"ping_interval": 20.0,
+					"reset_interval": 60.0,
+					"jamming_multiplier": 100.0,
+					"enable_rpo": false,
+					"enable_intercept": false
+				},
+				"components": [
+					{
+						"class": "Solar Panel",
+						"name": "Solar Panel +X",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.8,
+							0.276313,
+							-0.2
+						],
+						"rotation": [
+							35.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Area": 0.3,
+							"Efficiency": 0.4,
+							"Mass": 10.0
+						}
+					},
+					{
+						"class": "Solar Panel",
+						"name": "Solar Panel -X",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							-0.8,
+							0.276313,
+							-0.2
+						],
+						"rotation": [
+							35.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Area": 0.3,
+							"Efficiency": 0.4,
+							"Mass": 10.0
+						}
+					},
+					{
+						"class": "Battery",
+						"name": "Battery",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Nominal Capacity": 80.0,
+							"Charge Fraction": 0.5,
+							"Mass": 5.0
+						}
+					},
+					{
+						"class": "Computer",
+						"name": "Computer",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Reaction Wheels",
+						"name": "Reaction Wheels",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Mass": 9.0
+						}
+					},
+					{
+						"class": "Receiver",
+						"name": "Receiver",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							-0.36,
+							-0.16
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Antenna Gain": 3.0,
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Transmitter",
+						"name": "Transmitter",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							-0.36,
+							-0.16
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Mass": 1.0
+						}
+					},
+					{
+						"class": "Storage",
+						"name": "Storage",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							-0.2
+						],
+						"data": {
+							"Mass": 4.0
+						}
+					},
+					{
+						"class": "Camera",
+						"name": "Camera",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							-0.36,
+							-0.16
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Mass": 5.0
+						}
+					},
+					{
+						"class": "EM Sensor",
+						"name": "EM Sensor",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							-0.36,
+							-0.16
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "GPS Sensor",
+						"name": "GPS Sensor",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Magnetometer",
+						"name": "Magnetometer",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Mass": 2.0
+						}
+					}
+				]
+			},
+			{
+				"id": "SC_ROGUE",
+				"name": "Phantom",
+				"orbit": {
+					"planet": "Earth",
+					"values": [
+						10000.0,
+						0.015,
+						28.5,
+						200.0,
+						0.0,
+						25.0
+					],
+					"offset": [
+						0.0,
+						0.0,
+						0.0,
+						0.0,
+						0.0,
+						0.001
+					]
+				},
+				"physics": {
+					"override_mass": true,
+					"mass": 750.0,
+					"center_of_mass": [
+						0.0,
+						0.0,
+						0.0
+					],
+					"inertia_tensor": [
+						[
+							900.0,
+							0.0,
+							0.0
+						],
+						[
+							0.0,
+							800.0,
+							0.0
+						],
+						[
+							0.0,
+							0.0,
+							600.0
+						]
+					]
+				},
+				"visualization": {
+					"mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/MRO/BP_Z_SC_MRO_Chassis",
+					"scale": 10.0,
+					"offset": [
+						0.0,
+						0.0,
+						0.0
+					]
+				},
+				"controller": {
+					"safe_fraction": 0.05,
+					"capture_tax": 0.001,
+					"downlink_tax": 0.005,
+					"ping_interval": 20.0,
+					"reset_interval": 60.0,
+					"jamming_multiplier": 100.0,
+					"enable_rpo": false,
+					"enable_intercept": true
+				},
+				"components": [
+					{
+						"class": "Solar Panel",
+						"name": "Solar Panel",
+						"mesh": "None",
+						"enabled": true,
+						"data": {
+							"Area": 0.5,
+							"Efficiency": 0.4,
+							"Mass": 10.0
+						}
+					},
+					{
+						"class": "Battery",
+						"name": "Battery",
+						"mesh": "None",
+						"enabled": true,
+						"data": {
+							"Nominal Capacity": 200.0,
+							"Charge Fraction": 0.8,
+							"Mass": 8.0
+						}
+					},
+					{
+						"class": "Computer",
+						"name": "Computer",
+						"mesh": "None",
+						"enabled": true,
+						"data": {
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "External Force Torque",
+						"name": "Reaction Wheels",
+						"mesh": "None",
+						"enabled": true,
+						"data": {
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Receiver",
+						"name": "Receiver",
+						"mesh": "None",
+						"enabled": true,
+						"rotation": [
+							90.0,
+							90.0,
+							0.0
+						],
+						"data": {
+							"Antenna Gain": 500.0,
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Transmitter",
+						"name": "Transmitter",
+						"mesh": "None",
+						"enabled": true,
+						"rotation": [
+							90.0,
+							90.0,
+							0.0
+						],
+						"data": {
+							"Mass": 1.0
+						}
+					},
+					{
+						"class": "Jammer",
+						"name": "Jammer",
+						"mesh": "None",
+						"enabled": true,
+						"rotation": [
+							90.0,
+							90.0,
+							0.0
+						],
+						"data": {
+							"Power": 100.0,
+							"Antenna Gain": 15.0,
+							"Lookup": "RFPattern.csv"
+						}
+					},
+					{
+						"class": "Text",
+						"name": "Text Front",
+						"enabled": true,
+						"position": [
+							13.418,
+							40.162,
+							-8.064
+						],
+						"rotation": [
+							-1.4,
+							77.7,
+							-97.2
+						],
+						"data": {
+							"Text": "PHANTOM",
+							"Color": "#FF1744",
+							"Scale": 50.0
+						}
+					},
+					{
+						"class": "Text",
+						"name": "Text Back",
+						"enabled": true,
+						"position": [
+							12.061,
+							40.155,
+							-8.36
+						],
+						"rotation": [
+							178.6,
+							-77.7,
+							-82.6
+						],
+						"data": {
+							"Text": "PHANTOM",
+							"Color": "#FF1744",
+							"Scale": 50.0
+						}
+					}
+				]
+			}
+		],
+		"collections": [
+			{
+				"id": "Main",
+				"space_assets": [
+					"SC_OPS"
+				]
+			},
+			{
+				"id": "Rogue",
+				"space_assets": [
+					"SC_ROGUE"
+				]
+			}
+		]
+	},
+	"objects": {
+		"ground": [
+			{
+				"id": "GO_001",
+				"type": "vessel",
+				"name": "Hormuz Lead",
+				"planet": "Earth",
+				"latitude": 26.5,
+				"longitude": 56.5,
+				"altitude": 1,
+				"scale": 220,
+				"color": "#00FF00",
+				"data": {
+					"heading": 95.0,
+					"speed": 8.0
+				}
+			},
+			{
+				"id": "GO_002",
+				"type": "vessel",
+				"name": "Hormuz Trail",
+				"planet": "Earth",
+				"latitude": 26.4,
+				"longitude": 56.6,
+				"altitude": 1,
+				"scale": 220,
+				"color": "#00FF00",
+				"data": {
+					"heading": 95.0,
+					"speed": 7.5
+				}
+			},
+			{
+				"id": "GO_003",
+				"type": "vessel",
+				"name": "Hormuz Flank",
+				"planet": "Earth",
+				"latitude": 26.6,
+				"longitude": 56.4,
+				"altitude": 1,
+				"scale": 220,
+				"color": "#00FF00",
+				"data": {
+					"heading": 100.0,
+					"speed": 6.0
+				}
+			},
+			{
+				"id": "GO_004",
+				"type": "vessel",
+				"name": "Hormuz Picket",
+				"planet": "Earth",
+				"latitude": 26.3,
+				"longitude": 56.3,
+				"altitude": 1,
+				"scale": 220,
+				"color": "#00FF00",
+				"data": {
+					"heading": 86.0,
+					"speed": 5.0
+				}
+			},
+			{
+				"id": "GO_005",
+				"type": "vessel",
+				"name": "Hormuz Tender",
+				"planet": "Earth",
+				"latitude": 26.7,
+				"longitude": 56.7,
+				"altitude": 1,
+				"scale": 220,
+				"color": "#00FF00",
+				"data": {
+					"heading": 92.0,
+					"speed": 4.5
+				}
+			},
+			{
+				"id": "GO_006",
+				"type": "vessel",
+				"name": "Spoof Decoy A",
+				"planet": "Earth",
+				"latitude": 24.4,
+				"longitude": 58.5,
+				"altitude": 1,
+				"scale": 220,
+				"color": "#FFFF00",
+				"data": {
+					"heading": 270.0,
+					"speed": 0.0
+				}
+			},
+			{
+				"id": "GO_007",
+				"type": "vessel",
+				"name": "Spoof Decoy B",
+				"planet": "Earth",
+				"latitude": 24.3,
+				"longitude": 58.4,
+				"altitude": 1,
+				"scale": 220,
+				"color": "#FFFF00",
+				"data": {
+					"heading": 270.0,
+					"speed": 0.0
+				}
+			}
+		]
+	},
+	"events": [
+		{
+			"Enabled": true,
+			"Name": "GPS Spoof Region — Hormuz ON",
+			"Time": 1800.0,
+			"Repeat": false,
+			"Interval": 1.0,
+			"Type": "GPS",
+			"Data": {
+				"Type": "Spoofing",
+				"Enabled": true,
+				"Origin Latitude": 26.5,
+				"Origin Longitude": 56.5,
+				"Origin Altitude": 3622000.0,
+				"Radius": 500000.0,
+				"Spoof Latitude": -26.5,
+				"Spoof Longitude": -123.5,
+				"Spoof Altitude": 0.0
+			}
+		},
+		{
+			"Enabled": true,
+			"Name": "GPS Jammer Add — Hormuz",
+			"Time": 2400.0,
+			"Repeat": false,
+			"Interval": 1.0,
+			"Type": "GPS",
+			"Data": {
+				"Type": "Jamming",
+				"Action": "add",
+				"Jammer Latitude": 26.0,
+				"Jammer Longitude": 56.0,
+				"Jammer Altitude": 50000.0,
+				"Effective Radiated Power": 250000.0,
+				"Path Loss Exponent": 2.0
+			}
+		},
+		{
+			"Enabled": true,
+			"Name": "Storage Corruption",
+			"Time": 4200.0,
+			"Repeat": false,
+			"Interval": 1.0,
+			"Type": "Spacecraft",
+			"Target": "Storage",
+			"Assets": [
+				"SC_OPS"
+			],
+			"Data": {
+				"Corruption Fraction": 0.1,
+				"Corruption Intensity": 0.2
+			}
+		},
+		{
+			"Enabled": true,
+			"Name": "GPS Sensor Hard Fault",
+			"Time": 5400.0,
+			"Repeat": false,
+			"Interval": 1.0,
+			"Type": "Spacecraft",
+			"Target": "GPS Sensor",
+			"Assets": [
+				"SC_OPS"
+			],
+			"Data": {
+				"Fault State": 4
+			}
+		},
+		{
+			"Enabled": true,
+			"Name": "GPS Jammer Remove — Hormuz",
+			"Time": 5800.0,
+			"Repeat": false,
+			"Interval": 1.0,
+			"Type": "GPS",
+			"Data": {
+				"Type": "Jamming",
+				"Action": "remove",
+				"Index": "0"
+			}
+		},
+		{
+			"Enabled": true,
+			"Name": "GPS Spoof Region — Hormuz OFF",
+			"Time": 6200.0,
+			"Repeat": false,
+			"Interval": 1.0,
+			"Type": "GPS",
+			"Data": {
+				"Type": "Spoofing",
+				"Enabled": false
+			}
+		},
+		{
+			"Enabled": true,
+			"Name": "Tamper Ping State",
+			"Time": 15200.0,
+			"Repeat": false,
+			"Interval": 1.0,
+			"Type": "Cyber",
+			"Target": "Spacecraft",
+			"Assets": [
+				"SC_OPS"
+			],
+			"Data": {
+				"APID": 100,
+				"SubType": 0,
+				"Offset Bytes": 2,
+				"Payload": "FLAG-OWN",
+				"Encoding": "ascii",
+				"Expiry Seconds": 600.0,
+				"Clear On Reset": true
+			}
+		},
+		{
+			"Enabled": true,
+			"Name": "Tamper GPS Position",
+			"Time": 15600.0,
+			"Repeat": false,
+			"Interval": 1.0,
+			"Type": "Cyber",
+			"Target": "Spacecraft",
+			"Assets": [
+				"SC_OPS"
+			],
+			"Data": {
+				"APID": 301,
+				"SubType": -1,
+				"Offset Bytes": 0,
+				"Payload": "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
+				"Encoding": "hex",
+				"Expiry Seconds": 600.0,
+				"Clear On Reset": true
+			}
+		},
+		{
+			"Enabled": true,
+			"Name": "Reaction Wheel Stuck",
+			"Time": 15800.0,
+			"Repeat": false,
+			"Interval": 1.0,
+			"Type": "Spacecraft",
+			"Target": "Reaction Wheels",
+			"Assets": [
+				"SC_OPS"
+			],
+			"Data": {
+				"Stuck Index": 0
+			}
+		},
+		{
+			"Enabled": true,
+			"Name": "Battery Power Spikes",
+			"Time": 16100.0,
+			"Repeat": false,
+			"Interval": 1.0,
+			"Type": "Spacecraft",
+			"Target": "Battery-IntermittentConnectionErrorModel",
+			"Assets": [
+				"SC_OPS"
+			],
+			"Data": {
+				"Intermittent Mean": 1,
+				"Intermittent Std": 2
+			}
+		}
+	],
+	"questions": [
+		{
+			"section": "Orbital Operations",
+			"title": "What is the Semi-Major Axis (km) of Watchtower's orbit?",
+			"description": "Use the GPS telemetry to estimate the average altitude of the spacecraft and add Earth's radius (6 378 km).",
+			"type": "number",
+			"answer": {
+				"unit": "km",
+				"value": 10000.0,
+				"tolerance": 100.0,
+				"reason": "The defender flies an MEO orbit with SMA = 10 000 km, giving an altitude of ~3 622 km.",
+				"score": 5
+			}
+		},
+		{
+			"section": "Orbital Operations",
+			"title": "What is the Inclination (deg) of Watchtower's orbit?",
+			"description": "Read the maximum |latitude| from the GPS time series.",
+			"type": "number",
+			"answer": {
+				"unit": "deg",
+				"value": 28.5,
+				"tolerance": 1.0,
+				"reason": "The orbit was designed to cover the Hormuz / Arabian Sea AOI from a 28.5° inclination.",
+				"score": 5
+			}
+		},
+		{
+			"section": "Environmental Cyber (Phase 1)",
+			"title": "Around which AOI did GPS spoofing occur?",
+			"description": "Plot the GPS lat/lon trace and identify when reported position is inconsistent with the magnetometer and orbit propagation. The deceptive fix lands at the antipode of the affected region.",
+			"type": "select",
+			"answer": {
+				"options": [
+					"Caribbean",
+					"Hormuz Strait",
+					"Malacca Strait",
+					"South Atlantic",
+					"South Pacific"
+				],
+				"value": 1,
+				"reason": [
+					"The spoofing region was a 500 km-radius sphere centred on (26.5°N, 56.5°E) at MEO altitude — directly over the Hormuz Strait.",
+					"The spoofing region was a 500 km-radius sphere centred on (26.5°N, 56.5°E) at MEO altitude — directly over the Hormuz Strait.",
+					"The spoofing region was a 500 km-radius sphere centred on (26.5°N, 56.5°E) at MEO altitude — directly over the Hormuz Strait.",
+					"The spoofing region was a 500 km-radius sphere centred on (26.5°N, 56.5°E) at MEO altitude — directly over the Hormuz Strait.",
+					"The spoofing region was a 500 km-radius sphere centred on (26.5°N, 56.5°E) at MEO altitude — directly over the Hormuz Strait."
+				],
+				"score": 5
+			}
+		},
+		{
+			"section": "Environmental Cyber (Phase 1)",
+			"title": "Which sensor returned a hard fault that required a component reset?",
+			"description": "One sensor's APID stopped emitting fresh fixes mid-orbit. Cross-check against magnetometer health to distinguish the hard fault from environmental denial.",
+			"type": "select",
+			"answer": {
+				"options": [
+					"Camera",
+					"EM Sensor",
+					"GPS Sensor",
+					"Magnetometer",
+					"Reaction Wheels"
+				],
+				"value": 2,
+				"reason": [
+					"The GPS Sensor enters Fault State 4 at t=5 400 s; the magnetometer remains healthy throughout, distinguishing a hardware fault from the earlier spoofing/jamming.",
+					"The GPS Sensor enters Fault State 4 at t=5 400 s; the magnetometer remains healthy throughout, distinguishing a hardware fault from the earlier spoofing/jamming.",
+					"The GPS Sensor enters Fault State 4 at t=5 400 s; the magnetometer remains healthy throughout, distinguishing a hardware fault from the earlier spoofing/jamming.",
+					"The GPS Sensor enters Fault State 4 at t=5 400 s; the magnetometer remains healthy throughout, distinguishing a hardware fault from the earlier spoofing/jamming.",
+					"The GPS Sensor enters Fault State 4 at t=5 400 s; the magnetometer remains healthy throughout, distinguishing a hardware fault from the earlier spoofing/jamming."
+				],
+				"score": 5
+			}
+		},
+		{
+			"section": "Environmental Cyber (Phase 1)",
+			"title": "What was the symptom of the storage corruption event?",
+			"description": "After t≈4 200 s, downlinked imagery contains corrupted bytes. Identify the type of failure observed.",
+			"type": "select",
+			"answer": {
+				"options": [
+					"Bit-flips in stored imagery",
+					"Camera capture refused",
+					"Storage capacity reduced to zero",
+					"Transmitter bit-rate dropped"
+				],
+				"value": 0,
+				"reason": [
+					"The Spacecraft event 'Storage Corruption' applies a 10% corruption fraction at intensity 0.2 — bit-flips in stored imagery, observable on next downlink.",
+					"The Spacecraft event 'Storage Corruption' applies a 10% corruption fraction at intensity 0.2 — bit-flips in stored imagery, observable on next downlink.",
+					"The Spacecraft event 'Storage Corruption' applies a 10% corruption fraction at intensity 0.2 — bit-flips in stored imagery, observable on next downlink.",
+					"The Spacecraft event 'Storage Corruption' applies a 10% corruption fraction at intensity 0.2 — bit-flips in stored imagery, observable on next downlink."
+				],
+				"score": 5
+			}
+		},
+		{
+			"section": "Environmental Cyber (Phase 1)",
+			"title": "What is the most appropriate immediate mitigation for the GPS spoofing event?",
+			"description": "While the spacecraft is inside the spoofing volume, what action keeps mission-critical positioning trustworthy?",
+			"type": "select",
+			"answer": {
+				"options": [
+					"Component reset on GPS Sensor",
+					"Ephemeris rollback / dead-reckon from last good fix",
+					"Frequency hop the telemetry link",
+					"Rotate the team encryption key"
+				],
+				"value": 1,
+				"reason": [
+					"The hardware is healthy — the receiver is being fed a deceptive fix. Trust the last known orbit and dead-reckon out of the volume; cross-check against the magnetometer.",
+					"The hardware is healthy — the receiver is being fed a deceptive fix. Trust the last known orbit and dead-reckon out of the volume; cross-check against the magnetometer.",
+					"The hardware is healthy — the receiver is being fed a deceptive fix. Trust the last known orbit and dead-reckon out of the volume; cross-check against the magnetometer.",
+					"The hardware is healthy — the receiver is being fed a deceptive fix. Trust the last known orbit and dead-reckon out of the volume; cross-check against the magnetometer."
+				],
+				"score": 5
+			}
+		},
+		{
+			"section": "Adversary Attribution",
+			"title": "What is the rogue spacecraft's call-sign?",
+			"description": "Slew the camera onto the rogue spacecraft and read the chassis text.",
+			"type": "text",
+			"answer": {
+				"value": "PHANTOM",
+				"reason": "The rogue carries a 'PHANTOM' Text component on both faces of the chassis — visible from any approach angle in the camera image.",
+				"score": 5
+			}
+		},
+		{
+			"section": "Adversary Attribution",
+			"title": "What is the carrier frequency (MHz) of the rogue spacecraft's transmitter?",
+			"description": "Use the EM sensor to scan the spectrum and identify the strong off-nominal carrier.",
+			"type": "number",
+			"answer": {
+				"unit": "MHz",
+				"value": 905,
+				"tolerance": 10,
+				"reason": "The Phantom team is configured at 905 MHz; the EM sensor will resolve a strong carrier at that frequency during replay/jam phases.",
+				"score": 5
+			}
+		},
+		{
+			"section": "Adversary Attribution",
+			"title": "Which ground stations saw the broadcast downlink jam during AOI imaging passes?",
+			"description": "Multiple selection. Identify ground stations whose SNR drops below ~15 dB during the AOI passes (T_AOI_1 ± 90 s and T_AOI_2 ± 90 s).",
+			"type": "checkbox",
+			"answer": {
+				"options": [
+					"Auckland",
+					"Doha",
+					"Honolulu",
+					"Madrid",
+					"Miami",
+					"Perth",
+					"Singapore"
+				],
+				"value": [
+					1
+				],
+				"reason": [
+					"The two AOI passes occur over the Hormuz Strait — the in-view ground station for both is Doha. Update this answer post-dry-run with the actual stations observed; jamming is broadcast across all blue frequencies.",
+					"The two AOI passes occur over the Hormuz Strait — the in-view ground station for both is Doha. Update this answer post-dry-run with the actual stations observed; jamming is broadcast across all blue frequencies.",
+					"The two AOI passes occur over the Hormuz Strait — the in-view ground station for both is Doha. Update this answer post-dry-run with the actual stations observed; jamming is broadcast across all blue frequencies.",
+					"The two AOI passes occur over the Hormuz Strait — the in-view ground station for both is Doha. Update this answer post-dry-run with the actual stations observed; jamming is broadcast across all blue frequencies.",
+					"The two AOI passes occur over the Hormuz Strait — the in-view ground station for both is Doha. Update this answer post-dry-run with the actual stations observed; jamming is broadcast across all blue frequencies.",
+					"The two AOI passes occur over the Hormuz Strait — the in-view ground station for both is Doha. Update this answer post-dry-run with the actual stations observed; jamming is broadcast across all blue frequencies.",
+					"The two AOI passes occur over the Hormuz Strait — the in-view ground station for both is Doha. Update this answer post-dry-run with the actual stations observed; jamming is broadcast across all blue frequencies."
+				],
+				"score": 5
+			}
+		},
+		{
+			"section": "Active Attacks (Phase 2)",
+			"title": "Which blue team was singled out for pulsed uplink jamming?",
+			"description": "One team's uplink ack-rate drops to ~75-85% during a single ground-station pass mid-mission while other teams remain unaffected. Which one?",
+			"type": "select",
+			"answer": {
+				"options": [
+					"Blue Alpha",
+					"Blue Bravo"
+				],
+				"value": 1,
+				"reason": [
+					"The rogue's pulsed uplink jam targets Blue Bravo's frequency only — Blue Alpha sees no degradation.",
+					"The rogue's pulsed uplink jam targets Blue Bravo's frequency only — Blue Alpha sees no degradation."
+				],
+				"score": 5
+			}
+		},
+		{
+			"section": "Active Attacks (Phase 2)",
+			"title": "Roughly what proportion of Blue Bravo's commands failed during the uplink-jam window?",
+			"description": "Compare commands sent vs. commands acknowledged on Blue Bravo's console during the jam window. Express as a percentage.",
+			"type": "number",
+			"answer": {
+				"unit": "%",
+				"value": 20,
+				"tolerance": 10,
+				"reason": "The pulse pattern (8 s ON / 32 s OFF, 20% duty cycle) drops ~15-25% of commands. Tune on/off seconds in cyber_defender.py if observed rate differs.",
+				"score": 5
+			}
+		},
+		{
+			"section": "Active Attacks (Phase 2)",
+			"title": "Did the rogue replay any captured ciphertext against your team during the second half of the mission?",
+			"description": "Check the EM sensor for spurious uplink-traffic spikes on your team's frequency without a matching ground-station transmission.",
+			"type": "select",
+			"answer": {
+				"options": [
+					"No",
+					"Yes"
+				],
+				"value": 1,
+				"reason": [
+					"The rogue captures foreign uplinks during 6 000-9 000 s and replays them at random against every blue team between 9 500-14 500 s.",
+					"The rogue captures foreign uplinks during 6 000-9 000 s and replays them at random against every blue team between 9 500-14 500 s."
+				],
+				"score": 5
+			}
+		},
+		{
+			"section": "Active Attacks (Phase 2)",
+			"title": "Which APIDs showed Phase-3 telemetry tampering?",
+			"description": "Multiple selection. Compare suspect telemetry fields against magnetometer/orbit-prop ground truth and identify every APID whose payload contents drifted.",
+			"type": "checkbox",
+			"answer": {
+				"options": [
+					"100 (Ping)",
+					"200 (Battery)",
+					"300 (Magnetometer)",
+					"301 (GPS)",
+					"302 (EM Sensor)",
+					"401 (Reaction Wheels)"
+				],
+				"value": [
+					0,
+					3
+				],
+				"reason": [
+					"Cyber events tamper APID 100 (Ping State field flips to 'FLAG-OWN') and APID 301 (GPS position zeroed).",
+					"Cyber events tamper APID 100 (Ping State field flips to 'FLAG-OWN') and APID 301 (GPS position zeroed).",
+					"Cyber events tamper APID 100 (Ping State field flips to 'FLAG-OWN') and APID 301 (GPS position zeroed).",
+					"Cyber events tamper APID 100 (Ping State field flips to 'FLAG-OWN') and APID 301 (GPS position zeroed).",
+					"Cyber events tamper APID 100 (Ping State field flips to 'FLAG-OWN') and APID 301 (GPS position zeroed).",
+					"Cyber events tamper APID 100 (Ping State field flips to 'FLAG-OWN') and APID 301 (GPS position zeroed)."
+				],
+				"score": 6
+			}
+		},
+		{
+			"section": "Mitigations",
+			"title": "What action mitigates a successful uplink replay attack against your team?",
+			"description": "Pick the on-board action that invalidates any previously-captured ciphertext for your team going forward.",
+			"type": "select",
+			"answer": {
+				"options": [
+					"Component reset on Receiver",
+					"Ephemeris rollback",
+					"Frequency hop only",
+					"Rotate encryption key (telemetry / encryption command)"
+				],
+				"value": 3,
+				"reason": [
+					"Rotating the Caesar key changes the on-board cipher; any previously-captured ciphertext is no longer decodable on the spacecraft, so the replay fails.",
+					"Rotating the Caesar key changes the on-board cipher; any previously-captured ciphertext is no longer decodable on the spacecraft, so the replay fails.",
+					"Rotating the Caesar key changes the on-board cipher; any previously-captured ciphertext is no longer decodable on the spacecraft, so the replay fails.",
+					"Rotating the Caesar key changes the on-board cipher; any previously-captured ciphertext is no longer decodable on the spacecraft, so the replay fails."
+				],
+				"score": 4
+			}
+		},
+		{
+			"section": "Mitigations",
+			"title": "What action mitigates a sustained downlink jam over an AOI ground-station pass?",
+			"description": "Pick the action that restores a usable downlink at the next available pass.",
+			"type": "select",
+			"answer": {
+				"options": [
+					"Component reset on Transmitter",
+					"Frequency hop via the telemetry command",
+					"Reduce ping interval",
+					"Wait for the rogue to leave the area"
+				],
+				"value": 1,
+				"reason": [
+					"Hopping to a frequency outside the rogue's barrage moves the link off the jammed channel — the imagery downlinks cleanly on the next non-AOI pass.",
+					"Hopping to a frequency outside the rogue's barrage moves the link off the jammed channel — the imagery downlinks cleanly on the next non-AOI pass.",
+					"Hopping to a frequency outside the rogue's barrage moves the link off the jammed channel — the imagery downlinks cleanly on the next non-AOI pass.",
+					"Hopping to a frequency outside the rogue's barrage moves the link off the jammed channel — the imagery downlinks cleanly on the next non-AOI pass."
+				],
+				"score": 4
+			}
+		},
+		{
+			"section": "Mitigations",
+			"title": "What action clears a Cyber telemetry-tamper overlay (APID 100 / 301)?",
+			"description": "Both Phase-3 cyber overlays were authored with `Clear On Reset: true`. Which command removes them?",
+			"type": "select",
+			"answer": {
+				"options": [
+					"Component reset on Computer",
+					"Component reset on GPS Sensor",
+					"Frequency hop",
+					"Telemetry encryption rotate"
+				],
+				"value": 0,
+				"reason": [
+					"Resetting the Computer clears every resettable cyber overlay on the asset (per docs/scenarios/events.md § Reset behavior).",
+					"Resetting the Computer clears every resettable cyber overlay on the asset (per docs/scenarios/events.md § Reset behavior).",
+					"Resetting the Computer clears every resettable cyber overlay on the asset (per docs/scenarios/events.md § Reset behavior).",
+					"Resetting the Computer clears every resettable cyber overlay on the asset (per docs/scenarios/events.md § Reset behavior)."
+				],
+				"score": 4
+			}
+		}
+	]
+}
