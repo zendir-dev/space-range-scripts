@@ -81,41 +81,11 @@
 		},
 		{
 			"enabled": true,
-			"id": 390572,
-			"password": "R4N8UC",
-			"name": "Team Cyan",
-			"key": 12,
-			"frequency": 468,
-			"collection": "Main",
-			"color": "#00CED1"
-		},
-		{
-			"enabled": true,
-			"id": 671284,
-			"password": "V2P7DS",
-			"name": "Team Pink",
-			"key": 233,
-			"frequency": 901,
-			"collection": "Main",
-			"color": "#FF0080"
-		},
-		{
-			"enabled": true,
-			"id": 845319,
-			"password": "Z5G7XB",
-			"name": "Team Orange",
-			"key": 99,
-			"frequency": 777,
-			"collection": "Main",
-			"color": "#F23E05"
-		},
-		{
-			"enabled": true,
-			"id": 529678,
-			"password": "H8J4LK",
-			"name": "Team White",
-			"key": 176,
-			"frequency": 655,
+			"id": 111111,
+			"password": "AAAAAA",
+			"name": "Admin",
+			"key": 201,
+			"frequency": 523,
 			"collection": "Main",
 			"color": "#FFFFFF"
 		}
@@ -509,7 +479,7 @@
 							0.0
 						],
 						"data": {
-							"Power": 100.0,
+							"Power": 80.0,
 							"Antenna Gain": 15.0,
 							"Lookup": "RFPattern.csv"
 						}

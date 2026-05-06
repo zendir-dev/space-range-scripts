@@ -1,0 +1,1056 @@
+{
+	"simulation": {
+		"epoch": "2025/04/15 07:30:00",
+		"speed": 5.0,
+		"step_size": 0.12,
+		"integrator": "Euler",
+		"end_time": 0.0
+	},
+	"universe": {
+		"atmosphere": false,
+		"magnetosphere": true,
+		"gps": true,
+		"cloud_opacity": 0.9,
+		"cloud_contrast": 2.5,
+		"ambient_light": 0.25
+	},
+	"ground_stations": {
+		"locations": [
+			"Madrid",
+			"Dubai",
+			"Singapore",
+			"Auckland",
+			"Easter Island",
+			"Salvador",
+			"Miami"
+		],
+		"min_elevation": 0,
+		"max_range": 0,
+		"scale": 100
+	},
+	"teams": [
+		{
+			"enabled": true,
+			"id": 212997,
+			"password": "2EM6DF",
+			"name": "Rogue",
+			"key": 1,
+			"frequency": 500,
+			"collection": "Rogue",
+			"color": "#FF0000"
+		},
+		{
+			"enabled": true,
+			"id": 584203,
+			"password": "Q7X9PL",
+			"name": "Team Blue",
+			"key": 42,
+			"frequency": 612,
+			"collection": "Main",
+			"color": "#020CF1"
+		},
+		{
+			"enabled": true,
+			"id": 917462,
+			"password": "M3K8ZT",
+			"name": "Team Green",
+			"key": 87,
+			"frequency": 745,
+			"collection": "Main",
+			"color": "#00FF00"
+		},
+		{
+			"enabled": true,
+			"id": 263891,
+			"password": "X9L2QA",
+			"name": "Team Yellow",
+			"key": 154,
+			"frequency": 889,
+			"collection": "Main",
+			"color": "#FFFF00"
+		},
+		{
+			"enabled": true,
+			"id": 748105,
+			"password": "T6W3HY",
+			"name": "Team Violet",
+			"key": 201,
+			"frequency": 523,
+			"collection": "Main",
+			"color": "#8000FF"
+		}
+	],
+	"assets": {
+		"space": [
+			{
+				"id": "SC_001",
+				"name": "Microsat",
+				"orbit": {
+					"planet": "Earth",
+					"values": [
+						8200.0,
+						0.02,
+						17.3,
+						283.0,
+						0,
+						360
+					],
+					"offset": [
+						0.0,
+						0.0,
+						0.0,
+						0.0,
+						0.0,
+						0.001
+					]
+				},
+				"physics": {
+					"override_mass": true,
+					"mass": 100.0,
+					"center_of_mass": [
+						0.0,
+						0.0,
+						0.0
+					],
+					"inertia_tensor": [
+						[
+							10.0,
+							0.0,
+							0.0
+						],
+						[
+							0.0,
+							10.0,
+							0.0
+						],
+						[
+							0.0,
+							0.0,
+							10.0
+						]
+					]
+				},
+				"visualization": {
+					"mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/ZenSat/BP_Z_SC_ZenSat_Chassis",
+					"scale": 1.0,
+					"offset": [
+						0.0,
+						0.0,
+						0.12
+					]
+				},
+				"controller": {
+					"safe_fraction": 0.1,
+					"capture_tax": 0.001,
+					"downlink_tax": 0.01,
+					"ping_interval": 20.0,
+					"reset_interval": 60.0,
+					"jamming_multiplier": 100.0,
+					"enable_rpo": false
+				},
+				"components": [
+					{
+						"class": "Solar Panel",
+						"name": "Solar Panel +X",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.8,
+							0.276313,
+							-0.2
+						],
+						"rotation": [
+							35.0,
+							0.0,
+							0.0
+						],
+						"scale": 1.0,
+						"data": {
+							"Area": 0.3,
+							"Efficiency": 0.4,
+							"Mass": 10.0
+						}
+					},
+					{
+						"class": "Solar Panel",
+						"name": "Solar Panel -X",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							-0.8,
+							0.276313,
+							-0.2
+						],
+						"rotation": [
+							35.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Area": 0.3,
+							"Efficiency": 0.4,
+							"Mass": 10.0
+						}
+					},
+					{
+						"class": "Reaction Wheels",
+						"name": "Reaction Wheels",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Mass": 9.0
+						}
+					},
+					{
+						"class": "Computer",
+						"name": "Computer",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Battery",
+						"name": "Battery",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Nominal Capacity": 80.0,
+							"Charge Fraction": 0.5,
+							"Mass": 5.0
+						}
+					},
+					{
+						"class": "Camera",
+						"name": "Camera",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							-0.36,
+							-0.16
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Mass": 5.0
+						}
+					},
+					{
+						"class": "GPS Sensor",
+						"name": "GPS Sensor",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Receiver",
+						"name": "Receiver",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							-0.36,
+							-0.16
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Antenna Gain": 3.0,
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Transmitter",
+						"name": "Transmitter",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							-0.36,
+							-0.16
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Mass": 1.0
+						}
+					},
+					{
+						"class": "Storage",
+						"name": "Storage",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							-0.2
+						],
+						"data": {
+							"Mass": 4.0
+						}
+					},
+					{
+						"class": "EM Sensor",
+						"name": "EM Sensor",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							-0.36,
+							-0.16
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Mass": 2.0
+						}
+					}
+				]
+			},
+			{
+				"id": "SC_002",
+				"name": "Recon",
+				"orbit": {
+					"planet": "Earth",
+					"values": [
+						8200.0,
+						0.0199,
+						17.3,
+						283.0,
+						0,
+						0.004
+					],
+					"offset": [
+						0.0,
+						0.0,
+						0.0,
+						0.0,
+						0.0,
+						0.001
+					]
+				},
+				"physics": {
+					"override_mass": true,
+					"mass": 750.0,
+					"center_of_mass": [
+						0.0,
+						0.0,
+						0.0
+					],
+					"inertia_tensor": [
+						[
+							900.0,
+							0.0,
+							0.0
+						],
+						[
+							0.0,
+							800.0,
+							0.0
+						],
+						[
+							0.0,
+							0.0,
+							600.0
+						]
+					]
+				},
+				"visualization": {
+					"mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/MRO/BP_Z_SC_MRO_Chassis",
+					"scale": 10.0,
+					"offset": [
+						0.0,
+						0.0,
+						0.0
+					],
+					"hide": true
+				},
+				"controller": {
+					"safe_fraction": 0.1,
+					"capture_tax": 0.001,
+					"downlink_tax": 0.005,
+					"ping_interval": 20.0,
+					"reset_interval": 60.0,
+					"jamming_multiplier": 100.0,
+					"enable_rpo": true
+				},
+				"components": [
+					{
+						"class": "Computer",
+						"name": "Computer",
+						"mesh": "None",
+						"enabled": true,
+						"data": {
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "External Force Torque",
+						"name": "Reaction Wheels",
+						"mesh": "None",
+						"enabled": true,
+						"data": {
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Receiver",
+						"name": "Receiver",
+						"mesh": "None",
+						"enabled": true,
+						"rotation": [
+							90.0,
+							90.0,
+							0.0
+						],
+						"data": {
+							"Antenna Gain": 500.0,
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Transmitter",
+						"name": "Transmitter",
+						"mesh": "None",
+						"enabled": true,
+						"rotation": [
+							90.0,
+							90.0,
+							0.0
+						],
+						"data": {
+							"Mass": 1.0
+						}
+					},
+					{
+						"class": "Jammer",
+						"name": "Jammer",
+						"mesh": "None",
+						"enabled": true,
+						"rotation": [
+							90.0,
+							90.0,
+							0.0
+						],
+						"data": {
+							"Power": 100.0,
+							"Antenna Gain": 15.0,
+							"Lookup": "RFPattern.csv"
+						}
+					},
+					{
+						"class": "Text",
+						"name": "Text Front",
+						"enabled": true,
+						"position": [
+							13.418,
+							40.162,
+							-8.064
+						],
+						"rotation": [
+							-1.4,
+							77.7,
+							-97.2
+						],
+						"data": {
+							"Text": "RECON",
+							"Color": "#FFFF0D",
+							"Scale": 50.0
+						}
+					},
+					{
+						"class": "Text",
+						"name": "Text Back",
+						"enabled": true,
+						"position": [
+							12.061,
+							40.155,
+							-8.36
+						],
+						"rotation": [
+							178.6,
+							-77.7,
+							-82.6
+						],
+						"data": {
+							"Text": "RECON",
+							"Color": "#FFFF0D",
+							"Scale": 50.0
+						}
+					}
+				]
+			}
+		],
+		"collections": [
+			{
+				"id": "Main",
+				"space_assets": [
+					"SC_001"
+				]
+			},
+			{
+				"id": "Rogue",
+				"space_assets": [
+					"SC_002"
+				]
+			}
+		]
+	},
+	"objects": {
+		"ground": [
+			{
+				"id": "GO_001",
+				"type": "vessel",
+				"name": "EG01",
+				"planet": "Earth",
+				"latitude": 12.1,
+				"longitude": 44.2,
+				"altitude": 1,
+				"scale": 120,
+				"color": "#00FF00",
+				"data": {
+					"heading": 76,
+					"speed": 10.0
+				}
+			},
+			{
+				"id": "GO_002",
+				"type": "vessel",
+				"name": "EG02",
+				"planet": "Earth",
+				"latitude": 11.5,
+				"longitude": 44.2,
+				"altitude": 1,
+				"scale": 120,
+				"color": "#00FF00",
+				"data": {
+					"heading": 86.0,
+					"speed": 10.0
+				}
+			},
+			{
+				"id": "GO_003",
+				"type": "vessel",
+				"name": "EG03",
+				"planet": "Earth",
+				"latitude": 12,
+				"longitude": 45,
+				"altitude": 1,
+				"scale": 120,
+				"color": "#00FF00",
+				"data": {
+					"heading": 77.0,
+					"speed": 10.0
+				}
+			},
+			{
+				"id": "GO_004",
+				"type": "vessel",
+				"name": "EG04",
+				"planet": "Earth",
+				"latitude": 12.5,
+				"longitude": 45,
+				"altitude": 1,
+				"scale": 120,
+				"color": "#00FF00",
+				"data": {
+					"heading": 81.0,
+					"speed": 7.0
+				}
+			},
+			{
+				"id": "GO_005",
+				"type": "vessel",
+				"name": "EG05",
+				"planet": "Earth",
+				"latitude": 13.6,
+				"longitude": 43,
+				"altitude": 1,
+				"scale": 120,
+				"color": "#00FF00",
+				"data": {
+					"heading": 178.0,
+					"speed": 0.0
+				}
+			},
+			{
+				"id": "GO_006",
+				"type": "vessel",
+				"name": "EG06",
+				"planet": "Earth",
+				"latitude": 13.5,
+				"longitude": 42.5,
+				"altitude": 1,
+				"scale": 120,
+				"color": "#00FF00",
+				"data": {
+					"heading": 134,
+					"speed": 0.0
+				}
+			},
+			{
+				"id": "GO_007",
+				"type": "vessel",
+				"name": "EG07",
+				"planet": "Earth",
+				"latitude": 14,
+				"longitude": 42,
+				"altitude": 1,
+				"scale": 120,
+				"color": "#00FF00",
+				"data": {
+					"heading": 330.0,
+					"speed": 6.0
+				}
+			},
+			{
+				"id": "GO_008",
+				"type": "vessel",
+				"name": "IR01",
+				"planet": "Earth",
+				"latitude": 13,
+				"longitude": 43.1,
+				"altitude": 1,
+				"scale": 60,
+				"color": "#FFFF00",
+				"data": {
+					"heading": 270.0,
+					"speed": 0.0
+				}
+			},
+			{
+				"id": "GO_009",
+				"type": "vessel",
+				"name": "US01",
+				"planet": "Earth",
+				"latitude": 12.4,
+				"longitude": 43.5,
+				"altitude": 1,
+				"scale": 60,
+				"color": "#FF0000",
+				"data": {
+					"heading": 90.0,
+					"speed": 10.0
+				}
+			},
+			{
+				"id": "GO_010",
+				"type": "vessel",
+				"name": "US02",
+				"planet": "Earth",
+				"latitude": 14,
+				"longitude": 42.2,
+				"altitude": 1,
+				"scale": 60,
+				"color": "#00ffff",
+				"data": {
+					"heading": 350.0,
+					"speed": 6.0
+				}
+			},
+			{
+				"id": "GO_011",
+				"type": "vessel",
+				"name": "US03",
+				"planet": "Earth",
+				"latitude": 11.9,
+				"longitude": 43.5,
+				"altitude": 1,
+				"scale": 60,
+				"color": "#ffffff",
+				"data": {
+					"heading": 90.0,
+					"speed": 10.0
+				}
+			},
+			{
+				"id": "GO_012",
+				"type": "vessel",
+				"name": "SC01",
+				"planet": "Earth",
+				"latitude": 16.1,
+				"longitude": 112.1,
+				"altitude": 1,
+				"scale": 8,
+				"color": "#000000",
+				"data": {
+					"heading": 90.0,
+					"speed": 0.0
+				}
+			},
+			{
+				"id": "GO_013",
+				"type": "vessel",
+				"name": "SC02",
+				"planet": "Earth",
+				"latitude": 16.2,
+				"longitude": 112.1,
+				"altitude": 1,
+				"scale": 8,
+				"color": "#000000",
+				"data": {
+					"heading": 220.0,
+					"speed": 3.0
+				}
+			},
+			{
+				"id": "GO_014",
+				"type": "vessel",
+				"name": "SC03",
+				"planet": "Earth",
+				"latitude": 16.2,
+				"longitude": 112.0,
+				"altitude": 1,
+				"scale": 8,
+				"color": "#000000",
+				"data": {
+					"heading": 180.0,
+					"speed": 0.1
+				}
+			},
+			{
+				"id": "GO_015",
+				"type": "vessel",
+				"name": "SC04",
+				"planet": "Earth",
+				"latitude": 16,
+				"longitude": 112.0,
+				"altitude": 1,
+				"scale": 8,
+				"color": "#000000",
+				"data": {
+					"heading": 270.0,
+					"speed": 0.5
+				}
+			},
+			{
+				"id": "GO_016",
+				"type": "vessel",
+				"name": "SC05",
+				"planet": "Earth",
+				"latitude": 16.1,
+				"longitude": 111.9,
+				"altitude": 1,
+				"scale": 8,
+				"color": "#000000",
+				"data": {
+					"heading": 30.0,
+					"speed": 1.0
+				}
+			},
+			{
+				"id": "TX_01",
+				"type": "text",
+				"name": "tx01",
+				"planet": "Earth",
+				"latitude": 16.2,
+				"longitude": 112,
+				"altitude": 3,
+				"scale": 160000,
+				"color": "#011A01",
+				"data": {
+					"text": ","
+				}
+			}
+		]
+	},
+	"events": [
+		{
+			"Enabled": true,
+			"Name": "Battery Power Spikes",
+			"Time": 6000.0,
+			"Repeat": false,
+			"Interval": 1.0,
+			"Type": "Spacecraft",
+			"Target": "Battery-IntermittentConnectionErrorModel",
+			"Assets": [
+
+			],
+			"Data": {
+				"Intermittent Mean": 1,
+				"Intermittent Std": 2
+			}
+		}
+	],
+	"questions": [
+		{
+			"section": "Red Sea (Counter‑Piracy)",
+			"title": "How many commercial vessels in the Straight?",
+			"description": "The commercial vessels are represented by the large green ships located in the Bab el-Mandeb Straight. How many commercial vessels can you count in the straight?",
+			"type": "number",
+			"answer": {
+				"value": 7,
+				"reason": "There are 7 large green ships in the straight, representing the commercial vessels.",
+				"score": 4
+			}
+		},
+		{
+			"section": "Red Sea (Counter‑Piracy)",
+			"title": "How many vessels are currently damaged?",
+			"description": "From the fleet, identified by the large green ships located in the Bab el-Mandeb Straight, how many have been stationary for at least one orbit?",
+			"type": "number",
+			"answer": {
+				"value": 2,
+				"reason": "The two ships at the narrowest part are stationary throughout.",
+				"score": 8
+			}
+		},
+		{
+			"section": "Red Sea (Counter‑Piracy)",
+			"title": "Identify the destructive vessel",
+			"description": "Which non-green colored ship do you suspect to be a bad actor that may have caused the damage to the green shipping line in the straight?",
+			"type": "select",
+			"answer": {
+				"options": [
+					"Blue",
+					"Red",
+					"White",
+					"Yellow"
+				],
+				"value": 3,
+				"reason": [
+					"Its Yellow, the only ship hovering near the damaged ships in the straight",
+					"Its Yellow, the only ship hovering near the damaged ships in the straight",
+					"Its Yellow, the only ship hovering near the damaged ships in the straight",
+					"Its Yellow, the only ship hovering near the damaged ships in the straight"
+				],
+				"score": 8
+			}
+		},
+		{
+			"section": "South China Sea (Island Construction)",
+			"title": "New Island Latitude",
+			"description": "There exists a new island in the South China Sea, relative to the reference photo provided. Give the location of the newest island to the nearest 1 degree in latitude.",
+			"type": "number",
+			"answer": {
+				"unit": "deg",
+				"value": 16.1,
+				"tolerance": 0.7,
+				"reason": "This can be found in the Paracel Island group.",
+				"score": 7
+			}
+		},
+		{
+			"section": "South China Sea (Island Construction)",
+			"title": "New Island Longitude",
+			"description": "There exists a new island in the South China Sea, relative to the reference photo provided. Give the location of the newest island to the nearest 1 degree in longitude.",
+			"type": "number",
+			"answer": {
+				"unit": "deg",
+				"value": 112.0,
+				"tolerance": 0.99,
+				"reason": "This can be found in the Paracel Island group.",
+				"score": 7
+			}
+		},
+		{
+			"section": "South China Sea (Island Construction)",
+			"title": "How many construction vessels can you count, located in close proximity to the island?",
+			"description": "Use a narrow FOV for identification.",
+			"type": "number",
+			"answer": {
+				"value": 5,
+				"reason": "There are 5 small vessels that can be seen near the island if a small enough FOV is set on the camera, with the correct pointing algorithm.",
+				"score": 6
+			}
+		},
+		{
+			"section": "Rogue Spacecraft",
+			"title": "What interference anomaly occurred that disrupted routine space operations?",
+			"description": "A rogue spacecraft has been detected in the vicinity of your spacecraft, and you have observed interference with your spacecraft's communication systems. What type of interference anomaly occured?",
+			"type": "select",
+			"answer": {
+				"options": [
+					"Command Injection",
+					"Downlink Jamming",
+					"Kinetic Attack",
+					"Spoofing of GPS signals",
+					"Uplink Jamming"
+				],
+				"value": 1,
+				"reason": [
+					"The downlink communication link has a low signal-to-noise ratio causing data loss, which is consistent with a jamming attack on the downlink frequency."
+				],
+				"score": 2
+			}
+		},
+		{
+			"section": "Rogue Spacecraft",
+			"title": "What location(s) were affected by the interference anomaly that disrupted routine space operations?",
+			"description": "Above Which ground station(s) did the interference anomaly occur that disrupted routine space operations?",
+			"type": "checkbox",
+			"answer": {
+				"options": [
+					"Auckland",
+					"Dubai",
+					"Easter Island",
+					"Madrid",
+					"Miami",
+					"Salvador",
+					"Singapore"
+				],
+				"value": [
+					6
+				],
+				"reason": [
+					"Downlink jamming occured over the Dubai and Easter Island ground stations, as evidenced by the low signal to noise ratio and data loss observed in the telemetry data received from those stations."
+				],
+				"score": 4
+			}
+		},
+		{
+			"section": "Rogue Spacecraft",
+			"title": "What is the mitigating action to resolve the inteference anomaly?",
+			"description": "What action can be taken to resolve the interference anomaly and restore normal operations of the spacecraft?",
+			"type": "select",
+			"answer": {
+				"options": [
+					"Authentication Change ",
+					"Component Reset",
+					"Ephemeris Rollback",
+					"Frequency Hopping"
+				],
+				"value": 3,
+				"reason": [
+					"Frequency hopping can be used to mitigate the effects of downlink jamming by rapidly switching the communication frequency to avoid the interference, allowing the spacecraft to restore normal operations and maintain communication with ground stations."
+				],
+				"score": 2
+			}
+		},
+		{
+			"section": "Rogue Spacecraft",
+			"title": "What is the minimum signal-to-noise ratio experienced by the ground station during the inteference anomaly?",
+			"description": "This will be in dB.",
+			"type": "number",
+			"answer": {
+				"unit": "dB",
+				"value": 15.0,
+				"tolerance": 2.0,
+				"reason": "This is done by analyzing the telemetry data received from the ground stations during the interference anomaly, where a significant drop in signal strength is observed, resulting in a minimum signal-to-noise ratio of around 15 dB at the affected ground stations.",
+				"score": 4
+			}
+		},
+		{
+			"section": "Rogue Spacecraft",
+			"title": "Identify the Rogue Spacecraft's identity.",
+			"description": "Capture an image of the spacecraft responsible for the interference anomaly using the onboard camera to identify the identity of the rogue spacecraft. Hint: Look for any text or markings on the spacecraft that can provide clues to its identity.",
+			"type": "text",
+			"answer": {
+				"value": "RECON",
+				"reason": "This word can be spotted on the solar panels of the rogue spacecraft in the image data captured by the onboard camera.",
+				"score": 4
+			}
+		},
+		{
+			"section": "Rogue Spacecraft",
+			"title": "What is the frequency (MHz) of the Rogue Spacecraft's transmitter?",
+			"description": "Using your electromagnetic sensor onboard, identify the frequency of the rogue spacecraft's transmitter that is causing interference with your spacecraft's communication systems. You may need to orient your sensor in the correct direction to get a more accurate reading.",
+			"type": "number",
+			"answer": {
+				"unit": "MHz",
+				"value": 500,
+				"tolerance": 10,
+				"reason": "This can be found by analyzing the EM spectrum data collected by the onboard sensor, where a strong signal is observed at this frequency corresponding to the rogue spacecraft's transmitter.",
+				"score": 4
+			}
+		},
+		{
+			"section": "Orbital Operations",
+			"title": "During operations a component failure occurred on the spacecraft. What component failed?",
+			"description": "Using the telemetry data, identify which component on the spacecraft experienced a failure during operations.",
+			"type": "select",
+			"answer": {
+				"options": [
+					"Battery",
+					"Computer",
+					"GPS Sensor",
+					"Reaction Wheels",
+					"Reciever",
+					"Solar Panel",
+					"Storage",
+					"Transmitter"
+				],
+				"value": 0,
+				"reason": [
+					"The battery component started producing power spikes half-way through the mission. This could be fixed with a simple reset."
+				],
+				"score": 5
+			}
+		},
+		{
+			"section": "Orbital Operations",
+			"title": "What is the Semi Major Axis (km) of your spacecraft's orbit?",
+			"description": "Using the telemetry data, calculate the semi major axis of your spacecraft's orbit, in km.",
+			"type": "number",
+			"answer": {
+				"unit": "km",
+				"value": 8200.0,
+				"tolerance": 100.0,
+				"reason": "This can be calculated using the GPS data, by determining the average altitude of the spacecraft between the apoapsis and periapsis, and adding the radius of the Earth.",
+				"score": 5
+			}
+		},
+		{
+			"section": "Orbital Operations",
+			"title": "What is the eccentricity of your spacecraft's orbit?",
+			"description": "Using the telemetry data, calculate the eccentricity of your spacecraft's orbit.",
+			"type": "number",
+			"answer": {
+				"unit": "",
+				"value": 0.02,
+				"tolerance": 0.009,
+				"reason": "This can be calculated using the GPS data, by determining the minimum and maximum Semi-Major Axis of the orbit.",
+				"score": 5
+			}
+		},
+		{
+			"section": "Orbital Operations",
+			"title": "What is the Inclination (deg) of your spacecraft's orbit?",
+			"description": "Using the telemetery data, calculate the inclination of your spacecraft's orbit.",
+			"type": "number",
+			"answer": {
+				"unit": "deg",
+				"value": 17.3,
+				"tolerance": 1.0,
+				"reason": "This can be measured as the maximum latitude value from the GPS data, which indicates the angle of the orbit relative to the equatorial plane of the Earth.",
+				"score": 5
+			}
+		}
+	]
+}
