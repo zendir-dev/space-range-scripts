@@ -10,20 +10,24 @@ The **Maritime Cyber Watch** programme operates *Watchtower*, an MEO imagery / S
 
 ## Phase plan
 
+Sim speed is **1×** — wall-clock minutes match simulation seconds. With **ν = −90°** and times shifted **−9 min** from the old ν=−110° schedule, most scripted threats finish by **~36 min**; the rest of the hour is wind-down and scoring. **Re-validate** pass times on your first dry-run.
+
+Epoch **`2026/02/02 08:00 UTC`** — Dubai / Hormuz phasing is **~9 min earlier** than the prior orbit block; **run a trace** to confirm. Visibility (indicative): Paris **0–2 000 s**, Dubai **370–3 340 s**, Singapore **2 000–4 900 s**.
+
 | Phase | Wall | Sim time | Theme |
 | --- | --- | --- | --- |
-| 0 — Familiarisation | 00:00 – 00:05 | `0 – 1 500 s` | Connect, baseline ops, image Hormuz, see PHANTOM on map. |
-| 1 — Passive cyber | 00:05 – 00:20 | `1 500 – 6 000 s` | GPS spoof, GPS jam, storage corruption, GPS sensor hard fault. |
-| 2a — Rogue capture | 00:20 – 00:30 | `6 000 – 9 000 s` | PHANTOM cycles every blue team's frequency, recording foreign uplinks (silent — no defender-visible signature). |
-| 2b — Rogue replay & jam | 00:30 – 00:50 | `9 000 – 15 000 s` | Random replay bursts; **light pulsed** uplink jam on the last enemy team in config order (Blue Bravo by default); **broadcast** downlink jam over both AOI overhead passes. |
-| 3 — Compound | 00:50 – 00:55 | `15 000 – 16 500 s` | Cyber telemetry tampering (Ping `State`, GPS position) + reaction-wheel stuck + battery power spikes. |
-| 4 — Wind-down | 00:55 – 01:00 | `16 500 – 18 000 s` | Attacks stop. Teams finalise answers. |
+| 0 — Familiarisation | 00:00 – ~00:02 | `0 – ~120 s` | Paris pass; connect. **~30 s** GPS spoofing OFF (bootstrap). **~2 min** **solar-array degradation**. |
+| 1 — Passive cyber | ~00:02 – ~00:24 | `~120 – ~1 440 s` | Hormuz GPS spoof/jam/fault from ~**18 min**; AOI jam `T_AOI_1 ≈ 1 260 s`; storage ~**24 min**. Capture **`60 – 1 260 s`**. |
+| 2a — Rogue capture | ~00:01 – ~00:21 | `~60 – ~1 260 s` | **First half** — PHANTOM cycles every blue team's frequency (silent intercept pool). |
+| 2b — Rogue replay & jam | ~00:21 – ~00:34 | `~1 280 – ~2 060 s` | **Second half** — random replay of captured wires; pulsed uplink jam; second AOI jam `T_AOI_2 ≈ 2 010 s`. |
+| 3 — Compound | ~00:34 – ~00:36 | `~2 045 – ~2 160 s` | Cyber tamper + reaction wheel + battery pile-on. |
+| 4 — Wind-down | ~00:36 – 01:00 | `~2 160 – 3 600 s` | Attacks stop. Teams finalise answers. `simulation.end_time` stops the hour at **3 600 s**. |
 
-Run the simulation at `simulation.speed: 5.0` (already set in `cyber_defender.json`) — this gives ~1.8 orbits in the hour.
+At **1×**, less than one full orbit elapses in an hour — pacing prioritises cyber teaching over electro-optical framing.
 
 ## Launch sequence
 
-1. **Open** `cyber_defender.json` in Studio (or load via the admin tooling). Verify `simulation.speed = 5.0`, `universe.gps = true`, and that the six ground stations (Madrid, Doha, Singapore, Perth, Auckland, Miami) are present.
+1. **Open** `cyber_defender.json` in Studio (or load via the admin tooling). Verify `simulation.speed = 1.0`, `simulation.end_time = 3600`, `simulation.epoch` matches **`2026/02/02 08:00:00`**, `universe.gps = true`, and that the six ground stations (**Paris, Dubai, Singapore, Sydney, Easter Island, Miami**) are present in that order.
 2. **Start the rogue agent** from the project root:
 
    ```powershell
@@ -38,12 +42,12 @@ Run the simulation at `simulation.speed: 5.0` (already set in `cyber_defender.js
 
    - `cyber: defender asset resolved → 'SC_OPS' (Watchtower)`
    - `A7: uplink-jam target picked dynamically → 'Blue Bravo' (team_id=…, config_freq=… MHz)`
-   - `capture: started — 2 blue team(s), dwell=750s, quota=2/team, window=[6000, 9000]s`
+   - `capture: started — 2 blue team(s), dwell=…s, quota=2/team, window=[60, 1260]s`
    - `capture: stored intercept for '<team>' (1/2, rx=… MHz, t≈…s)` — repeats per intercept.
    - `capture: complete — 4 intercept(s) across 2 team(s)` (or window-expiry if the quota wasn't met).
-   - `replay: armed 8 burst(s) between t=9500s and t=14500s — times=[…]`
+   - `replay: armed 8 burst(s) between t=1820s and t=2600s — times=[…]`
    - `replay: t=…s burst 1/8 → '<team>' @ … MHz (sha1=…)` — repeats per burst.
-   - `jamming: scheduled 15 pulse(s) for 'Uplink Pulse Jam (<team>)' …`
+   - `jamming: scheduled … pulse pair(s) for 'Uplink Pulse Jam (<team>)' …`
    - `Downlink Jam ON (AOI Pass 1)` / `OFF` — fires once per AOI pass.
 
 5. **Forensic artefacts** are saved next to the script when each phase finalises:
@@ -56,10 +60,10 @@ Run the simulation at `simulation.speed: 5.0` (already set in `cyber_defender.js
 ## Sanity checklist before going live
 
 - [ ] `python -c "import json; json.load(open(r'scenarios/Cyber Defender/cyber_defender.json'))"` returns no error.
-- [ ] `admin_get_scenario_events` lists **10** events (6 GPS/Spacecraft for Phase 1, 4 Cyber/Spacecraft for Phase 3).
+- [ ] `admin_get_scenario_events` lists **12** events (8 GPS/Spacecraft for Phase 1, 4 Cyber/Spacecraft for Phase 3).
 - [ ] Both blue teams' MQTT clients receive their first Ping within ~30 sim s of start.
-- [ ] PHANTOM is visible on the map view from `t=0` (no `visualization.hide`).
-- [ ] At `t=1 800 s`, the GPS spoof event fires — operator's GPS lat/lon snaps to the antipode. The defender's orbit-1 descending Hormuz pass (`t ≈ 3 730 s, lat ≈ 26.5° N, lon ≈ 54° E`) lands inside the spoof + jam windows, so the baseline imagery operators take of the AOI is geo-tagged with bogus coordinates if they trust GPS naively.
+- [ ] `SC_ROGUE` has `visualization.hide: true` (rogue not on default map — EM sensor for attribution).
+- [ ] GPS spoof region enables at **`t ≈ 1 080 s`** (ν=−90° schedule; ~**18 min**); jam **`~1 110–1 380 s`**, hard fault **`~1 220 s`**. **`T_AOI_1 ≈ 1 260 s`** — imagery downlink jam overlaps the environmental GPS attack window by design (**dry-run** to confirm).
 
 ## Tunables to lock from a dry-run
 
@@ -67,8 +71,8 @@ These constants live at the top of `cyber_defender.py` and need to be tuned on t
 
 | Constant | Default | Action |
 | --- | --- | --- |
-| `T_AOI_1` | `11 200 s` | First phase-2b lat-26.5°N pass (≈ orbit-2 ascending, Caribbean / Miami arc). Find the actual sim-time from the GPS trace; patch in. |
-| `T_AOI_2` | `13 700 s` | Second phase-2b lat-26.5°N pass (≈ orbit-2 descending, Mediterranean / Madrid arc). Patch from the GPS trace. |
+| `T_AOI_1` | `1 260 s` | Hormuz-centred broadcast jam — patch from GPS trace if your integrator differs. |
+| `T_AOI_2` | `2 010 s` | Second AOI jam (Dubai + Singapore overlap region) — patch from trace. |
 | `UPLINK_JAM_ON` | `8.0 s` | Tune up if the observed Blue Bravo command-success rate during the jam window is too high (>85 %). |
 | `UPLINK_JAM_PERIOD` | `40.0 s` | Adjust to keep the duty cycle ≈ 20 % unless dry-run shows a different fraction works better. |
 

@@ -479,21 +479,22 @@ class MultiTeamCaptureSequence:
 
 class MultiTeamReplaySequence:
     """
-    Schedule N replay bursts at random sim-times within ``[start, end]``.
+    Schedule N replay **rounds** at random sim-times within ``[start, end]``.
 
-    Each burst:
+    Each **round** (one tick of the state machine at a scheduled time):
 
-    1. Picks a random ``(team_id, captured_wire)`` from the
-       :class:`MultiTeamCaptureSequence`'s pools.
+    1. For **every** blue team in the capture sequence, in roster order,
+       picks a **random** :class:`CapturedWire` from **that team's pool only**.
     2. Tunes the rogue's ground TX to that team's nominal frequency
        (``set_telemetry``) so the EM-sensor view shows the carrier change.
     3. Calls :func:`replay.replay_transmit_bytes` with the captured
        on-air bytes.
 
-    A burst is no-op if the capture pools are still empty when it fires
-    (which should be rare — capture should finish well before this window
-    opens). Logs every replay for the post-exercise forensic question
-    "how many distinct teams were replayed against?".
+       If a team's pool is empty at round fire-time, that team is skipped
+       for that round (logged). Otherwise every team receives one injection
+       attempt per round so bursts align across crews.
+
+    Logs every transmit for forensics (round index, team, success).
 
     Parameters
     ----------
@@ -595,18 +596,39 @@ class MultiTeamReplaySequence:
 
     def _fire_one(self, sim_time: float) -> None:
         pools = self._capture.get_pools()
-        candidates: list[tuple[int, CapturedWire]] = [
-            (tid, w) for tid, ws in pools.items() for w in ws
-        ]
-        if not candidates:
+        teams = self._capture._teams
+        burst_no = self._next_idx + 1
+
+        if not teams:
             printer.warn(
-                f"replay: no captures available at t={sim_time:.0f}s — "
-                f"burst {self._next_idx + 1}/{self._burst_count} skipped"
+                f"replay: no blue teams at t={sim_time:.0f}s — "
+                f"round {burst_no}/{self._burst_count} skipped"
             )
             with self._lock:
                 self._log.append(
                     {
                         "sim_time": sim_time,
+                        "burst_round": burst_no,
+                        "team_id": None,
+                        "team_name": None,
+                        "freq_mhz": None,
+                        "success": False,
+                        "reason": "no teams",
+                    }
+                )
+            return
+
+        any_candidates = any(len(pools.get(t.id, ())) > 0 for t in teams)
+        if not any_candidates:
+            printer.warn(
+                f"replay: no captures in any pool at t={sim_time:.0f}s — "
+                f"round {burst_no}/{self._burst_count} skipped entirely"
+            )
+            with self._lock:
+                self._log.append(
+                    {
+                        "sim_time": sim_time,
+                        "burst_round": burst_no,
                         "team_id": None,
                         "team_name": None,
                         "freq_mhz": None,
@@ -616,60 +638,81 @@ class MultiTeamReplaySequence:
                 )
             return
 
-        team_id, wire = self._rng.choice(candidates)
-        team = self._capture._team_by_id.get(team_id)
-        if team is None:
-            return
+        for team in teams:
+            tid = team.id
+            ws = pools.get(tid, [])
+            if not ws:
+                printer.warn(
+                    f"replay: no captures for '{team.name}' at t={sim_time:.0f}s "
+                    f"— round {burst_no}/{self._burst_count} skipped for this team"
+                )
+                with self._lock:
+                    self._log.append(
+                        {
+                            "sim_time": sim_time,
+                            "burst_round": burst_no,
+                            "team_id": tid,
+                            "team_name": team.name,
+                            "freq_mhz": None,
+                            "success": False,
+                            "reason": "no captures for team",
+                        }
+                    )
+                continue
 
-        freq = float(team.frequency)
-        snap = RFLinkSnapshot(
-            frequency_mhz=freq,
-            key=int(team.key),
-            bandwidth_mhz=self._bandwidth,
-        )
-        try:
-            tune_ground(self._client, snap)
-        except Exception as e:
-            printer.warn(f"replay: tune_ground failed before burst: {e}")
-
-        try:
-            resp = replay_transmit_bytes(self._client, freq, wire.payload_b64, encoding="base64")
-        except Exception as e:
-            printer.error(f"replay: transmit_bytes raised: {e}")
-            resp = None
-
-        ok = bool(resp and resp.get("success"))
-        payload_hash = ""
-        try:
-            import hashlib
-            raw = base64.standard_b64decode(wire.payload_b64.encode("ascii"))
-            payload_hash = hashlib.sha1(raw).hexdigest()[:12]
-        except Exception:
-            pass
-
-        with self._lock:
-            self._log.append(
-                {
-                    "sim_time": sim_time,
-                    "team_id": team_id,
-                    "team_name": team.name,
-                    "freq_mhz": freq,
-                    "payload_sha1_12": payload_hash,
-                    "success": ok,
-                }
+            wire = self._rng.choice(ws)
+            freq = float(team.frequency)
+            snap = RFLinkSnapshot(
+                frequency_mhz=freq,
+                key=int(team.key),
+                bandwidth_mhz=self._bandwidth,
             )
+            try:
+                tune_ground(self._client, snap)
+            except Exception as e:
+                printer.warn(f"replay: tune_ground failed for '{team.name}': {e}")
 
-        burst_no = self._next_idx + 1
-        if ok:
-            printer.success(
-                f"replay: t={sim_time:.0f}s burst {burst_no}/{self._burst_count} "
-                f"→ '{team.name}' @ {freq} MHz (sha1={payload_hash})"
-            )
-        else:
-            printer.error(
-                f"replay: t={sim_time:.0f}s burst {burst_no}/{self._burst_count} "
-                f"failed → '{team.name}' @ {freq} MHz: {resp}"
-            )
+            try:
+                resp = replay_transmit_bytes(
+                    self._client, freq, wire.payload_b64, encoding="base64"
+                )
+            except Exception as e:
+                printer.error(f"replay: transmit_bytes raised: {e}")
+                resp = None
+
+            ok = bool(resp and resp.get("success"))
+            payload_hash = ""
+            try:
+                import hashlib
+
+                raw = base64.standard_b64decode(wire.payload_b64.encode("ascii"))
+                payload_hash = hashlib.sha1(raw).hexdigest()[:12]
+            except Exception:
+                pass
+
+            with self._lock:
+                self._log.append(
+                    {
+                        "sim_time": sim_time,
+                        "burst_round": burst_no,
+                        "team_id": tid,
+                        "team_name": team.name,
+                        "freq_mhz": freq,
+                        "payload_sha1_12": payload_hash,
+                        "success": ok,
+                    }
+                )
+
+            if ok:
+                printer.success(
+                    f"replay: t={sim_time:.0f}s round {burst_no}/{self._burst_count} "
+                    f"→ '{team.name}' @ {freq} MHz (sha1={payload_hash})"
+                )
+            else:
+                printer.error(
+                    f"replay: t={sim_time:.0f}s round {burst_no}/{self._burst_count} "
+                    f"failed → '{team.name}' @ {freq} MHz: {resp}"
+                )
 
     def _finalise(self) -> None:
         with self._lock:
@@ -679,7 +722,8 @@ class MultiTeamReplaySequence:
             log_copy = list(self._log)
         n_ok = sum(1 for r in log_copy if r.get("success"))
         printer.success(
-            f"replay: complete — {n_ok}/{len(log_copy)} burst(s) succeeded"
+            f"replay: complete — {n_ok}/{len(log_copy)} transmit(s) succeeded "
+            f"({self._burst_count} round(s) × {len(self._capture._teams)} team(s) max)"
         )
         if self.on_complete:
             try:

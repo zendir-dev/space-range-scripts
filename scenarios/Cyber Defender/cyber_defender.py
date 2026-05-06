@@ -8,17 +8,17 @@ Cyber Defender — Space Range scenario script
 The **rogue** spacecraft (callsign *PHANTOM*) drives every active cyber
 effect in this scenario:
 
-* **Phase 2a — Multi-team capture (6 000 → 9 000 s).**
+* **Phase 2a — Multi-team capture (first half of session at 1×).**
   The rogue cycles its receiver across every blue team's RF identity and
-  records foreign Uplink Intercepts into per-team capture pools.
-  See :class:`src.cyber_replay.MultiTeamCaptureSequence`.
+  records foreign Uplink Intercepts (commands to the defender) into
+  per-team capture pools. See :class:`src.cyber_replay.MultiTeamCaptureSequence`.
 
-* **Phase 2b — Random multi-team replay (9 500 → 14 500 s).**
-  Eight bursts spread randomly through the window, each picking a random
-  captured wire and re-broadcasting it at the matching team's frequency.
-  See :class:`src.cyber_replay.MultiTeamReplaySequence`.
+* **Phase 2b — Random replay (second half).**
+  **Eight rounds** at random sim-times; **each round** sends **one**
+  random captured wire **per blue team** (from that team's pool; verbatim
+  bytes, no mutation). See :class:`src.cyber_replay.MultiTeamReplaySequence`.
 
-* **A7 — Light pulsed uplink jam (10 200 → 10 800 s).**
+* **A7 — Light pulsed uplink jam.**
   20 % duty-cycle pulse jam on **one** blue team's frequency. The target is
   picked dynamically from :attr:`Scenario.enemy_teams` (the last enemy team
   in config order), so renaming or extending the team roster requires no
@@ -27,7 +27,7 @@ effect in this scenario:
 * **A8 / A11 — Broadcast downlink jam over AOI imaging passes.**
   Saturating jam on every blue frequency for 180 s centred on each AOI
   overhead. ``T_AOI_1`` / ``T_AOI_2`` are placeholder constants — lock from
-  a dry-run (see ``cyber_defender.spec.md`` § 12.6).
+  a dry-run (see ``cyber_defender.spec.md`` § 12).
 
 Team identity is **never hard-coded** in this script — every blue-team
 detail is read from :attr:`Scenario.enemy_teams` (loaded from the JSON
@@ -101,10 +101,19 @@ scheduler = scenario.scheduler
 # ``on_session``.
 # ---------------------------------------------------------------------------
 
-CAPTURE_START = 6_000.0
-CAPTURE_END = 9_000.0
-REPLAY_START = 9_500.0
-REPLAY_END = 14_500.0
+# Timeline at simulation.speed = 1.0 (wall-clock seconds == sim seconds).
+# Design: rogue **listens the first half** of the hour (capture foreign uplink
+# intercepts from all blue teams), then **re-transmits random captured commands**
+# in the second half (verbatim payload bytes, random team/pick each burst).
+# Orbit: True Anomaly **−90°** (defender) / **−89.99°** (rogue) — ~9 min earlier
+# SOH phasing than ν=−110°. All absolute times below are **shifted −540 s** to
+# match. Re-validate on first dry-run.
+# Ground-station visibility: re-check after ν change. Hormuz / GPS JSON cluster
+# ~1 080–1 380 s overlaps capture.
+CAPTURE_START = 60.0
+CAPTURE_END = 1_260.0
+REPLAY_START = 1_280.0
+REPLAY_END = 2_060.0
 
 capture: "MultiTeamCaptureSequence | None" = None
 replay_seq: "MultiTeamReplaySequence | None" = None
@@ -138,7 +147,7 @@ def _build_active_sequences() -> None:
 
     blue_count = max(1, len(scenario.enemy_teams))
     per_team_quota = 2 if blue_count <= 2 else 3
-    # ~2 sweeps of every team across the 3 000 s capture window.
+    # ~2 sweeps of every team across the capture window.
     dwell_seconds = (CAPTURE_END - CAPTURE_START) / blue_count / 2.0
 
     capture = MultiTeamCaptureSequence(
@@ -155,7 +164,7 @@ def _build_active_sequences() -> None:
         start_at=REPLAY_START,
         end_at=REPLAY_END,
         burst_count=8,
-        seed=20260415,
+        seed=20260202,
     )
 
     capture.on_complete = _save_capture_pools
@@ -212,15 +221,15 @@ printer.info(
 
 
 # ---------------------------------------------------------------------------
-# A7 — Light pulsed uplink jam on a single blue team (10 200 → 10 800 s)
+# A7 — Light pulsed uplink jam on a single blue team
 # ---------------------------------------------------------------------------
 # The target team is picked dynamically — the **last** enemy team in config
 # order. Adjust the index below to single out a different team; the rest of
 # the script (and the question framework) follows automatically.
 # ---------------------------------------------------------------------------
 
-UPLINK_JAM_START = 10_200.0
-UPLINK_JAM_END = 10_800.0
+UPLINK_JAM_START = 2_100.0
+UPLINK_JAM_END = 2_200.0
 UPLINK_JAM_ON = 8.0
 UPLINK_JAM_PERIOD = 40.0       # 20 % duty cycle
 UPLINK_JAM_POWER = 0.8          # well below A8/A11 saturating power
@@ -261,29 +270,13 @@ else:
 # ---------------------------------------------------------------------------
 # A8 / A11 — Broadcast downlink jam centred on AOI imaging passes
 #
-# These two times must be **locked from a dry-run** (see spec § 12.6).
-# Placeholders below are derived from the analytic geometry of the chosen
-# orbit (SMA=10 000 km, e=0.015, i=37.5°, RAAN=242°, ω=0°, ν=0°) and the
-# 2026/02/02 12:00 UTC epoch:
-#   * Orbit-1 descending pass at lat 26.5° N hits geographic lon ≈ 54° E
-#     (≈ Hormuz) at t ≈ 3 730 s — this falls in **phase 1** (passive),
-#     overlapping the GPS spoof + jam events so operators take a baseline
-#     Hormuz image while their GPS is being spoofed/jammed (great pedagogy
-#     for the GPS-attribution questions).
-#   * Orbit-2 ascending pass at t ≈ 11 200 s lands at lon ≈ -80° E
-#     (Caribbean band, lat 26.5° N).
-#   * Orbit-2 descending pass at t ≈ 13 700 s lands at lon ≈ 13° E
-#     (Mediterranean band, lat 26.5° N).
-#   Both orbit-2 passes fall inside phase 2b (9 000 – 15 000 s), giving the
-#   rogue a clean window to broadcast-jam the imagery downlink. They are in
-#   the same imaging lat-band as Hormuz even though they cross different
-#   longitudes — operators are still capturing/downlinking high-priority
-#   imagery during these passes.
-# Lock both values to the actual GPS trace once the scenario is dry-run.
+# These two times must be **locked from a dry-run** (see spec § 12).
+# Hormuz-centred broadcast downlink jam. Second pass: Dubai+Singapore overlap —
+# patch from GPS trace if your geometry differs.
 # ---------------------------------------------------------------------------
 
-T_AOI_1 = 11_200.0      # ≈ orbit-2 ascending pass (Caribbean band)
-T_AOI_2 = 13_700.0      # ≈ orbit-2 descending pass (Mediterranean band)
+T_AOI_1 = 1_260.0
+T_AOI_2 = 2_010.0
 AOI_HALF = 90.0                 # 180 s window each (T ± 90 s)
 AOI_JAM_POWER = 3.0             # saturating — clean broadcast outage
 
@@ -324,12 +317,12 @@ _add_aoi_jam("AOI Pass 2", T_AOI_2)
 
 scheduler.add_event(
     name="Initial Sun Point",
-    trigger_time=100.0,
+    trigger_time=60.0,
     **commands.guidance_sun("Solar Panel"),
 )
 scheduler.add_event(
     name="Final Sun Point",
-    trigger_time=16_500.0,
+    trigger_time=2_760.0,
     **commands.guidance_sun("Solar Panel"),
 )
 

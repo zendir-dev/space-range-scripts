@@ -1,10 +1,9 @@
 {
 	"simulation": {
-		"epoch": "2026/02/02 12:00:00",
-		"speed": 5.0,
-		"step_size": 0.12,
-		"integrator": "Euler",
-		"end_time": 0.0
+		"epoch": "2026/02/02 08:00:00",
+		"speed": 1.0,
+		"step_size": 0.025,
+		"integrator": "Euler"
 	},
 	"universe": {
 		"atmosphere": false,
@@ -12,15 +11,15 @@
 		"gps": true,
 		"cloud_opacity": 0.85,
 		"cloud_contrast": 2.5,
-		"ambient_light": 0.25
+		"ambient_light": 0.07
 	},
 	"ground_stations": {
 		"locations": [
-			"Madrid",
-			"Doha",
+			"Paris",
+			"Dubai",
 			"Singapore",
-			"Perth",
-			"Auckland",
+			"Sydney",
+			"Easter Island",
 			"Miami"
 		],
 		"min_elevation": 5,
@@ -69,10 +68,10 @@
 					"values": [
 						10000.0,
 						0.015,
-						37.5,
-						242.0,
+						-37.0,
+						350.0,
 						0.0,
-						0.0
+						-90.0
 					],
 					"offset": [
 						0.0,
@@ -122,8 +121,8 @@
 					"safe_fraction": 0.1,
 					"capture_tax": 0.001,
 					"downlink_tax": 0.005,
-					"ping_interval": 20.0,
-					"reset_interval": 60.0,
+					"ping_interval": 3.0,
+					"reset_interval": 20.0,
 					"jamming_multiplier": 100.0,
 					"enable_rpo": false,
 					"enable_intercept": false
@@ -183,7 +182,7 @@
 						],
 						"data": {
 							"Nominal Capacity": 80.0,
-							"Charge Fraction": 0.5,
+							"Charge Fraction": 0.9,
 							"Mass": 5.0
 						}
 					},
@@ -344,10 +343,10 @@
 					"values": [
 						10000.0,
 						0.015,
-						37.5,
-						242.0,
+						-37.0,
+						350.0,
 						0.0,
-						0.01
+						-89.99
 					],
 					"offset": [
 						0.0,
@@ -391,14 +390,15 @@
 						0.0,
 						0.0,
 						0.0
-					]
+					],
+					"hide": true
 				},
 				"controller": {
 					"safe_fraction": 0.05,
 					"capture_tax": 0.001,
 					"downlink_tax": 0.005,
-					"ping_interval": 20.0,
-					"reset_interval": 60.0,
+					"ping_interval": 3.0,
+					"reset_interval": 20.0,
 					"jamming_multiplier": 100.0,
 					"enable_rpo": false,
 					"enable_intercept": true
@@ -659,8 +659,23 @@
 	"events": [
 		{
 			"Enabled": true,
+			"Name": "Solar Panel Degradation (early warm-up)",
+			"Time": 120.0,
+			"Repeat": false,
+			"Interval": 1.0,
+			"Type": "Spacecraft",
+			"Target": "SolarPanel-SolarPanelDegradationErrorModel",
+			"Assets": [
+				"SC_OPS"
+			],
+			"Data": {
+				"Degradation Rate": 100000.0
+			}
+		},
+		{
+			"Enabled": true,
 			"Name": "GPS Spoof Region — Hormuz ON",
-			"Time": 1800.0,
+			"Time": 1080.0,
 			"Repeat": false,
 			"Interval": 1.0,
 			"Type": "GPS",
@@ -679,7 +694,7 @@
 		{
 			"Enabled": true,
 			"Name": "GPS Jammer Add — Hormuz",
-			"Time": 2400.0,
+			"Time": 1110.0,
 			"Repeat": false,
 			"Interval": 1.0,
 			"Type": "GPS",
@@ -696,7 +711,7 @@
 		{
 			"Enabled": true,
 			"Name": "Storage Corruption",
-			"Time": 4200.0,
+			"Time": 1420.0,
 			"Repeat": false,
 			"Interval": 1.0,
 			"Type": "Spacecraft",
@@ -712,7 +727,7 @@
 		{
 			"Enabled": true,
 			"Name": "GPS Sensor Hard Fault",
-			"Time": 5400.0,
+			"Time": 1220.0,
 			"Repeat": false,
 			"Interval": 1.0,
 			"Type": "Spacecraft",
@@ -727,7 +742,7 @@
 		{
 			"Enabled": true,
 			"Name": "GPS Jammer Remove — Hormuz",
-			"Time": 5800.0,
+			"Time": 1380.0,
 			"Repeat": false,
 			"Interval": 1.0,
 			"Type": "GPS",
@@ -739,8 +754,20 @@
 		},
 		{
 			"Enabled": true,
-			"Name": "GPS Spoof Region — Hormuz OFF",
-			"Time": 6200.0,
+			"Name": "GPS Spoof Region — Hormuz OFF (post-cluster)",
+			"Time": 1390.0,
+			"Repeat": false,
+			"Interval": 1.0,
+			"Type": "GPS",
+			"Data": {
+				"Type": "Spoofing",
+				"Enabled": false
+			}
+		},
+		{
+			"Enabled": true,
+			"Name": "GPS Spoof Region — Hormuz OFF (bootstrap)",
+			"Time": 30.0,
 			"Repeat": false,
 			"Interval": 1.0,
 			"Type": "GPS",
@@ -752,7 +779,7 @@
 		{
 			"Enabled": true,
 			"Name": "Tamper Ping State",
-			"Time": 15200.0,
+			"Time": 2080.0,
 			"Repeat": false,
 			"Interval": 1.0,
 			"Type": "Cyber",
@@ -773,7 +800,7 @@
 		{
 			"Enabled": true,
 			"Name": "Tamper GPS Position",
-			"Time": 15600.0,
+			"Time": 2650.0,
 			"Repeat": false,
 			"Interval": 1.0,
 			"Type": "Cyber",
@@ -794,7 +821,7 @@
 		{
 			"Enabled": true,
 			"Name": "Reaction Wheel Stuck",
-			"Time": 15800.0,
+			"Time": 2045.0,
 			"Repeat": false,
 			"Interval": 1.0,
 			"Type": "Spacecraft",
@@ -809,7 +836,7 @@
 		{
 			"Enabled": true,
 			"Name": "Battery Power Spikes",
-			"Time": 16100.0,
+			"Time": 2160.0,
 			"Repeat": false,
 			"Interval": 1.0,
 			"Type": "Spacecraft",
@@ -844,10 +871,23 @@
 			"type": "number",
 			"answer": {
 				"unit": "deg",
-				"value": 37.5,
+				"value": 37.0,
 				"tolerance": 1.0,
-				"reason": "The orbit was tuned for ground-station coverage across the Madrid → Doha → Singapore → Perth → Auckland → Miami chain; the resulting 37.5° inclination still passes directly over the Hormuz / Arabian Sea AOI on the descending leg of orbit 1.",
+				"reason": "The six-element Keplerian set uses inclination −37° (retrograde sense in the sim); the maximum |latitude| from GPS matches the absolute inclination magnitude.",
 				"score": 5
+			}
+		},
+		{
+			"section": "Maritime picture (Phase 0)",
+			"title": "How many vessels are in the primary Hormuz Strait traffic cluster?",
+			"description": "In Studio / map ground objects, count only the five coordinated-traffic vessels at the Hormuz grid (GO_001–GO_005 — Lead, Trail, Flank, Picket, Tender). Exclude the two yellow decoy hulls offset to the southeast — those exist for the GPS spoofing lesson, not strait traffic counting.",
+			"type": "number",
+			"answer": {
+				"unit": "vessels",
+				"value": 5.0,
+				"tolerance": 0.25,
+				"reason": "The scenario authors five green Hormuz-cluster vessels; two additional yellow vessels (Spoof Decoy A/B) are geographically separated for the antipode spoof narrative.",
+				"score": 3
 			}
 		},
 		{
@@ -889,11 +929,11 @@
 				],
 				"value": 2,
 				"reason": [
-					"The GPS Sensor enters Fault State 4 at t=5 400 s; the magnetometer remains healthy throughout, distinguishing a hardware fault from the earlier spoofing/jamming.",
-					"The GPS Sensor enters Fault State 4 at t=5 400 s; the magnetometer remains healthy throughout, distinguishing a hardware fault from the earlier spoofing/jamming.",
-					"The GPS Sensor enters Fault State 4 at t=5 400 s; the magnetometer remains healthy throughout, distinguishing a hardware fault from the earlier spoofing/jamming.",
-					"The GPS Sensor enters Fault State 4 at t=5 400 s; the magnetometer remains healthy throughout, distinguishing a hardware fault from the earlier spoofing/jamming.",
-					"The GPS Sensor enters Fault State 4 at t=5 400 s; the magnetometer remains healthy throughout, distinguishing a hardware fault from the earlier spoofing/jamming."
+					"The GPS Sensor enters Fault State 4 at t≈1 220 s (Hormuz pass / Dubai link); the magnetometer remains healthy throughout, distinguishing a hardware fault from the earlier spoofing/jamming.",
+					"The GPS Sensor enters Fault State 4 at t≈1 220 s (Hormuz pass / Dubai link); the magnetometer remains healthy throughout, distinguishing a hardware fault from the earlier spoofing/jamming.",
+					"The GPS Sensor enters Fault State 4 at t≈1 220 s (Hormuz pass / Dubai link); the magnetometer remains healthy throughout, distinguishing a hardware fault from the earlier spoofing/jamming.",
+					"The GPS Sensor enters Fault State 4 at t≈1 220 s (Hormuz pass / Dubai link); the magnetometer remains healthy throughout, distinguishing a hardware fault from the earlier spoofing/jamming.",
+					"The GPS Sensor enters Fault State 4 at t≈1 220 s (Hormuz pass / Dubai link); the magnetometer remains healthy throughout, distinguishing a hardware fault from the earlier spoofing/jamming."
 				],
 				"score": 5
 			}
@@ -901,7 +941,7 @@
 		{
 			"section": "Environmental Cyber (Phase 1)",
 			"title": "What was the symptom of the storage corruption event?",
-			"description": "After t≈4 200 s, downlinked imagery contains corrupted bytes. Identify the type of failure observed.",
+			"description": "After the Storage corruption event (~23–24 min, once the Hormuz GPS jammer and spoof region have been cleared), downlinked imagery contains corrupted bytes. Identify the type of failure observed.",
 			"type": "select",
 			"answer": {
 				"options": [
@@ -945,11 +985,11 @@
 		{
 			"section": "Adversary Attribution",
 			"title": "What is the rogue spacecraft's call-sign?",
-			"description": "Slew the camera onto the rogue spacecraft and read the chassis text.",
+			"description": "The rogue is hidden on the default map/3D view (`visualization.hide`); use the EM sensor during replay/jam phases and mission context. The configured call-sign is **PHANTOM** (Text components on the chassis if you enable visibility in a custom build).",
 			"type": "text",
 			"answer": {
 				"value": "PHANTOM",
-				"reason": "The rogue carries a 'PHANTOM' Text component on both faces of the chassis — visible from any approach angle in the camera image.",
+				"reason": "Scenario asset name **Phantom** with PHANTOM chassis labels in JSON; stock workshop hides the mesh so teams infer from spectrum / instructor brief.",
 				"score": 5
 			}
 		},
@@ -973,24 +1013,25 @@
 			"type": "checkbox",
 			"answer": {
 				"options": [
-					"Auckland",
-					"Doha",
-					"Madrid",
-					"Miami",
-					"Perth",
-					"Singapore"
+					"Paris",
+					"Dubai",
+					"Singapore",
+					"Sydney",
+					"Easter Island",
+					"Miami"
 				],
 				"value": [
-					2,
-					3
+					0,
+					1,
+					2
 				],
 				"reason": [
-					"The two phase-2b AOI passes are at lat 26.5°N — orbit-2 ascending crosses near the Caribbean (in view of Miami) and orbit-2 descending crosses the Mediterranean band (in view of Madrid). Update this answer post-dry-run with the actual stations observed; jamming is broadcast across all blue frequencies.",
-					"The two phase-2b AOI passes are at lat 26.5°N — orbit-2 ascending crosses near the Caribbean (in view of Miami) and orbit-2 descending crosses the Mediterranean band (in view of Madrid). Update this answer post-dry-run with the actual stations observed; jamming is broadcast across all blue frequencies.",
-					"The two phase-2b AOI passes are at lat 26.5°N — orbit-2 ascending crosses near the Caribbean (in view of Miami) and orbit-2 descending crosses the Mediterranean band (in view of Madrid). Update this answer post-dry-run with the actual stations observed; jamming is broadcast across all blue frequencies.",
-					"The two phase-2b AOI passes are at lat 26.5°N — orbit-2 ascending crosses near the Caribbean (in view of Miami) and orbit-2 descending crosses the Mediterranean band (in view of Madrid). Update this answer post-dry-run with the actual stations observed; jamming is broadcast across all blue frequencies.",
-					"The two phase-2b AOI passes are at lat 26.5°N — orbit-2 ascending crosses near the Caribbean (in view of Miami) and orbit-2 descending crosses the Mediterranean band (in view of Madrid). Update this answer post-dry-run with the actual stations observed; jamming is broadcast across all blue frequencies.",
-					"The two phase-2b AOI passes are at lat 26.5°N — orbit-2 ascending crosses near the Caribbean (in view of Miami) and orbit-2 descending crosses the Mediterranean band (in view of Madrid). Update this answer post-dry-run with the actual stations observed; jamming is broadcast across all blue frequencies."
+					"Placeholder keyed to coverage windows for this epoch/orbit (ν=−90° / times −9 min): Hormuz-centred AOI jam (~21 min) overlaps Paris (0–2 000 s) and Dubai (370–3 340 s); second AOI jam overlaps Dubai and Singapore (2 000–4 900 s). Confirm SNR on dry-run and adjust indices.",
+					"Placeholder keyed to coverage windows for this epoch/orbit (ν=−90° / times −9 min): Hormuz-centred AOI jam (~21 min) overlaps Paris (0–2 000 s) and Dubai (370–3 340 s); second AOI jam overlaps Dubai and Singapore (2 000–4 900 s). Confirm SNR on dry-run and adjust indices.",
+					"Placeholder keyed to coverage windows for this epoch/orbit (ν=−90° / times −9 min): Hormuz-centred AOI jam (~21 min) overlaps Paris (0–2 000 s) and Dubai (370–3 340 s); second AOI jam overlaps Dubai and Singapore (2 000–4 900 s). Confirm SNR on dry-run and adjust indices.",
+					"Placeholder keyed to coverage windows for this epoch/orbit (ν=−90° / times −9 min): Hormuz-centred AOI jam (~21 min) overlaps Paris (0–2 000 s) and Dubai (370–3 340 s); second AOI jam overlaps Dubai and Singapore (2 000–4 900 s). Confirm SNR on dry-run and adjust indices.",
+					"Placeholder keyed to coverage windows for this epoch/orbit (ν=−90° / times −9 min): Hormuz-centred AOI jam (~21 min) overlaps Paris (0–2 000 s) and Dubai (370–3 340 s); second AOI jam overlaps Dubai and Singapore (2 000–4 900 s). Confirm SNR on dry-run and adjust indices.",
+					"Placeholder keyed to coverage windows for this epoch/orbit (ν=−90° / times −9 min): Hormuz-centred AOI jam (~21 min) overlaps Paris (0–2 000 s) and Dubai (370–3 340 s); second AOI jam overlaps Dubai and Singapore (2 000–4 900 s). Confirm SNR on dry-run and adjust indices."
 				],
 				"score": 5
 			}
@@ -1038,8 +1079,43 @@
 				],
 				"value": 1,
 				"reason": [
-					"The rogue captures foreign uplinks during 6 000-9 000 s and replays them at random against every blue team between 9 500-14 500 s.",
-					"The rogue captures foreign uplinks during 6 000-9 000 s and replays them at random against every blue team between 9 500-14 500 s."
+					"The rogue captures foreign uplinks during ~60–1 260 s; during ~1 280–2 060 s it runs eight replay **rounds** at seeded times — **each round issues one random replay per blue team** (from that team's pool).",
+					"The rogue captures foreign uplinks during ~60–1 260 s; during ~1 280–2 060 s it runs eight replay **rounds** at seeded times — **each round issues one random replay per blue team** (from that team's pool)."
+				],
+				"score": 5
+			}
+		},
+		{
+			"section": "Active Attacks (Phase 2)",
+			"title": "How many replay rounds does the rogue schedule (each round hits every blue team that has captures)?",
+			"description": "`burst_count` in `cyber_defender.py` — each round time triggers one adversarial transmit per blue team (random pick from that team's intercept pool).",
+			"type": "number",
+			"answer": {
+				"unit": "rounds",
+				"value": 8.0,
+				"tolerance": 0.25,
+				"reason": "`MultiTeamReplaySequence(..., burst_count=8)` schedules eight round times; at each time the script loops all enemy teams.",
+				"score": 4
+			}
+		},
+		{
+			"section": "Active Attacks (Phase 2)",
+			"title": "When (relative to session start at 1×) does the adversarial replay campaign typically occur?",
+			"description": "Replay rounds are scattered through the second half of the hour after capture ends — not during the first ~21 minutes of passive / GPS-heavy activity.",
+			"type": "select",
+			"answer": {
+				"options": [
+					"0–10 minutes only",
+					"Roughly 21–35 minutes simulation time (second half; replay window)",
+					"Only in the final 5 minutes",
+					"Continuously from t = 0"
+				],
+				"value": 1,
+				"reason": [
+					"Replay is confined to `[REPLAY_START, REPLAY_END]` (~1 280–2 060 s ≈ 21–34 min at 1× for the current ν=−90° schedule).",
+					"Replay is confined to `[REPLAY_START, REPLAY_END]` (~1 280–2 060 s ≈ 21–34 min at 1× for the current ν=−90° schedule).",
+					"Replay is confined to `[REPLAY_START, REPLAY_END]` (~1 280–2 060 s ≈ 21–34 min at 1× for the current ν=−90° schedule).",
+					"Replay is confined to `[REPLAY_START, REPLAY_END]` (~1 280–2 060 s ≈ 21–34 min at 1× for the current ν=−90° schedule)."
 				],
 				"score": 5
 			}
