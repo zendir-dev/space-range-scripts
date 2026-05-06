@@ -27,6 +27,12 @@ def xor_crypt(password: str, data: bytes) -> bytes:
     return bytes(b ^ key[i % len(key)] for i, b in enumerate(data))
 
 
+def caesar_encrypt(key: int, data: bytes) -> bytes:
+    """Caesar (additive mod 256) — inverse of :func:`caesar_decrypt`; used for RF uplink replay."""
+    k = int(key) & 0xFF
+    return bytes((b + k) & 0xFF for b in data)
+
+
 def caesar_decrypt(key: int, data: bytes) -> bytes:
     k = int(key) & 0xFF
     return bytes((b - k) & 0xFF for b in data)

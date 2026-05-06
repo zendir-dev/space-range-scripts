@@ -119,6 +119,11 @@ class SpaceRangeClient(GroundRequestClient):
         self._on_connect_cb = on_connect   # called in a background thread after subscriptions are live
         self.on_downlink: Optional[Callable[[bytes], None]] = None
 
+        # Optional multi-team ``…/{game}/+/Uplink`` subscription (password XOR only — see docs).
+        self._foreign_uplink_topic: Optional[str] = None
+        self._foreign_uplink_passwords: dict[int, str] = {}
+        self._foreign_uplink_cb: Optional[Callable[[int, bytes], None]] = None
+
         game = config.game
 
         self._session_topic  = f"Zendir/SpaceRange/{game}/Session"
@@ -174,6 +179,47 @@ class SpaceRangeClient(GroundRequestClient):
         if handler is not None and getattr(self._client, "is_connected", lambda: False)():
             self._client.subscribe(self._downlink_topic)
             printer.info(f"Subscribing to {self._downlink_topic}")
+
+    def start_foreign_uplink_capture(
+        self,
+        teams: list[TeamConfig],
+        callback: Callable[[int, bytes], None],
+    ) -> None:
+        """
+        Subscribe to ``Zendir/SpaceRange/{game}/+/Uplink`` for the given *teams*.
+
+        Incoming payloads are XOR-decrypted with **that team segment's** password
+        (same transport layer as :meth:`send_command`) and delivered as
+        ``callback(team_id, decrypted_bytes)``. Does **not** apply Caesar — MQTT
+        uplink uses XOR only (see ``docs/guides/encryption-walkthrough.md``).
+
+        Call :meth:`stop_foreign_uplink_capture` when finished so the wildcard
+        subscription is removed.
+        """
+        if not teams:
+            printer.warn("start_foreign_uplink_capture: empty team list — nothing to do")
+            return
+        game = self._config.game
+        topic = f"Zendir/SpaceRange/{game}/+/Uplink"
+        self._foreign_uplink_topic = topic
+        self._foreign_uplink_passwords = {int(t.id): t.password for t in teams}
+        self._foreign_uplink_cb = callback
+        if getattr(self._client, "is_connected", lambda: False)():
+            self._client.subscribe(topic)
+            printer.info(f"Subscribing to {topic} (foreign uplink capture, {len(teams)} team(s))")
+
+    def stop_foreign_uplink_capture(self) -> None:
+        """Tear down :meth:`start_foreign_uplink_capture` subscription and routing."""
+        topic = self._foreign_uplink_topic
+        self._foreign_uplink_cb = None
+        self._foreign_uplink_passwords.clear()
+        self._foreign_uplink_topic = None
+        if topic and getattr(self._client, "is_connected", lambda: False)():
+            try:
+                self._client.unsubscribe(topic)
+                printer.info(f"Unsubscribed from {topic}")
+            except Exception as e:
+                printer.warn(f"stop_foreign_uplink_capture: unsubscribe failed: {e}")
 
     def connect_and_run(self):
         """Connect to the broker and block in the network loop (Ctrl+C to exit)."""
@@ -265,6 +311,9 @@ class SpaceRangeClient(GroundRequestClient):
             if self.on_downlink:
                 printer.info(f"Subscribing to {self._downlink_topic}")
                 client.subscribe(self._downlink_topic)
+            if self._foreign_uplink_cb and self._foreign_uplink_topic:
+                printer.info(f"Subscribing to {self._foreign_uplink_topic}")
+                client.subscribe(self._foreign_uplink_topic)
             if self.admin._password:
                 printer.info(f"Subscribing to {self._admin_response_topic}")
                 client.subscribe(self._admin_response_topic)
@@ -290,6 +339,20 @@ class SpaceRangeClient(GroundRequestClient):
                     printer.error(f"on_downlink handler raised: {e}")
         elif msg.topic == self._admin_response_topic:
             self.admin.handle_message(msg.payload)
+        elif self._foreign_uplink_cb:
+            parts = msg.topic.split("/")
+            if len(parts) >= 5 and parts[-1] == "Uplink":
+                try:
+                    tid = int(parts[-2])
+                except ValueError:
+                    tid = -1
+                pwd = self._foreign_uplink_passwords.get(tid)
+                if pwd is not None:
+                    raw = xor_encrypt(msg.payload, pwd)
+                    try:
+                        self._foreign_uplink_cb(tid, raw)
+                    except Exception as e:
+                        printer.error(f"foreign uplink callback raised: {e}")
 
     def _resolve_live_asset_id(self):
         """

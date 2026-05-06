@@ -8,15 +8,18 @@ Cyber Defender — Space Range scenario script
 The **rogue** spacecraft (callsign *PHANTOM*) drives every active cyber
 effect in this scenario:
 
-* **Phase 2a — Multi-team capture (first half of session at 1×).**
-  The rogue cycles its receiver across every blue team's RF identity and
-  records foreign Uplink Intercepts (commands to the defender) into
-  per-team capture pools. See :class:`src.cyber_replay.MultiTeamCaptureSequence`.
+* **Phase 2a — MQTT capture (first 15 minutes at 1×).**
+  The rogue subscribes to **every** blue team's MQTT ``Uplink`` topic at once,
+  XOR-decrypts with each team's password, and stores valid JSON commands per
+  team (no RF dwell / no Format-3 intercept). See
+  :class:`src.cyber_replay.MqttUplinkCaptureSequence`.
 
-* **Phase 2b — Random replay (second half).**
-  **Eight rounds** at random sim-times; **each round** sends **one**
-  random captured wire **per blue team** (from that team's pool; verbatim
-  bytes, no mutation). See :class:`src.cyber_replay.MultiTeamReplaySequence`.
+* **Phase 2b — Random replay (after capture).**
+  **Eight bursts** at random sim-times; **each burst** sends **three** random
+  stored commands **in a row per blue team**, with **3 s wall-clock** spacing
+  before ``set_telemetry`` for the next team (ground rate limits). MQTT-sourced
+  JSON is Caesar-encrypted with that team's RF key **at transmit time** and sent
+  on **live** carrier MHz via :class:`src.cyber_replay.MultiTeamReplaySequence`.
 
 * **A7 — Light pulsed uplink jam.**
   20 % duty-cycle pulse jam on **one** blue team's frequency. The target is
@@ -52,10 +55,7 @@ if _PROJECT_ROOT not in sys.path:
     sys.path.insert(0, _PROJECT_ROOT)
 
 from src import Scenario, commands, printer
-from src.cyber_replay import (
-    MultiTeamCaptureSequence,
-    MultiTeamReplaySequence,
-)
+from src.cyber_replay import MqttUplinkCaptureSequence, MultiTeamReplaySequence
 from src.jamming import schedule_jammer_pulses
 
 
@@ -102,27 +102,24 @@ scheduler = scenario.scheduler
 # ---------------------------------------------------------------------------
 
 # Timeline at simulation.speed = 1.0 (wall-clock seconds == sim seconds).
-# Design: rogue **listens the first half** of the hour (capture foreign uplink
-# intercepts from all blue teams), then **re-transmits random captured commands**
-# in the second half (verbatim payload bytes, random team/pick each burst).
+# First **900 s**: MQTT uplink capture only (no scripted jammer / guidance).
+# After that: normal rogue timeline (guidance, AOI jams, pulse jam, replay).
 # Orbit: True Anomaly **−90°** (defender) / **−89.99°** (rogue) — ~9 min earlier
 # SOH phasing than ν=−110°. All absolute times below are **shifted −540 s** to
 # match. Re-validate on first dry-run.
-# Ground-station visibility: re-check after ν change. Hormuz / GPS JSON cluster
-# ~1 080–1 380 s overlaps capture.
-CAPTURE_START = 60.0
-CAPTURE_END = 1_260.0
+CAPTURE_START = 0.0
+CAPTURE_END = 900.0
 REPLAY_START = 1_280.0
 REPLAY_END = 2_060.0
 
-capture: "MultiTeamCaptureSequence | None" = None
+capture: "MqttUplinkCaptureSequence | None" = None
 replay_seq: "MultiTeamReplaySequence | None" = None
 
 
 def _save_capture_pools(_pools: dict) -> None:
     if capture is None:
         return
-    out = os.path.join(_SCRIPT_DIR, "cyber_defender_captures.json")
+    out = os.path.join(_SCRIPT_DIR, "captures.json")
     try:
         capture.save(out)
         printer.info(f"capture: pools saved → {out}")
@@ -145,18 +142,14 @@ def _build_active_sequences() -> None:
     """Construct the capture / replay sequences once the client is live."""
     global capture, replay_seq
 
-    blue_count = max(1, len(scenario.enemy_teams))
-    per_team_quota = 2 if blue_count <= 2 else 3
-    # ~2 sweeps of every team across the capture window.
-    dwell_seconds = (CAPTURE_END - CAPTURE_START) / blue_count / 2.0
+    blue_count = len(scenario.enemy_teams)
 
-    capture = MultiTeamCaptureSequence(
+    capture = MqttUplinkCaptureSequence(
         scenario.client,
         scenario.enemy_teams,
         start_at=CAPTURE_START,
         end_at=CAPTURE_END,
-        per_team_quota=per_team_quota,
-        dwell_seconds=dwell_seconds,
+        max_per_team=512,
     )
     replay_seq = MultiTeamReplaySequence(
         scenario.client,
@@ -165,14 +158,15 @@ def _build_active_sequences() -> None:
         end_at=REPLAY_END,
         burst_count=8,
         seed=20260202,
+        frequency_for_team=lambda t: float(scenario.live_enemy_frequency_for(t)),
     )
 
     capture.on_complete = _save_capture_pools
     replay_seq.on_complete = _save_replay_log
 
     printer.info(
-        f"cyber: capture window=[{CAPTURE_START:.0f}, {CAPTURE_END:.0f}]s "
-        f"({blue_count} blue team(s), quota={per_team_quota}, dwell={dwell_seconds:.0f}s); "
+        f"cyber: MQTT capture window=[{CAPTURE_START:.0f}, {CAPTURE_END:.0f}]s "
+        f"({blue_count} blue team(s)); "
         f"replay window=[{REPLAY_START:.0f}, {REPLAY_END:.0f}]s, bursts=8"
     )
 
@@ -317,7 +311,7 @@ _add_aoi_jam("AOI Pass 2", T_AOI_2)
 
 scheduler.add_event(
     name="Initial Sun Point",
-    trigger_time=60.0,
+    trigger_time=CAPTURE_END,
     **commands.guidance_sun("Solar Panel"),
 )
 scheduler.add_event(

