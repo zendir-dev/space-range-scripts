@@ -752,43 +752,51 @@
 		},
 		{
 			"Enabled": true,
-			"Name": "GPS Spoof Remove — Haifa",
+			"Name": "GPS Spoof Region — Haifa ON",
 			"Time": 870.0,
 			"Repeat": false,
 			"Interval": 1.0,
 			"Type": "GPS",
 			"Data": {
 				"Type": "Spoofing",
-				"Action": "remove",
-				"Index": "0"
+				"Enabled": true,
+				"Origin Latitude": 32.9,
+				"Origin Longitude": 35.2,
+				"Origin Altitude": 3622000.0,
+				"Radius": 50000000.0,
+				"Spoof Latitude": 37.8,
+				"Spoof Longitude": 59.7,
+				"Spoof Altitude": 2000000.0
 			}
 		},
 		{
 			"Enabled": true,
-			"Name": "GPS Jammer Add — Hormuz",
-			"Time": 1140.0,
+			"Name": "GPS Spoof Region — Haifa ON",
+			"Time": 980.0,
 			"Repeat": false,
 			"Interval": 1.0,
 			"Type": "GPS",
 			"Data": {
-				"Type": "Jamming",
-				"Action": "add",
-				"Jammer Latitude": 26.0,
-				"Jammer Longitude": 56.0,
-				"Jammer Altitude": 500000.0,
-				"Effective Radiated Power": 25000000.0,
-				"Path Loss Exponent": 1.0
+				"Type": "Spoofing",
+				"Enabled": true,
+				"Origin Latitude": 32.9,
+				"Origin Longitude": 35.2,
+				"Origin Altitude": 3622000.0,
+				"Radius": 50000000.0,
+				"Spoof Latitude": 9.7,
+				"Spoof Longitude": 50.4,
+				"Spoof Altitude": 2500000.0
 			}
 		},
 		{
 			"Enabled": true,
-			"Name": "GPS Jammer Remove — Hormuz",
-			"Time": 1500.0,
+			"Name": "GPS Spoof Remove — Haifa",
+			"Time": 1100.0,
 			"Repeat": false,
 			"Interval": 1.0,
 			"Type": "GPS",
 			"Data": {
-				"Type": "Jamming",
+				"Type": "Spoofing",
 				"Action": "remove",
 				"Index": "0"
 			}
@@ -836,6 +844,36 @@
 			],
 			"Data": {
 				"Nominal Index": 0
+			}
+		},
+		{
+			"Enabled": true,
+			"Name": "GPS Jammer Add — Hormuz",
+			"Time": 1850.0,
+			"Repeat": false,
+			"Interval": 1.0,
+			"Type": "GPS",
+			"Data": {
+				"Type": "Jamming",
+				"Action": "add",
+				"Jammer Latitude": 26.0,
+				"Jammer Longitude": 56.0,
+				"Jammer Altitude": 500000.0,
+				"Effective Radiated Power": 25000000.0,
+				"Path Loss Exponent": 1.0
+			}
+		},
+		{
+			"Enabled": true,
+			"Name": "GPS Jammer Remove — Hormuz",
+			"Time": 2000.0,
+			"Repeat": false,
+			"Interval": 1.0,
+			"Type": "GPS",
+			"Data": {
+				"Type": "Jamming",
+				"Action": "remove",
+				"Index": "0"
 			}
 		},
 		{
