@@ -1,6 +1,6 @@
 # Cyber Defender — Scenario Specification
 
-> **Status**: design draft — pre-implementation.
+> **Status**: implemented baseline — keep synced with JSON/script edits.
 > **Audience**: scenario author (JSON), Python-script author (rogue agent), instructor.
 > **Sibling references**: `scenarios/Orbital Sentinel/orbital_sentinel.json` & `orbital_sentinel.py` for the closest existing template; this scenario reuses that shape (multiple blue teams sharing one collection + scripted Red team).
 
@@ -16,7 +16,7 @@ A small fleet of **blue teams** share one defender spacecraft over a busy mariti
 
 By the end of the workshop, an operator should be able to:
 
-1. **Recognise** the telemetry signatures of: GPS spoofing, GPS jamming, uplink jamming, downlink jamming, command injection (telemetry tamper), replay attack, sensor fault, storage corruption, **solar-array degradation** (early-session warm-up).
+1. **Recognise** the telemetry signatures of: GPS spoofing, GPS jamming, uplink jamming, downlink jamming, command injection (telemetry tamper), replay attack, storage capacity fault, reaction-wheel fault, and **solar-array degradation**.
 2. **Distinguish** an *environmental* effect (everyone sees it) from a *targeted* effect aimed at one team's RF identity (only that team sees it).
 3. **Pick** the right mitigation per attack — frequency hop, key rotation, component reset, ephemeris rollback, ignore-and-wait.
 4. **Attribute** effects to a candidate adversary using **EM spectrum** (rogue mesh hidden by default; optional camera only if `visualization.hide` is cleared).
@@ -30,7 +30,7 @@ By the end of the workshop, an operator should be able to:
 | Wall-clock duration | **60 minutes** |
 | Sim speed | **1×** (`simulation.speed: 1.0`) — wall-clock seconds match simulation seconds; pacing matches real operator tempo (electro-optical collection is not the learning objective). |
 | Sim seconds elapsed | **3 600 s** (one hour); `simulation.end_time` stops the session at the hour mark. |
-| Threat-heavy arc | **`0 → ~2 160 s`** (~first **36 minutes**, ν=−90° schedule) — passive GPS/storage/GPS-fault events, rogue capture/replay/jam windows, broadcast AOI downlink jams, and compound cyber tail finish by **~2 160 s**, leaving the rest of the hour for debrief and question wrap-up. |
+| Threat-heavy arc | **`0 → ~3 000 s`** (~first **50 minutes**) — passive GPS/fault/inject events plus rogue replay/jam windows complete by **3 000 s**, leaving final minutes for debrief and scoring. |
 
 ### Phase plan (sim-time anchored)
 
@@ -38,14 +38,12 @@ Epoch **`2026/02/02 08:00 UTC`**, orbit §4.1 — **ν = −90°** pulls SOH pha
 
 | Phase | Wall | Sim time | Theme |
 | --- | --- | --- | --- |
-| **0 — Familiarisation** | 00:00 – ~00:12 | `0 – ~720 s` | Paris visibility; connect, baseline ops. **~30 s** bootstrap **GPS spoofing OFF**. **~10 min** **solar-array degradation**. Optional vessel-count question. |
-| **1 — Passive cyber** | ~00:12 – ~00:24 | `~720 – ~1 440 s` | Hormuz **GPS spoof → jam → fault → jam remove** (from ~**18 min**); **storage ~26 min**. **Rogue capture** `0 → 900 s`. |
-| **2a — Rogue capture** | ~00:01 – ~00:21 | `~60 – ~1 260 s` | **First half of session** — cycle every blue frequency; silent per-team capture pools. |
-| **2b — Rogue replay & jam** | ~00:25 – ~00:50 | `~1 500 – ~3 000 s` envelope | Replay bursts **`1 500 – 1 980`**, **continuous uplink jam `1 980 – 2 280`** (all blue MHz); **Singapore** downlink **`2 400 – 3 000`**. |
-| **3 — Compound** | ~00:34 – ~00:45 | `~2 080 – ~2 650 s` | Cyber telemetry tamper **plus** the scripted **reaction-wheel stuck** hardware fault (no battery fault in this workshop). |
-| **4 — Wind-down** | ~00:36 – 01:00 | `~2 160 – 3 600 s` | No new scripted attacks. Teams finalise answers and forensic notes. |
-
-> **`T_AOI_1`** (**~1 260 s**, ~**21 min**) fires during Phase 1 — broadcast downlink jam overlaps the Hormuz GPS attack cluster by design.
+| **0 — Familiarisation** | 00:00 – ~00:12 | `0 – ~720 s` | Paris visibility; connect, baseline ops. **~6:40 min** first GPS spoof region and **~10 min** solar-array degradation. Optional vessel-count question. |
+| **1 — Passive cyber** | ~00:07 – ~00:33 | `~400 – ~2 000 s` | Multi-step GPS spoof sequence (5 region updates + remove), storage/reaction-wheel faults, GPS jamming on/off, and two cyber inject events. |
+| **2a — Rogue capture** | ~00:00 – ~00:15 | `0 – 900 s` | MQTT uplink capture only (all blue teams subscribed concurrently). |
+| **2b — Rogue replay & jam** | ~00:25 – ~00:50 | `~1 500 – ~3 000 s` envelope | Replay bursts **`1 500 – 1 980`**, **continuous uplink jam `1 980 – 2 280`** (all blue MHz), Singapore downlink barrage **`2 400 – 3 000`**. |
+| **3 — Compound** | ~00:26 – ~00:33 | `~1 560 – ~2 000 s` | Storage + reaction-wheel fault, GPS jamming, and the second cyber inject overlap this arc. |
+| **4 — Wind-down** | ~00:50 – 01:00 | `~3 000 – 3 600 s` | No new scripted attacks. Teams finalise answers and forensic notes. |
 
 > Phases 1 and 2 deliberately **overlap visually but separate causally**: Phase 1 is global (everyone is affected); Phase 2 is targeted by the rogue spacecraft. Asking teams to attribute who-caused-what is the core of the assessment. Phase 2 is split into a **listen-only first half** and a **broadcast second half** so capture has time to populate before replay.
 
@@ -68,35 +66,37 @@ Single checklist for dry-runs at **1×** (`wall seconds == sim seconds`). Values
 
 | Sim (s) | Wall | Src | Event |
 | ---: | ---: | :--- | :--- |
-| 30 | 00:30 | JSON | GPS Spoof Region — Hormuz OFF **(bootstrap)** |
-| 60 | 01:00 | Py | `Initial Sun Point` |
-| 600 | 10:00 | JSON | Solar Panel Degradation (**150000** degradation rate, **1.5×** stock **100000**) |
-| 840 | 14:00 | JSON | Cyber Inject Magnetometer (`STAR INJECT`, APID **300**) |
+| 0 | 00:00 | Py | `Initial Sun Point` |
+| 400 | 06:40 | JSON | GPS Spoof Region 1 |
+| 600 | 10:00 | JSON | Solar Panel Degradation (**150000** degradation rate) |
+| 600 | 10:00 | JSON | GPS Spoof Region 2 |
+| 800 | 13:20 | JSON | GPS Spoof Region 3 |
+| 840 | 14:00 | JSON | Cyber Inject 1 (`STAR INJECT`, APID **300**) |
+| 870 | 14:30 | JSON | GPS Spoof Region 4 |
 | 890 | 14:50 | Py | Point jammer at **Dubai** (downlink barrage prep) |
-| 900 | 15:00 | Py | Downlink Jam **ON** (Dubai segment, `guidance_ground`) |
-| 1 080 | 18:00 | JSON | GPS Spoof Region — Hormuz ON |
-| 1 110 | 18:30 | JSON | GPS Jammer Add — Hormuz |
-| 1 220 | 20:20 | JSON | GPS Sensor Hard Fault |
-| 1 380 | 23:00 | JSON | GPS Jammer Remove — Hormuz |
-| 1 390 | 23:10 | JSON | GPS Spoof Region — Hormuz OFF **(post-cluster)** |
+| 900 | 15:00 | Py | Downlink Jam **ON** (Dubai segment) |
+| 980 | 16:20 | JSON | GPS Spoof Region 5 |
+| 1 100 | 18:20 | JSON | GPS Spoof Off (remove index 0) |
 | 1 500 | 25:00 | Py | Downlink Jam **OFF** (Dubai segment) |
 | 1 525.7 | 25:26 | Py | Replay burst **#1** |
-| 1 560 | 26:00 | JSON | Storage Full (`Capacity`: stock Spacecraft.json recipe) |
-| 1 620 | 27:00 | JSON | Reaction Wheel Stuck (`Stuck Index`: 0 → Wheel 1) |
+| 1 560 | 26:00 | JSON | Storage Full |
+| 1 620 | 27:00 | JSON | Reaction Wheel Stuck |
 | 1 626.2 | 27:06 | Py | Replay burst **#2** |
 | 1 642.0 | 27:22 | Py | Replay burst **#3** |
 | 1 754.6 | 29:15 | Py | Replay burst **#4** |
 | 1 775.0 | 29:35 | Py | Replay burst **#5** |
-| 1 800 | 30:00 | JSON | Reaction Wheel Nominal (`Nominal Index`: 0 → unstuck, stock Spacecraft.json recipe) |
+| 1 800 | 30:00 | JSON | Reaction Wheel Nominal |
 | 1 801.0 | 30:01 | Py | Replay burst **#6** |
-| 1 860.7 | 30:41 | Py | Replay burst **#7** |
-| 1 920 | 32:00 | JSON | Cyber Inject EM Sensor (`ECHO VIRUS`, APID **302**) |
+| 1 850 | 30:50 | JSON | GPS Jamming On |
+| 1 860.7 | 31:01 | Py | Replay burst **#7** |
+| 1 920 | 32:00 | JSON | Cyber Inject 2 (`ECHO VIRUS`, APID **302**) |
 | 1 956.2 | 32:36 | Py | Replay burst **#8** |
 | 1 970 | 32:50 | Py | Point jammer at defender bus (uplink jam prep) |
 | 1 980 | 33:00 | Py | **Uplink Jam ON** (all blue MHz, low power) |
+| 2 000 | 33:20 | JSON | GPS Jamming Off |
 | 2 280 | 38:00 | Py | **Uplink Jam OFF** |
 | 2 390 | 39:50 | Py | Point jammer at **Singapore** (downlink barrage prep) |
-| 2 400 | 40:00 | Py | Downlink Jam **ON** (Singapore segment, `guidance_ground`) |
+| 2 400 | 40:00 | Py | Downlink Jam **ON** (Singapore segment) |
 | 3 000 | 50:00 | Py | Downlink Jam **OFF** (Singapore segment) |
 | 3 060 | 51:00 | Py | `Final Sun Point` |
 
@@ -183,7 +183,7 @@ Singapore      2 000 – 4 900
 Sydney         3 600 – 6 670
 ```
 
-The scripted threats place **Hormuz-region GPS attacks and the first AOI downlink jam ~21 min** into the pass on the current ν=−90° / −540 s clock (Dubai link primary), with **nearest-GS routing to Dubai ~8–12 min** — align fine timing on your range if link logic differs. **Re-validate after any orbit or epoch change.**
+The scripted threats place the first broadcast downlink barrage over the Dubai-linked segment (**900–1500 s**) and the second over the Singapore-linked segment (**2400–3000 s**). Re-validate pass ownership if your ground-routing policy differs.
 
 #### 4.3.2 Cities deliberately not used
 
@@ -265,7 +265,7 @@ Mandatory canonical 6 (Solar Panel, Battery, Computer, Receiver, Transmitter, St
 | --- | --- | --- |
 | `Camera` | Imagery for AOI questions + visual ID of PHANTOM. | 303 (CCD) |
 | `EM Sensor` | Required for Phase 2 attribution (rogue's TX frequency). | 302 |
-| `GPS Sensor` | Target of Phase 1 spoofing/jamming/sensor-fault. | 301 |
+| `GPS Sensor` | Source of APID 301 telemetry used to observe spoofing/jamming effects. | 301 |
 | `Magnetometer` | Cross-check GPS spoof against B-field. | 300 |
 | `Reaction Wheels` | Pointing for camera/EM. | 401 |
 
@@ -349,19 +349,19 @@ Earlier guidance still applies: **fewer** vessels than *Orbital Sentinel* becaus
 - **Pedagogy**: gives operators **something to chase before the Hormuz GPS cluster** without stacking ambiguous imagery faults.
 - **Assessment** (question bank): fault type = **Solar Panel Degradation**; panels keyed as **Both** (+X and −X); event time **~10 min** (±3 min tolerance).
 
-#### A1. GPS Spoofing — Hormuz region
+#### A1. GPS Spoofing sequence — Regions 1 to 5
 
 - **Type**: passive (`Type: "GPS"`, `Data.Type: "Spoofing"`).
-- **Window**: **bootstrap OFF** at **`30 s`**, **ON** at **`1 080 s`**, **post-cluster OFF** at **`1 390 s`** (brackets the Hormuz pass; **Storage Full** follows later at **1 560 s**).
-- **Mechanism**: spoof a ~200 km-radius volume centred on `lat 26.5°, lon 56.5°, alt 4 000 km` — when the defender's GPS receiver is inside the sphere, position is reported at `lat -26.5°, lon -123.5°` (mirror point in the South Pacific).
-- **Signature**: GPS lat/lon "jumps" while velocity vector and B-field are unchanged. APID 301 (`GPS`) reports drift, APID 300 (`Magnetometer`) doesn't.
-- **Mitigation**: ephemeris rollback (or trust last good fix until exit).
+- **Window**: **`400 s → 1 100 s`**.
+- **Mechanism**: five authored spoof-region updates (`GPS Spoof Region 1..5`) progressively move the spoofed location, then `GPS Spoof Off` removes index `0`.
+- **Signature**: APID 301 (`GPS`) position/altitude track jumps across implausible regions while APID 300 (`Magnetometer`) remains physically coherent.
+- **Mitigation**: cross-check with non-GPS sensors, dead-reckon, or roll back to last trusted navigation state.
 
-#### A2. GPS Jamming — ground source over AOI
+#### A2. GPS Jamming — ground source
 
 - **Type**: passive (`Type: "GPS"`, `Data.Type: "Jamming"`, `Action: "add"`).
-- **Window**: `1 110 s → 1 380 s` (paired add/remove with `Index: "0"`).
-- **Mechanism**: ground jammer at `lat 26°, lon 56°, alt 50 km`, `ERP: 250 000 W`.
+- **Window**: **`1 850 s → 2 000 s`** (paired add/remove with `Index: "0"`).
+- **Mechanism**: `GPS Jamming On` adds jammer at `lat 26°, lon 56°, alt 500 km`, `ERP: 25 000 000 W`, `Path Loss Exponent: 1.0`; `GPS Jamming Off` removes it.
 - **Signature**: GPS solutions go unhealthy / no-fix when over the AOI.
 - **Mitigation**: dead-reckon; cross-check with magnetometer (still healthy).
 
@@ -375,36 +375,24 @@ Earlier guidance still applies: **fewer** vessels than *Orbital Sentinel* becaus
 - **Pedagogy**: separates **storage sizing / capacity** stress from GPS-layer attacks.
 - **Assessment** (question bank): keyed outcome **“Storage Capacity was Decreased”** (interpretation of capacity clamp); event time **26 min** (±3 min tolerance).
 
-#### A4. GPS Sensor fault (sustained / hard fault)
-
-- **Type**: passive (`Type: "Spacecraft"`, `Target: "GPS Sensor"`).
-- **Window**: fires at **`1 220 s`** (authoritative value from `cyber_defender.json`); cleared by `reset` from operator.
-- **Mechanism**: `Data: { "Fault State": 4 }`.
-- **Signature**: APID 301 stops emitting fresh fixes / sticks at last value with `fault_state != 0`.
-- **Mitigation**: `reset` the `GPS Sensor` component. Distinguishes a hardware fault from A1/A2 environmental denial.
-
 ### Phase 2a — Listen across every blue team (Python rogue script)
 
 #### A5. Multi-team replay capture
 
 - **Type**: active (extends `InterceptReplaySequence` from `src/cyber_replay.py`).
-- **Window**: `60 s → 1 260 s` (first half of the hour; overlaps passive GPS on purpose).
-- **Mechanism** (script-level — *new* helper required, see § 11.2):
-  1. Resolve **every** blue team's RF via `rf_catalog.get_all_frequencies(admin)` — gives one snapshot per team.
-  2. **Cycle** through them on a fixed dwell derived from the capture window length and team count so each team is visited twice before the window closes (at 1× speed the dwell is tens of seconds per sweep for a two-team roster). With more teams, shorten dwell proportionally.
-  3. For each dwell, `tune_ground` to that team's `(freq, key, bandwidth)` and keep a **per-team capture pool** indexed by `team_id`.
-  4. Stop the cycle once **every blue team has at least `X = 2` foreign intercepts** captured (or the window expires). Save the pools as JSON for forensics.
+- **Window**: **`0 s → 900 s`**.
+- **Mechanism**: rogue enables MQTT foreign-uplink capture for **all** blue teams at once, storing valid decrypted JSON commands into per-team pools (`max_per_team` cap).
 - **Signature**: nothing visible to the defender — captures are silent.
 - **Defender training point**: this only succeeds because uplinks are unauthenticated ciphertext. Operators who rotate `encryption` mid-window invalidate any captured ciphertext for *their* team going forward.
 
-> Implementation detail: the existing `InterceptReplaySequence.begin_capture(listen_rf, foreign_count)` is a single-frequency capture. Extend with a thin wrapper `MultiTeamCaptureSequence` that owns a `dict[team_id, list[CapturedWire]]` plus a tuner-cycle loop driven from `tick(sim_time)`. Reuse `decode_downlink_mqtt_payload` + `parse_uplink_intercept_record`.
+> Implementation detail: implemented as `MqttUplinkCaptureSequence` (multi-team MQTT capture), which stores valid JSON uplinks per team across `0 → 900 s` without RF dwell-cycling.
 
 ### Phase 2b — Replay & jam across every blue team (Python rogue script)
 
 #### A6. Random multi-team replay
 
 - **Type**: active (re-broadcast captured wire bytes from A5 — **no mutation**; each transmit draws a **random** wire from **that team's** pool — commands that were sent *to the defender* and overheard while listening as that blue RF identity).
-- **Window**: `1 280 s → 2 060 s` (second half; starts just after first-half capture ends).
+- **Window**: **`1 500 s → 1 980 s`**.
 - **Mechanism**:
   1. Schedule **N replay rounds** (`burst_count`, default **8**) at **random** sim-times across the window.
   2. At **each round time**, for **every** blue team **in order**, pick a **random** capture from **that team's pool only**, tune the rogue ground TX to that team's frequency, and `replay_transmit_bytes` the **verbatim** on-air bytes. If a team's pool is empty, skip that team for that round (logged).
@@ -507,16 +495,23 @@ From **after the last Cyber tamper / telemetry event you author** onwards: opera
 
 ## 10. Question framework
 
-Aim for **~16-18 questions**, total score `100`, distributed across these sections (mirrors *Orbital Sentinel*'s breakdown style):
+Current JSON carries **32 questions** across the sections below. Keep this breakdown synced with `cyber_defender.json`:
 
 | Section | Approx weight | Sample question titles |
 | --- | --- | --- |
 | Orbital Operations (sanity) | ~14 pts | Maritime counts, semi-major axis, inclination |
-| Component Faults | ~29 pts | Solar degradation (type / panels / time), Storage Full (effect / time), reaction wheel (which wheel / time) |
-| Environmental Cyber (Phase 1) | ~20 pts | GPS spoof region, GPS sensor hard fault, spoof mitigation - storage fault questions live under Component Faults |
-| Adversary Attribution | 25 pts | "What is the rogue spacecraft's call-sign?" (brief / EM), "What frequency does PHANTOM transmit on?" (EM sensor), "Which ground stations saw downlink jamming?" |
-| Active Attacks (Phase 2) | 25 pts | "Which blue team(s) had captured uplinks replayed against them?", "What was the minimum SNR observed during the downlink jam?", "Which APID(s) showed tampering in Phase 3?" |
-| Mitigations | 15 pts | `select` questions on best response per attack — frequency hop, key rotation, component reset, ephemeris rollback. |
+| Vessel Identification | 10 pts | Green and yellow vessel counts |
+| Orbital Operations | 10 pts | Semi-major axis and inclination |
+| Solar Panel Fault | 10 pts | fault type, affected panels, time |
+| Storage Fault | 8 pts | effect and time |
+| Reaction Wheels Fault | 7 pts | affected wheel and time |
+| GPS Spoofing | 15 pts | first/last time and spoofed region |
+| GPS Jamming | 10 pts | first/last time |
+| Cyber Injects | 20 pts | APID selection + hidden payload text |
+| Rogue Identification | 15 pts | call-sign + transmitter frequency |
+| Downlink Jamming | 20 pts | episodes, affected stations, min SNR, mitigation |
+| Uplink Jamming | 20 pts | episodes, station, min SNR, mitigation |
+| Replay Attacks | 15 pts | affected station, duration, mitigation |
 
 > Question *content* (specific values) should be filled in by the JSON-author after a dry-run, since "minimum SNR" / "exact pass affected" are implementation-time observations, not design-time predictions.
 
@@ -533,7 +528,7 @@ When this spec is approved, three artefacts get produced (all in this folder):
 - `assets.space[]`: `SC_OPS`, `SC_ROGUE` (§7).
 - `assets.collections[]`: `Main: ["SC_OPS"]`, `Rogue: ["SC_ROGUE"]`.
 - `objects.ground[]`: minimal Hormuz cluster (§8).
-- `events[]`: A1, A2, A3, A4, A9 (Magnetometer inject), A10 (EM Sensor inject), A12, A13 — sorted by `Time`.
+- `events[]`: 14 passive events, including GPS Spoof Region 1..5 and GPS Jamming On/Off, plus the two Cyber Inject events and spacecraft faults; sorted by `Time`.
 - `questions[]`: see §10.
 
 ### 11.2 `cyber_defender.py`
@@ -541,44 +536,41 @@ When this spec is approved, three artefacts get produced (all in this folder):
 Mirrors `orbital_sentinel.py` shape but uses the new multi-team helpers:
 
 ```python
-from src import Scenario, commands, replay, rf_catalog
-from src.cyber_replay import MultiTeamCaptureSequence, MultiTeamReplaySequence
-                             # ↑ NEW helpers — to be added in src/cyber_replay.py
+from src import Scenario, commands
+from src.cyber_replay import MqttUplinkCaptureSequence, MultiTeamReplaySequence
+
+CAPTURE_START, CAPTURE_END = 0.0, 900.0
+REPLAY_START, REPLAY_END = 1500.0, 1980.0
+UPLINK_JAM_START, UPLINK_JAM_END, UPLINK_JAM_POWER = 1980.0, 2280.0, 0.08
 
 scenario = Scenario(team_name="Rogue", config_path=_config_path)
 scheduler = scenario.scheduler
 
-capture = MultiTeamCaptureSequence(scenario.client,
-                                   blue_teams=scenario.enemies,
-                                   per_team_quota=2)
-replay_seq = MultiTeamReplaySequence(scenario.client,
-                                     capture=capture,
-                                     burst_count=8,
-                                     window=(1_280.0, 2_060.0))
+capture = MqttUplinkCaptureSequence(
+    scenario.client, scenario.enemy_teams,
+    start_at=CAPTURE_START, end_at=CAPTURE_END, max_per_team=512
+)
+replay_seq = MultiTeamReplaySequence(
+    scenario.client, capture,
+    start_at=REPLAY_START, end_at=REPLAY_END,
+    burst_count=8, seed=20260202,
+    frequency_for_team=lambda t: float(scenario.live_enemy_frequency_for(t)),
+)
 
-# Phase 2a — capture (illustrative — real script uses tick()-driven windows)
-scheduler.add_event("Capture: cycle blue teams", trigger_time=60.0,
-                    pre_trigger=lambda a: capture.start_cycle(),
-                    command="noop", args={}, description="...")
-scheduler.add_event("Capture: stop", trigger_time=1_260.0,
-                    pre_trigger=lambda a: capture.stop_cycle(),
-                    command="noop", args={}, description="...")
-
-# Phase 2b — replay across teams (random sim-times within window)
-scheduler.add_event("Replay: arm bursts", trigger_time=1_280.0,
-                    pre_trigger=lambda a: replay_seq.arm_random_bursts(),
-                    command="noop", args={}, description="...")
-
-# A7 / A8 / A11 — jammer events use commands.jammer_start
-# with live_enemy_frequencies, identical to orbital_sentinel.py.
+# Uplink jam: single ON/OFF, all blue frequencies, low power
+scheduler.add_event("Uplink Jam ON", trigger_time=UPLINK_JAM_START,
+                    pre_trigger=live_jammer_args_all,
+                    **commands.jammer_start(scenario.enemy_fallback_freqs, UPLINK_JAM_POWER))
+scheduler.add_event("Uplink Jam OFF", trigger_time=UPLINK_JAM_END,
+                    **commands.jammer_stop())
 ```
 
 `Scenario.run` already drives `on_session` → `seq.tick(session["time"])` forwarding; the new helpers expose a matching `tick(sim_time)`.
 
-> **New code additions to `src/cyber_replay.py`**:
+> **Current cyber replay primitives used by this scenario**:
 >
-> - `MultiTeamCaptureSequence` — owns `dict[team_id, list[CapturedWire]]`, cycles `tune_ground` across each team's RF with a configurable dwell.
-> - `MultiTeamReplaySequence` — given a capture pool and a `(start, end)` sim window, schedules `N` random **round times**; at each time, **loops every blue team**, picks a random capture from **that** team's pool, and calls `replay_transmit_bytes` on the live team frequency.
+> - `MqttUplinkCaptureSequence` — captures valid JSON uplink commands per blue team during `0 → 900 s`.
+> - `MultiTeamReplaySequence` — schedules random replay rounds in `1500 → 1980 s`, then replays per-team captures against each team's live frequency.
 
 > **New code addition to `src/commands.py` (or a small `src/jamming.py`)**:
 >
@@ -602,7 +594,7 @@ Short page (single screen) giving the instructor:
 3. **PHANTOM visibility** — **`visualization.hide: true`** on `SC_ROGUE`; discovery via **EM sensor** / spectrum and brief, not default map mesh.
 4. **A9 / A10 ASCII Cyber payloads** — `STAR INJECT` and `ECHO VIRUS` avoid `{`, `}`, `"` per the JSON-loader constraint on Cyber ASCII payloads.
 5. **Capture / replay cadence** — **First half** of session: multi-team **capture** only. **Second half**: **random replay bursts** (plus jams). Per-team quota **`X = 2`** if `len(enemy_teams) ≤ 2`, else **`X = 3`** (`cyber_defender.py`).
-6. **`T_AOI_1` / `T_AOI_2`** — Instructor to validate against GPS trace (**ongoing**).
+6. **Ground-station ownership during jamming** — confirm Dubai and Singapore pass ownership on your range if routing policy differs.
 7. **A7 uplink jam** — **Continuous** barrage at **low power** on **all** blue MHz; **`UPLINK_JAM_POWER`** is the lone scalar to tune after dry-run.
 
 ---
@@ -617,5 +609,5 @@ Short page (single screen) giving the instructor:
 - `docs/scenarios/ground-stations.md` — full city catalog (added alongside this spec).
 - `docs/reference/packet-formats.md` § APID catalog — the full APID table; pick Cyber-event APIDs that match components on `SC_OPS`.
 - `src/cyber_replay.py`, `src/replay.py`, `src/rf_catalog.py` — Python glue for active phases.
-- `src/commands.py` — `jammer_start` / `jammer_stop` / `guidance_spacecraft`.
+- `src/commands.py` — `jammer_start` / `jammer_stop` / `guidance_spacecraft` / `guidance_ground`.
 - `docs/guides/instructor-admin.md` — admin checklist and live-event push.

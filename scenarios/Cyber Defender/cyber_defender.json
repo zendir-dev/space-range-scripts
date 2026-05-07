@@ -900,190 +900,8 @@
 	],
 	"questions": [
 		{
-			"section": "Orbital Operations",
-			"title": "Vessel Identification: How many green vessels are clustered in the Strait of Hormuz?",
-			"description": "Taking Earth observation imagery of the Hormuz region, count the number of green vessesls found.",
-			"type": "number",
-			"answer": {
-				"unit": "",
-				"value": 5.0,
-				"tolerance": 0,
-				"reason": "Five vessels are located in the Strait of Hormuz.",
-				"score": 5
-			}
-		},
-		{
-			"section": "Orbital Operations",
-			"title": "Vessel Identification: How many yellow vessels appear near near the Malacca Strait?",
-			"description": "Taking Earth observation imagery of the Malacca Strait region, count the number of yellow vessesls found.",
-			"type": "number",
-			"answer": {
-				"unit": "",
-				"value": 2.0,
-				"tolerance": 0,
-				"reason": "Two yellow vessels are located near the Malacca Strait.",
-				"score": 5
-			}
-		},
-		{
-			"section": "Orbital Operations",
-			"title": "Orbit Determination: What is the Semi-Major Axis (km) of your spacecraft's orbit?",
-			"description": "Using on-board telemetry, calculate the semi-major axis of your spacecraft's orbit.",
-			"type": "number",
-			"answer": {
-				"unit": "km",
-				"value": 10000.0,
-				"tolerance": 100.0,
-				"reason": "Using the GPS data, the spacecraft flies with an average altitude of 3622 km, giving a semi-major axis of 10000 km.",
-				"score": 5
-			}
-		},
-		{
-			"section": "Orbital Operations",
-			"title": "Orbit Determination: What is the Inclination (deg) of your spacecraft's orbit?",
-			"description": "Using on-board telemetry, calculate the inclination of your spacecraft's orbit.",
-			"type": "number",
-			"answer": {
-				"unit": "deg",
-				"value": 37.0,
-				"tolerance": 1.0,
-				"reason": "Using the GPS data, the inclination of the spacecraft's orbit is 37 degrees, found to be the maximum latitude value from the GPS data.",
-				"score": 5
-			}
-		},
-		{
-			"section": "Component Faults",
-			"title": "Solar Panel Fault: What fault occurred on the solar panels?",
-			"description": "Some of the solar panels were damaged at a point in time. Identify the type of fault that occurred.",
-			"type": "select",
-			"answer": {
-				"options": [
-					"Battery Thermal Runaway",
-					"Broken Wiring",
-					"Intermittent Connection",
-					"Solar Panel Degradation",
-					"Solar Panel Open Circuit"
-				],
-				"value": 3,
-				"reason": [
-					"Battery thermal runaway is unrelated to the authored solar degradation event.",
-					"Broken Wiring is not the fault model used in this scenario.",
-					"Intermittent Connection applies to power interconnect models, not the solar degradation trigger.",
-					"Correct. The solar panel began to degrade over time, slowly loosing performance.",
-					"Open circuit is a distractor; the scenario uses a degradation rate fault instead."
-				],
-				"score": 4
-			}
-		},
-		{
-			"section": "Component Faults",
-			"title": "Solar Panel Fault: Which solar panels were affected by this fault?",
-			"description": "At least one of the solar panels was affected by the fault. Which ones were affected?",
-			"type": "checkbox",
-			"answer": {
-				"options": [
-					"Solar Panel +X",
-					"Solar Panel -X"
-				],
-				"value": [
-					0,
-					1
-				],
-				"reason": [
-					"Correct. This solar panel was affected by the fault.",
-					"Correct. This solar panel was affected by the fault."
-				],
-				"score": 2
-			}
-		},
-		{
-			"section": "Component Faults",
-			"title": "Solar Panel Fault: At what time (minutes from session start) did this fault occur?",
-			"description": "At least one of the solar panels was affected by the fault. Give elapsed simulation minutes at which this fault first occurred.",
-			"type": "number",
-			"answer": {
-				"unit": "min",
-				"value": 10.0,
-				"tolerance": 3.0,
-				"reason": "This fault occurred at 600 seconds into the simulation, and ran until the solar panel was reset or completely degraded.",
-				"score": 4
-			}
-		},
-		{
-			"section": "Component Faults",
-			"title": "Storage Fault: What fault occurred on the spacecraft storage system?",
-			"description": "At some point the storage system on the spacecraft was stressed. What outcome matches telemetry and capacity behaviour?",
-			"type": "select",
-			"answer": {
-				"options": [
-					"Imagery Capture Disabled",
-					"Storage Bits Corrupted",
-					"Storage Capacity was Decreased",
-					"Storage Completely Emptied",
-					"Transmitter Bit Rate Reduced"
-				],
-				"value": 2,
-				"reason": [
-					"The camera chain is not disabled by this Storage event.",
-					"Bit corruption would be the legacy Storage Corruption recipe; this scenario uses Storage Full instead.",
-					"Correct. The storage capacity was reduced to 100000 bytes, matching the telemetry data.",
-					"The event does not wipe stored objects.",
-					"The transmitter is unrelated to the Storage trigger."
-				],
-				"score": 4
-			}
-		},
-		{
-			"section": "Component Faults",
-			"title": "Storage Fault: At what time (minutes from session start) did this fault occur?",
-			"description": "Give elapsed simulation minutes at which this fault first occurred.",
-			"type": "number",
-			"answer": {
-				"unit": "min",
-				"value": 26.0,
-				"tolerance": 3.0,
-				"reason": "This fault occurred at 1560 seconds into the simulation, and ran until the storage system was reset.",
-				"score": 4
-			}
-		},
-		{
-			"section": "Component Faults",
-			"title": "Reaction Wheel Fault: Which reaction wheels became stuck?",
-			"description": "At least one of the reaction wheels became stuck. Which wheels became stuck?",
-			"type": "checkbox",
-			"answer": {
-				"options": [
-					"Wheel X",
-					"Wheel Y",
-					"Wheel Z"
-				],
-				"value": [
-					0
-				],
-				"reason": [
-					"Correct. This wheel became stuck, where the speed could not be controlled.",
-					"Reaction Wheel Y is not stuck. The stuck condition is where the wheel speed could not be controlled.",
-					"Reaction Wheel Z is not stuck. The stuck condition is where the wheel speed could not be controlled."
-				],
-				"score": 3
-			}
-		},
-		{
-			"section": "Component Faults",
-			"title": "Reaction Wheel Fault: At what time (minutes from session start) did this fault occur?",
-			"description": "At least one of the reaction wheels became stuck. Give elapsed simulation minutes at which this fault first occurred.",
-			"type": "number",
-			"answer": {
-				"unit": "min",
-				"value": 27.0,
-				"tolerance": 3.0,
-				"reason": "This fault occurred at 1620 seconds into the simulation, and ran until the reaction wheel was reset or completely nominal.",
-				"score": 4
-			}
-		},
-		{
-			"section": "Environmental Cyber",
-			"title": "GPS Spoofing: At what time (in minutes from session start) did the GPS spoofing first occur?",
+			"section": "GPS Spoofing",
+			"title": "At what time (in minutes from session start) did the GPS spoofing first occur?",
 			"description": "The GPS spoofing first occurred at a point in time. Give elapsed simulation minutes at which this spoofing first occurred.",
 			"type": "number",
 			"answer": {
@@ -1095,8 +913,8 @@
 			}
 		},
 		{
-			"section": "Environmental Cyber",
-			"title": "GPS Spoofing: At what time (in minutes from session start) did the GPS spoofing last occur?",
+			"section": "GPS Spoofing",
+			"title": "At what time (in minutes from session start) did the GPS spoofing last occur?",
 			"description": "The GPS spoofing last occurred at a point in time. Give elapsed simulation minutes at which this spoofing last occurred.",
 			"type": "number",
 			"answer": {
@@ -1108,8 +926,8 @@
 			}
 		},
 		{
-			"section": "Environmental Cyber",
-			"title": "GPS Spoofing: Where was the spoofed region centred?",
+			"section": "GPS Spoofing",
+			"title": "Where was the spoofed region centred?",
 			"description": "The GPS spoofing occurred over a region. Where was the region centred?",
 			"type": "select",
 			"answer": {
@@ -1138,34 +956,105 @@
 			}
 		},
 		{
-			"section": "Environmental Cyber",
-			"title": "GPS Jamming: At what time (in minutes from session start) did the GPS jamming first occur?",
-			"description": "The GPS jamming first occurred at a point in time. Give elapsed simulation minutes at which this jamming first occurred.",
-			"type": "number",
+			"section": "Solar Panel Fault",
+			"title": "What fault occurred on the solar panels?",
+			"description": "Some of the solar panels were damaged at a point in time. Identify the type of fault that occurred.",
+			"type": "select",
 			"answer": {
-				"unit": "min",
-				"value": 30.8,
-				"tolerance": 1.5,
-				"reason": "This jamming occurred at 600 seconds into the simulation.",
-				"score": 5
+				"options": [
+					"Battery Thermal Runaway",
+					"Broken Wiring",
+					"Intermittent Connection",
+					"Solar Panel Degradation",
+					"Solar Panel Open Circuit"
+				],
+				"value": 3,
+				"reason": [
+					"Battery thermal runaway is unrelated to the authored solar degradation event.",
+					"Broken Wiring is not the fault model used in this scenario.",
+					"Intermittent Connection applies to power interconnect models, not the solar degradation trigger.",
+					"Correct. The solar panel began to degrade over time, slowly loosing performance.",
+					"Open circuit is a distractor; the scenario uses a degradation rate fault instead."
+				],
+				"score": 4
 			}
 		},
 		{
-			"section": "Environmental Cyber",
-			"title": "GPS Jamming: At what time (in minutes from session start) did the GPS jamming last occur?",
-			"description": "The GPS jamming last occurred at a point in time. Give elapsed simulation minutes at which this jamming last occurred.",
-			"type": "number",
+			"section": "Solar Panel Fault",
+			"title": "Which solar panels were affected by this fault?",
+			"description": "At least one of the solar panels was affected by the fault. Which ones were affected?",
+			"type": "checkbox",
 			"answer": {
-				"unit": "min",
-				"value": 33.3,
-				"tolerance": 1.5,
-				"reason": "This jamming ran for 4.5 minutes, starting at 600 seconds into the simulation.",
-				"score": 5
+				"options": [
+					"Solar Panel +X",
+					"Solar Panel -X"
+				],
+				"value": [
+					0,
+					1
+				],
+				"reason": [
+					"Correct. This solar panel was affected by the fault.",
+					"Correct. This solar panel was affected by the fault."
+				],
+				"score": 2
 			}
 		},
 		{
-			"section": "Cyber Threats",
-			"title": "Cyber Injects: What hidden text appeared in the cyber injection around 14 minutes?",
+			"section": "Solar Panel Fault",
+			"title": "At what time (minutes from session start) did this fault occur?",
+			"description": "At least one of the solar panels was affected by the fault. Give elapsed simulation minutes at which this fault first occurred.",
+			"type": "number",
+			"answer": {
+				"unit": "min",
+				"value": 10.0,
+				"tolerance": 3.0,
+				"reason": "This fault occurred at 600 seconds into the simulation, and ran until the solar panel was reset or completely degraded.",
+				"score": 4
+			}
+		},
+		{
+			"section": "Cyber Injects",
+			"title": "Which messages, based on their APID, had injected text due to a cyber attack?",
+			"description": "Some messages had injected text, disrupting the data found within the packets. This was due to a cyber attack. Which messages were affected?",
+			"type": "checkbox",
+			"answer": {
+				"options": [
+					"100 - Ping",
+					"200 - Battery",
+					"201 - Power Source",
+					"202 - Power Node",
+					"300 - Magnetometer",
+					"301 - GPS",
+					"302 - EM Sensor",
+					"400 - Computer",
+					"401 - Reaction Wheels",
+					"500 - Receiver",
+					"501 - Transmitter"
+				],
+				"value": [
+					4,
+					6
+				],
+				"reason": [
+					"Ping (APID 100) was not one of the two scripted inject APIDs for this question.",
+					"Battery (APID 200) was not one of the two scripted inject APIDs for this question.",
+					"Power Source (APID 201) was not one of the two scripted inject APIDs for this question.",
+					"Power Node (APID 202) was not one of the two scripted inject APIDs for this question.",
+					"Correct. Magnetometer (APID 300) receives a Cyber overlay for five minutes starting at 840 s (~14 min).",
+					"GPS (APID 301) was not one of the two scripted inject APIDs for this question.",
+					"Correct. EM Sensor (APID 302) receives a Cyber overlay for five minutes starting at 1920 s (~32 min).",
+					"Computer (APID 400) was not one of the two scripted inject APIDs for this question.",
+					"Reaction Wheels (APID 401) was not one of the two scripted inject APIDs for this question.",
+					"Receiver (APID 500) was not one of the two scripted inject APIDs for this question.",
+					"Transmitter (APID 501) was not one of the two scripted inject APIDs for this question."
+				],
+				"score": 10
+			}
+		},
+		{
+			"section": "Cyber Injects",
+			"title": "What hidden text appeared in the cyber injection around 14 minutes?",
 			"description": "One of the messages had injected text, disrupting the data found within the packets. What was the text that appeared?",
 			"type": "text",
 			"answer": {
@@ -1175,8 +1064,8 @@
 			}
 		},
 		{
-			"section": "Cyber Threats",
-			"title": "Cyber Injects: What hidden text appeared in the cyber injection around 32 minutes?",
+			"section": "Cyber Injects",
+			"title": "What hidden text appeared in the cyber injection around 32 minutes?",
 			"description": "One of the messages had injected text, disrupting the data found within the packets. What was the text that appeared?",
 			"type": "text",
 			"answer": {
@@ -1186,19 +1075,8 @@
 			}
 		},
 		{
-			"section": "Cyber Threats",
-			"title": "Rogue Identification: What is the rogue spacecraft's call-sign?",
-			"description": "The rogue spacecraft is identified by its call-sign, visible on the spacecraft's chassis. What is the call-sign of the rogue spacecraft?",
-			"type": "text",
-			"answer": {
-				"value": "PHANTOM",
-				"reason": "The rogue asset is configured with call-sign PHANTOM on its chassis labels and mission data.",
-				"score": 10
-			}
-		},
-		{
-			"section": "Cyber Threats",
-			"title": "Downlink Jamming: How many distinct sustained broadcast downlink jam episodes occurred?",
+			"section": "Downlink Jamming",
+			"title": "How many distinct sustained broadcast downlink jam episodes occurred?",
 			"description": "The rogue spacecraft held a saturating barrage jam on your team's frequency. How many episodes of jamming occurred?",
 			"type": "number",
 			"answer": {
@@ -1210,8 +1088,8 @@
 			}
 		},
 		{
-			"section": "Cyber Threats",
-			"title": "Downlink Jamming: Which ground stations were affected by the downlink jamming attack?",
+			"section": "Downlink Jamming",
+			"title": "Which ground stations were affected by the downlink jamming attack?",
 			"description": "The rogue spacecraft held a saturating barrage jam on your team's frequency. Which ground stations were affected by the jamming attack?",
 			"type": "checkbox",
 			"answer": {
@@ -1241,8 +1119,8 @@
 			}
 		},
 		{
-			"section": "Cyber Threats",
-			"title": "Downlink Jamming: What was the lowest signal-to-noise ratio (dB) observed at the ground station during downlink jamming?",
+			"section": "Downlink Jamming",
+			"title": "What was the lowest signal-to-noise ratio (dB) observed at the ground station during downlink jamming?",
 			"description": "During the downlink jamming attack, what was the lowest signal-to-noise ratio (dB) observed at the ground station?",
 			"type": "number",
 			"answer": {
@@ -1254,8 +1132,8 @@
 			}
 		},
 		{
-			"section": "Cyber Threats",
-			"title": "Downlink Jamming: What action mitigates a sustained downlink jam during a ground-station pass?",
+			"section": "Downlink Jamming",
+			"title": "What action mitigates a sustained downlink jam during a ground-station pass?",
 			"description": "Which of the following options would be the best immediate mitigation when a downlink jam is occurring?",
 			"type": "select",
 			"answer": {
@@ -1280,90 +1158,32 @@
 			}
 		},
 		{
-			"section": "Cyber Threats",
-			"title": "Uplink Jamming: How many distinct sustained broadcast uplink jam episodes occurred?",
-			"description": "The rogue spacecraft held a saturating barrage jam on your team's frequency. How many episodes of jamming occurred?",
+			"section": "Rogue Identification",
+			"title": "What is the rogue spacecraft's call-sign?",
+			"description": "The rogue spacecraft is identified by its call-sign, visible on the spacecraft's chassis. What is the call-sign of the rogue spacecraft?",
+			"type": "text",
+			"answer": {
+				"value": "PHANTOM",
+				"reason": "The rogue asset is configured with call-sign PHANTOM on its chassis labels and mission data.",
+				"score": 10
+			}
+		},
+		{
+			"section": "Rogue Identification",
+			"title": "What frequency does the rogue spacecraft transmit its data on?",
+			"description": "The rogue spacecraft transmits on a frequency to its ground stations. What frequency does the rogue spacecraft transmit its data on?",
 			"type": "number",
 			"answer": {
-				"unit": "",
-				"value": 1.0,
-				"tolerance": 0,
-				"reason": "The rogue spacecraft held a saturating barrage jam on your team's frequency for one episode.",
+				"unit": "MHz",
+				"value": 905.0,
+				"tolerance": 20.0,
+				"reason": "The rogue spacecraft transmits on frequency 905 MHz. This can be found in the EM data by analysing the spectrum of the rogue spacecraft's transmitter.",
 				"score": 5
 			}
 		},
 		{
-			"section": "Cyber Threats",
-			"title": "Uplink Jamming: To which ground station were you connected to during the uplink jamming attack?",
-			"description": "The rogue spacecraft held a saturating barrage jam on your team's frequency. Which ground station were you connected to during the uplink jamming attack?",
-			"type": "checkbox",
-			"answer": {
-				"options": [
-					"Dubai",
-					"Easter Island",
-					"Miami",
-					"Mumbai",
-					"Paris",
-					"Singapore",
-					"Sydney"
-				],
-				"value": [
-					3
-				],
-				"reason": [
-					"The spacecraft was not connected to Dubai during the uplink jamming attack.",
-					"The spacecraft was not connected to Easter Island during the uplink jamming attack.",
-					"The spacecraft was not connected to Miami during the uplink jamming attack.",
-					"Correct. The spacecraft was connected to Mumbai during the uplink jamming attack.",
-					"The spacecraft was not connected to Paris during the uplink jamming attack.",
-					"The spacecraft was not connected to Singapore during the uplink jamming attack.",
-					"The spacecraft was not connected to Sydney during the uplink jamming attack."
-				],
-				"score": 5
-			}
-		},
-		{
-			"section": "Cyber Threats",
-			"title": "Uplink Jamming: What was the lowest signal-to-noise ratio (dB) observed during the uplink jamming attack?",
-			"description": "During the uplink jamming attack, what was the lowest signal-to-noise ratio (dB) observed?",
-			"type": "number",
-			"answer": {
-				"unit": "dB",
-				"value": 21.0,
-				"tolerance": 3.0,
-				"reason": "The SNR dropped to 21 dB during the uplink jamming attack. This can be found in the telemetry data on the uplink connection.",
-				"score": 7
-			}
-		},
-		{
-			"section": "Cyber Threats",
-			"title": "Uplink Jamming: What action mitigates a sustained uplink jam during a ground-station pass?",
-			"description": "Which of the following options would be the best immediate mitigation when a uplink jam is occurring?",
-			"type": "select",
-			"answer": {
-				"options": [
-					"Antenna Reset",
-					"Computer Reboot",
-					"Cycling the Encryption Key",
-					"Downlinking Data",
-					"Frequency Hopping",
-					"Waiting for the Attack to End"
-				],
-				"value": 4,
-				"reason": [
-					"Resetting the antenna would not help with the uplink jamming attack.",
-					"Rebooting the computer would not help with the uplink jamming attack.",
-					"Cycling the encryption key would not help with the downlink jamming attack.",
-					"Downlinking data would not help with the uplink jamming attack.",
-					"Frequency hopping would help with the uplink jamming attack by moving to an unjammed frequency.",
-					"Waiting for the attack to end would not help with the uplink jamming attack."
-				],
-				"score": 3
-			}
-		},
-		{
-			"section": "Cyber Threats",
-			"title": "Replay Attacks: During which ground station's pass did you experience uplink replay attacks?",
+			"section": "Replay Attacks",
+			"title": "During which ground station's pass did you experience uplink replay attacks?",
 			"description": "Replay traffic appears on your team's uplink frequency without a matching command from your console. When did the replay attacks occur?",
 			"type": "checkbox",
 			"answer": {
@@ -1392,8 +1212,8 @@
 			}
 		},
 		{
-			"section": "Cyber Threats",
-			"title": "Replay Attacks: How long did the replay attacks last?",
+			"section": "Replay Attacks",
+			"title": "How long did the replay attacks last?",
 			"description": "The replay attacks lasted for a period of time. How long did they last for in minutes?",
 			"type": "number",
 			"answer": {
@@ -1405,8 +1225,8 @@
 			}
 		},
 		{
-			"section": "Cyber Threats",
-			"title": "Replay Attacks: What action mitigates a successful uplink replay attack against your team?",
+			"section": "Replay Attacks",
+			"title": "What action mitigates a successful uplink replay attack against your team?",
 			"description": "Which of the following options would be appropriate immediate mitigation when a uplink replay attack is occurring?",
 			"type": "checkbox",
 			"answer": {
@@ -1430,6 +1250,238 @@
 					"Frequency hopping would help with the uplink replay attack by moving to an unjammed frequency.",
 					"Waiting for the attack to end would not help with the uplink replay attack."
 				],
+				"score": 5
+			}
+		},
+		{
+			"section": "Storage Fault",
+			"title": "What fault occurred on the spacecraft storage system?",
+			"description": "At some point the storage system on the spacecraft was stressed. What outcome matches telemetry and capacity behaviour?",
+			"type": "select",
+			"answer": {
+				"options": [
+					"Imagery Capture Disabled",
+					"Storage Bits Corrupted",
+					"Storage Capacity was Decreased",
+					"Storage Completely Emptied",
+					"Transmitter Bit Rate Reduced"
+				],
+				"value": 2,
+				"reason": [
+					"The camera chain is not disabled by this Storage event.",
+					"Bit corruption would be the legacy Storage Corruption recipe; this scenario uses Storage Full instead.",
+					"Correct. The storage capacity was reduced to 100000 bytes, matching the telemetry data.",
+					"The event does not wipe stored objects.",
+					"The transmitter is unrelated to the Storage trigger."
+				],
+				"score": 4
+			}
+		},
+		{
+			"section": "Storage Fault",
+			"title": "At what time (minutes from session start) did this fault occur?",
+			"description": "Give elapsed simulation minutes at which this fault first occurred.",
+			"type": "number",
+			"answer": {
+				"unit": "min",
+				"value": 26.0,
+				"tolerance": 3.0,
+				"reason": "This fault occurred at 1560 seconds into the simulation, and ran until the storage system was reset.",
+				"score": 4
+			}
+		},
+		{
+			"section": "Reaction Wheels Fault",
+			"title": "Which reaction wheels became stuck?",
+			"description": "At least one of the reaction wheels became stuck. Which wheels became stuck?",
+			"type": "checkbox",
+			"answer": {
+				"options": [
+					"Wheel X",
+					"Wheel Y",
+					"Wheel Z"
+				],
+				"value": [
+					0
+				],
+				"reason": [
+					"Correct. This wheel became stuck, where the speed could not be controlled.",
+					"Reaction Wheel Y is not stuck. The stuck condition is where the wheel speed could not be controlled.",
+					"Reaction Wheel Z is not stuck. The stuck condition is where the wheel speed could not be controlled."
+				],
+				"score": 3
+			}
+		},
+		{
+			"section": "Reaction Wheels Fault",
+			"title": "At what time (minutes from session start) did this fault occur?",
+			"description": "At least one of the reaction wheels became stuck. Give elapsed simulation minutes at which this fault first occurred.",
+			"type": "number",
+			"answer": {
+				"unit": "min",
+				"value": 27.0,
+				"tolerance": 3.0,
+				"reason": "This fault occurred at 1620 seconds into the simulation, and ran until the reaction wheel was reset or completely nominal.",
+				"score": 4
+			}
+		},
+		{
+			"section": "Vessel Identification",
+			"title": "How many green vessels are clustered in the Strait of Hormuz?",
+			"description": "Taking Earth observation imagery of the Hormuz region, count the number of green vessesls found.",
+			"type": "number",
+			"answer": {
+				"unit": "",
+				"value": 5.0,
+				"tolerance": 0,
+				"reason": "Five vessels are located in the Strait of Hormuz.",
+				"score": 5
+			}
+		},
+		{
+			"section": "Vessel Identification",
+			"title": "How many yellow vessels appear near near the Malacca Strait?",
+			"description": "Taking Earth observation imagery of the Malacca Strait region, count the number of yellow vessesls found.",
+			"type": "number",
+			"answer": {
+				"unit": "",
+				"value": 2.0,
+				"tolerance": 0,
+				"reason": "Two yellow vessels are located near the Malacca Strait.",
+				"score": 5
+			}
+		},
+		{
+			"section": "GPS Jamming",
+			"title": "At what time (in minutes from session start) did the GPS jamming first occur?",
+			"description": "The GPS jamming first occurred at a point in time. Give elapsed simulation minutes at which this jamming first occurred.",
+			"type": "number",
+			"answer": {
+				"unit": "min",
+				"value": 30.8,
+				"tolerance": 1.5,
+				"reason": "This jamming occurred at 600 seconds into the simulation.",
+				"score": 5
+			}
+		},
+		{
+			"section": "GPS Jamming",
+			"title": "At what time (in minutes from session start) did the GPS jamming last occur?",
+			"description": "The GPS jamming last occurred at a point in time. Give elapsed simulation minutes at which this jamming last occurred.",
+			"type": "number",
+			"answer": {
+				"unit": "min",
+				"value": 33.3,
+				"tolerance": 1.5,
+				"reason": "This jamming ran for 4.5 minutes, starting at 600 seconds into the simulation.",
+				"score": 5
+			}
+		},
+		{
+			"section": "Uplink Jamming",
+			"title": "How many distinct sustained broadcast uplink jam episodes occurred?",
+			"description": "The rogue spacecraft held a saturating barrage jam on your team's frequency. How many episodes of jamming occurred?",
+			"type": "number",
+			"answer": {
+				"unit": "",
+				"value": 1.0,
+				"tolerance": 0,
+				"reason": "The rogue spacecraft held a saturating barrage jam on your team's frequency for one episode.",
+				"score": 5
+			}
+		},
+		{
+			"section": "Uplink Jamming",
+			"title": "To which ground station were you connected to during the uplink jamming attack?",
+			"description": "The rogue spacecraft held a saturating barrage jam on your team's frequency. Which ground station were you connected to during the uplink jamming attack?",
+			"type": "checkbox",
+			"answer": {
+				"options": [
+					"Dubai",
+					"Easter Island",
+					"Miami",
+					"Mumbai",
+					"Paris",
+					"Singapore",
+					"Sydney"
+				],
+				"value": [
+					3
+				],
+				"reason": [
+					"The spacecraft was not connected to Dubai during the uplink jamming attack.",
+					"The spacecraft was not connected to Easter Island during the uplink jamming attack.",
+					"The spacecraft was not connected to Miami during the uplink jamming attack.",
+					"Correct. The spacecraft was connected to Mumbai during the uplink jamming attack.",
+					"The spacecraft was not connected to Paris during the uplink jamming attack.",
+					"The spacecraft was not connected to Singapore during the uplink jamming attack.",
+					"The spacecraft was not connected to Sydney during the uplink jamming attack."
+				],
+				"score": 5
+			}
+		},
+		{
+			"section": "Uplink Jamming",
+			"title": "What was the lowest signal-to-noise ratio (dB) observed during the uplink jamming attack?",
+			"description": "During the uplink jamming attack, what was the lowest signal-to-noise ratio (dB) observed?",
+			"type": "number",
+			"answer": {
+				"unit": "dB",
+				"value": 21.0,
+				"tolerance": 3.0,
+				"reason": "The SNR dropped to 21 dB during the uplink jamming attack. This can be found in the telemetry data on the uplink connection.",
+				"score": 7
+			}
+		},
+		{
+			"section": "Uplink Jamming",
+			"title": "What action mitigates a sustained uplink jam during a ground-station pass?",
+			"description": "Which of the following options would be the best immediate mitigation when a uplink jam is occurring?",
+			"type": "select",
+			"answer": {
+				"options": [
+					"Antenna Reset",
+					"Computer Reboot",
+					"Cycling the Encryption Key",
+					"Downlinking Data",
+					"Frequency Hopping",
+					"Waiting for the Attack to End"
+				],
+				"value": 4,
+				"reason": [
+					"Resetting the antenna would not help with the uplink jamming attack.",
+					"Rebooting the computer would not help with the uplink jamming attack.",
+					"Cycling the encryption key would not help with the downlink jamming attack.",
+					"Downlinking data would not help with the uplink jamming attack.",
+					"Frequency hopping would help with the uplink jamming attack by moving to an unjammed frequency.",
+					"Waiting for the attack to end would not help with the uplink jamming attack."
+				],
+				"score": 3
+			}
+		},
+		{
+			"section": "Orbital Operations",
+			"title": "What is the Semi-Major Axis (km) of your spacecraft's orbit?",
+			"description": "Using on-board telemetry, calculate the semi-major axis of your spacecraft's orbit.",
+			"type": "number",
+			"answer": {
+				"unit": "km",
+				"value": 10000.0,
+				"tolerance": 100.0,
+				"reason": "Using the GPS data, the spacecraft flies with an average altitude of 3622 km, giving a semi-major axis of 10000 km.",
+				"score": 5
+			}
+		},
+		{
+			"section": "Orbital Operations",
+			"title": "What is the Inclination (deg) of your spacecraft's orbit?",
+			"description": "Using on-board telemetry, calculate the inclination of your spacecraft's orbit.",
+			"type": "number",
+			"answer": {
+				"unit": "deg",
+				"value": 37.0,
+				"tolerance": 1.0,
+				"reason": "Using the GPS data, the inclination of the spacecraft's orbit is 37 degrees, found to be the maximum latitude value from the GPS data.",
 				"score": 5
 			}
 		}
