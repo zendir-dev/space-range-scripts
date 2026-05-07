@@ -675,27 +675,40 @@
 		},
 		{
 			"Enabled": true,
-			"Name": "GPS Spoof Region — Hormuz ON",
-			"Time": 1080.0,
+			"Name": "GPS Spoof Region — Haifa ON",
+			"Time": 600.0,
 			"Repeat": false,
 			"Interval": 1.0,
 			"Type": "GPS",
 			"Data": {
 				"Type": "Spoofing",
 				"Enabled": true,
-				"Origin Latitude": 26.5,
-				"Origin Longitude": 56.5,
+				"Origin Latitude": 32.9,
+				"Origin Longitude": 35.2,
 				"Origin Altitude": 3622000.0,
 				"Radius": 500000.0,
-				"Spoof Latitude": -26.5,
-				"Spoof Longitude": -123.5,
+				"Spoof Latitude": 31.4,
+				"Spoof Longitude": 25.3,
 				"Spoof Altitude": 0.0
 			}
 		},
 		{
 			"Enabled": true,
+			"Name": "GPS Jammer Remove — Haifa",
+			"Time": 870.0,
+			"Repeat": false,
+			"Interval": 1.0,
+			"Type": "GPS",
+			"Data": {
+				"Type": "Jamming",
+				"Action": "remove",
+				"Index": "0"
+			}
+		},
+		{
+			"Enabled": true,
 			"Name": "GPS Jammer Add — Hormuz",
-			"Time": 1110.0,
+			"Time": 1140.0,
 			"Repeat": false,
 			"Interval": 1.0,
 			"Type": "GPS",
@@ -727,7 +740,7 @@
 		},
 		{
 			"Enabled": true,
-			"Name": "GPS Sensor Hard Fault",
+			"Name": "CHANGE_GPS Sensor Hard Fault",
 			"Time": 1220.0,
 			"Repeat": false,
 			"Interval": 1.0,
@@ -742,21 +755,8 @@
 		},
 		{
 			"Enabled": true,
-			"Name": "GPS Jammer Remove — Hormuz",
-			"Time": 1380.0,
-			"Repeat": false,
-			"Interval": 1.0,
-			"Type": "GPS",
-			"Data": {
-				"Type": "Jamming",
-				"Action": "remove",
-				"Index": "0"
-			}
-		},
-		{
-			"Enabled": true,
 			"Name": "GPS Spoof Region — Hormuz OFF (post-cluster)",
-			"Time": 1390.0,
+			"Time": 1500.0,
 			"Repeat": false,
 			"Interval": 1.0,
 			"Type": "GPS",
