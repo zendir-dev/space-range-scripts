@@ -863,60 +863,60 @@
 	"questions": [
 		{
 			"section": "Orbital Operations",
-			"title": "How many green vessels are clustered in the Strait of Hormuz?",
-			"description": "On the Earth map / maritime overlay, count green hulls in the Hormuz traffic group only (Lead, Trail, Flank, Picket, Tender). Do not count yellow hulls.",
+			"title": "Vessel Identification: How many green vessels are clustered in the Strait of Hormuz?",
+			"description": "Taking Earth observation imagery of the Hormuz region, count the number of green vessesls found.",
 			"type": "number",
 			"answer": {
-				"unit": "vessels",
+				"unit": "",
 				"value": 5.0,
-				"tolerance": 0.25,
-				"reason": "Five green vessels are authored at the Hormuz grid; yellow vessels are placed separately near Singapore / Malacca.",
+				"tolerance": 0,
+				"reason": "Five vessels are located in the Strait of Hormuz.",
 				"score": 5
 			}
 		},
 		{
 			"section": "Orbital Operations",
-			"title": "How many yellow vessels appear near Singapore / the Malacca Strait?",
-			"description": "Count yellow hulls in the Singapore-Malacca maritime picture (not the Hormuz green group).",
+			"title": "Vessel Identification: How many yellow vessels appear near near the Malacca Strait?",
+			"description": "Taking Earth observation imagery of the Malacca Strait region, count the number of yellow vessesls found.",
 			"type": "number",
 			"answer": {
-				"unit": "vessels",
+				"unit": "",
 				"value": 2.0,
-				"tolerance": 0.25,
-				"reason": "Two yellow vessels (Malacca Yellow A/B) are positioned near Singapore / Malacca.",
+				"tolerance": 0,
+				"reason": "Two yellow vessels are located near the Malacca Strait.",
 				"score": 5
 			}
 		},
 		{
 			"section": "Orbital Operations",
-			"title": "What is the Semi-Major Axis (km) of Watchtower's orbit?",
-			"description": "Use GPS telemetry to estimate average altitude and add Earth's radius (6 378 km), or read equivalent orbital data for your spacecraft.",
+			"title": "Orbit Determination: What is the Semi-Major Axis (km) of your spacecraft's orbit?",
+			"description": "Using on-board telemetry, calculate the semi-major axis of your spacecraft's orbit.",
 			"type": "number",
 			"answer": {
 				"unit": "km",
 				"value": 10000.0,
 				"tolerance": 100.0,
-				"reason": "The defender flies an MEO orbit with SMA = 10 000 km, giving an altitude of ~3 622 km.",
+				"reason": "Using the GPS data, the spacecraft flies with an average altitude of 3622 km, giving a semi-major axis of 10000 km.",
 				"score": 5
 			}
 		},
 		{
 			"section": "Orbital Operations",
-			"title": "What is the Inclination (deg) of Watchtower's orbit?",
-			"description": "Read the maximum |latitude| from the GPS time series.",
+			"title": "Orbit Determination: What is the Inclination (deg) of your spacecraft's orbit?",
+			"description": "Using on-board telemetry, calculate the inclination of your spacecraft's orbit.",
 			"type": "number",
 			"answer": {
 				"unit": "deg",
 				"value": 37.0,
 				"tolerance": 1.0,
-				"reason": "The six-element Keplerian set uses inclination −37° (retrograde sense in the sim); the maximum |latitude| from GPS matches the absolute inclination magnitude.",
+				"reason": "Using the GPS data, the inclination of the spacecraft's orbit is 37 degrees, found to be the maximum latitude value from the GPS data.",
 				"score": 5
 			}
 		},
 		{
 			"section": "Component Faults",
-			"title": "Solar panel damage - what error model was applied?",
-			"description": "One of the solar panels was damaged at a point in time. Identify the fault type recorded by the spacecraft.",
+			"title": "Solar Panel Fault: What fault occurred on the solar panels?",
+			"description": "Some of the solar panels were damaged at a point in time. Identify the type of fault that occurred.",
 			"type": "select",
 			"answer": {
 				"options": [
@@ -931,7 +931,7 @@
 					"Battery thermal runaway is unrelated to the authored solar degradation event.",
 					"Broken Wiring is not the fault model used in this scenario.",
 					"Intermittent Connection applies to power interconnect models, not the solar degradation trigger.",
-					"Correct. The scenario fires the Solar Panel Degradation model (SolarPanel-SolarPanelDegradationErrorModel) at 600 s (~10 min) on SC_OPS with degradation rate 150000 (1.5x the stock 100000 recipe).",
+					"Correct. The solar panel began to degrade over time, slowly loosing performance.",
 					"Open circuit is a distractor; the scenario uses a degradation rate fault instead."
 				],
 				"score": 4
@@ -939,40 +939,41 @@
 		},
 		{
 			"section": "Component Faults",
-			"title": "Solar panel damage - which solar panel(s) were affected?",
-			"description": "One of the solar panels was damaged at a point in time. The degradation model applies to the spacecraft solar strings.",
-			"type": "select",
+			"title": "Solar Panel Fault: Which solar panels were affected by this fault?",
+			"description": "At least one of the solar panels was affected by the fault. Which ones were affected?",
+			"type": "checkbox",
 			"answer": {
 				"options": [
-					"Both",
 					"Solar Panel +X",
 					"Solar Panel -X"
 				],
-				"value": 0,
+				"value": [
+					0,
+					1
+				],
 				"reason": [
-					"Correct. Both solar strings show correlated degradation from the shared model.",
-					"Incomplete. The fault is not limited to the +X panel only.",
-					"Incomplete. The fault is not limited to the -X panel only."
+					"Correct. This solar panel was affected by the fault.",
+					"Correct. This solar panel was affected by the fault."
 				],
 				"score": 2
 			}
 		},
 		{
 			"section": "Component Faults",
-			"title": "Solar panel damage - at what time (minutes from session start) did the fault occur?",
-			"description": "One of the solar panels was damaged at a point in time. Give elapsed simulation minutes at 1x speed.",
+			"title": "Solar Panel Fault: At what time (minutes from session start) did this fault occur?",
+			"description": "At least one of the solar panels was affected by the fault. Give elapsed simulation minutes at which this fault first occurred.",
 			"type": "number",
 			"answer": {
 				"unit": "min",
 				"value": 10.0,
 				"tolerance": 3.0,
-				"reason": "The Solar Panel Degradation event is authored at 600 s = 10 min (within ±3 min tolerance).",
+				"reason": "This fault occurred at 600 seconds into the simulation, and ran until the solar panel was reset or completely degraded.",
 				"score": 4
 			}
 		},
 		{
 			"section": "Component Faults",
-			"title": "Storage fault - what was the operational result?",
+			"title": "Storage Fault: What fault occurred on the spacecraft storage system?",
 			"description": "At some point the storage system on the spacecraft was stressed. What outcome matches telemetry and capacity behaviour?",
 			"type": "select",
 			"answer": {
@@ -987,7 +988,7 @@
 				"reason": [
 					"The camera chain is not disabled by this Storage event.",
 					"Bit corruption would be the legacy Storage Corruption recipe; this scenario uses Storage Full instead.",
-					"Correct. The Storage Full event (Target Storage, Capacity data) clamps usable capacity so operators see reduced headroom versus nominal.",
+					"Correct. The storage capacity was reduced to 100000 bytes, matching the telemetry data.",
 					"The event does not wipe stored objects.",
 					"The transmitter is unrelated to the Storage trigger."
 				],
@@ -996,47 +997,49 @@
 		},
 		{
 			"section": "Component Faults",
-			"title": "Storage fault - at what time (minutes from session start) did it occur?",
-			"description": "Give elapsed simulation minutes at 1x speed when the storage event fires.",
+			"title": "Storage Fault: At what time (minutes from session start) did this fault occur?",
+			"description": "Give elapsed simulation minutes at which this fault first occurred.",
 			"type": "number",
 			"answer": {
 				"unit": "min",
 				"value": 26.0,
 				"tolerance": 3.0,
-				"reason": "Storage Full is authored at 1560 s = 26 min (within ±3 min tolerance).",
+				"reason": "This fault occurred at 1560 seconds into the simulation, and ran until the storage system was reset.",
 				"score": 4
 			}
 		},
 		{
 			"section": "Component Faults",
-			"title": "Reaction wheel fault - which wheel became stuck?",
-			"description": "At some point one of the reaction wheels became stuck.",
-			"type": "select",
+			"title": "Reaction Wheel Fault: Which reaction wheels became stuck?",
+			"description": "At least one of the reaction wheels became stuck. Which wheels became stuck?",
+			"type": "checkbox",
 			"answer": {
 				"options": [
-					"Wheel 1",
-					"Wheel 2",
-					"Wheel 3"
+					"Wheel X",
+					"Wheel Y",
+					"Wheel Z"
 				],
-				"value": 0,
+				"value": [
+					0
+				],
 				"reason": [
-					"Correct. Stuck index 0 maps to wheel 1 (first wheel).",
-					"The scenario does not author a stuck condition on wheel 2.",
-					"The scenario does not author a stuck condition on wheel 3."
+					"Correct. This wheel became stuck, where the speed could not be controlled.",
+					"Reaction Wheel Y is not stuck. The stuck condition is where the wheel speed could not be controlled.",
+					"Reaction Wheel Z is not stuck. The stuck condition is where the wheel speed could not be controlled."
 				],
 				"score": 3
 			}
 		},
 		{
 			"section": "Component Faults",
-			"title": "Reaction wheel fault - at what time (minutes from session start) did it become stuck?",
-			"description": "Give elapsed simulation minutes at 1x speed.",
+			"title": "Reaction Wheel Fault: At what time (minutes from session start) did this fault occur?",
+			"description": "At least one of the reaction wheels became stuck. Give elapsed simulation minutes at which this fault first occurred.",
 			"type": "number",
 			"answer": {
 				"unit": "min",
 				"value": 27.0,
 				"tolerance": 3.0,
-				"reason": "Reaction Wheel Stuck is authored at 1620 s = 27 min (within ±3 min tolerance). Reaction Wheel Nominal at 1800 s clears the same wheel index.",
+				"reason": "This fault occurred at 1620 seconds into the simulation, and ran until the reaction wheel was reset or completely nominal.",
 				"score": 4
 			}
 		},
@@ -1061,27 +1064,27 @@
 					"The spoofing region was not centred over the South Atlantic.",
 					"The spoofing region was not centred over the South Pacific."
 				],
-				"score": 5
+				"score": 0
 			}
 		},
 		{
-			"section": "Cyber Attacks",
-			"title": "Cyber inject APIDs",
-			"description": "Select exactly two APIDs that had scripted telemetry overlays injected during this session (ASCII payload replays on live telemetry).",
+			"section": "Cyber Threats",
+			"title": "Cyber Injects: Which messages, based on their APID, had injected text due to a cyber attack?",
+			"description": "Some messages had injected text, disrupting the data found within the packets. This was due to a cyber attack. Which messages were affected?",
 			"type": "checkbox",
 			"answer": {
 				"options": [
-					"100 Ping",
-					"200 Battery",
-					"201 Power Source",
-					"202 Power Node",
-					"300 Magnetometer",
-					"301 GPS",
-					"302 EM Sensor",
-					"400 Computer",
-					"401 Reaction Wheels",
-					"500 Receiver",
-					"501 Transmitter"
+					"100 - Ping",
+					"200 - Battery",
+					"201 - Power Source",
+					"202 - Power Node",
+					"300 - Magnetometer",
+					"301 - GPS",
+					"302 - EM Sensor",
+					"400 - Computer",
+					"401 - Reaction Wheels",
+					"500 - Receiver",
+					"501 - Transmitter"
 				],
 				"value": [
 					4,
@@ -1090,69 +1093,69 @@
 				"reason": [
 					"Ping (APID 100) was not one of the two scripted inject APIDs for this question.",
 					"Battery (APID 200) was not one of the two scripted inject APIDs for this question.",
-					"The scenario does not author a Power Source overlay for these scripted injects.",
-					"The scenario does not author a Power Node overlay for these scripted injects.",
+					"Power Source (APID 201) was not one of the two scripted inject APIDs for this question.",
+					"Power Node (APID 202) was not one of the two scripted inject APIDs for this question.",
 					"Correct. Magnetometer (APID 300) receives a Cyber overlay for five minutes starting at 840 s (~14 min).",
-					"GPS (APID 301) is not one of the two scripted inject overlays in this session.",
+					"GPS (APID 301) was not one of the two scripted inject APIDs for this question.",
 					"Correct. EM Sensor (APID 302) receives a Cyber overlay for five minutes starting at 1920 s (~32 min).",
-					"The Computer APID was not used for these scripted overlays.",
-					"The Reaction Wheels APID was not used for these scripted overlays.",
-					"The Receiver APID was not used for these scripted overlays.",
-					"The Transmitter APID was not used for these scripted overlays."
+					"Computer (APID 400) was not one of the two scripted inject APIDs for this question.",
+					"Reaction Wheels (APID 401) was not one of the two scripted inject APIDs for this question.",
+					"Receiver (APID 500) was not one of the two scripted inject APIDs for this question.",
+					"Transmitter (APID 501) was not one of the two scripted inject APIDs for this question."
 				],
-				"score": 7
+				"score": 10
 			}
 		},
 		{
-			"section": "Cyber Attacks",
-			"title": "What hidden ASCII message appeared in the cyber injection around 14 minutes?",
-			"description": "Read the injected telemetry field on the Magnetometer message during the ~14-19 minute window.",
+			"section": "Cyber Threats",
+			"title": "Cyber Injects: What hidden text appeared in the cyber injection around 14 minutes?",
+			"description": "One of the messages had injected text, disrupting the data found within the packets. What was the text that appeared?",
 			"type": "text",
 			"answer": {
 				"value": "STAR INJECT",
-				"reason": "The Cyber event at 840 s targets APID 300 with Encoding ascii and Payload STAR INJECT for 300 s (5 min).",
-				"score": 4
+				"reason": "The Cyber event at 840 seconds targets APID 300 with Encoding ascii and Payload STAR INJECT for 300 seconds.",
+				"score": 5
 			}
 		},
 		{
-			"section": "Cyber Attacks",
-			"title": "What hidden ASCII message appeared in the cyber injection around 32 minutes?",
-			"description": "Read the injected telemetry field on the EM Sensor message during the ~32-37 minute window.",
+			"section": "Cyber Threats",
+			"title": "Cyber Injects: What hidden text appeared in the cyber injection around 32 minutes?",
+			"description": "One of the messages had injected text, disrupting the data found within the packets. What was the text that appeared?",
 			"type": "text",
 			"answer": {
 				"value": "ECHO VIRUS",
-				"reason": "The Cyber event at 1920 s targets APID 302 with Encoding ascii and Payload ECHO VIRUS for 300 s (5 min).",
-				"score": 4
+				"reason": "The Cyber event at 1920 seconds targets APID 302 with Encoding ascii and Payload ECHO VIRUS for 300 seconds.",
+				"score": 5
 			}
 		},
 		{
-			"section": "Cyber Attacks",
-			"title": "What is the rogue spacecraft's call-sign?",
-			"description": "Use the EM sensor during replay and jam phases and infer from mission context; the adversary call-sign is marked on the rogue chassis.",
+			"section": "Cyber Threats",
+			"title": "Rogue Identification: What is the rogue spacecraft's call-sign?",
+			"description": "The rogue spacecraft is identified by its call-sign, visible on the spacecraft's chassis. What is the call-sign of the rogue spacecraft?",
 			"type": "text",
 			"answer": {
 				"value": "PHANTOM",
 				"reason": "The rogue asset is configured with call-sign PHANTOM on its chassis labels and mission data.",
-				"score": 5
+				"score": 10
 			}
 		},
 		{
-			"section": "Cyber Attacks",
-			"title": "How many distinct sustained broadcast downlink jam episodes occurred?",
-			"description": "Count separate intervals where the rogue held a saturating barrage jam on blue-team downlink frequencies (clear SNR collapse / loss of imagery).",
+			"section": "Cyber Threats",
+			"title": "Downlink Jamming: How many distinct sustained broadcast downlink jam episodes occurred?",
+			"description": "The rogue spacecraft held a saturating barrage jam on your team's frequency. How many episodes of jamming occurred?",
 			"type": "number",
 			"answer": {
-				"unit": "episodes",
+				"unit": "",
 				"value": 2.0,
-				"tolerance": 0.25,
-				"reason": "The rogue script arms two broadcast downlink barrages: about 900-1500 s (~15-25 min, Dubai pass segment) and about 2400-3000 s (~40-50 min, Singapore pass segment).",
+				"tolerance": 0,
+				"reason": "The rogue spacecraft held a saturating barrage jam on your team's frequency for two episodes.",
 				"score": 5
 			}
 		},
 		{
-			"section": "Cyber Attacks",
-			"title": "To which ground stations were you connected when the downlink jamming attack occurred?",
-			"description": "Multiple selection. The rogue runs two broadcast downlink barrages. For each barrage window, identify the ground station you were logically connected through when that jam was keyed against the Dubai and Singapore sites.",
+			"section": "Cyber Threats",
+			"title": "Downlink Jamming: Which ground stations were affected by the downlink jamming attack?",
+			"description": "The rogue spacecraft held a saturating barrage jam on your team's frequency. Which ground stations were affected by the jamming attack?",
 			"type": "checkbox",
 			"answer": {
 				"options": [
@@ -1170,34 +1173,73 @@
 				],
 				"reason": [
 					"Correct. The first broadcast barrage aligns with the Dubai pass segment in the scripted visibility model (~9-25 min), so operators are keyed through Dubai during that jam.",
-					"Easter Island is not keyed for either downlink barrage.",
-					"Miami is not keyed for either downlink barrage.",
-					"Mumbai is not keyed for either broadcast downlink barrage.",
-					"The Paris segment does not host either broadcast barrage.",
+					"Easter Island is not affected by the downlink jamming attack.",
+					"Miami is not affected by the downlink jamming attack.",
+					"Mumbai is not affected by the downlink jamming attack.",
+					"Paris is not affected by the downlink jamming attack.",
 					"Correct. The second broadcast barrage aligns with the Singapore pass segment (~38-69 min), so operators are keyed through Singapore during that jam.",
-					"Sydney is not keyed for either broadcast downlink barrage."
+					"Sydney is not affected by the downlink jamming attack."
 				],
-				"score": 7
+				"score": 5
 			}
 		},
 		{
-			"section": "Cyber Attacks",
-			"title": "What was the lowest signal-to-noise ratio (dB) observed at the ground station during downlink jamming?",
-			"description": "Read the ground-station SNR trace during either broadcast barrage window (approximately 900-1500 s or 2400-3000 s simulation time at 1x). Answer in dB; use the deepest dip you see.",
+			"section": "Cyber Threats",
+			"title": "Downlink Jamming: What was the lowest signal-to-noise ratio (dB) observed at the ground station during downlink jamming?",
+			"description": "During the downlink jamming attack, what was the lowest signal-to-noise ratio (dB) observed at the ground station?",
 			"type": "number",
 			"answer": {
 				"unit": "dB",
 				"value": 15.0,
-				"tolerance": 4.0,
-				"reason": "Keyed provisionally (~15 dB floor, wide tolerance until dry-run): broadcast barrage uses 3 W on all blue downlink MHz. Patch value and tighten tolerance after a GPS / link-budget smoke run if your integrator differs.",
+				"tolerance": 3.0,
+				"reason": "The SNR dropped to 15 dB during the downlink jamming attack. This can be found in the telemetry data on the downlink connection.",
+				"score": 7
+			}
+		},
+		{
+			"section": "Cyber Threats",
+			"title": "Downlink Jamming: What action mitigates a sustained downlink jam during a ground-station pass?",
+			"description": "Which of the following options would be the best immediate mitigation when a downlink jam is occurring?",
+			"type": "select",
+			"answer": {
+				"options": [
+					"Antenna Reset",
+					"Computer Reboot",
+					"Cycling the Encryption Key",
+					"Downlinking Data",
+					"Frequency Hopping",
+					"Waiting for the Attack to End"
+				],
+				"value": 4,
+				"reason": [
+					"Resetting the antenna would not help with the downlink jamming attack.",
+					"Rebooting the computer would not help with the downlink jamming attack.",
+					"Cycling the encryption key would not help with the downlink jamming attack.",
+					"Downlinking data would not help with the downlink jamming attack.",
+					"Frequency hopping would help with the downlink jamming attack by moving to an unjammed frequency.",
+					"Waiting for the attack to end would not help with the downlink jamming attack."
+				],
+				"score": 3
+			}
+		},
+		{
+			"section": "Cyber Threats",
+			"title": "Uplink Jamming: How many distinct sustained broadcast uplink jam episodes occurred?",
+			"description": "The rogue spacecraft held a saturating barrage jam on your team's frequency. How many episodes of jamming occurred?",
+			"type": "number",
+			"answer": {
+				"unit": "",
+				"value": 1.0,
+				"tolerance": 0,
+				"reason": "The rogue spacecraft held a saturating barrage jam on your team's frequency for one episode.",
 				"score": 5
 			}
 		},
 		{
-			"section": "Cyber Attacks",
-			"title": "To which ground station were you connected when the uplink jamming attack occurred?",
-			"description": "Continuous low-power uplink jam runs about 1980-2280 s simulation time (~33-38 min at 1x) on all blue-team MHz while the rogue points at Watchtower.",
-			"type": "select",
+			"section": "Cyber Threats",
+			"title": "Uplink Jamming: To which ground station were you connected to during the uplink jamming attack?",
+			"description": "The rogue spacecraft held a saturating barrage jam on your team's frequency. Which ground station were you connected to during the uplink jamming attack?",
+			"type": "checkbox",
 			"answer": {
 				"options": [
 					"Dubai",
@@ -1208,37 +1250,65 @@
 					"Singapore",
 					"Sydney"
 				],
-				"value": 3,
+				"value": [
+					3
+				],
 				"reason": [
-					"Dubai's keyed segment ends before the uplink jam window.",
-					"Easter Island is not the keyed station for this window.",
-					"Miami is not the keyed station for this window.",
-					"Correct. The uplink jam window (~33-38 min) sits inside the Mumbai pass segment (25-38 min).",
-					"The uplink jam window is outside the Paris window.",
-					"Singapore's pass begins after the uplink jam window.",
-					"Sydney does not yet have pass priority at this time."
+					"The spacecraft was not connected to Dubai during the uplink jamming attack.",
+					"The spacecraft was not connected to Easter Island during the uplink jamming attack.",
+					"The spacecraft was not connected to Miami during the uplink jamming attack.",
+					"Correct. The spacecraft was connected to Mumbai during the uplink jamming attack.",
+					"The spacecraft was not connected to Paris during the uplink jamming attack.",
+					"The spacecraft was not connected to Singapore during the uplink jamming attack.",
+					"The spacecraft was not connected to Sydney during the uplink jamming attack."
 				],
 				"score": 5
 			}
 		},
 		{
-			"section": "Cyber Attacks",
-			"title": "What was the lowest signal-to-noise ratio (dB) observed at the ground station during uplink jamming?",
-			"description": "Read SNR during the continuous uplink jam window. Power is very low but persists for the whole window.",
+			"section": "Cyber Threats",
+			"title": "Uplink Jamming: What was the lowest signal-to-noise ratio (dB) observed during the uplink jamming attack?",
+			"description": "During the uplink jamming attack, what was the lowest signal-to-noise ratio (dB) observed?",
 			"type": "number",
 			"answer": {
 				"unit": "dB",
 				"value": 21.0,
-				"tolerance": 10.0,
-				"reason": "Keyed provisionally (wide tolerance until dry-run): continuous uplink jam uses ~0.08 W versus 3 W downlink barrage. Patch floor and tighten tolerance after verification.",
-				"score": 5
+				"tolerance": 3.0,
+				"reason": "The SNR dropped to 21 dB during the uplink jamming attack. This can be found in the telemetry data on the uplink connection.",
+				"score": 7
 			}
 		},
 		{
-			"section": "Cyber Attacks",
-			"title": "During which ground station's pass did you experience uplink replay attacks?",
-			"description": "Replay traffic appears on your team's uplink frequency without a matching command from your console. Replay is scheduled ~25-33 min at 1x. Match that interval to the pass timeline in the brief.",
+			"section": "Cyber Threats",
+			"title": "Uplink Jamming: What action mitigates a sustained uplink jam during a ground-station pass?",
+			"description": "Which of the following options would be the best immediate mitigation when a uplink jam is occurring?",
 			"type": "select",
+			"answer": {
+				"options": [
+					"Antenna Reset",
+					"Computer Reboot",
+					"Cycling the Encryption Key",
+					"Downlinking Data",
+					"Frequency Hopping",
+					"Waiting for the Attack to End"
+				],
+				"value": 4,
+				"reason": [
+					"Resetting the antenna would not help with the uplink jamming attack.",
+					"Rebooting the computer would not help with the uplink jamming attack.",
+					"Cycling the encryption key would not help with the downlink jamming attack.",
+					"Downlinking data would not help with the uplink jamming attack.",
+					"Frequency hopping would help with the uplink jamming attack by moving to an unjammed frequency.",
+					"Waiting for the attack to end would not help with the uplink jamming attack."
+				],
+				"score": 3
+			}
+		},
+		{
+			"section": "Cyber Threats",
+			"title": "Replay Attacks: During which ground station's pass did you experience uplink replay attacks?",
+			"description": "Replay traffic appears on your team's uplink frequency without a matching command from your console. When did the replay attacks occur?",
+			"type": "checkbox",
 			"answer": {
 				"options": [
 					"Dubai",
@@ -1249,118 +1319,61 @@
 					"Singapore",
 					"Sydney"
 				],
-				"value": 3,
-				"reason": [
-					"Replay begins after the Dubai segment closes at about 25 min.",
-					"Easter Island is not the keyed station for the replay window.",
-					"Miami is not the keyed station for the replay window.",
-					"Correct. The replay window (~25-33 min) lies inside the Mumbai pass segment (25-38 min).",
-					"Replay is after the Paris window.",
-					"Singapore's pass starts after replay ends.",
-					"Sydney is not the keyed station for the replay window."
+				"value": [
+					3
 				],
-				"score": 6
-			}
-		},
-		{
-			"section": "Cyber Attacks",
-			"title": "How many replay bursts does the rogue schedule against teams that have captured commands?",
-			"description": "Count distinct replay burst times (each burst fires multiple shots per team). Use EM sensor activity or operator logs.",
-			"type": "number",
-			"answer": {
-				"unit": "bursts",
-				"value": 8.0,
-				"tolerance": 0.25,
-				"reason": "The rogue schedules eight burst times between about 25 and 33 minutes simulation time (about 1500-1980 s); each burst replays against every blue team that has a non-empty capture pool.",
-				"score": 4
-			}
-		},
-		{
-			"section": "Cyber Attacks",
-			"title": "When (at 1x simulation speed) does the adversarial replay campaign occur?",
-			"description": "Captures are collected only in the first 15 minutes; replay never overlaps that quiet capture window.",
-			"type": "select",
-			"answer": {
-				"options": [
-					"0-15 minutes only",
-					"15-25 minutes only",
-					"Continuously from session start",
-					"Roughly 25-33 minutes simulation time"
-				],
-				"value": 3,
 				"reason": [
-					"0-15 minutes is capture-only; no replay fires then.",
-					"15-25 minutes is the Dubai-segment broadcast downlink jam, not replay.",
-					"Replay is not continuous from the session start.",
-					"Correct. Replay is confined to about 1500-1980 s (~25-33 min at 1x)."
+					"The spacecraft was not connected to Dubai during the replay attack.",
+					"The spacecraft was not connected to Easter Island during the replay attack.",
+					"The spacecraft was not connected to Miami during the replay attack.",
+					"Correct. The spacecraft was connected to Mumbai during the replay attack.",
+					"The spacecraft was not connected to Paris during the replay attack.",
+					"The spacecraft was not connected to Singapore during the replay attack.",
+					"The spacecraft was not connected to Sydney during the replay attack."
 				],
 				"score": 5
 			}
 		},
 		{
-			"section": "Mitigations",
-			"title": "What action mitigates a successful uplink replay attack against your team?",
-			"description": "Pick the on-board action that invalidates any previously-captured ciphertext for your team going forward.",
-			"type": "select",
+			"section": "Cyber Threats",
+			"title": "Replay Attacks: How long did the replay attacks last?",
+			"description": "The replay attacks lasted for a period of time. How long did they last for in minutes?",
+			"type": "number",
 			"answer": {
-				"options": [
-					"Component reset on Receiver",
-					"Ephemeris rollback",
-					"Frequency hop only",
-					"Rotate encryption key (telemetry / encryption command)"
-				],
-				"value": 3,
-				"reason": [
-					"Receiver reset does not rotate the on-air cipher; captured traffic can still decode if the key is unchanged.",
-					"Ephemeris rollback does not change the radio encryption key used for uplink acceptance.",
-					"Frequency hop alone does not invalidate previously captured ciphertext for the old channel if the key is unchanged.",
-					"Correct. Rotating the encryption key changes the on-board cipher so previously captured ciphertext no longer decodes on the spacecraft."
-				],
-				"score": 4
+				"unit": "min",
+				"value": 8.0,
+				"tolerance": 2.0,
+				"reason": "The replay attacks lasted for approximately 8 minutes.",
+				"score": 5
 			}
 		},
 		{
-			"section": "Mitigations",
-			"title": "What action mitigates a sustained downlink jam during a ground-station pass?",
-			"description": "Pick the action that restores a usable downlink at the next available pass.",
-			"type": "select",
+			"section": "Cyber Threats",
+			"title": "Replay Attacks: What action mitigates a successful uplink replay attack against your team?",
+			"description": "Which of the following options would be appropriate immediate mitigation when a uplink replay attack is occurring?",
+			"type": "checkbox",
 			"answer": {
 				"options": [
-					"Component reset on Transmitter",
-					"Frequency hop via the telemetry command",
-					"Reduce ping interval",
-					"Wait for the rogue to leave the area"
+					"Antenna Reset",
+					"Computer Reboot",
+					"Cycling the Encryption Key",
+					"Downlinking Data",
+					"Frequency Hopping",
+					"Waiting for the Attack to End"
 				],
-				"value": 1,
+				"value": [
+					2,
+					4
+				],
 				"reason": [
-					"Transmitter reset does not by itself move the downlink to an unjammed channel.",
-					"Correct. Hopping the telemetry link off the jammed frequency restores a usable downlink on a later pass.",
-					"Reducing ping interval does not remove wideband downlink jamming.",
-					"Waiting is not the best immediate mitigation when a frequency hop is available."
+					"Resetting the antenna would not help with the uplink replay attack.",
+					"Rebooting the computer would not help with the uplink replay attack.",
+					"Cycling the encryption key would help with the uplink replay attack by changing the on-board cipher.",
+					"Downlinking data would not help with the uplink replay attack.",
+					"Frequency hopping would help with the uplink replay attack by moving to an unjammed frequency.",
+					"Waiting for the attack to end would not help with the uplink replay attack."
 				],
-				"score": 4
-			}
-		},
-		{
-			"section": "Mitigations",
-			"title": "What action clears a Cyber telemetry-tamper overlay?",
-			"description": "The Magnetometer and EM Sensor inject overlays were authored with Clear On Reset true. Which command removes them?",
-			"type": "select",
-			"answer": {
-				"options": [
-					"Component reset on Computer",
-					"Component reset on Magnetometer",
-					"Frequency hop",
-					"Telemetry encryption rotate"
-				],
-				"value": 0,
-				"reason": [
-					"Correct. Resetting the Computer clears resettable cyber overlays that were authored to clear on reset.",
-					"Resetting only the Magnetometer does not clear Computer-scoped cyber overlays on other APIDs; the keyed clear path is Computer reset.",
-					"A frequency hop does not clear software overlays injected on telemetry packets.",
-					"Rotating encryption does not remove cyber tamper overlays keyed to clear on computer reset."
-				],
-				"score": 4
+				"score": 5
 			}
 		}
 	]
