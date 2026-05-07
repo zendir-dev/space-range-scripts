@@ -629,13 +629,13 @@
 				"type": "vessel",
 				"name": "Malacca Yellow A",
 				"planet": "Earth",
-				"latitude": 1.42,
-				"longitude": 103.85,
+				"latitude": 2.0,
+				"longitude": 102.0,
 				"altitude": 1,
 				"scale": 110,
 				"color": "#FFFF00",
 				"data": {
-					"heading": 270.0,
+					"heading": 130.0,
 					"speed": 0.0
 				}
 			},
@@ -644,13 +644,13 @@
 				"type": "vessel",
 				"name": "Malacca Yellow B",
 				"planet": "Earth",
-				"latitude": 1.36,
-				"longitude": 103.92,
+				"latitude": 1.9,
+				"longitude": 102.01,
 				"altitude": 1,
 				"scale": 110,
 				"color": "#FFFF00",
 				"data": {
-					"heading": 270.0,
+					"heading": 310.0,
 					"speed": 0.0
 				}
 			}
@@ -675,6 +675,25 @@
 		{
 			"Enabled": true,
 			"Name": "GPS Spoof Region — Haifa ON",
+			"Time": 400.0,
+			"Repeat": false,
+			"Interval": 1.0,
+			"Type": "GPS",
+			"Data": {
+				"Type": "Spoofing",
+				"Enabled": true,
+				"Origin Latitude": 32.9,
+				"Origin Longitude": 35.2,
+				"Origin Altitude": 3622000.0,
+				"Radius": 50000000.0,
+				"Spoof Latitude": 31.4,
+				"Spoof Longitude": 25.3,
+				"Spoof Altitude": 200000.0
+			}
+		},
+		{
+			"Enabled": true,
+			"Name": "GPS Spoof Region — Haifa ON",
 			"Time": 600.0,
 			"Repeat": false,
 			"Interval": 1.0,
@@ -685,10 +704,29 @@
 				"Origin Latitude": 32.9,
 				"Origin Longitude": 35.2,
 				"Origin Altitude": 3622000.0,
-				"Radius": 500000.0,
-				"Spoof Latitude": 31.4,
-				"Spoof Longitude": 25.3,
-				"Spoof Altitude": 0.0
+				"Radius": 50000000.0,
+				"Spoof Latitude": 38.4,
+				"Spoof Longitude": 38.2,
+				"Spoof Altitude": 200000.0
+			}
+		},
+		{
+			"Enabled": true,
+			"Name": "GPS Spoof Region — Haifa ON",
+			"Time": 800.0,
+			"Repeat": false,
+			"Interval": 1.0,
+			"Type": "GPS",
+			"Data": {
+				"Type": "Spoofing",
+				"Enabled": true,
+				"Origin Latitude": 32.9,
+				"Origin Longitude": 35.2,
+				"Origin Altitude": 3622000.0,
+				"Radius": 50000000.0,
+				"Spoof Latitude": 27.3,
+				"Spoof Longitude": 38.6,
+				"Spoof Altitude": 200000.0
 			}
 		},
 		{
@@ -714,13 +752,13 @@
 		},
 		{
 			"Enabled": true,
-			"Name": "GPS Jammer Remove — Haifa",
+			"Name": "GPS Spoof Remove — Haifa",
 			"Time": 870.0,
 			"Repeat": false,
 			"Interval": 1.0,
 			"Type": "GPS",
 			"Data": {
-				"Type": "Jamming",
+				"Type": "Spoofing",
 				"Action": "remove",
 				"Index": "0"
 			}
@@ -737,9 +775,22 @@
 				"Action": "add",
 				"Jammer Latitude": 26.0,
 				"Jammer Longitude": 56.0,
-				"Jammer Altitude": 50000.0,
-				"Effective Radiated Power": 250000.0,
-				"Path Loss Exponent": 2.0
+				"Jammer Altitude": 500000.0,
+				"Effective Radiated Power": 25000000.0,
+				"Path Loss Exponent": 1.0
+			}
+		},
+		{
+			"Enabled": true,
+			"Name": "GPS Jammer Remove — Hormuz",
+			"Time": 1500.0,
+			"Repeat": false,
+			"Interval": 1.0,
+			"Type": "GPS",
+			"Data": {
+				"Type": "Jamming",
+				"Action": "remove",
+				"Index": "0"
 			}
 		},
 		{
@@ -755,30 +806,6 @@
 			],
 			"Data": {
 				"Capacity": 100000
-			}
-		},
-		{
-			"Enabled": true,
-			"Name": "GPS Spoof Region — Hormuz OFF (post-cluster)",
-			"Time": 1500.0,
-			"Repeat": false,
-			"Interval": 1.0,
-			"Type": "GPS",
-			"Data": {
-				"Type": "Spoofing",
-				"Enabled": false
-			}
-		},
-		{
-			"Enabled": true,
-			"Name": "GPS Spoof Region — Hormuz OFF (bootstrap)",
-			"Time": 30.0,
-			"Repeat": false,
-			"Interval": 1.0,
-			"Type": "GPS",
-			"Data": {
-				"Type": "Spoofing",
-				"Enabled": false
 			}
 		},
 		{
