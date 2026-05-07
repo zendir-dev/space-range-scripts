@@ -19,7 +19,7 @@ Epoch **`2026/02/02 08:00 UTC`** — Dubai / Hormuz phasing is **~9 min earlier*
 | 0 — Familiarisation | 00:00 – ~00:12 | `0 – ~720 s` | Paris pass; connect. **~30 s** GPS spoofing OFF (bootstrap). **~10 min** solar-array degradation. |
 | 1 — Passive cyber | ~00:12 – ~00:24 | `~720 – ~1 440 s` | Hormuz GPS spoof/jam/fault from ~**18 min**; AOI jam `T_AOI_1 ≈ 1 260 s`; storage ~**26 min**. MQTT capture **`0 – 900 s`** (rogue idle otherwise). |
 | 2a — Rogue capture | ~00:00 – ~00:15 | `0 – 900 s` | PHANTOM subscribes to **all** blue MQTT uplinks (password XOR → JSON pool). |
-| 2b — Rogue replay & jam | ~00:21 – ~00:34 | `~1 280 – ~2 060 s` | **Eight bursts** — **3** random replays per team per burst, **3 s** between teams; pulsed uplink jam; second AOI jam `T_AOI_2 ≈ 2 010 s`. |
+| 2b — Rogue replay & jam | ~00:25 – ~00:38 | `~1 500 – ~2 280 s` | **Eight replay bursts** in `1 500 – 1 980` s (~25–33 min); **continuous low-power uplink jam** (~33–38 min) on **all** blue MHz, jammer at Watchtower; **Singapore** downlink barrage follows later (~40–50 min). |
 | 3 — Compound | ~00:34 – ~00:36 | `~2 045 – ~2 160 s` | Cyber tamper + reaction wheel + battery pile-on. |
 | 4 — Wind-down | ~00:36 – 01:00 | `~2 160 – 3 600 s` | Attacks stop. Teams finalise answers. `simulation.end_time` stops the hour at **3 600 s**. |
 
@@ -45,18 +45,18 @@ At **1×**, less than one full orbit elapses in an hour — pacing prioritises c
    - `mqtt_capture: started — 2 team(s), max … JSON cmd(s)/team, window=[0, 900]s`
    - `mqtt_capture: stored JSON cmd for '<team>' (…)` — repeats per command.
    - `mqtt_capture: complete — … JSON command(s) across 2 team(s)` (or window-expiry).
-   - `replay: armed 8 burst(s) between t=1820s and t=2600s — times=[…]`
+   - `replay: armed 8 burst(s) between t=1500s and t=1980s — times=[…]`
    - `replay: waiting 3.0s before next team ('<team>') …` — between teams within a burst.
    - `replay: t=…s round 1/8 shot 1/3 → '<team>' @ … MHz (sha1=…)` — three shots per team each replay round.
-   - `jamming: scheduled … pulse pair(s) for 'Uplink Pulse Jam (<team>)' …`
-   - `Downlink Jam ON (AOI Pass 1)` / `OFF` — fires once per AOI pass.
+   - `Uplink Jam ON` / `Uplink Jam OFF` — single bracket, all blue-team frequencies (`live_jammer_args_all`), bore-sighted at Watchtower.
+   - `Downlink Jam ON (Dubai segment)` / `OFF` … `Downlink Jam ON (Singapore segment)` / `OFF` — bore-sighted at those ground stations (not Watchtower).
 
 5. **Forensic artefacts** are saved next to the script when each phase finalises:
 
    - `captures.json` — every captured command, indexed by team (gitignored).
    - `cyber_defender_replays.json` — every replay attempt (sim time, burst round, **shot_in_round**, target team, sha1 of payload, success flag).
 
-   Use these to mark the Phase-2 questions ("how many distinct teams were replayed against?", "roughly what proportion of Blue Bravo's commands failed?").
+   Use these to mark replay forensics ("how many bursts?", captures per team, etc.).
 
 ## Sanity checklist before going live
 
@@ -72,12 +72,10 @@ These constants live at the top of `cyber_defender.py` and need to be tuned on t
 
 | Constant | Default | Action |
 | --- | --- | --- |
-| `T_AOI_1` | `1 260 s` | Hormuz-centred broadcast jam — patch from GPS trace if your integrator differs. |
-| `T_AOI_2` | `2 010 s` | Second AOI jam (Dubai + Singapore overlap region) — patch from trace. |
-| `UPLINK_JAM_ON` | `8.0 s` | Tune up if the observed Blue Bravo command-success rate during the jam window is too high (>85 %). |
-| `UPLINK_JAM_PERIOD` | `40.0 s` | Adjust to keep the duty cycle ≈ 20 % unless dry-run shows a different fraction works better. |
+| `UPLINK_JAM_POWER` | `0.08` W | Increase slightly if uplink degradation is invisible on dry-run; stay well below broadcast downlink (**3 W**). |
+| `UPLINK_JAM_START` / `_END` | `1980` / `2280` s | Slide the Mumbai-keyed uplink nuisance window if your pass timeline drifts. |
 
-The two GPS Cyber-event payloads (`A9` Ping `State`, `A10` GPS position) both avoid `{`, `}`, `"` to dodge the JSON-parsing bug; do not edit those payloads without re-checking the constraint.
+The Cyber-event ASCII payloads for Magnetometer (`STAR INJECT`) and EM Sensor (`ECHO VIRUS`) avoid `{`, `}`, `"` to dodge the JSON-parsing bug; do not edit those payloads without re-checking the constraint.
 
 ## Extending to 8 blue teams
 
@@ -86,10 +84,6 @@ Add the extra entries to `teams[]` in the JSON (use the *Orbital Sentinel* roste
 - `scenario.enemy_teams` enumerates blue teams from the JSON.
 - `scenario.live_enemy_frequencies_by_team()` admin-queries each team's live frequency at fire-time.
 - The per-team capture quota auto-bumps from 2 → 3 once `len(enemy_teams) > 2`.
-- The pulsed uplink-jam target is `scenario.enemy_teams[-1]` — the last enemy team in config order. Edit the index in `cyber_defender.py` if you want a different team singled out.
-
-If you reorder or rename teams, the script logs the picked target on startup (`A7: uplink-jam target picked dynamically → '…'`) so you can confirm the choice before the simulation kicks off. **Update the matching question answer in `cyber_defender.json` to reflect the picked team** — the Phase-2 "Which blue team was singled out?" question currently encodes the answer as the last team's name.
-
 ## See also
 
 - [`cyber_defender.spec.md`](cyber_defender.spec.md) — full scenario design (orbit choice, ground-station coverage, attack rationale, question framework).
@@ -97,4 +91,4 @@ If you reorder or rename teams, the script logs the picked target on startup (`A
 - [`docs/scenarios/ground-stations.md`](../../docs/scenarios/ground-stations.md) — full ground-station catalog.
 - [`docs/reference/packet-formats.md`](../../docs/reference/packet-formats.md) — APID catalog (used by the Cyber tamper events).
 - [`src/cyber_replay.py`](../../src/cyber_replay.py) — `MultiTeamCaptureSequence`, `MultiTeamReplaySequence`.
-- [`src/jamming.py`](../../src/jamming.py) — `schedule_jammer_pulses`.
+- [`src/jamming.py`](../../src/jamming.py) — `schedule_jammer_pulses` (optional for other scenarios; Cyber Defender uplink jam is a simple ON/OFF pair in `cyber_defender.py`).

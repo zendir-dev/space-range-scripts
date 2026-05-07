@@ -41,7 +41,7 @@ Epoch **`2026/02/02 08:00 UTC`**, orbit §4.1 — **ν = −90°** pulls SOH pha
 | **0 — Familiarisation** | 00:00 – ~00:12 | `0 – ~720 s` | Paris visibility; connect, baseline ops. **~30 s** bootstrap **GPS spoofing OFF**. **~10 min** **solar-array degradation**. Optional vessel-count question. |
 | **1 — Passive cyber** | ~00:12 – ~00:24 | `~720 – ~1 440 s` | Hormuz **GPS spoof → jam → fault → jam remove** (from ~**18 min**); **storage ~26 min**. **Rogue capture** `0 → 900 s`. |
 | **2a — Rogue capture** | ~00:01 – ~00:21 | `~60 – ~1 260 s` | **First half of session** — cycle every blue frequency; silent per-team capture pools. |
-| **2b — Rogue replay & jam** | ~00:21 – ~00:34 | `~1 280 – ~2 060 s` | **Second half** — random re-transmit of captured uplink bytes; pulsed uplink jam; **second AOI downlink jam** (`T_AOI_2 ≈ 2 010 s`). |
+| **2b — Rogue replay & jam** | ~00:25 – ~00:50 | `~1 500 – ~3 000 s` envelope | Replay bursts **`1 500 – 1 980`**, **continuous uplink jam `1 980 – 2 280`** (all blue MHz); **Singapore** downlink **`2 400 – 3 000`**. |
 | **3 — Compound** | ~00:34 – ~00:45 | `~2 080 – ~2 650 s` | Cyber telemetry tamper **plus** the scripted **reaction-wheel stuck** hardware fault (no battery fault in this workshop). |
 | **4 — Wind-down** | ~00:36 – 01:00 | `~2 160 – 3 600 s` | No new scripted attacks. Teams finalise answers and forensic notes. |
 
@@ -57,12 +57,12 @@ Single checklist for dry-runs at **1×** (`wall seconds == sim seconds`). Values
 
 | Item | Sim interval (s) | Definition |
 | --- | --- | --- |
-| Multi-team **uplink capture** | **60 → 1 260** | `CAPTURE_START` / `CAPTURE_END` |
-| **Replay** envelope | **1 280 → 2 060** | `REPLAY_START` / `REPLAY_END`; eight bursts drawn inside (`seed` below) |
-| **A7** pulsed uplink jam | **1 560 → 1 660** | **8 s ON / 40 s period** — pulses ON **1 560**, **1 600**, **1 640**; OFF **1 568**, **1 608**, **1 648** |
-| **AOI broadcast downlink jam** | Pass **1**: **1 170 → 1 350**; Pass **2**: **1 920 → 2 100** | Centres **`T_AOI_1 = 1 260`**, **`T_AOI_2 = 2 010`**; half-width **90 s** each (`±90` from centre) |
+| Multi-team **uplink capture** | **0 → 900** | `CAPTURE_START` / `CAPTURE_END` |
+| **Replay** envelope | **1 500 → 1 980** | `REPLAY_START` / `REPLAY_END`; eight bursts drawn inside (`seed` below) |
+| **A7** uplink jam | **1 980 → 2 280** | Continuous; **~0.08 W** on **all** blue MHz (`UPLINK_JAM_POWER`); bore-sight defender via `guidance_spacecraft` |
+| **Broadcast downlink jam** | **900 → 1 500** (Dubai bore-sight) and **2 400 → 3 000** (Singapore bore-sight) | Prep events **10 s** before each **ON**; jammer aimed with `guidance_ground("Jammer", "<station>")`, not at the defender bus |
 
-**Replay round times** — `MultiTeamReplaySequence(..., seed=20260202)`, uniform on **`[1280, 2060]`** (recompute if seed or bounds change): **1 321.7**, **1 485.0**, **1 510.7**, **1 693.8**, **1 726.8**, **1 769.2**, **1 866.2**, **2 021.4**. At **each** instant the rogue issues **one transmit per blue team** (each picks a random wire from **that** team's capture pool).
+**Replay round times** — `MultiTeamReplaySequence(..., seed=20260202)`, uniform on **`[1500, 1980]`** (recompute if seed or bounds change): **1 525.7**, **1 626.2**, **1 642.0**, **1 754.6**, **1 775.0**, **1 801.0**, **1 860.7**, **1 956.2** s.
 
 **Point & edge triggers** — sorted by **simulation time** (`ν = −90°` / **−89.99°** rogue; absolute times **−540 s** vs former ν=−110° schedule)
 
@@ -71,38 +71,34 @@ Single checklist for dry-runs at **1×** (`wall seconds == sim seconds`). Values
 | 30 | 00:30 | JSON | GPS Spoof Region — Hormuz OFF **(bootstrap)** |
 | 60 | 01:00 | Py | `Initial Sun Point` |
 | 600 | 10:00 | JSON | Solar Panel Degradation (**150000** degradation rate, **1.5×** stock **100000**) |
+| 840 | 14:00 | JSON | Cyber Inject Magnetometer (`STAR INJECT`, APID **300**) |
+| 890 | 14:50 | Py | Point jammer at **Dubai** (downlink barrage prep) |
+| 900 | 15:00 | Py | Downlink Jam **ON** (Dubai segment, `guidance_ground`) |
 | 1 080 | 18:00 | JSON | GPS Spoof Region — Hormuz ON |
 | 1 110 | 18:30 | JSON | GPS Jammer Add — Hormuz |
-| 1 160 | 19:20 | Py | Point jammer (AOI Pass **1** prep) |
-| 1 170 | 19:30 | Py | Downlink Jam **ON** (AOI Pass **1**) |
 | 1 220 | 20:20 | JSON | GPS Sensor Hard Fault |
-| 1 321.7 | 22:02 | Py | Replay burst **#1** |
-| 1 350 | 22:30 | Py | Downlink Jam **OFF** (AOI Pass **1**) |
 | 1 380 | 23:00 | JSON | GPS Jammer Remove — Hormuz |
 | 1 390 | 23:10 | JSON | GPS Spoof Region — Hormuz OFF **(post-cluster)** |
+| 1 500 | 25:00 | Py | Downlink Jam **OFF** (Dubai segment) |
+| 1 525.7 | 25:26 | Py | Replay burst **#1** |
 | 1 560 | 26:00 | JSON | Storage Full (`Capacity`: stock Spacecraft.json recipe) |
-| 1 485.0 | 24:45 | Py | Replay burst **#2** |
-| 1 510.7 | 25:11 | Py | Replay burst **#3** |
-| 1 550 | 25:50 | Py | Point jammer (A7 uplink jam prep) |
-| 1 560 | 26:00 | Py | A7 jammer **ON** #1 |
-| 1 568 | 26:08 | Py | A7 jammer **OFF** #1 |
-| 1 600 | 26:40 | Py | A7 jammer **ON** #2 |
-| 1 608 | 26:48 | Py | A7 jammer **OFF** #2 |
-| 1 640 | 27:20 | Py | A7 jammer **ON** #3 |
-| 1 648 | 27:28 | Py | A7 jammer **OFF** #3 |
-| 1 693.8 | 28:14 | Py | Replay burst **#4** |
-| 1 726.8 | 28:47 | Py | Replay burst **#5** |
-| 1 769.2 | 29:29 | Py | Replay burst **#6** |
-| 1 866.2 | 31:06 | Py | Replay burst **#7** |
-| 1 910 | 31:50 | Py | Point jammer (AOI Pass **2** prep) |
-| 1 920 | 32:00 | Py | Downlink Jam **ON** (AOI Pass **2**) |
-| 2 021.4 | 33:41 | Py | Replay burst **#8** |
 | 1 620 | 27:00 | JSON | Reaction Wheel Stuck (`Stuck Index`: 0 → Wheel 1) |
+| 1 626.2 | 27:06 | Py | Replay burst **#2** |
+| 1 642.0 | 27:22 | Py | Replay burst **#3** |
+| 1 754.6 | 29:15 | Py | Replay burst **#4** |
+| 1 775.0 | 29:35 | Py | Replay burst **#5** |
 | 1 800 | 30:00 | JSON | Reaction Wheel Nominal (`Nominal Index`: 0 → unstuck, stock Spacecraft.json recipe) |
-| 2 080 | 34:40 | JSON | Tamper Ping State (Cyber) |
-| 2 100 | 35:00 | Py | Downlink Jam **OFF** (AOI Pass **2**) |
-| 2 110 | 35:10 | JSON | Tamper GPS Position (Cyber) |
-| 2 760 | 46:00 | Py | `Final Sun Point` |
+| 1 801.0 | 30:01 | Py | Replay burst **#6** |
+| 1 860.7 | 30:41 | Py | Replay burst **#7** |
+| 1 920 | 32:00 | JSON | Cyber Inject EM Sensor (`ECHO VIRUS`, APID **302**) |
+| 1 956.2 | 32:36 | Py | Replay burst **#8** |
+| 1 970 | 32:50 | Py | Point jammer at defender bus (uplink jam prep) |
+| 1 980 | 33:00 | Py | **Uplink Jam ON** (all blue MHz, low power) |
+| 2 280 | 38:00 | Py | **Uplink Jam OFF** |
+| 2 390 | 39:50 | Py | Point jammer at **Singapore** (downlink barrage prep) |
+| 2 400 | 40:00 | Py | Downlink Jam **ON** (Singapore segment, `guidance_ground`) |
+| 3 000 | 50:00 | Py | Downlink Jam **OFF** (Singapore segment) |
+| 3 060 | 51:00 | Py | `Final Sun Point` |
 
 **Wall** column is **mm:ss** from session start at 1×. **Src**: **JSON** = `events[]` in `cyber_defender.json`; **Py** = `cyber_defender.py` scheduler / replay module.
 
@@ -273,7 +269,7 @@ Mandatory canonical 6 (Solar Panel, Battery, Computer, Receiver, Transmitter, St
 | `Magnetometer` | Cross-check GPS spoof against B-field. | 300 |
 | `Reaction Wheels` | Pointing for camera/EM. | 401 |
 
-The APID column matters for Phase 3 telemetry tampering (§ 9, A9-A10) — only APIDs whose underlying components exist on `SC_OPS` will actually be emitted and therefore be patchable.
+The APID column matters for Phase 3 telemetry overlays (§ 9, A9-A10 — Magnetometer and EM Sensor injects) — only APIDs whose underlying components exist on `SC_OPS` will actually be emitted and therefore be patchable.
 
 `controller`:
 
@@ -419,112 +415,72 @@ Earlier guidance still applies: **fewer** vessels than *Orbital Sentinel* becaus
 
 > Implementation detail: a second helper `MultiTeamReplaySequence` schedules replay events through the existing `EventScheduler`. Replay events arm at creation but **fire on `tick(sim_time)`**, identical to the single-team `schedule_replay_at` pattern — just iterated. Every replay event resolves the **current** team frequency live via `live_enemy_frequencies`-style lookup (key may have been rotated mid-window, in which case the replay simply fails to decode on-board, which is itself observable behaviour).
 
-#### A7. Light pulsed uplink jamming (one blue team)
+#### A7. Continuous uplink jam (shared defender bore-sight, all blue MHz, low power)
 
-- **Type**: active (`commands.jammer_start` / `jammer_stop` pulsed against one blue team's freq).
-- **Window**: `1 560 s → 1 660 s` (inside replay + second AOI window).
-- **Design intent**: **light** — we want a *fraction* of the targeted team's commands to fail, not all of them. The pulse + low-power combination lands ~15-25% of the team's commands inside an ON window where the jammer drowns the uplink, while the rest pass normally. This produces a much more realistic "intermittent comms" symptom than continuous jamming and gives operators something to *measure* (success rate) rather than just notice.
-- **Mechanism**: a Python helper `schedule_jammer_pulses(...)` (see § 11.2) emits an alternating sequence of `jammer_start` / `jammer_stop` events at low power across the window:
-
-  ```python
-  scheduler.add_event("Point Jammer to Watchtower",
-      trigger_time=2_090.0,
-      **commands.guidance_spacecraft("Jammer", "SC_OPS"))
-  schedule_jammer_pulses(scheduler,
-      name="Uplink Pulse Jam (<target team>)",
-      start=2_100.0, end=2_200.0,
-      on_seconds=8.0, period_seconds=40.0,    # 20% duty cycle
-      frequencies_resolver=lambda: [scenario.team_frequency("<target team>")],
-      power=0.8)                              # well below A8/A11's level
-  ```
-
-  Frequencies are resolved live (per pulse) so a key/freq rotation by Blue Bravo mid-window changes the target without rewriting the schedule. The script picks **one team** to single out so the question "which team was uplink-jammed?" has a concrete answer.
-- **Signature**: that team's ping payloads start showing **gaps** in the `Commands` list (some sent commands never appear as executed). Success rate during the window is roughly `1 − duty_cycle` ≈ 75-85%. Other blue teams continue normally.
-- **Mitigation**: `telemetry` frequency hop (from ground) **or** `encryption` rotate (from spacecraft) — both move the team off the jammed channel for subsequent commands.
-- **Forensic question target**: "Roughly what proportion of Blue Bravo's commands failed during the jam window?" — design tolerance ±10 pp.
-
-#### A8. Downlink jamming over AOI imaging Pass #1
-
-- **Type**: active (broadcast jammer across all blue freqs, fired during an AOI overhead pass).
-- **Window**: **`T_AOI_1 ± 90 s`** (~180 s total) — default `T_AOI_1 ≈ 1 260 s` (ν=−90° schedule); **patch from GPS lat/lon if your epoch/geodesy differs**.
-- **Design intent**: the *narrative* effect — "you can't downlink your imagery from this pass". Teams are most likely to be capturing during AOI overhead, so jamming the downlink at exactly that moment makes the imagery they want most expensive to retrieve. They have to wait for a non-AOI pass over a different ground station, or hop frequency.
+- **Type**: active — one **`jammer_start`** and one **`jammer_stop`**.
+- **Window**: **`1 980 → 2 280` s** (Mumbai keyed pass narrative).
+- **Design intent**: the rogue bore-sights the **defender spacecraft** (`guidance_spacecraft("Jammer", <first-blue-asset>)`) — not a ground antenna — while hitting **every** blue team's MHz in one list. **Very low wattage** (default **~0.08 W** vs **3 W** downlink barrage) keeps the effect pedagogical rather than wiping all uplinks at once; no pulses and no scripted per-team hopping.
 - **Mechanism**:
 
   ```python
-  scheduler.add_event("Point Jammer to Watchtower",
-      trigger_time=T_AOI_1 - 100.0,
-      **commands.guidance_spacecraft("Jammer", "SC_OPS"))
-  scheduler.add_event("Downlink Jam ON (AOI Pass 1)",
-      trigger_time=T_AOI_1 - 90.0, pre_trigger=live_jammer_args,
-      **commands.jammer_start(scenario.enemy_fallback_freqs, power=3.0))
-  scheduler.add_event("Downlink Jam OFF",
-      trigger_time=T_AOI_1 + 90.0, **commands.jammer_stop())
+  scheduler.add_event(..., trigger_time=UPLINK_JAM_START - 10.0,
+      **guidance_spacecraft("Jammer", DEFENDER_ASSET_ID))
+  scheduler.add_event("Uplink Jam ON", trigger_time=UPLINK_JAM_START,
+      pre_trigger=live_jammer_args_all,
+      **jammer_start(fallback=enemies_mhz_list, power=UPLINK_JAM_POWER))
+  scheduler.add_event("Uplink Jam OFF", trigger_time=UPLINK_JAM_END,
+      **jammer_stop())
   ```
 
-  Frequency list = **every** blue team's frequency. Power `3.0 W` (no pulsing — this one *is* meant to be saturating, because we want a clean, attributable failure for the question).
-- **Signature**: telemetry stops arriving for **all** blue teams during the pass; ground-station SNR view drops below ~15 dB; the spacecraft itself reports healthy on the next non-AOI pass. Distinguishes a *broadcast* jam (A8) from a *targeted* one (A7).
-- **Mitigation**: frequency hop via `telemetry` for each team independently before the next AOI pass.
-- **Forensic question target**: "During which imaging pass did downlink fail?" / "Which ground station(s) saw the jammed downlink?" — both answers depend on `T_AOI_1`'s actual value once the orbit is dry-run.
+- **Signature**: all blue crews may see **weaker / sporadic uplink degradation** concurrently during the Mumbai window depending on simulator link budget — far gentler than the downlink AOI barrage.
+- **Mitigation**: `telemetry` frequency hop and/or encryption rotate remains valid coursework.
 
-> **Locking AOI pass times**: **`T_AOI_1`** keys off the dry-run Hormuz crossing (~**1 260 s**). **`T_AOI_2`** sits in the Dubai + Singapore overlap (~**2 010 s**) alongside replay/uplink jam — adjust both after GPS trace validation if your integration timestep or station masks differ.
+#### A8. Broadcast downlink jam — Dubai segment
 
-#### A11. Downlink jamming over AOI imaging Pass #2
+- **Type**: active (rogue spacecraft jammer, all blue-team downlink MHz).
+- **Window**: **`900 → 1 500` s** (simulation time).
+- **Design intent**: operators are **keyed through Dubai** (~9–25 min scripted visibility); bore-sighting the **Dubai ground site** jams the contested downlink geography without pointing the rogue at the defender bus.
+- **Mechanism**:
 
-- **Type**: active (same mechanism as A8, second AOI overhead).
-- **Window**: **`T_AOI_2 ± 90 s`** — default `T_AOI_2 ≈ 2 010 s`, again **lock from dry-run**.
-- **Design intent**: a second broadcast jam on the lat-band imaging timeline minutes after the first — same mechanism, different pass geometry / station depending on ground track. Lets teams realise the jam is **band-locked, not station-locked**, and that frequency-hopping after Pass #1 pays off if they did it.
-- **Mechanism**: identical to A8 — `T_AOI_2 ± 90 s`, all blue freqs, `power=3.0 W`.
-- **Signature**: same as A8 but on a different ground station's pass. Teams who hopped frequency after Pass #1 should see either reduced impact (rogue is jamming the *old* freq) or none (rogue is jamming a freq nobody listens on any more).
-- **Mitigation**: confirms the A8 mitigation worked. Otherwise: hop now.
-- **Forensic question target**: pairs with A8's question — "Was the second imaging pass also disrupted? At what ground station?"
+  ```python
+  scheduler.add_event("Point Jammer at Dubai (...)",
+      trigger_time=890.0, **commands.guidance_ground("Jammer", "Dubai"))
+  scheduler.add_event("Downlink Jam ON (Dubai segment)",
+      trigger_time=900.0, pre_trigger=live_jammer_args_all,
+      **commands.jammer_start(enemy_fallback_freqs, power=3.0))
+  scheduler.add_event("Downlink Jam OFF (Dubai segment)",
+      trigger_time=1500.0, **commands.jammer_stop())
+  ```
+
+  Frequency list = **every** blue team's frequency (`live_jammer_args_all`). Power `3.0 W`.
+
+#### A11. Broadcast downlink jam — Singapore segment
+
+- **Type**: active (same as A8).
+- **Window**: **`2 400 → 3 000` s**.
+- **Design intent**: second barrage **keyed through Singapore** (~38+ min scripted visibility); jammer bore-sighted with `guidance_ground("Jammer", "Singapore")`.
+- **Mechanism**: Same pattern as A8 with prep at **`2 390` s**, **ON** at **`2 400`**, **OFF** at **`3 000`**, `power=3.0 W`.
+- **Mitigation**: frequency hop (`telemetry`) so the next pass can close on an unjammed channel.
 
 ### Phase 3 — Compound (Cyber events + script)
 
-> **Payload safety**: the scenario JSON loader does not handle `{`, `}`, or `"` inside Cyber-event ASCII payloads (a bug in the JSON-to-internal-string round trip). All ASCII payloads below avoid those characters. For obvious "FLAG" signatures, use `FLAG-<word>` rather than `FLAG{<word>}`. Hex payloads are fine because they're matched character-class.
+> **Payload safety**: the scenario JSON loader does not handle `{`, `}`, or `"` inside Cyber-event ASCII payloads (a bug in the JSON-to-internal-string round trip). The A9 and A10 ASCII payloads (`STAR INJECT`, `ECHO VIRUS`) avoid those characters.
 
-#### A9. Telemetry tamper — Ping `State` field (APID 100)
+#### A9. Cyber inject — Magnetometer (APID 300)
 
 - **Type**: passive (`Type: "Cyber"`, `Target: "Spacecraft"`, `Assets: ["SC_OPS"]`).
-- **Window**: trigger at `2 080 s`, `Expiry Seconds: 600.0`.
-- **Mechanism**:
-
-  ```json
-  { "Enabled": true, "Name": "Tamper Ping State", "Time": 2080.0,
-    "Type": "Cyber", "Target": "Spacecraft", "Assets": ["SC_OPS"],
-    "Data": {
-      "APID": 100, "SubType": 0, "Offset Bytes": 2,
-      "Payload": "FLAG-OWN", "Encoding": "ascii",
-      "Expiry Seconds": 600.0, "Clear On Reset": true
-    }
-  }
-  ```
-
-  Per `docs/reference/packet-formats.md` § Ping packet, byte offset `2` of the user data is the start of the `State` string content (after the 2-byte length prefix). Overwriting `"NOMINAL"` (7 bytes) with `"FLAG-OWN"` (8 bytes — truncated to the 7-byte field) is harmless to the packet length but clearly visible in the operator UI's Ping view.
-- **Signature**: `state` field shown in operator UI flips from `NOMINAL` to a garbled / signature string. Ping continues to arrive at expected cadence.
+- **Window**: trigger at `840 s` (~14 min), `Expiry Seconds: 300.0` (5 min overlay).
+- **Mechanism**: full-message ASCII overlay at offset `0`, payload `STAR INJECT`, `Encoding: "ascii"`, `Clear On Reset: true`.
+- **Signature**: Magnetometer user data shows the injected string for the overlay window.
 - **Mitigation**: `reset` the `Computer` (overlay clears because of `Clear On Reset: true`).
 
-#### A10. Telemetry tamper — GPS position (APID 301)
+#### A10. Cyber inject — EM Sensor (APID 302)
 
-- **Type**: passive.
-- **Window**: trigger at `2 650 s`, `Expiry Seconds: 600.0`.
-- **Mechanism**:
-
-  ```json
-  { "Enabled": true, "Name": "Tamper GPS Position", "Time": 2650.0,
-    "Type": "Cyber", "Target": "Spacecraft", "Assets": ["SC_OPS"],
-    "Data": {
-      "APID": 301, "SubType": -1, "Offset Bytes": 0,
-      "Payload": "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-      "Encoding": "hex",
-      "Expiry Seconds": 600.0, "Clear On Reset": true
-    }
-  }
-  ```
-
-  The logical field order of the on-board GPS solution is defined in `api-classes/Zendir.Classes/Messages/Custom/GPSDataMessage.cs`: `IsActive`, `NumActive`, `CorrectedPseudoRange`, `TimeOfWeek`, `ECI` (`Vector3`), `ECEF` (`Vector3`), `Latitude`, `Longitude`, `Altitude`. The **wire layout** of APID 301 user-data (packing, array encoding, and whether a binary header precedes the first `Vector3`) must still be taken from the **XTCE / `get_packet_schemas` dry-run** — the C# class gives semantic order, not byte offsets. The stock event uses a 24-byte hex zero wipe aligned with the assumed start of the packed position block; shift `Offset Bytes` if your schema places `ECI`/`ECEF` later.
-- **Signature**: live GPS plot snaps to implausible coordinates; magnetometer is unchanged so the team can detect the inconsistency.
-- **Mitigation**: `reset` Computer (via `Clear On Reset: true`).
-- **Confirm before shipping**: lock **`Offset Bytes`** from a live schema pull if the first 24 B do not line up with the first position `Vector3` in the packetized stream.
+- **Type**: passive (same Cyber schema as A9).
+- **Window**: trigger at `1 920 s` (~32 min), `Expiry Seconds: 300.0` (5 min overlay).
+- **Mechanism**: full-message ASCII overlay at offset `0`, payload `ECHO VIRUS`, `Encoding: "ascii"`, `Clear On Reset: true`.
+- **Signature**: EM Sensor user data shows the injected string for the overlay window.
+- **Mitigation**: `reset` the `Computer` (same as A9).
 
 #### A12. Reaction-wheel stuck (component fault)
 
@@ -577,7 +533,7 @@ When this spec is approved, three artefacts get produced (all in this folder):
 - `assets.space[]`: `SC_OPS`, `SC_ROGUE` (§7).
 - `assets.collections[]`: `Main: ["SC_OPS"]`, `Rogue: ["SC_ROGUE"]`.
 - `objects.ground[]`: minimal Hormuz cluster (§8).
-- `events[]`: A1, A2, A3, A4, A9, A10, A12, A13 — sorted by `Time`.
+- `events[]`: A1, A2, A3, A4, A9 (Magnetometer inject), A10 (EM Sensor inject), A12, A13 — sorted by `Time`.
 - `questions[]`: see §10.
 
 ### 11.2 `cyber_defender.py`
@@ -626,7 +582,7 @@ scheduler.add_event("Replay: arm bursts", trigger_time=1_280.0,
 
 > **New code addition to `src/commands.py` (or a small `src/jamming.py`)**:
 >
-> - `schedule_jammer_pulses(scheduler, *, name, start, end, on_seconds, period_seconds, frequencies_resolver, power)` — emits an alternating `jammer_start` / `jammer_stop` event sequence to produce a duty-cycle pulse over `[start, end]`. `frequencies_resolver` is called per ON pulse so live frequency rotations are picked up without rewriting the schedule. Used by A7 (light uplink jam) and is generally useful for any future "intermittent denial" pattern.
+> - `schedule_jammer_pulses(...)` — optional helper for *other* scenarios that need duty-cycled jams. **Cyber Defender A7** no longer uses it (single ON/OFF uplink barrage instead).
 
 ### 11.3 `README.md` (instructor brief)
 
@@ -644,10 +600,10 @@ Short page (single screen) giving the instructor:
 1. **Single RF per team** — **Keep** one `frequency` per team (matches shipped scenarios).
 2. **A6 replay semantics** — **Each round** re-sends **one random capture per team** from **each team's** pool (**verbatim** bytes). Do **not** require successful state mutation; wording allows accept/reject on board.
 3. **PHANTOM visibility** — **`visualization.hide: true`** on `SC_ROGUE`; discovery via **EM sensor** / spectrum and brief, not default map mesh.
-4. **A10 GPS logical field order** — Documented from `GPSDataMessage.cs` (§A10); **packed byte offsets** still confirmed via XTCE / dry-run.
+4. **A9 / A10 ASCII Cyber payloads** — `STAR INJECT` and `ECHO VIRUS` avoid `{`, `}`, `"` per the JSON-loader constraint on Cyber ASCII payloads.
 5. **Capture / replay cadence** — **First half** of session: multi-team **capture** only. **Second half**: **random replay bursts** (plus jams). Per-team quota **`X = 2`** if `len(enemy_teams) ≤ 2`, else **`X = 3`** (`cyber_defender.py`).
 6. **`T_AOI_1` / `T_AOI_2`** — Instructor to validate against GPS trace (**ongoing**).
-7. **A7 uplink-jam duty** — **20%** design target; **tune after more testing** if observed ack-rate does not match.
+7. **A7 uplink jam** — **Continuous** barrage at **low power** on **all** blue MHz; **`UPLINK_JAM_POWER`** is the lone scalar to tune after dry-run.
 
 ---
 

@@ -151,7 +151,7 @@ class EventScheduler:
                         printer.warn(f"Falling back to default args for '{event.name}'.")
 
                 command_packet = {
-                    "id": self.live_asset_id,
+                    "asset": self.live_asset_id,
                     "command": event.command,
                     "time": 0,  # execute immediately
                     "args": args,

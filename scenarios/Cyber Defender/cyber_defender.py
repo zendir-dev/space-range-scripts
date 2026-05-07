@@ -20,13 +20,16 @@ effect in this scenario:
   wall-clock spacing before ``set_telemetry`` for the next team. Replay uses
   data captured in minutes 0–15 only.
 
-* **Pulsed uplink jam** (minutes ~33–38).
-  Light-duty pulse jam on **one** blue team's frequency (last enemy team in
-  config order). See :func:`src.jamming.schedule_jammer_pulses`.
+* **Uplink jam** (minutes ~33–38): jammer bore-sighted on the **shared
+  defender spacecraft** (first blue asset); **continuous** barrage at **very
+  low power** across **every** blue team's MHz (no pulses, no per-team
+  frequency hopping in the schedule).
 
 * **Broadcast downlink jam — two windows**
-  Saturating jam on every blue frequency during the **Dubai** pass segment
-  (**15–25 min**) and the **Singapore** pass segment (**40–50 min**).
+  Saturating jam on every blue frequency while the rogue **bore-sights the
+  Dubai and Singapore ground sites** (not the defender spacecraft) during
+  the **Dubai** pass segment (**15–25 min**) and the **Singapore** pass
+  segment (**40–50 min**).
 
 Team identity is **never hard-coded** in this script — every blue-team
 detail is read from :attr:`Scenario.enemy_teams` (loaded from the JSON
@@ -52,7 +55,6 @@ if _PROJECT_ROOT not in sys.path:
 
 from src import Scenario, commands, printer
 from src.cyber_replay import MqttUplinkCaptureSequence, MultiTeamReplaySequence
-from src.jamming import schedule_jammer_pulses
 
 
 # ---------------------------------------------------------------------------
@@ -104,7 +106,8 @@ scheduler = scenario.scheduler
 # **0–900 s:** MQTT uplink capture only.
 # **900–1 500 s (15–25 min):** broadcast downlink jam (Dubai segment).
 # **1 500–1 980 s (25–33 min):** replay bursts (captures from 0–900 s).
-# **1 980–2 280 s (33–38 min):** light pulsed uplink jam (Mumbai segment).
+# **1 980–2 280 s (33–38 min):** continuous low-power uplink jam (all blue MHz,
+#    jammer aimed at defender / Mumbai keyed pass segment).
 # **2 400–3 000 s (40–50 min):** broadcast downlink jam (Singapore segment).
 CAPTURE_START = 0.0
 CAPTURE_END = 900.0
@@ -187,14 +190,6 @@ def live_jammer_args_all(default_args: dict) -> dict:
     return {**default_args, "frequencies": freqs}
 
 
-def live_jammer_args_for(team):
-    """Build a ``pre_trigger`` that resolves a single team's live frequency."""
-    def _hook(default_args: dict) -> dict:
-        freq = scenario.live_enemy_frequency_for(team)
-        return {**default_args, "frequencies": [float(freq)]}
-    return _hook
-
-
 # ---------------------------------------------------------------------------
 # Defender's static asset id (for guidance_spacecraft pointing).
 # Resolved dynamically via the first enemy team's collection so a rename of
@@ -214,49 +209,39 @@ printer.info(
 
 
 # ---------------------------------------------------------------------------
-# A7 — Light pulsed uplink jam on a single blue team
-# ---------------------------------------------------------------------------
-# The target team is picked dynamically — the **last** enemy team in config
-# order. Adjust the index below to single out a different team; the rest of
-# the script (and the question framework) follows automatically.
+# A7 — Continuous uplink jam (all blue MHz, defender bore-sight, low power)
 # ---------------------------------------------------------------------------
 
 UPLINK_JAM_START = 1_980.0
 UPLINK_JAM_END = 2_280.0
-UPLINK_JAM_ON = 5.0
-UPLINK_JAM_PERIOD = 60.0       # light duty cycle (~8 %)
-UPLINK_JAM_POWER = 0.45        # subtle vs broadcast barrage
+# Far below broadcast downlink jam (3 W); enough to perturb links if dry-run proves too faint, bump slightly.
+UPLINK_JAM_POWER = 0.08
 
-UPLINK_JAM_TARGET = scenario.enemy_teams[-1] if scenario.enemy_teams else None
-
-if UPLINK_JAM_TARGET is None:
-    printer.warn(
-        "A7: no enemy teams configured — pulsed uplink jam will be skipped"
-    )
+if not scenario.enemy_teams:
+    printer.warn("A7: no enemy teams configured — uplink jam will be skipped")
 else:
     printer.info(
-        f"A7: uplink-jam target picked dynamically → '{UPLINK_JAM_TARGET.name}' "
-        f"(team_id={UPLINK_JAM_TARGET.id}, config_freq={UPLINK_JAM_TARGET.frequency} MHz)"
+        f"A7: uplink jam → point at defender '{DEFENDER_ASSET_ID}', "
+        f"all blue MHz, {UPLINK_JAM_POWER} W, [{UPLINK_JAM_START:.0f},{UPLINK_JAM_END:.0f}]s"
     )
-
     scheduler.add_event(
         name=f"Point Jammer at {DEFENDER_ASSET_ID} (uplink jam prep)",
         trigger_time=UPLINK_JAM_START - 10.0,
         **commands.guidance_spacecraft("Jammer", DEFENDER_ASSET_ID),
     )
-
-    schedule_jammer_pulses(
-        scheduler,
-        name=f"Uplink Pulse Jam ({UPLINK_JAM_TARGET.name})",
-        start=UPLINK_JAM_START,
-        end=UPLINK_JAM_END,
-        on_seconds=UPLINK_JAM_ON,
-        period_seconds=UPLINK_JAM_PERIOD,
-        power=UPLINK_JAM_POWER,
-        fallback_frequencies=[float(UPLINK_JAM_TARGET.frequency)],
-        frequencies_resolver=lambda t=UPLINK_JAM_TARGET: [
-            float(scenario.live_enemy_frequency_for(t))
-        ],
+    scheduler.add_event(
+        name="Uplink Jam ON",
+        trigger_time=UPLINK_JAM_START,
+        pre_trigger=live_jammer_args_all,
+        **commands.jammer_start(
+            frequencies=list(scenario.enemy_fallback_freqs),
+            power=UPLINK_JAM_POWER,
+        ),
+    )
+    scheduler.add_event(
+        name="Uplink Jam OFF",
+        trigger_time=UPLINK_JAM_END,
+        **commands.jammer_stop(),
     )
 
 
@@ -271,11 +256,12 @@ JAM_SINGAPORE_END = 3_000.0
 BROADCAST_JAM_POWER = 3.0
 
 
-def _add_broadcast_jam_window(label: str, on_at: float, off_at: float) -> None:
+def _add_broadcast_jam_window(label: str, on_at: float, off_at: float, ground_station: str) -> None:
+    """Barrage jam while the rogue's jammer bore-sights the named ground site (not the defender spacecraft)."""
     scheduler.add_event(
-        name=f"Point Jammer at {DEFENDER_ASSET_ID} ({label} prep)",
+        name=f"Point Jammer at {ground_station} ({label} prep)",
         trigger_time=on_at - 10.0,
-        **commands.guidance_spacecraft("Jammer", DEFENDER_ASSET_ID),
+        **commands.guidance_ground("Jammer", ground_station),
     )
     scheduler.add_event(
         name=f"Downlink Jam ON ({label})",
@@ -293,8 +279,10 @@ def _add_broadcast_jam_window(label: str, on_at: float, off_at: float) -> None:
     )
 
 
-_add_broadcast_jam_window("Dubai pass 15–25 min", JAM_DUBAI_START, JAM_DUBAI_END)
-_add_broadcast_jam_window("Singapore pass 40–50 min", JAM_SINGAPORE_START, JAM_SINGAPORE_END)
+_add_broadcast_jam_window("Dubai pass 15–25 min", JAM_DUBAI_START, JAM_DUBAI_END, "Dubai")
+_add_broadcast_jam_window(
+    "Singapore pass 40–50 min", JAM_SINGAPORE_START, JAM_SINGAPORE_END, "Singapore"
+)
 
 
 # ---------------------------------------------------------------------------
@@ -304,7 +292,7 @@ _add_broadcast_jam_window("Singapore pass 40–50 min", JAM_SINGAPORE_START, JAM
 
 scheduler.add_event(
     name="Initial Sun Point",
-    trigger_time=CAPTURE_END,
+    trigger_time=0.0,
     **commands.guidance_sun("Solar Panel"),
 )
 scheduler.add_event(

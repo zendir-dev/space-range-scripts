@@ -69,8 +69,8 @@
 					"values": [
 						10000.0,
 						0.015,
-						-37.0,
-						350.0,
+						-37,
+						350.004,
 						0.0,
 						-90.0
 					],
@@ -343,11 +343,11 @@
 					"planet": "Earth",
 					"values": [
 						10000.0,
-						0.015,
-						-37.0,
+						0.0151,
+						-37,
 						350.0,
 						0.0,
-						-89.99
+						-90.0
 					],
 					"offset": [
 						0.0,
@@ -486,8 +486,7 @@
 						],
 						"data": {
 							"Power": 100.0,
-							"Antenna Gain": 15.0,
-							"Lookup": "RFPattern.csv"
+							"Antenna Gain": 15.0
 						}
 					},
 					{
@@ -694,6 +693,27 @@
 		},
 		{
 			"Enabled": true,
+			"Name": "Cyber Inject Magnetometer (STAR INJECT)",
+			"Time": 840.0,
+			"Repeat": false,
+			"Interval": 1.0,
+			"Type": "Cyber",
+			"Target": "Spacecraft",
+			"Assets": [
+				"SC_OPS"
+			],
+			"Data": {
+				"APID": 300,
+				"SubType": -1,
+				"Offset Bytes": 0,
+				"Payload": "STAR INJECT",
+				"Encoding": "ascii",
+				"Expiry Seconds": 300.0,
+				"Clear On Reset": true
+			}
+		},
+		{
+			"Enabled": true,
 			"Name": "GPS Jammer Remove — Haifa",
 			"Time": 870.0,
 			"Repeat": false,
@@ -763,48 +783,6 @@
 		},
 		{
 			"Enabled": true,
-			"Name": "Tamper Ping State",
-			"Time": 2080.0,
-			"Repeat": false,
-			"Interval": 1.0,
-			"Type": "Cyber",
-			"Target": "Spacecraft",
-			"Assets": [
-				"SC_OPS"
-			],
-			"Data": {
-				"APID": 100,
-				"SubType": 0,
-				"Offset Bytes": 2,
-				"Payload": "FLAG-OWN",
-				"Encoding": "ascii",
-				"Expiry Seconds": 600.0,
-				"Clear On Reset": true
-			}
-		},
-		{
-			"Enabled": true,
-			"Name": "Tamper GPS Position",
-			"Time": 2650.0,
-			"Repeat": false,
-			"Interval": 1.0,
-			"Type": "Cyber",
-			"Target": "Spacecraft",
-			"Assets": [
-				"SC_OPS"
-			],
-			"Data": {
-				"APID": 301,
-				"SubType": -1,
-				"Offset Bytes": 0,
-				"Payload": "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-				"Encoding": "hex",
-				"Expiry Seconds": 600.0,
-				"Clear On Reset": true
-			}
-		},
-		{
-			"Enabled": true,
 			"Name": "Reaction Wheel Stuck",
 			"Time": 1620.0,
 			"Repeat": false,
@@ -832,6 +810,27 @@
 			"Data": {
 				"Nominal Index": 0
 			}
+		},
+		{
+			"Enabled": true,
+			"Name": "Cyber Inject EM Sensor (ECHO VIRUS)",
+			"Time": 1920.0,
+			"Repeat": false,
+			"Interval": 1.0,
+			"Type": "Cyber",
+			"Target": "Spacecraft",
+			"Assets": [
+				"SC_OPS"
+			],
+			"Data": {
+				"APID": 302,
+				"SubType": -1,
+				"Offset Bytes": 0,
+				"Payload": "ECHO VIRUS",
+				"Encoding": "ascii",
+				"Expiry Seconds": 300.0,
+				"Clear On Reset": true
+			}
 		}
 	],
 	"questions": [
@@ -845,7 +844,7 @@
 				"value": 5.0,
 				"tolerance": 0.25,
 				"reason": "Five green vessels are authored at the Hormuz grid; yellow vessels are placed separately near Singapore / Malacca.",
-				"score": 4
+				"score": 5
 			}
 		},
 		{
@@ -858,7 +857,7 @@
 				"value": 2.0,
 				"tolerance": 0.25,
 				"reason": "Two yellow vessels (Malacca Yellow A/B) are positioned near Singapore / Malacca.",
-				"score": 4
+				"score": 5
 			}
 		},
 		{
@@ -1015,7 +1014,7 @@
 			}
 		},
 		{
-			"section": "Environmental Cyber (Phase 1)",
+			"section": "Environmental Cyber",
 			"title": "Around which geographic region did GPS spoofing occur?",
 			"description": "Plot the GPS lat/lon trace and identify when reported position is inconsistent with the magnetometer and orbit propagation. The deceptive fix lands at the antipode of the affected region.",
 			"type": "select",
@@ -1039,53 +1038,68 @@
 			}
 		},
 		{
-			"section": "Environmental Cyber (Phase 1)",
-			"title": "Which sensor returned a hard fault that required a component reset?",
-			"description": "One sensor's APID stopped emitting fresh fixes mid-orbit. Cross-check against magnetometer health to distinguish the hard fault from environmental denial.",
-			"type": "select",
+			"section": "Cyber Attacks",
+			"title": "Cyber inject APIDs",
+			"description": "Select exactly two APIDs that had scripted telemetry overlays injected during this session (ASCII payload replays on live telemetry).",
+			"type": "checkbox",
 			"answer": {
 				"options": [
-					"Camera",
-					"EM Sensor",
-					"GPS Sensor",
-					"Magnetometer",
-					"Reaction Wheels"
+					"100 Ping",
+					"200 Battery",
+					"201 Power Source",
+					"202 Power Node",
+					"300 Magnetometer",
+					"301 GPS",
+					"302 EM Sensor",
+					"400 Computer",
+					"401 Reaction Wheels",
+					"500 Receiver",
+					"501 Transmitter"
 				],
-				"value": 2,
+				"value": [
+					4,
+					6
+				],
 				"reason": [
-					"The Camera was not the component forced into the keyed hard fault.",
-					"The EM Sensor was not the component forced into the keyed hard fault.",
-					"Correct. The GPS Sensor enters fault state 4 at about 1220 s; the magnetometer stays healthy, separating hardware fault from environmental denial.",
-					"The Magnetometer was not the component forced into the keyed hard fault.",
-					"The Reaction Wheels were not the component forced into the keyed hard fault."
+					"Ping (APID 100) was not one of the two scripted inject APIDs for this question.",
+					"Battery (APID 200) was not one of the two scripted inject APIDs for this question.",
+					"The scenario does not author a Power Source overlay for these scripted injects.",
+					"The scenario does not author a Power Node overlay for these scripted injects.",
+					"Correct. Magnetometer (APID 300) receives a Cyber overlay for five minutes starting at 840 s (~14 min).",
+					"GPS (APID 301) is not one of the two scripted inject overlays in this session.",
+					"Correct. EM Sensor (APID 302) receives a Cyber overlay for five minutes starting at 1920 s (~32 min).",
+					"The Computer APID was not used for these scripted overlays.",
+					"The Reaction Wheels APID was not used for these scripted overlays.",
+					"The Receiver APID was not used for these scripted overlays.",
+					"The Transmitter APID was not used for these scripted overlays."
 				],
-				"score": 5
+				"score": 7
 			}
 		},
 		{
-			"section": "Environmental Cyber (Phase 1)",
-			"title": "What is the most appropriate immediate mitigation for the GPS spoofing event?",
-			"description": "While the spacecraft is inside the spoofing volume, what action keeps mission-critical positioning trustworthy?",
-			"type": "select",
+			"section": "Cyber Attacks",
+			"title": "What hidden ASCII message appeared in the cyber injection around 14 minutes?",
+			"description": "Read the injected telemetry field on the Magnetometer message during the ~14-19 minute window.",
+			"type": "text",
 			"answer": {
-				"options": [
-					"Component reset on GPS Sensor",
-					"Ephemeris rollback / dead-reckon from last good fix",
-					"Frequency hop the telemetry link",
-					"Rotate the team encryption key"
-				],
-				"value": 1,
-				"reason": [
-					"Resetting the GPS Sensor does not remove a geometrically valid but false RF-induced position; dead-reckon first.",
-					"Correct. The receiver hardware is healthy but the solution is wrong while inside the spoof volume; ephemeris rollback and dead-reckoning restore trustworthy state.",
-					"A telemetry frequency hop does not fix an on-board false GPS solution inside the spoof volume.",
-					"Rotating the encryption key does not correct a spoofed GPS navigation solution."
-				],
-				"score": 5
+				"value": "STAR INJECT",
+				"reason": "The Cyber event at 840 s targets APID 300 with Encoding ascii and Payload STAR INJECT for 300 s (5 min).",
+				"score": 4
 			}
 		},
 		{
-			"section": "Adversary Attribution",
+			"section": "Cyber Attacks",
+			"title": "What hidden ASCII message appeared in the cyber injection around 32 minutes?",
+			"description": "Read the injected telemetry field on the EM Sensor message during the ~32-37 minute window.",
+			"type": "text",
+			"answer": {
+				"value": "ECHO VIRUS",
+				"reason": "The Cyber event at 1920 s targets APID 302 with Encoding ascii and Payload ECHO VIRUS for 300 s (5 min).",
+				"score": 4
+			}
+		},
+		{
+			"section": "Cyber Attacks",
 			"title": "What is the rogue spacecraft's call-sign?",
 			"description": "Use the EM sensor during replay and jam phases and infer from mission context; the adversary call-sign is marked on the rogue chassis.",
 			"type": "text",
@@ -1096,20 +1110,7 @@
 			}
 		},
 		{
-			"section": "Adversary Attribution",
-			"title": "What is the carrier frequency (MHz) of the rogue spacecraft's transmitter?",
-			"description": "Use the EM sensor to scan the spectrum and identify the strong off-nominal carrier.",
-			"type": "number",
-			"answer": {
-				"unit": "MHz",
-				"value": 905,
-				"tolerance": 10,
-				"reason": "The Rogue team PHANTOM spacecraft is configured at 905 MHz; the EM sensor will resolve a strong carrier at that frequency during replay and jam phases.",
-				"score": 5
-			}
-		},
-		{
-			"section": "Adversary Attribution",
+			"section": "Cyber Attacks",
 			"title": "How many distinct sustained broadcast downlink jam episodes occurred?",
 			"description": "Count separate intervals where the rogue held a saturating barrage jam on blue-team downlink frequencies (clear SNR collapse / loss of imagery).",
 			"type": "number",
@@ -1122,9 +1123,9 @@
 			}
 		},
 		{
-			"section": "Adversary Attribution",
-			"title": "Which ground stations had passes during those broadcast downlink jam windows?",
-			"description": "Multiple selection. The keyed visibility model is: Paris 0-9 min, Dubai 9-25 min, Mumbai 25-38 min, Singapore 38 min-1 h 9 min, Sydney from 1 h 9 min onward. Pick every station whose pass overlaps a barrage window.",
+			"section": "Cyber Attacks",
+			"title": "To which ground stations were you connected when the downlink jamming attack occurred?",
+			"description": "Multiple selection. The rogue runs two broadcast downlink barrages. For each barrage window, identify the ground station you were logically connected through when that jam was keyed against the Dubai and Singapore sites.",
 			"type": "checkbox",
 			"answer": {
 				"options": [
@@ -1141,52 +1142,34 @@
 					5
 				],
 				"reason": [
-					"Correct. Select Dubai for the first barrage window (~15-25 min) under this visibility model.",
-					"Easter Island is not keyed for either barrage window.",
-					"Miami is not keyed for either barrage window.",
-					"Mumbai is not keyed for either broadcast barrage window.",
-					"The Paris pass does not overlap either scripted barrage window.",
-					"Correct. Select Singapore for the second barrage window (~40-50 min) under this visibility model.",
-					"Sydney is not keyed for either barrage window."
+					"Correct. The first broadcast barrage aligns with the Dubai pass segment in the scripted visibility model (~9-25 min), so operators are keyed through Dubai during that jam.",
+					"Easter Island is not keyed for either downlink barrage.",
+					"Miami is not keyed for either downlink barrage.",
+					"Mumbai is not keyed for either broadcast downlink barrage.",
+					"The Paris segment does not host either broadcast barrage.",
+					"Correct. The second broadcast barrage aligns with the Singapore pass segment (~38-69 min), so operators are keyed through Singapore during that jam.",
+					"Sydney is not keyed for either broadcast downlink barrage."
 				],
 				"score": 7
 			}
 		},
 		{
-			"section": "Active Attacks (Phase 2)",
-			"title": "Which blue team was singled out for pulsed uplink jamming?",
-			"description": "One team's uplink ack-rate dips during light pulsed jamming (~33-38 min simulation time at 1x) while the other team's link stays nominal - both teams share the same spacecraft but use different RF identities.",
-			"type": "select",
-			"answer": {
-				"options": [
-					"Blue Alpha",
-					"Blue Bravo"
-				],
-				"value": 1,
-				"reason": [
-					"The keyed target team is not Blue Alpha for this scripted pulse jam.",
-					"Correct. The rogue pulsed uplink jam targets Blue Bravo's frequency only; Blue Alpha sees no degradation."
-				],
-				"score": 5
-			}
-		},
-		{
-			"section": "Active Attacks (Phase 2)",
-			"title": "Roughly what proportion of Blue Bravo's commands failed during the uplink-jam window?",
-			"description": "Compare commands sent vs. commands acknowledged on Blue Bravo's console during the ~33-38 min jam window. Express as a percentage.",
+			"section": "Cyber Attacks",
+			"title": "What was the lowest signal-to-noise ratio (dB) observed at the ground station during downlink jamming?",
+			"description": "Read the ground-station SNR trace during either broadcast barrage window (approximately 900-1500 s or 2400-3000 s simulation time at 1x). Answer in dB; use the deepest dip you see.",
 			"type": "number",
 			"answer": {
-				"unit": "%",
-				"value": 10,
-				"tolerance": 8,
-				"reason": "The pulse pattern is intentionally light (5 s ON per 60 s period, reduced jammer power), so only a modest fraction of uplink attempts should fail.",
+				"unit": "dB",
+				"value": 15.0,
+				"tolerance": 4.0,
+				"reason": "Keyed provisionally (~15 dB floor, wide tolerance until dry-run): broadcast barrage uses 3 W on all blue downlink MHz. Patch value and tighten tolerance after a GPS / link-budget smoke run if your integrator differs.",
 				"score": 5
 			}
 		},
 		{
-			"section": "Active Attacks (Phase 2)",
-			"title": "During which ground station's pass did pulsed uplink jamming occur?",
-			"description": "Use the pass timeline: Paris 0-9 min, Dubai 9-25 min, Mumbai 25-38 min, Singapore 38 min-1 h 9 min, Sydney from 1 h 9 min onward.",
+			"section": "Cyber Attacks",
+			"title": "To which ground station were you connected when the uplink jamming attack occurred?",
+			"description": "Continuous low-power uplink jam runs about 1980-2280 s simulation time (~33-38 min at 1x) on all blue-team MHz while the rogue points at Watchtower.",
 			"type": "select",
 			"answer": {
 				"options": [
@@ -1200,19 +1183,32 @@
 				],
 				"value": 3,
 				"reason": [
-					"Dubai's keyed segment ends before the pulsed uplink window.",
+					"Dubai's keyed segment ends before the uplink jam window.",
 					"Easter Island is not the keyed station for this window.",
 					"Miami is not the keyed station for this window.",
-					"Correct. The pulsed uplink window (~33-38 min) sits inside the Mumbai pass segment (25-38 min).",
-					"Pulsed uplink is outside the Paris window.",
-					"Singapore's pass begins after the pulsed uplink window.",
+					"Correct. The uplink jam window (~33-38 min) sits inside the Mumbai pass segment (25-38 min).",
+					"The uplink jam window is outside the Paris window.",
+					"Singapore's pass begins after the uplink jam window.",
 					"Sydney does not yet have pass priority at this time."
 				],
 				"score": 5
 			}
 		},
 		{
-			"section": "Active Attacks (Phase 2)",
+			"section": "Cyber Attacks",
+			"title": "What was the lowest signal-to-noise ratio (dB) observed at the ground station during uplink jamming?",
+			"description": "Read SNR during the continuous uplink jam window. Power is very low but persists for the whole window.",
+			"type": "number",
+			"answer": {
+				"unit": "dB",
+				"value": 21.0,
+				"tolerance": 10.0,
+				"reason": "Keyed provisionally (wide tolerance until dry-run): continuous uplink jam uses ~0.08 W versus 3 W downlink barrage. Patch floor and tighten tolerance after verification.",
+				"score": 5
+			}
+		},
+		{
+			"section": "Cyber Attacks",
 			"title": "During which ground station's pass did you experience uplink replay attacks?",
 			"description": "Replay traffic appears on your team's uplink frequency without a matching command from your console. Replay is scheduled ~25-33 min at 1x. Match that interval to the pass timeline in the brief.",
 			"type": "select",
@@ -1240,7 +1236,7 @@
 			}
 		},
 		{
-			"section": "Active Attacks (Phase 2)",
+			"section": "Cyber Attacks",
 			"title": "How many replay bursts does the rogue schedule against teams that have captured commands?",
 			"description": "Count distinct replay burst times (each burst fires multiple shots per team). Use EM sensor activity or operator logs.",
 			"type": "number",
@@ -1253,7 +1249,7 @@
 			}
 		},
 		{
-			"section": "Active Attacks (Phase 2)",
+			"section": "Cyber Attacks",
 			"title": "When (at 1x simulation speed) does the adversarial replay campaign occur?",
 			"description": "Captures are collected only in the first 15 minutes; replay never overlaps that quiet capture window.",
 			"type": "select",
@@ -1272,35 +1268,6 @@
 					"Correct. Replay is confined to about 1500-1980 s (~25-33 min at 1x)."
 				],
 				"score": 5
-			}
-		},
-		{
-			"section": "Active Attacks (Phase 2)",
-			"title": "Which APIDs showed Phase-3 telemetry tampering?",
-			"description": "Multiple selection. On your team's spacecraft, compare suspect telemetry fields against magnetometer and orbit-propagation ground truth and identify every APID whose payload contents drifted.",
-			"type": "checkbox",
-			"answer": {
-				"options": [
-					"100 (Ping)",
-					"200 (Battery)",
-					"300 (Magnetometer)",
-					"301 (GPS)",
-					"302 (EM Sensor)",
-					"401 (Reaction Wheels)"
-				],
-				"value": [
-					0,
-					3
-				],
-				"reason": [
-					"Correct. Select 100 (Ping) for the tampered Ping state field.",
-					"APID 200 (Battery) is not one of the keyed tampers.",
-					"APID 300 (Magnetometer) is not one of the keyed tampers.",
-					"Correct. Select 301 (GPS) for the tampered GPS position block.",
-					"APID 302 (EM Sensor) is not one of the keyed tampers.",
-					"APID 401 (Reaction Wheels) is not one of the keyed tampers."
-				],
-				"score": 6
 			}
 		},
 		{
@@ -1349,20 +1316,20 @@
 		},
 		{
 			"section": "Mitigations",
-			"title": "What action clears a Cyber telemetry-tamper overlay (APID 100 / 301)?",
-			"description": "Both Phase-3 cyber overlays were authored with Clear On Reset true. Which command removes them?",
+			"title": "What action clears a Cyber telemetry-tamper overlay?",
+			"description": "The Magnetometer and EM Sensor inject overlays were authored with Clear On Reset true. Which command removes them?",
 			"type": "select",
 			"answer": {
 				"options": [
 					"Component reset on Computer",
-					"Component reset on GPS Sensor",
+					"Component reset on Magnetometer",
 					"Frequency hop",
 					"Telemetry encryption rotate"
 				],
 				"value": 0,
 				"reason": [
 					"Correct. Resetting the Computer clears resettable cyber overlays that were authored to clear on reset.",
-					"Resetting only the GPS Sensor does not clear the Ping overlay on Computer-owned telemetry.",
+					"Resetting only the Magnetometer does not clear Computer-scoped cyber overlays on other APIDs; the keyed clear path is Computer reset.",
 					"A frequency hop does not clear software overlays injected on telemetry packets.",
 					"Rotating encryption does not remove cyber tamper overlays keyed to clear on computer reset."
 				],
