@@ -674,7 +674,7 @@
 		},
 		{
 			"Enabled": true,
-			"Name": "GPS Spoof Region — Haifa ON",
+			"Name": "GPS Spoof Region 1",
 			"Time": 400.0,
 			"Repeat": false,
 			"Interval": 1.0,
@@ -693,7 +693,7 @@
 		},
 		{
 			"Enabled": true,
-			"Name": "GPS Spoof Region — Haifa ON",
+			"Name": "GPS Spoof Region 2",
 			"Time": 600.0,
 			"Repeat": false,
 			"Interval": 1.0,
@@ -712,7 +712,7 @@
 		},
 		{
 			"Enabled": true,
-			"Name": "GPS Spoof Region — Haifa ON",
+			"Name": "GPS Spoof Region 3",
 			"Time": 800.0,
 			"Repeat": false,
 			"Interval": 1.0,
@@ -731,7 +731,7 @@
 		},
 		{
 			"Enabled": true,
-			"Name": "Cyber Inject Magnetometer (STAR INJECT)",
+			"Name": "Cyber Inject 1",
 			"Time": 840.0,
 			"Repeat": false,
 			"Interval": 1.0,
@@ -752,7 +752,7 @@
 		},
 		{
 			"Enabled": true,
-			"Name": "GPS Spoof Region — Haifa ON",
+			"Name": "GPS Spoof Region 4",
 			"Time": 870.0,
 			"Repeat": false,
 			"Interval": 1.0,
@@ -771,7 +771,7 @@
 		},
 		{
 			"Enabled": true,
-			"Name": "GPS Spoof Region — Haifa ON",
+			"Name": "GPS Spoof Region 5",
 			"Time": 980.0,
 			"Repeat": false,
 			"Interval": 1.0,
@@ -790,7 +790,7 @@
 		},
 		{
 			"Enabled": true,
-			"Name": "GPS Spoof Remove — Haifa",
+			"Name": "GPS Spoof Off",
 			"Time": 1100.0,
 			"Repeat": false,
 			"Interval": 1.0,
@@ -848,7 +848,7 @@
 		},
 		{
 			"Enabled": true,
-			"Name": "GPS Jammer Add — Hormuz",
+			"Name": "GPS Jamming On",
 			"Time": 1850.0,
 			"Repeat": false,
 			"Interval": 1.0,
@@ -865,7 +865,7 @@
 		},
 		{
 			"Enabled": true,
-			"Name": "GPS Jammer Remove — Hormuz",
+			"Name": "GPS Jamming Off",
 			"Time": 2000.0,
 			"Repeat": false,
 			"Interval": 1.0,
@@ -878,7 +878,7 @@
 		},
 		{
 			"Enabled": true,
-			"Name": "Cyber Inject EM Sensor (ECHO VIRUS)",
+			"Name": "Cyber Inject 2",
 			"Time": 1920.0,
 			"Repeat": false,
 			"Interval": 1.0,
@@ -1083,65 +1083,84 @@
 		},
 		{
 			"section": "Environmental Cyber",
-			"title": "Around which geographic region did GPS spoofing occur?",
-			"description": "Plot the GPS lat/lon trace and identify when reported position is inconsistent with the magnetometer and orbit propagation. The deceptive fix lands at the antipode of the affected region.",
-			"type": "select",
+			"title": "GPS Spoofing: At what time (in minutes from session start) did the GPS spoofing first occur?",
+			"description": "The GPS spoofing first occurred at a point in time. Give elapsed simulation minutes at which this spoofing first occurred.",
+			"type": "number",
 			"answer": {
-				"options": [
-					"Caribbean",
-					"Hormuz Strait",
-					"Malacca Strait",
-					"South Atlantic",
-					"South Pacific"
-				],
-				"value": 1,
-				"reason": [
-					"The spoofing region was not centred over the Caribbean.",
-					"Correct. The spoofing volume is centred over the Hormuz Strait region (500 km-radius sphere at MEO altitude near 26.5°N, 56.5°E).",
-					"The keyed region is not the Malacca Strait.",
-					"The spoofing region was not centred over the South Atlantic.",
-					"The spoofing region was not centred over the South Pacific."
-				],
-				"score": 0
+				"unit": "min",
+				"value": 10.0,
+				"tolerance": 1.0,
+				"reason": "This spoofing occurred at 600 seconds into the simulation.",
+				"score": 5
 			}
 		},
 		{
-			"section": "Cyber Threats",
-			"title": "Cyber Injects: Which messages, based on their APID, had injected text due to a cyber attack?",
-			"description": "Some messages had injected text, disrupting the data found within the packets. This was due to a cyber attack. Which messages were affected?",
-			"type": "checkbox",
+			"section": "Environmental Cyber",
+			"title": "GPS Spoofing: At what time (in minutes from session start) did the GPS spoofing last occur?",
+			"description": "The GPS spoofing last occurred at a point in time. Give elapsed simulation minutes at which this spoofing last occurred.",
+			"type": "number",
+			"answer": {
+				"unit": "min",
+				"value": 14.5,
+				"tolerance": 1.5,
+				"reason": "This spoofing ran for 4.5 minutes, starting at 600 seconds into the simulation.",
+				"score": 5
+			}
+		},
+		{
+			"section": "Environmental Cyber",
+			"title": "GPS Spoofing: Where was the spoofed region centred?",
+			"description": "The GPS spoofing occurred over a region. Where was the region centred?",
+			"type": "select",
 			"answer": {
 				"options": [
-					"100 - Ping",
-					"200 - Battery",
-					"201 - Power Source",
-					"202 - Power Node",
-					"300 - Magnetometer",
-					"301 - GPS",
-					"302 - EM Sensor",
-					"400 - Computer",
-					"401 - Reaction Wheels",
-					"500 - Receiver",
-					"501 - Transmitter"
+					"Australia",
+					"Central Asia",
+					"Eastern Europe",
+					"India",
+					"Middle-East",
+					"North-East Asia",
+					"South-East Asia",
+					"Western Europe"
 				],
-				"value": [
-					4,
-					6
-				],
+				"value": 4,
 				"reason": [
-					"Ping (APID 100) was not one of the two scripted inject APIDs for this question.",
-					"Battery (APID 200) was not one of the two scripted inject APIDs for this question.",
-					"Power Source (APID 201) was not one of the two scripted inject APIDs for this question.",
-					"Power Node (APID 202) was not one of the two scripted inject APIDs for this question.",
-					"Correct. Magnetometer (APID 300) receives a Cyber overlay for five minutes starting at 840 s (~14 min).",
-					"GPS (APID 301) was not one of the two scripted inject APIDs for this question.",
-					"Correct. EM Sensor (APID 302) receives a Cyber overlay for five minutes starting at 1920 s (~32 min).",
-					"Computer (APID 400) was not one of the two scripted inject APIDs for this question.",
-					"Reaction Wheels (APID 401) was not one of the two scripted inject APIDs for this question.",
-					"Receiver (APID 500) was not one of the two scripted inject APIDs for this question.",
-					"Transmitter (APID 501) was not one of the two scripted inject APIDs for this question."
+					"The spoofing did not occur over Australia.",
+					"The spoofing did not occur over Central Asia.",
+					"The spoofing did not occur over Eastern Europe.",
+					"The spoofing did not occur over India.",
+					"Correct. The spoofing occurred over the Middle-East region.",
+					"The spoofing did not occur over North-East Asia.",
+					"The spoofing did not occur over South-East Asia.",
+					"The spoofing did not occur over Western Europe."
 				],
-				"score": 10
+				"score": 5
+			}
+		},
+		{
+			"section": "Environmental Cyber",
+			"title": "GPS Jamming: At what time (in minutes from session start) did the GPS jamming first occur?",
+			"description": "The GPS jamming first occurred at a point in time. Give elapsed simulation minutes at which this jamming first occurred.",
+			"type": "number",
+			"answer": {
+				"unit": "min",
+				"value": 30.8,
+				"tolerance": 1.5,
+				"reason": "This jamming occurred at 600 seconds into the simulation.",
+				"score": 5
+			}
+		},
+		{
+			"section": "Environmental Cyber",
+			"title": "GPS Jamming: At what time (in minutes from session start) did the GPS jamming last occur?",
+			"description": "The GPS jamming last occurred at a point in time. Give elapsed simulation minutes at which this jamming last occurred.",
+			"type": "number",
+			"answer": {
+				"unit": "min",
+				"value": 33.3,
+				"tolerance": 1.5,
+				"reason": "This jamming ran for 4.5 minutes, starting at 600 seconds into the simulation.",
+				"score": 5
 			}
 		},
 		{
