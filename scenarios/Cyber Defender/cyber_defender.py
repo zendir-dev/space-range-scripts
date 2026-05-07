@@ -14,23 +14,19 @@ effect in this scenario:
   team (no RF dwell / no Format-3 intercept). See
   :class:`src.cyber_replay.MqttUplinkCaptureSequence`.
 
-* **Phase 2b — Random replay (after capture).**
-  **Eight bursts** at random sim-times; **each burst** sends **three** random
-  stored commands **in a row per blue team**, with **3 s wall-clock** spacing
-  before ``set_telemetry`` for the next team (ground rate limits). MQTT-sourced
-  JSON is Caesar-encrypted with that team's RF key **at transmit time** and sent
-  on **live** carrier MHz via :class:`src.cyber_replay.MultiTeamReplaySequence`.
+* **Phase 2b — Random replay (minutes 25–33 at 1×).**
+  **Eight bursts** at random sim-times in ``[1 500, 1 980]`` s; **each burst**
+  sends **three** random stored commands **in a row per blue team**, with **3 s**
+  wall-clock spacing before ``set_telemetry`` for the next team. Replay uses
+  data captured in minutes 0–15 only.
 
-* **A7 — Light pulsed uplink jam.**
-  20 % duty-cycle pulse jam on **one** blue team's frequency. The target is
-  picked dynamically from :attr:`Scenario.enemy_teams` (the last enemy team
-  in config order), so renaming or extending the team roster requires no
-  changes here. See :func:`src.jamming.schedule_jammer_pulses`.
+* **Pulsed uplink jam** (minutes ~33–38).
+  Light-duty pulse jam on **one** blue team's frequency (last enemy team in
+  config order). See :func:`src.jamming.schedule_jammer_pulses`.
 
-* **A8 / A11 — Broadcast downlink jam over AOI imaging passes.**
-  Saturating jam on every blue frequency for 180 s centred on each AOI
-  overhead. ``T_AOI_1`` / ``T_AOI_2`` are placeholder constants — lock from
-  a dry-run (see ``cyber_defender.spec.md`` § 12).
+* **Broadcast downlink jam — two windows**
+  Saturating jam on every blue frequency during the **Dubai** pass segment
+  (**15–25 min**) and the **Singapore** pass segment (**40–50 min**).
 
 Team identity is **never hard-coded** in this script — every blue-team
 detail is read from :attr:`Scenario.enemy_teams` (loaded from the JSON
@@ -102,15 +98,18 @@ scheduler = scenario.scheduler
 # ---------------------------------------------------------------------------
 
 # Timeline at simulation.speed = 1.0 (wall-clock seconds == sim seconds).
-# First **900 s**: MQTT uplink capture only (no scripted jammer / guidance).
-# After that: normal rogue timeline (guidance, AOI jams, pulse jam, replay).
-# Orbit: True Anomaly **−90°** (defender) / **−89.99°** (rogue) — ~9 min earlier
-# SOH phasing than ν=−110°. All absolute times below are **shifted −540 s** to
-# match. Re-validate on first dry-run.
+# Ground visibility (workshop key): Paris 0–9 min, Dubai 9–25, Mumbai 25–38,
+# Singapore 38–69, Sydney 69+ (see scenario brief).
+#
+# **0–900 s:** MQTT uplink capture only.
+# **900–1 500 s (15–25 min):** broadcast downlink jam (Dubai segment).
+# **1 500–1 980 s (25–33 min):** replay bursts (captures from 0–900 s).
+# **1 980–2 280 s (33–38 min):** light pulsed uplink jam (Mumbai segment).
+# **2 400–3 000 s (40–50 min):** broadcast downlink jam (Singapore segment).
 CAPTURE_START = 0.0
 CAPTURE_END = 900.0
-REPLAY_START = 1_280.0
-REPLAY_END = 2_060.0
+REPLAY_START = 1_500.0
+REPLAY_END = 1_980.0
 
 capture: "MqttUplinkCaptureSequence | None" = None
 replay_seq: "MultiTeamReplaySequence | None" = None
@@ -222,11 +221,11 @@ printer.info(
 # the script (and the question framework) follows automatically.
 # ---------------------------------------------------------------------------
 
-UPLINK_JAM_START = 2_100.0
-UPLINK_JAM_END = 2_200.0
-UPLINK_JAM_ON = 8.0
-UPLINK_JAM_PERIOD = 40.0       # 20 % duty cycle
-UPLINK_JAM_POWER = 0.8          # well below A8/A11 saturating power
+UPLINK_JAM_START = 1_980.0
+UPLINK_JAM_END = 2_280.0
+UPLINK_JAM_ON = 5.0
+UPLINK_JAM_PERIOD = 60.0       # light duty cycle (~8 %)
+UPLINK_JAM_POWER = 0.45        # subtle vs broadcast barrage
 
 UPLINK_JAM_TARGET = scenario.enemy_teams[-1] if scenario.enemy_teams else None
 
@@ -262,25 +261,19 @@ else:
 
 
 # ---------------------------------------------------------------------------
-# A8 / A11 — Broadcast downlink jam centred on AOI imaging passes
-#
-# These two times must be **locked from a dry-run** (see spec § 12).
-# Hormuz-centred broadcast downlink jam. Second pass: Dubai+Singapore overlap —
-# patch from GPS trace if your geometry differs.
+# Broadcast downlink jam — Dubai segment (15–25 min) & Singapore (40–50 min)
 # ---------------------------------------------------------------------------
 
-T_AOI_1 = 1_260.0
-T_AOI_2 = 2_010.0
-AOI_HALF = 90.0                 # 180 s window each (T ± 90 s)
-AOI_JAM_POWER = 3.0             # saturating — clean broadcast outage
+JAM_DUBAI_START = 900.0
+JAM_DUBAI_END = 1_500.0
+JAM_SINGAPORE_START = 2_400.0
+JAM_SINGAPORE_END = 3_000.0
+BROADCAST_JAM_POWER = 3.0
 
 
-def _add_aoi_jam(label: str, t_centre: float) -> None:
-    on_at = t_centre - AOI_HALF
-    off_at = t_centre + AOI_HALF
-
+def _add_broadcast_jam_window(label: str, on_at: float, off_at: float) -> None:
     scheduler.add_event(
-        name=f"Point Jammer at {DEFENDER_ASSET_ID} ({label})",
+        name=f"Point Jammer at {DEFENDER_ASSET_ID} ({label} prep)",
         trigger_time=on_at - 10.0,
         **commands.guidance_spacecraft("Jammer", DEFENDER_ASSET_ID),
     )
@@ -290,7 +283,7 @@ def _add_aoi_jam(label: str, t_centre: float) -> None:
         pre_trigger=live_jammer_args_all,
         **commands.jammer_start(
             frequencies=list(scenario.enemy_fallback_freqs),
-            power=AOI_JAM_POWER,
+            power=BROADCAST_JAM_POWER,
         ),
     )
     scheduler.add_event(
@@ -300,8 +293,8 @@ def _add_aoi_jam(label: str, t_centre: float) -> None:
     )
 
 
-_add_aoi_jam("AOI Pass 1", T_AOI_1)
-_add_aoi_jam("AOI Pass 2", T_AOI_2)
+_add_broadcast_jam_window("Dubai pass 15–25 min", JAM_DUBAI_START, JAM_DUBAI_END)
+_add_broadcast_jam_window("Singapore pass 40–50 min", JAM_SINGAPORE_START, JAM_SINGAPORE_END)
 
 
 # ---------------------------------------------------------------------------
@@ -316,7 +309,7 @@ scheduler.add_event(
 )
 scheduler.add_event(
     name="Final Sun Point",
-    trigger_time=2_760.0,
+    trigger_time=3_060.0,
     **commands.guidance_sun("Solar Panel"),
 )
 

@@ -17,6 +17,7 @@
 		"locations": [
 			"Paris",
 			"Dubai",
+			"Mumbai",
 			"Singapore",
 			"Sydney",
 			"Easter Island",
@@ -557,7 +558,7 @@
 				"latitude": 26.5,
 				"longitude": 56.5,
 				"altitude": 1,
-				"scale": 220,
+				"scale": 110,
 				"color": "#00FF00",
 				"data": {
 					"heading": 95.0,
@@ -572,7 +573,7 @@
 				"latitude": 26.4,
 				"longitude": 56.6,
 				"altitude": 1,
-				"scale": 220,
+				"scale": 110,
 				"color": "#00FF00",
 				"data": {
 					"heading": 95.0,
@@ -587,7 +588,7 @@
 				"latitude": 26.6,
 				"longitude": 56.4,
 				"altitude": 1,
-				"scale": 220,
+				"scale": 110,
 				"color": "#00FF00",
 				"data": {
 					"heading": 100.0,
@@ -602,7 +603,7 @@
 				"latitude": 26.3,
 				"longitude": 56.3,
 				"altitude": 1,
-				"scale": 220,
+				"scale": 110,
 				"color": "#00FF00",
 				"data": {
 					"heading": 86.0,
@@ -617,7 +618,7 @@
 				"latitude": 26.7,
 				"longitude": 56.7,
 				"altitude": 1,
-				"scale": 220,
+				"scale": 110,
 				"color": "#00FF00",
 				"data": {
 					"heading": 92.0,
@@ -627,12 +628,12 @@
 			{
 				"id": "GO_006",
 				"type": "vessel",
-				"name": "Spoof Decoy A",
+				"name": "Malacca Yellow A",
 				"planet": "Earth",
-				"latitude": 24.4,
-				"longitude": 58.5,
+				"latitude": 1.42,
+				"longitude": 103.85,
 				"altitude": 1,
-				"scale": 220,
+				"scale": 110,
 				"color": "#FFFF00",
 				"data": {
 					"heading": 270.0,
@@ -642,12 +643,12 @@
 			{
 				"id": "GO_007",
 				"type": "vessel",
-				"name": "Spoof Decoy B",
+				"name": "Malacca Yellow B",
 				"planet": "Earth",
-				"latitude": 24.3,
-				"longitude": 58.4,
+				"latitude": 1.36,
+				"longitude": 103.92,
 				"altitude": 1,
-				"scale": 220,
+				"scale": 110,
 				"color": "#FFFF00",
 				"data": {
 					"heading": 270.0,
@@ -853,8 +854,34 @@
 	"questions": [
 		{
 			"section": "Orbital Operations",
+			"title": "How many green vessels are clustered in the Strait of Hormuz?",
+			"description": "On the Earth map / maritime overlay, count **green** hulls in the Hormuz traffic group only (Lead, Trail, Flank, Picket, Tender). Do not count yellow hulls.",
+			"type": "number",
+			"answer": {
+				"unit": "vessels",
+				"value": 5.0,
+				"tolerance": 0.25,
+				"reason": "Five green vessels are authored at the Hormuz grid; yellow vessels are placed separately near Singapore / Malacca.",
+				"score": 4
+			}
+		},
+		{
+			"section": "Orbital Operations",
+			"title": "How many yellow vessels appear near Singapore / the Malacca Strait?",
+			"description": "Count **yellow** hulls in the Singapore–Malacca maritime picture (not the Hormuz green group).",
+			"type": "number",
+			"answer": {
+				"unit": "vessels",
+				"value": 2.0,
+				"tolerance": 0.25,
+				"reason": "Two yellow vessels (Malacca Yellow A/B) are positioned near Singapore / Malacca.",
+				"score": 4
+			}
+		},
+		{
+			"section": "Orbital Operations",
 			"title": "What is the Semi-Major Axis (km) of Watchtower's orbit?",
-			"description": "Use the GPS telemetry to estimate the average altitude of the spacecraft and add Earth's radius (6 378 km).",
+			"description": "Use GPS telemetry to estimate average altitude and add Earth's radius (6 378 km), or read equivalent orbital data for your spacecraft.",
 			"type": "number",
 			"answer": {
 				"unit": "km",
@@ -878,21 +905,8 @@
 			}
 		},
 		{
-			"section": "Maritime picture (Phase 0)",
-			"title": "How many vessels are in the primary Hormuz Strait traffic cluster?",
-			"description": "In Studio / map ground objects, count only the five coordinated-traffic vessels at the Hormuz grid (GO_001–GO_005 — Lead, Trail, Flank, Picket, Tender). Exclude the two yellow decoy hulls offset to the southeast — those exist for the GPS spoofing lesson, not strait traffic counting.",
-			"type": "number",
-			"answer": {
-				"unit": "vessels",
-				"value": 5.0,
-				"tolerance": 0.25,
-				"reason": "The scenario authors five green Hormuz-cluster vessels; two additional yellow vessels (Spoof Decoy A/B) are geographically separated for the antipode spoof narrative.",
-				"score": 3
-			}
-		},
-		{
 			"section": "Environmental Cyber (Phase 1)",
-			"title": "Around which AOI did GPS spoofing occur?",
+			"title": "Around which geographic region did GPS spoofing occur?",
 			"description": "Plot the GPS lat/lon trace and identify when reported position is inconsistent with the magnetometer and orbit propagation. The deceptive fix lands at the antipode of the affected region.",
 			"type": "select",
 			"answer": {
@@ -985,11 +999,11 @@
 		{
 			"section": "Adversary Attribution",
 			"title": "What is the rogue spacecraft's call-sign?",
-			"description": "The rogue is hidden on the default map/3D view (`visualization.hide`); use the EM sensor during replay/jam phases and mission context. The configured call-sign is **PHANTOM** (Text components on the chassis if you enable visibility in a custom build).",
+			"description": "Use the EM sensor during replay and jam phases and infer from mission context; the adversary call-sign is marked on the rogue chassis.",
 			"type": "text",
 			"answer": {
 				"value": "PHANTOM",
-				"reason": "Scenario asset name **Phantom** with PHANTOM chassis labels in JSON; stock workshop hides the mesh so teams infer from spectrum / instructor brief.",
+				"reason": "The rogue asset is configured with call-sign PHANTOM on its chassis labels and mission data.",
 				"score": 5
 			}
 		},
@@ -1008,38 +1022,52 @@
 		},
 		{
 			"section": "Adversary Attribution",
-			"title": "Which ground stations saw the broadcast downlink jam during AOI imaging passes?",
-			"description": "Multiple selection. Identify ground stations whose SNR drops below ~15 dB during the AOI passes (T_AOI_1 ± 90 s and T_AOI_2 ± 90 s).",
+			"title": "How many distinct sustained broadcast downlink jam episodes occurred?",
+			"description": "Count separate intervals where the rogue held a saturating barrage jam on blue-team downlink frequencies (clear SNR collapse / loss of imagery).",
+			"type": "number",
+			"answer": {
+				"unit": "episodes",
+				"value": 2.0,
+				"tolerance": 0.25,
+				"reason": "The rogue script arms two broadcast downlink barrages: ~900–1 500 s (~15–25 min, Dubai pass segment) and ~2 400–3 000 s (~40–50 min, Singapore pass segment).",
+				"score": 5
+			}
+		},
+		{
+			"section": "Adversary Attribution",
+			"title": "Which ground stations had passes during those broadcast downlink jam windows?",
+			"description": "Multiple selection. The keyed visibility model is: Paris 0–9 min, Dubai 9–25 min, Mumbai 25–38 min, Singapore 38 min–1 h 9 min, Sydney from 1 h 9 min onward. Pick every station whose pass overlaps a barrage window.",
 			"type": "checkbox",
 			"answer": {
 				"options": [
 					"Paris",
 					"Dubai",
+					"Mumbai",
 					"Singapore",
 					"Sydney",
 					"Easter Island",
 					"Miami"
 				],
 				"value": [
-					0,
 					1,
-					2
+					3
 				],
 				"reason": [
-					"Placeholder keyed to coverage windows for this epoch/orbit (ν=−90° / times −9 min): Hormuz-centred AOI jam (~21 min) overlaps Paris (0–2 000 s) and Dubai (370–3 340 s); second AOI jam overlaps Dubai and Singapore (2 000–4 900 s). Confirm SNR on dry-run and adjust indices.",
-					"Placeholder keyed to coverage windows for this epoch/orbit (ν=−90° / times −9 min): Hormuz-centred AOI jam (~21 min) overlaps Paris (0–2 000 s) and Dubai (370–3 340 s); second AOI jam overlaps Dubai and Singapore (2 000–4 900 s). Confirm SNR on dry-run and adjust indices.",
-					"Placeholder keyed to coverage windows for this epoch/orbit (ν=−90° / times −9 min): Hormuz-centred AOI jam (~21 min) overlaps Paris (0–2 000 s) and Dubai (370–3 340 s); second AOI jam overlaps Dubai and Singapore (2 000–4 900 s). Confirm SNR on dry-run and adjust indices.",
-					"Placeholder keyed to coverage windows for this epoch/orbit (ν=−90° / times −9 min): Hormuz-centred AOI jam (~21 min) overlaps Paris (0–2 000 s) and Dubai (370–3 340 s); second AOI jam overlaps Dubai and Singapore (2 000–4 900 s). Confirm SNR on dry-run and adjust indices.",
-					"Placeholder keyed to coverage windows for this epoch/orbit (ν=−90° / times −9 min): Hormuz-centred AOI jam (~21 min) overlaps Paris (0–2 000 s) and Dubai (370–3 340 s); second AOI jam overlaps Dubai and Singapore (2 000–4 900 s). Confirm SNR on dry-run and adjust indices.",
-					"Placeholder keyed to coverage windows for this epoch/orbit (ν=−90° / times −9 min): Hormuz-centred AOI jam (~21 min) overlaps Paris (0–2 000 s) and Dubai (370–3 340 s); second AOI jam overlaps Dubai and Singapore (2 000–4 900 s). Confirm SNR on dry-run and adjust indices."
+					"The Paris pass (0–9 min) does not overlap either scripted barrage window.",
+					"The first barrage (~900–1 500 s, ~15–25 min) falls in the Dubai pass segment.",
+					"Mumbai is not keyed for either broadcast barrage window.",
+					"The second barrage (~2 400–3 000 s, ~40–50 min) falls in the Singapore pass segment.",
+					"Sydney is not keyed for either broadcast barrage.",
+					"Easter Island is not keyed for either broadcast barrage.",
+					"Miami is not keyed for either broadcast barrage."
 				],
-				"score": 5
+				"score": 7
 			}
 		},
 		{
 			"section": "Active Attacks (Phase 2)",
 			"title": "Which blue team was singled out for pulsed uplink jamming?",
-			"description": "One team's uplink ack-rate drops to ~75-85% during a single ground-station pass mid-mission while other teams remain unaffected. Which one?",
+			"description": "One team's uplink ack-rate dips during light pulsed jamming (~33–38 min simulation time at 1×) while the other team's link stays nominal — both teams share the same spacecraft but use different RF identities.",
 			"type": "select",
 			"answer": {
 				"options": [
@@ -1057,65 +1085,103 @@
 		{
 			"section": "Active Attacks (Phase 2)",
 			"title": "Roughly what proportion of Blue Bravo's commands failed during the uplink-jam window?",
-			"description": "Compare commands sent vs. commands acknowledged on Blue Bravo's console during the jam window. Express as a percentage.",
+			"description": "Compare commands sent vs. commands acknowledged on Blue Bravo's console during the ~33–38 min jam window. Express as a percentage.",
 			"type": "number",
 			"answer": {
 				"unit": "%",
-				"value": 20,
-				"tolerance": 10,
-				"reason": "The pulse pattern (8 s ON / 32 s OFF, 20% duty cycle) drops ~15-25% of commands. Tune on/off seconds in cyber_defender.py if observed rate differs.",
+				"value": 10,
+				"tolerance": 8,
+				"reason": "The pulse pattern is intentionally light (5 s ON per 60 s period, reduced jammer power), so only a modest fraction of uplink attempts should fail.",
 				"score": 5
 			}
 		},
 		{
 			"section": "Active Attacks (Phase 2)",
-			"title": "Did the rogue replay any captured ciphertext against your team during the second half of the mission?",
-			"description": "Check the EM sensor for spurious uplink-traffic spikes on your team's frequency without a matching ground-station transmission.",
+			"title": "During which ground station's pass did pulsed uplink jamming occur?",
+			"description": "Use the pass timeline: Paris 0–9 min, Dubai 9–25 min, Mumbai 25–38 min, Singapore 38 min–1 h 9 min, Sydney from 1 h 9 min onward.",
 			"type": "select",
 			"answer": {
 				"options": [
-					"No",
-					"Yes"
+					"Paris",
+					"Dubai",
+					"Mumbai",
+					"Singapore",
+					"Sydney",
+					"Easter Island",
+					"Miami"
 				],
-				"value": 1,
+				"value": 2,
 				"reason": [
-					"The rogue captures foreign uplinks during ~60–1 260 s; during ~1 280–2 060 s it runs eight replay **rounds** at seeded times — **each round issues one random replay per blue team** (from that team's pool).",
-					"The rogue captures foreign uplinks during ~60–1 260 s; during ~1 280–2 060 s it runs eight replay **rounds** at seeded times — **each round issues one random replay per blue team** (from that team's pool)."
+					"Pulsed uplink jam is scripted ~33–38 min — outside the Paris window.",
+					"Dubai's keyed segment ends at ~25 min; pulsed uplink starts later.",
+					"The ~33–38 min window sits inside the Mumbai pass segment (25–38 min).",
+					"Singapore's pass begins after the pulsed uplink window.",
+					"Sydney does not yet have pass priority at ~33–38 min.",
+					"Easter Island is not the keyed station for this window.",
+					"Miami is not the keyed station for this window."
 				],
 				"score": 5
 			}
 		},
 		{
 			"section": "Active Attacks (Phase 2)",
-			"title": "How many replay rounds does the rogue schedule (each round hits every blue team that has captures)?",
-			"description": "`burst_count` in `cyber_defender.py` — each round time triggers one adversarial transmit per blue team (random pick from that team's intercept pool).",
+			"title": "During which ground station's pass did you experience uplink replay attacks?",
+			"description": "Replay traffic appears on your team's uplink frequency without a matching command from your console. Replay is scheduled ~25–33 min at 1×. Match that interval to the pass timeline in the brief.",
+			"type": "select",
+			"answer": {
+				"options": [
+					"Paris",
+					"Dubai",
+					"Mumbai",
+					"Singapore",
+					"Sydney",
+					"Easter Island",
+					"Miami"
+				],
+				"value": 2,
+				"reason": [
+					"Replay (~1 500–1 980 s) is after the Paris window.",
+					"Replay begins after the Dubai segment closes at ~25 min.",
+					"The replay window (~25–33 min) lies inside the Mumbai pass segment (25–38 min).",
+					"Singapore's pass starts at ~38 min — after replay ends.",
+					"Sydney is not the keyed station for the replay window.",
+					"Easter Island is not the keyed station for the replay window.",
+					"Miami is not the keyed station for the replay window."
+				],
+				"score": 6
+			}
+		},
+		{
+			"section": "Active Attacks (Phase 2)",
+			"title": "How many replay bursts does the rogue schedule against teams that have captured commands?",
+			"description": "Count distinct replay **burst** times (each burst fires multiple shots per team). Use EM sensor activity or operator logs.",
 			"type": "number",
 			"answer": {
-				"unit": "rounds",
+				"unit": "bursts",
 				"value": 8.0,
 				"tolerance": 0.25,
-				"reason": "`MultiTeamReplaySequence(..., burst_count=8)` schedules eight round times; at each time the script loops all enemy teams.",
+				"reason": "The rogue schedules eight burst times between ~25 and ~33 minutes simulation time (~1 500–1 980 s); each burst replays against every blue team that has a non-empty capture pool.",
 				"score": 4
 			}
 		},
 		{
 			"section": "Active Attacks (Phase 2)",
-			"title": "When (relative to session start at 1×) does the adversarial replay campaign typically occur?",
-			"description": "Replay rounds are scattered through the second half of the hour after capture ends — not during the first ~21 minutes of passive / GPS-heavy activity.",
+			"title": "When (at 1× simulation speed) does the adversarial replay campaign occur?",
+			"description": "Captures are collected only in the first 15 minutes; replay never overlaps that quiet capture window.",
 			"type": "select",
 			"answer": {
 				"options": [
-					"0–10 minutes only",
-					"Roughly 21–35 minutes simulation time (second half; replay window)",
-					"Only in the final 5 minutes",
-					"Continuously from t = 0"
+					"0–15 minutes only",
+					"Roughly 25–33 minutes simulation time",
+					"Roughly 15–25 minutes only",
+					"Continuously from session start"
 				],
 				"value": 1,
 				"reason": [
-					"Replay is confined to `[REPLAY_START, REPLAY_END]` (~1 280–2 060 s ≈ 21–34 min at 1× for the current ν=−90° schedule).",
-					"Replay is confined to `[REPLAY_START, REPLAY_END]` (~1 280–2 060 s ≈ 21–34 min at 1× for the current ν=−90° schedule).",
-					"Replay is confined to `[REPLAY_START, REPLAY_END]` (~1 280–2 060 s ≈ 21–34 min at 1× for the current ν=−90° schedule).",
-					"Replay is confined to `[REPLAY_START, REPLAY_END]` (~1 280–2 060 s ≈ 21–34 min at 1× for the current ν=−90° schedule)."
+					"0–15 minutes is capture-only; no replay fires then.",
+					"Replay is confined to ~1 500–1 980 s (~25–33 min at 1×).",
+					"15–25 minutes is the Dubai-segment broadcast downlink jam, not replay.",
+					"Replay is not continuous from t = 0."
 				],
 				"score": 5
 			}
@@ -1123,7 +1189,7 @@
 		{
 			"section": "Active Attacks (Phase 2)",
 			"title": "Which APIDs showed Phase-3 telemetry tampering?",
-			"description": "Multiple selection. Compare suspect telemetry fields against magnetometer/orbit-prop ground truth and identify every APID whose payload contents drifted.",
+			"description": "Multiple selection. On your team's spacecraft, compare suspect telemetry fields against magnetometer and orbit-propagation ground truth and identify every APID whose payload contents drifted.",
 			"type": "checkbox",
 			"answer": {
 				"options": [
@@ -1173,7 +1239,7 @@
 		},
 		{
 			"section": "Mitigations",
-			"title": "What action mitigates a sustained downlink jam over an AOI ground-station pass?",
+			"title": "What action mitigates a sustained downlink jam during a ground-station pass?",
 			"description": "Pick the action that restores a usable downlink at the next available pass.",
 			"type": "select",
 			"answer": {
@@ -1185,10 +1251,10 @@
 				],
 				"value": 1,
 				"reason": [
-					"Hopping to a frequency outside the rogue's barrage moves the link off the jammed channel — the imagery downlinks cleanly on the next non-AOI pass.",
-					"Hopping to a frequency outside the rogue's barrage moves the link off the jammed channel — the imagery downlinks cleanly on the next non-AOI pass.",
-					"Hopping to a frequency outside the rogue's barrage moves the link off the jammed channel — the imagery downlinks cleanly on the next non-AOI pass.",
-					"Hopping to a frequency outside the rogue's barrage moves the link off the jammed channel — the imagery downlinks cleanly on the next non-AOI pass."
+					"Hopping to a frequency outside the rogue's barrage moves the link off the jammed channel so imagery can downlink on the next clear pass.",
+					"Hopping to a frequency outside the rogue's barrage moves the link off the jammed channel so imagery can downlink on the next clear pass.",
+					"Hopping to a frequency outside the rogue's barrage moves the link off the jammed channel so imagery can downlink on the next clear pass.",
+					"Hopping to a frequency outside the rogue's barrage moves the link off the jammed channel so imagery can downlink on the next clear pass."
 				],
 				"score": 4
 			}
