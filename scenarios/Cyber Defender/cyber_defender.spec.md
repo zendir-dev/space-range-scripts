@@ -38,11 +38,11 @@ Epoch **`2026/02/02 08:00 UTC`**, orbit §4.1 — **ν = −90°** pulls SOH pha
 
 | Phase | Wall | Sim time | Theme |
 | --- | --- | --- | --- |
-| **0 — Familiarisation** | 00:00 – ~00:02 | `0 – ~120 s` | Paris visibility; connect, baseline ops. **~30 s** bootstrap **GPS spoofing OFF**. **~2 min** **solar-array degradation** warm-up. Optional vessel-count question. |
-| **1 — Passive cyber** | ~00:02 – ~00:24 | `~120 – ~1 440 s` | Hormuz **GPS spoof → jam → fault → jam remove** (from ~**18 min**); **storage ~23–24 min**. **Rogue capture** `60 → 1 260 s`. |
+| **0 — Familiarisation** | 00:00 – ~00:12 | `0 – ~720 s` | Paris visibility; connect, baseline ops. **~30 s** bootstrap **GPS spoofing OFF**. **~10 min** **solar-array degradation**. Optional vessel-count question. |
+| **1 — Passive cyber** | ~00:12 – ~00:24 | `~720 – ~1 440 s` | Hormuz **GPS spoof → jam → fault → jam remove** (from ~**18 min**); **storage ~26 min**. **Rogue capture** `0 → 900 s`. |
 | **2a — Rogue capture** | ~00:01 – ~00:21 | `~60 – ~1 260 s` | **First half of session** — cycle every blue frequency; silent per-team capture pools. |
 | **2b — Rogue replay & jam** | ~00:21 – ~00:34 | `~1 280 – ~2 060 s` | **Second half** — random re-transmit of captured uplink bytes; pulsed uplink jam; **second AOI downlink jam** (`T_AOI_2 ≈ 2 010 s`). |
-| **3 — Compound** | ~00:34 – ~00:36 | `~2 045 – ~2 160 s` | Cyber telemetry tamper + reaction wheel + battery pile-on. |
+| **3 — Compound** | ~00:34 – ~00:45 | `~2 080 – ~2 650 s` | Cyber telemetry tamper **plus** the scripted **reaction-wheel stuck** hardware fault (no battery fault in this workshop). |
 | **4 — Wind-down** | ~00:36 – 01:00 | `~2 160 – 3 600 s` | No new scripted attacks. Teams finalise answers and forensic notes. |
 
 > **`T_AOI_1`** (**~1 260 s**, ~**21 min**) fires during Phase 1 — broadcast downlink jam overlaps the Hormuz GPS attack cluster by design.
@@ -70,7 +70,7 @@ Single checklist for dry-runs at **1×** (`wall seconds == sim seconds`). Values
 | ---: | ---: | :--- | :--- |
 | 30 | 00:30 | JSON | GPS Spoof Region — Hormuz OFF **(bootstrap)** |
 | 60 | 01:00 | Py | `Initial Sun Point` |
-| 120 | 02:00 | JSON | Solar Panel Degradation **(early warm-up)** |
+| 600 | 10:00 | JSON | Solar Panel Degradation (**150000** degradation rate, **1.5×** stock **100000**) |
 | 1 080 | 18:00 | JSON | GPS Spoof Region — Hormuz ON |
 | 1 110 | 18:30 | JSON | GPS Jammer Add — Hormuz |
 | 1 160 | 19:20 | Py | Point jammer (AOI Pass **1** prep) |
@@ -80,7 +80,7 @@ Single checklist for dry-runs at **1×** (`wall seconds == sim seconds`). Values
 | 1 350 | 22:30 | Py | Downlink Jam **OFF** (AOI Pass **1**) |
 | 1 380 | 23:00 | JSON | GPS Jammer Remove — Hormuz |
 | 1 390 | 23:10 | JSON | GPS Spoof Region — Hormuz OFF **(post-cluster)** |
-| 1 420 | 23:40 | JSON | Storage Corruption |
+| 1 560 | 26:00 | JSON | Storage Full (`Capacity`: stock Spacecraft.json recipe) |
 | 1 485.0 | 24:45 | Py | Replay burst **#2** |
 | 1 510.7 | 25:11 | Py | Replay burst **#3** |
 | 1 550 | 25:50 | Py | Point jammer (A7 uplink jam prep) |
@@ -97,11 +97,11 @@ Single checklist for dry-runs at **1×** (`wall seconds == sim seconds`). Values
 | 1 910 | 31:50 | Py | Point jammer (AOI Pass **2** prep) |
 | 1 920 | 32:00 | Py | Downlink Jam **ON** (AOI Pass **2**) |
 | 2 021.4 | 33:41 | Py | Replay burst **#8** |
-| 2 045 | 34:05 | JSON | Reaction Wheel Stuck |
+| 1 620 | 27:00 | JSON | Reaction Wheel Stuck (`Stuck Index`: 0 → Wheel 1) |
+| 1 800 | 30:00 | JSON | Reaction Wheel Nominal (`Nominal Index`: 0 → unstuck, stock Spacecraft.json recipe) |
 | 2 080 | 34:40 | JSON | Tamper Ping State (Cyber) |
 | 2 100 | 35:00 | Py | Downlink Jam **OFF** (AOI Pass **2**) |
 | 2 110 | 35:10 | JSON | Tamper GPS Position (Cyber) |
-| 2 160 | 36:00 | JSON | Battery Power Spikes |
 | 2 760 | 46:00 | Py | `Final Sun Point` |
 
 **Wall** column is **mm:ss** from session start at 1×. **Src**: **JSON** = `events[]` in `cyber_defender.json`; **Py** = `cyber_defender.py` scheduler / replay module.
@@ -346,16 +346,17 @@ Earlier guidance still applies: **fewer** vessels than *Orbital Sentinel* becaus
 #### A0. Solar panel degradation (early warm-up)
 
 - **Type**: passive (`Type: "Spacecraft"`, `Target: "SolarPanel-SolarPanelDegradationErrorModel"`).
-- **Window**: fires once at **`120 s`** (~2 min); persists until mitigated via component logic.
-- **Mechanism**: `Data: { "Degradation Rate": 100000.0 }` on **`SC_OPS`** (see `docs/scenarios/events.md`).
+- **Window**: fires once at **`600 s`** (**~10 min** simulation time); persists until mitigated via component logic.
+- **Mechanism**: `Data: { "Degradation Rate": 150000.0 }` (**1.5×** the stock **100000** recipe) on **`SC_OPS`** (see `docs/scenarios/events.md`).
 - **Signature**: solar / power telemetry trends away from nominal — **orthogonal** to RF cyber, easy to attribute to **hardware / environment**.
 - **Mitigation**: component `reset` / ops procedure per platform.
 - **Pedagogy**: gives operators **something to chase before the Hormuz GPS cluster** without stacking ambiguous imagery faults.
+- **Assessment** (question bank): fault type = **Solar Panel Degradation**; panels keyed as **Both** (+X and −X); event time **~10 min** (±3 min tolerance).
 
 #### A1. GPS Spoofing — Hormuz region
 
 - **Type**: passive (`Type: "GPS"`, `Data.Type: "Spoofing"`).
-- **Window**: **bootstrap OFF** at **`30 s`**, **ON** at **`1 080 s`**, **post-cluster OFF** at **`1 390 s`** (brackets the Hormuz pass; ends before storage corruption at **1 420 s**).
+- **Window**: **bootstrap OFF** at **`30 s`**, **ON** at **`1 080 s`**, **post-cluster OFF** at **`1 390 s`** (brackets the Hormuz pass; **Storage Full** follows later at **1 560 s**).
 - **Mechanism**: spoof a ~200 km-radius volume centred on `lat 26.5°, lon 56.5°, alt 4 000 km` — when the defender's GPS receiver is inside the sphere, position is reported at `lat -26.5°, lon -123.5°` (mirror point in the South Pacific).
 - **Signature**: GPS lat/lon "jumps" while velocity vector and B-field are unchanged. APID 301 (`GPS`) reports drift, APID 300 (`Magnetometer`) doesn't.
 - **Mitigation**: ephemeris rollback (or trust last good fix until exit).
@@ -368,19 +369,20 @@ Earlier guidance still applies: **fewer** vessels than *Orbital Sentinel* becaus
 - **Signature**: GPS solutions go unhealthy / no-fix when over the AOI.
 - **Mitigation**: dead-reckon; cross-check with magnetometer (still healthy).
 
-#### A3. Storage corruption
+#### A3. Storage Full (capacity stress)
 
-- **Type**: passive (`Type: "Spacecraft"`, `Target: "Storage"`).
-- **Window**: fires once at **`1 420 s`** (after the Hormuz GPS jammer is removed); corruption persists until mitigated.
-- **Mechanism**: `Data: { "Corruption Fraction": 0.1, "Corruption Intensity": 0.2 }`.
-- **Signature**: downlinked imagery starts containing scrambled bytes; APID 503 (`Storage`) reports degradation.
-- **Mitigation**: `reset` the Storage component.
-- **Pedagogy**: scheduled **after** the A1/A2/A4 GPS sequence so operators separate **environmental RF/GPS denial** from **payload-layer storage** faults.
+- **Type**: passive (`Type: "Spacecraft"`, `Target: "Storage"`) — stock recipe **`Storage Full`** from `studio/Plugins/SpaceRange/Resources/Events/Spacecraft.json`.
+- **Window**: fires once at **`1 560 s`** (**26 min** simulation time).
+- **Mechanism**: `Data: { "Capacity": 100000 }` on **`SC_OPS`** — clamps usable capacity so operators perceive **reduced storage headroom** (not bit-rot).
+- **Signature**: storage fullness / capacity telemetry diverges from nominal; imagery retention planning is affected.
+- **Mitigation**: ops procedures per platform — archive, delete, or `reset` Storage if your lesson plan allows.
+- **Pedagogy**: separates **storage sizing / capacity** stress from GPS-layer attacks.
+- **Assessment** (question bank): keyed outcome **“Storage Capacity was Decreased”** (interpretation of capacity clamp); event time **26 min** (±3 min tolerance).
 
 #### A4. GPS Sensor fault (sustained / hard fault)
 
 - **Type**: passive (`Type: "Spacecraft"`, `Target: "GPS Sensor"`).
-- **Window**: fires at **`1 760 s`**; cleared by `reset` from operator.
+- **Window**: fires at **`1 220 s`** (authoritative value from `cyber_defender.json`); cleared by `reset` from operator.
 - **Mechanism**: `Data: { "Fault State": 4 }`.
 - **Signature**: APID 301 stops emitting fresh fixes / sticks at last value with `fault_state != 0`.
 - **Mitigation**: `reset` the `GPS Sensor` component. Distinguishes a hardware fault from A1/A2 environmental denial.
@@ -504,11 +506,11 @@ Earlier guidance still applies: **fewer** vessels than *Orbital Sentinel* becaus
 #### A10. Telemetry tamper — GPS position (APID 301)
 
 - **Type**: passive.
-- **Window**: trigger at `2 110 s`, `Expiry Seconds: 600.0`.
+- **Window**: trigger at `2 650 s`, `Expiry Seconds: 600.0`.
 - **Mechanism**:
 
   ```json
-  { "Enabled": true, "Name": "Tamper GPS Position", "Time": 2110.0,
+  { "Enabled": true, "Name": "Tamper GPS Position", "Time": 2650.0,
     "Type": "Cyber", "Target": "Spacecraft", "Assets": ["SC_OPS"],
     "Data": {
       "APID": 301, "SubType": -1, "Offset Bytes": 0,
@@ -527,22 +529,23 @@ Earlier guidance still applies: **fewer** vessels than *Orbital Sentinel* becaus
 #### A12. Reaction-wheel stuck (component fault)
 
 - **Type**: passive (`Type: "Spacecraft"`, `Target: "Reaction Wheels"`).
-- **Window**: `2 045 s`.
-- **Mechanism**: `Data: { "Stuck Index": 0 }`. Pointing degrades while teams are mitigating telemetry tamper.
+- **Stuck at**: **`1 620 s`** (**27 min** simulation time).
+- **Mechanism**: `Data: { "Stuck Index": 0 }` → **Wheel 1** stuck (zero-based index).
 - **Signature**: APID 401 (`Reaction Wheels`) reports a stuck axis; pointing drifts.
-- **Mitigation**: `reset` `Reaction Wheels`.
+- **Mitigation**: `reset` `Reaction Wheels`, or wait for the scripted **nominal** event below.
 
-#### A13. Battery intermittent connection
+#### A12b. Reaction-wheel nominal (unstuck)
 
-- **Type**: passive (`Type: "Spacecraft"`, `Target: "Battery-IntermittentConnectionErrorModel"`).
-- **Window**: `2 160 s`.
-- **Mechanism**: `Data: { "Intermittent Mean": 1, "Intermittent Std": 2 }` (verbatim from *Orbital Sentinel*).
-- **Signature**: APID 200 (`Battery`) state-of-charge reports become noisy / spike.
-- **Mitigation**: `reset` `Battery`.
+- **Type**: passive (same target as A12; stock recipe **Reaction Wheel Nominal** in `studio/Plugins/SpaceRange/Resources/Events/Spacecraft.json`).
+- **Fires at**: **`1 800 s`** (**30 min** simulation time).
+- **Mechanism**: `Data: { "Nominal Index": 0 }` — clears the stuck state on wheel index **0** (same wheel as A12).
+- **Assessment** (question bank): wheel **1** for which wheel stuck; stuck time **27 min** (±3 min tolerance).
+
+> **Hardware faults in this workshop**: only **three** passive spacecraft component events are authored — **A0** solar degradation, **A3** storage full, **A12** reaction-wheel stuck. There is **no** battery intermittent-connection event in `cyber_defender.json`.
 
 ### Phase 4 — Wind-down
 
-From **`~2 160 s` onwards**: **no new effects fire**. Operator focus shifts to answering questions and reviewing EM-sensor / console artefacts until `end_time` at **3 600 s**.
+From **after the last Cyber tamper / telemetry event you author** onwards: operator focus shifts to answering questions and reviewing EM-sensor / console artefacts until `end_time` at **3 600 s**.
 
 ---
 
@@ -552,8 +555,9 @@ Aim for **~16-18 questions**, total score `100`, distributed across these sectio
 
 | Section | Approx weight | Sample question titles |
 | --- | --- | --- |
-| Orbital Operations (sanity) | 10 pts | "What is the SC_OPS semi-major axis?", "What is the orbital period?" |
-| Environmental Cyber (Phase 1) | 25 pts | "Which AOI was GPS-spoofed?", "Where was the GPS jammer located?", "Which sensor returned a hard fault and at roughly what time?" |
+| Orbital Operations (sanity) | ~14 pts | Maritime counts, semi-major axis, inclination |
+| Component Faults | ~29 pts | Solar degradation (type / panels / time), Storage Full (effect / time), reaction wheel (which wheel / time) |
+| Environmental Cyber (Phase 1) | ~20 pts | GPS spoof region, GPS sensor hard fault, spoof mitigation - storage fault questions live under Component Faults |
 | Adversary Attribution | 25 pts | "What is the rogue spacecraft's call-sign?" (brief / EM), "What frequency does PHANTOM transmit on?" (EM sensor), "Which ground stations saw downlink jamming?" |
 | Active Attacks (Phase 2) | 25 pts | "Which blue team(s) had captured uplinks replayed against them?", "What was the minimum SNR observed during the downlink jam?", "Which APID(s) showed tampering in Phase 3?" |
 | Mitigations | 15 pts | `select` questions on best response per attack — frequency hop, key rotation, component reset, ephemeris rollback. |

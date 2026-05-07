@@ -42,7 +42,7 @@
 			"enabled": true,
 			"id": 111111,
 			"password": "AAAAAA",
-			"name": "Blue Alpha",
+			"name": "Blue Team",
 			"key": 73,
 			"frequency": 612,
 			"collection": "Main",
@@ -52,11 +52,11 @@
 			"enabled": true,
 			"id": 222222,
 			"password": "BBBBBB",
-			"name": "Blue Bravo",
+			"name": "Green Team",
 			"key": 119,
 			"frequency": 745,
 			"collection": "Main",
-			"color": "#4FC3F7"
+			"color": "#00FF00"
 		}
 	],
 	"assets": {
@@ -660,8 +660,8 @@
 	"events": [
 		{
 			"Enabled": true,
-			"Name": "Solar Panel Degradation (early warm-up)",
-			"Time": 120.0,
+			"Name": "Solar Panel Degradation",
+			"Time": 600.0,
 			"Repeat": false,
 			"Interval": 1.0,
 			"Type": "Spacecraft",
@@ -670,7 +670,7 @@
 				"SC_OPS"
 			],
 			"Data": {
-				"Degradation Rate": 100000.0
+				"Degradation Rate": 150000.0
 			}
 		},
 		{
@@ -724,8 +724,8 @@
 		},
 		{
 			"Enabled": true,
-			"Name": "Storage Corruption",
-			"Time": 1420.0,
+			"Name": "Storage Full",
+			"Time": 1560.0,
 			"Repeat": false,
 			"Interval": 1.0,
 			"Type": "Spacecraft",
@@ -734,23 +734,7 @@
 				"SC_OPS"
 			],
 			"Data": {
-				"Corruption Fraction": 0.1,
-				"Corruption Intensity": 0.2
-			}
-		},
-		{
-			"Enabled": true,
-			"Name": "CHANGE_GPS Sensor Hard Fault",
-			"Time": 1220.0,
-			"Repeat": false,
-			"Interval": 1.0,
-			"Type": "Spacecraft",
-			"Target": "GPS Sensor",
-			"Assets": [
-				"SC_OPS"
-			],
-			"Data": {
-				"Fault State": 4
+				"Capacity": 100000
 			}
 		},
 		{
@@ -822,7 +806,7 @@
 		{
 			"Enabled": true,
 			"Name": "Reaction Wheel Stuck",
-			"Time": 2045.0,
+			"Time": 1620.0,
 			"Repeat": false,
 			"Interval": 1.0,
 			"Type": "Spacecraft",
@@ -836,18 +820,17 @@
 		},
 		{
 			"Enabled": true,
-			"Name": "Battery Power Spikes",
-			"Time": 2160.0,
+			"Name": "Reaction Wheel Nominal",
+			"Time": 1800.0,
 			"Repeat": false,
 			"Interval": 1.0,
 			"Type": "Spacecraft",
-			"Target": "Battery-IntermittentConnectionErrorModel",
+			"Target": "Reaction Wheels",
 			"Assets": [
 				"SC_OPS"
 			],
 			"Data": {
-				"Intermittent Mean": 1,
-				"Intermittent Std": 2
+				"Nominal Index": 0
 			}
 		}
 	],
@@ -855,7 +838,7 @@
 		{
 			"section": "Orbital Operations",
 			"title": "How many green vessels are clustered in the Strait of Hormuz?",
-			"description": "On the Earth map / maritime overlay, count **green** hulls in the Hormuz traffic group only (Lead, Trail, Flank, Picket, Tender). Do not count yellow hulls.",
+			"description": "On the Earth map / maritime overlay, count green hulls in the Hormuz traffic group only (Lead, Trail, Flank, Picket, Tender). Do not count yellow hulls.",
 			"type": "number",
 			"answer": {
 				"unit": "vessels",
@@ -868,7 +851,7 @@
 		{
 			"section": "Orbital Operations",
 			"title": "How many yellow vessels appear near Singapore / the Malacca Strait?",
-			"description": "Count **yellow** hulls in the Singapore–Malacca maritime picture (not the Hormuz green group).",
+			"description": "Count yellow hulls in the Singapore-Malacca maritime picture (not the Hormuz green group).",
 			"type": "number",
 			"answer": {
 				"unit": "vessels",
@@ -905,6 +888,133 @@
 			}
 		},
 		{
+			"section": "Component Faults",
+			"title": "Solar panel damage - what error model was applied?",
+			"description": "One of the solar panels was damaged at a point in time. Identify the fault type recorded by the spacecraft.",
+			"type": "select",
+			"answer": {
+				"options": [
+					"Battery Thermal Runaway",
+					"Broken Wiring",
+					"Intermittent Connection",
+					"Solar Panel Degradation",
+					"Solar Panel Open Circuit"
+				],
+				"value": 3,
+				"reason": [
+					"Battery thermal runaway is unrelated to the authored solar degradation event.",
+					"Broken Wiring is not the fault model used in this scenario.",
+					"Intermittent Connection applies to power interconnect models, not the solar degradation trigger.",
+					"Correct. The scenario fires the Solar Panel Degradation model (SolarPanel-SolarPanelDegradationErrorModel) at 600 s (~10 min) on SC_OPS with degradation rate 150000 (1.5x the stock 100000 recipe).",
+					"Open circuit is a distractor; the scenario uses a degradation rate fault instead."
+				],
+				"score": 4
+			}
+		},
+		{
+			"section": "Component Faults",
+			"title": "Solar panel damage - which solar panel(s) were affected?",
+			"description": "One of the solar panels was damaged at a point in time. The degradation model applies to the spacecraft solar strings.",
+			"type": "select",
+			"answer": {
+				"options": [
+					"Both",
+					"Solar Panel +X",
+					"Solar Panel -X"
+				],
+				"value": 0,
+				"reason": [
+					"Correct. Both solar strings show correlated degradation from the shared model.",
+					"Incomplete. The fault is not limited to the +X panel only.",
+					"Incomplete. The fault is not limited to the -X panel only."
+				],
+				"score": 2
+			}
+		},
+		{
+			"section": "Component Faults",
+			"title": "Solar panel damage - at what time (minutes from session start) did the fault occur?",
+			"description": "One of the solar panels was damaged at a point in time. Give elapsed simulation minutes at 1x speed.",
+			"type": "number",
+			"answer": {
+				"unit": "min",
+				"value": 10.0,
+				"tolerance": 3.0,
+				"reason": "The Solar Panel Degradation event is authored at 600 s = 10 min (within ±3 min tolerance).",
+				"score": 4
+			}
+		},
+		{
+			"section": "Component Faults",
+			"title": "Storage fault - what was the operational result?",
+			"description": "At some point the storage system on the spacecraft was stressed. What outcome matches telemetry and capacity behaviour?",
+			"type": "select",
+			"answer": {
+				"options": [
+					"Imagery Capture Disabled",
+					"Storage Bits Corrupted",
+					"Storage Capacity was Decreased",
+					"Storage Completely Emptied",
+					"Transmitter Bit Rate Reduced"
+				],
+				"value": 2,
+				"reason": [
+					"The camera chain is not disabled by this Storage event.",
+					"Bit corruption would be the legacy Storage Corruption recipe; this scenario uses Storage Full instead.",
+					"Correct. The Storage Full event (Target Storage, Capacity data) clamps usable capacity so operators see reduced headroom versus nominal.",
+					"The event does not wipe stored objects.",
+					"The transmitter is unrelated to the Storage trigger."
+				],
+				"score": 4
+			}
+		},
+		{
+			"section": "Component Faults",
+			"title": "Storage fault - at what time (minutes from session start) did it occur?",
+			"description": "Give elapsed simulation minutes at 1x speed when the storage event fires.",
+			"type": "number",
+			"answer": {
+				"unit": "min",
+				"value": 26.0,
+				"tolerance": 3.0,
+				"reason": "Storage Full is authored at 1560 s = 26 min (within ±3 min tolerance).",
+				"score": 4
+			}
+		},
+		{
+			"section": "Component Faults",
+			"title": "Reaction wheel fault - which wheel became stuck?",
+			"description": "At some point one of the reaction wheels became stuck.",
+			"type": "select",
+			"answer": {
+				"options": [
+					"Wheel 1",
+					"Wheel 2",
+					"Wheel 3"
+				],
+				"value": 0,
+				"reason": [
+					"Correct. Stuck index 0 maps to wheel 1 (first wheel).",
+					"The scenario does not author a stuck condition on wheel 2.",
+					"The scenario does not author a stuck condition on wheel 3."
+				],
+				"score": 3
+			}
+		},
+		{
+			"section": "Component Faults",
+			"title": "Reaction wheel fault - at what time (minutes from session start) did it become stuck?",
+			"description": "Give elapsed simulation minutes at 1x speed.",
+			"type": "number",
+			"answer": {
+				"unit": "min",
+				"value": 27.0,
+				"tolerance": 3.0,
+				"reason": "Reaction Wheel Stuck is authored at 1620 s = 27 min (within ±3 min tolerance). Reaction Wheel Nominal at 1800 s clears the same wheel index.",
+				"score": 4
+			}
+		},
+		{
 			"section": "Environmental Cyber (Phase 1)",
 			"title": "Around which geographic region did GPS spoofing occur?",
 			"description": "Plot the GPS lat/lon trace and identify when reported position is inconsistent with the magnetometer and orbit propagation. The deceptive fix lands at the antipode of the affected region.",
@@ -919,11 +1029,11 @@
 				],
 				"value": 1,
 				"reason": [
-					"The spoofing region was a 500 km-radius sphere centred on (26.5°N, 56.5°E) at MEO altitude — directly over the Hormuz Strait.",
-					"The spoofing region was a 500 km-radius sphere centred on (26.5°N, 56.5°E) at MEO altitude — directly over the Hormuz Strait.",
-					"The spoofing region was a 500 km-radius sphere centred on (26.5°N, 56.5°E) at MEO altitude — directly over the Hormuz Strait.",
-					"The spoofing region was a 500 km-radius sphere centred on (26.5°N, 56.5°E) at MEO altitude — directly over the Hormuz Strait.",
-					"The spoofing region was a 500 km-radius sphere centred on (26.5°N, 56.5°E) at MEO altitude — directly over the Hormuz Strait."
+					"The spoofing region was not centred over the Caribbean.",
+					"Correct. The spoofing volume is centred over the Hormuz Strait region (500 km-radius sphere at MEO altitude near 26.5°N, 56.5°E).",
+					"The keyed region is not the Malacca Strait.",
+					"The spoofing region was not centred over the South Atlantic.",
+					"The spoofing region was not centred over the South Pacific."
 				],
 				"score": 5
 			}
@@ -943,33 +1053,11 @@
 				],
 				"value": 2,
 				"reason": [
-					"The GPS Sensor enters Fault State 4 at t≈1 220 s (Hormuz pass / Dubai link); the magnetometer remains healthy throughout, distinguishing a hardware fault from the earlier spoofing/jamming.",
-					"The GPS Sensor enters Fault State 4 at t≈1 220 s (Hormuz pass / Dubai link); the magnetometer remains healthy throughout, distinguishing a hardware fault from the earlier spoofing/jamming.",
-					"The GPS Sensor enters Fault State 4 at t≈1 220 s (Hormuz pass / Dubai link); the magnetometer remains healthy throughout, distinguishing a hardware fault from the earlier spoofing/jamming.",
-					"The GPS Sensor enters Fault State 4 at t≈1 220 s (Hormuz pass / Dubai link); the magnetometer remains healthy throughout, distinguishing a hardware fault from the earlier spoofing/jamming.",
-					"The GPS Sensor enters Fault State 4 at t≈1 220 s (Hormuz pass / Dubai link); the magnetometer remains healthy throughout, distinguishing a hardware fault from the earlier spoofing/jamming."
-				],
-				"score": 5
-			}
-		},
-		{
-			"section": "Environmental Cyber (Phase 1)",
-			"title": "What was the symptom of the storage corruption event?",
-			"description": "After the Storage corruption event (~23–24 min, once the Hormuz GPS jammer and spoof region have been cleared), downlinked imagery contains corrupted bytes. Identify the type of failure observed.",
-			"type": "select",
-			"answer": {
-				"options": [
-					"Bit-flips in stored imagery",
-					"Camera capture refused",
-					"Storage capacity reduced to zero",
-					"Transmitter bit-rate dropped"
-				],
-				"value": 0,
-				"reason": [
-					"The Spacecraft event 'Storage Corruption' applies a 10% corruption fraction at intensity 0.2 — bit-flips in stored imagery, observable on next downlink.",
-					"The Spacecraft event 'Storage Corruption' applies a 10% corruption fraction at intensity 0.2 — bit-flips in stored imagery, observable on next downlink.",
-					"The Spacecraft event 'Storage Corruption' applies a 10% corruption fraction at intensity 0.2 — bit-flips in stored imagery, observable on next downlink.",
-					"The Spacecraft event 'Storage Corruption' applies a 10% corruption fraction at intensity 0.2 — bit-flips in stored imagery, observable on next downlink."
+					"The Camera was not the component forced into the keyed hard fault.",
+					"The EM Sensor was not the component forced into the keyed hard fault.",
+					"Correct. The GPS Sensor enters fault state 4 at about 1220 s; the magnetometer stays healthy, separating hardware fault from environmental denial.",
+					"The Magnetometer was not the component forced into the keyed hard fault.",
+					"The Reaction Wheels were not the component forced into the keyed hard fault."
 				],
 				"score": 5
 			}
@@ -988,10 +1076,10 @@
 				],
 				"value": 1,
 				"reason": [
-					"The hardware is healthy — the receiver is being fed a deceptive fix. Trust the last known orbit and dead-reckon out of the volume; cross-check against the magnetometer.",
-					"The hardware is healthy — the receiver is being fed a deceptive fix. Trust the last known orbit and dead-reckon out of the volume; cross-check against the magnetometer.",
-					"The hardware is healthy — the receiver is being fed a deceptive fix. Trust the last known orbit and dead-reckon out of the volume; cross-check against the magnetometer.",
-					"The hardware is healthy — the receiver is being fed a deceptive fix. Trust the last known orbit and dead-reckon out of the volume; cross-check against the magnetometer."
+					"Resetting the GPS Sensor does not remove a geometrically valid but false RF-induced position; dead-reckon first.",
+					"Correct. The receiver hardware is healthy but the solution is wrong while inside the spoof volume; ephemeris rollback and dead-reckoning restore trustworthy state.",
+					"A telemetry frequency hop does not fix an on-board false GPS solution inside the spoof volume.",
+					"Rotating the encryption key does not correct a spoofed GPS navigation solution."
 				],
 				"score": 5
 			}
@@ -1016,7 +1104,7 @@
 				"unit": "MHz",
 				"value": 905,
 				"tolerance": 10,
-				"reason": "The Rogue team / PHANTOM spacecraft is configured at 905 MHz; the EM sensor will resolve a strong carrier at that frequency during replay/jam phases.",
+				"reason": "The Rogue team PHANTOM spacecraft is configured at 905 MHz; the EM sensor will resolve a strong carrier at that frequency during replay and jam phases.",
 				"score": 5
 			}
 		},
@@ -1029,37 +1117,37 @@
 				"unit": "episodes",
 				"value": 2.0,
 				"tolerance": 0.25,
-				"reason": "The rogue script arms two broadcast downlink barrages: ~900–1 500 s (~15–25 min, Dubai pass segment) and ~2 400–3 000 s (~40–50 min, Singapore pass segment).",
+				"reason": "The rogue script arms two broadcast downlink barrages: about 900-1500 s (~15-25 min, Dubai pass segment) and about 2400-3000 s (~40-50 min, Singapore pass segment).",
 				"score": 5
 			}
 		},
 		{
 			"section": "Adversary Attribution",
 			"title": "Which ground stations had passes during those broadcast downlink jam windows?",
-			"description": "Multiple selection. The keyed visibility model is: Paris 0–9 min, Dubai 9–25 min, Mumbai 25–38 min, Singapore 38 min–1 h 9 min, Sydney from 1 h 9 min onward. Pick every station whose pass overlaps a barrage window.",
+			"description": "Multiple selection. The keyed visibility model is: Paris 0-9 min, Dubai 9-25 min, Mumbai 25-38 min, Singapore 38 min-1 h 9 min, Sydney from 1 h 9 min onward. Pick every station whose pass overlaps a barrage window.",
 			"type": "checkbox",
 			"answer": {
 				"options": [
-					"Paris",
 					"Dubai",
-					"Mumbai",
-					"Singapore",
-					"Sydney",
 					"Easter Island",
-					"Miami"
+					"Miami",
+					"Mumbai",
+					"Paris",
+					"Singapore",
+					"Sydney"
 				],
 				"value": [
-					1,
-					3
+					0,
+					5
 				],
 				"reason": [
-					"The Paris pass (0–9 min) does not overlap either scripted barrage window.",
-					"The first barrage (~900–1 500 s, ~15–25 min) falls in the Dubai pass segment.",
+					"Correct. Select Dubai for the first barrage window (~15-25 min) under this visibility model.",
+					"Easter Island is not keyed for either barrage window.",
+					"Miami is not keyed for either barrage window.",
 					"Mumbai is not keyed for either broadcast barrage window.",
-					"The second barrage (~2 400–3 000 s, ~40–50 min) falls in the Singapore pass segment.",
-					"Sydney is not keyed for either broadcast barrage.",
-					"Easter Island is not keyed for either broadcast barrage.",
-					"Miami is not keyed for either broadcast barrage."
+					"The Paris pass does not overlap either scripted barrage window.",
+					"Correct. Select Singapore for the second barrage window (~40-50 min) under this visibility model.",
+					"Sydney is not keyed for either barrage window."
 				],
 				"score": 7
 			}
@@ -1067,7 +1155,7 @@
 		{
 			"section": "Active Attacks (Phase 2)",
 			"title": "Which blue team was singled out for pulsed uplink jamming?",
-			"description": "One team's uplink ack-rate dips during light pulsed jamming (~33–38 min simulation time at 1×) while the other team's link stays nominal — both teams share the same spacecraft but use different RF identities.",
+			"description": "One team's uplink ack-rate dips during light pulsed jamming (~33-38 min simulation time at 1x) while the other team's link stays nominal - both teams share the same spacecraft but use different RF identities.",
 			"type": "select",
 			"answer": {
 				"options": [
@@ -1076,8 +1164,8 @@
 				],
 				"value": 1,
 				"reason": [
-					"The rogue's pulsed uplink jam targets Blue Bravo's frequency only — Blue Alpha sees no degradation.",
-					"The rogue's pulsed uplink jam targets Blue Bravo's frequency only — Blue Alpha sees no degradation."
+					"The keyed target team is not Blue Alpha for this scripted pulse jam.",
+					"Correct. The rogue pulsed uplink jam targets Blue Bravo's frequency only; Blue Alpha sees no degradation."
 				],
 				"score": 5
 			}
@@ -1085,7 +1173,7 @@
 		{
 			"section": "Active Attacks (Phase 2)",
 			"title": "Roughly what proportion of Blue Bravo's commands failed during the uplink-jam window?",
-			"description": "Compare commands sent vs. commands acknowledged on Blue Bravo's console during the ~33–38 min jam window. Express as a percentage.",
+			"description": "Compare commands sent vs. commands acknowledged on Blue Bravo's console during the ~33-38 min jam window. Express as a percentage.",
 			"type": "number",
 			"answer": {
 				"unit": "%",
@@ -1098,27 +1186,27 @@
 		{
 			"section": "Active Attacks (Phase 2)",
 			"title": "During which ground station's pass did pulsed uplink jamming occur?",
-			"description": "Use the pass timeline: Paris 0–9 min, Dubai 9–25 min, Mumbai 25–38 min, Singapore 38 min–1 h 9 min, Sydney from 1 h 9 min onward.",
+			"description": "Use the pass timeline: Paris 0-9 min, Dubai 9-25 min, Mumbai 25-38 min, Singapore 38 min-1 h 9 min, Sydney from 1 h 9 min onward.",
 			"type": "select",
 			"answer": {
 				"options": [
-					"Paris",
 					"Dubai",
-					"Mumbai",
-					"Singapore",
-					"Sydney",
 					"Easter Island",
-					"Miami"
+					"Miami",
+					"Mumbai",
+					"Paris",
+					"Singapore",
+					"Sydney"
 				],
-				"value": 2,
+				"value": 3,
 				"reason": [
-					"Pulsed uplink jam is scripted ~33–38 min — outside the Paris window.",
-					"Dubai's keyed segment ends at ~25 min; pulsed uplink starts later.",
-					"The ~33–38 min window sits inside the Mumbai pass segment (25–38 min).",
-					"Singapore's pass begins after the pulsed uplink window.",
-					"Sydney does not yet have pass priority at ~33–38 min.",
+					"Dubai's keyed segment ends before the pulsed uplink window.",
 					"Easter Island is not the keyed station for this window.",
-					"Miami is not the keyed station for this window."
+					"Miami is not the keyed station for this window.",
+					"Correct. The pulsed uplink window (~33-38 min) sits inside the Mumbai pass segment (25-38 min).",
+					"Pulsed uplink is outside the Paris window.",
+					"Singapore's pass begins after the pulsed uplink window.",
+					"Sydney does not yet have pass priority at this time."
 				],
 				"score": 5
 			}
@@ -1126,27 +1214,27 @@
 		{
 			"section": "Active Attacks (Phase 2)",
 			"title": "During which ground station's pass did you experience uplink replay attacks?",
-			"description": "Replay traffic appears on your team's uplink frequency without a matching command from your console. Replay is scheduled ~25–33 min at 1×. Match that interval to the pass timeline in the brief.",
+			"description": "Replay traffic appears on your team's uplink frequency without a matching command from your console. Replay is scheduled ~25-33 min at 1x. Match that interval to the pass timeline in the brief.",
 			"type": "select",
 			"answer": {
 				"options": [
-					"Paris",
 					"Dubai",
-					"Mumbai",
-					"Singapore",
-					"Sydney",
 					"Easter Island",
-					"Miami"
+					"Miami",
+					"Mumbai",
+					"Paris",
+					"Singapore",
+					"Sydney"
 				],
-				"value": 2,
+				"value": 3,
 				"reason": [
-					"Replay (~1 500–1 980 s) is after the Paris window.",
-					"Replay begins after the Dubai segment closes at ~25 min.",
-					"The replay window (~25–33 min) lies inside the Mumbai pass segment (25–38 min).",
-					"Singapore's pass starts at ~38 min — after replay ends.",
-					"Sydney is not the keyed station for the replay window.",
+					"Replay begins after the Dubai segment closes at about 25 min.",
 					"Easter Island is not the keyed station for the replay window.",
-					"Miami is not the keyed station for the replay window."
+					"Miami is not the keyed station for the replay window.",
+					"Correct. The replay window (~25-33 min) lies inside the Mumbai pass segment (25-38 min).",
+					"Replay is after the Paris window.",
+					"Singapore's pass starts after replay ends.",
+					"Sydney is not the keyed station for the replay window."
 				],
 				"score": 6
 			}
@@ -1154,34 +1242,34 @@
 		{
 			"section": "Active Attacks (Phase 2)",
 			"title": "How many replay bursts does the rogue schedule against teams that have captured commands?",
-			"description": "Count distinct replay **burst** times (each burst fires multiple shots per team). Use EM sensor activity or operator logs.",
+			"description": "Count distinct replay burst times (each burst fires multiple shots per team). Use EM sensor activity or operator logs.",
 			"type": "number",
 			"answer": {
 				"unit": "bursts",
 				"value": 8.0,
 				"tolerance": 0.25,
-				"reason": "The rogue schedules eight burst times between ~25 and ~33 minutes simulation time (~1 500–1 980 s); each burst replays against every blue team that has a non-empty capture pool.",
+				"reason": "The rogue schedules eight burst times between about 25 and 33 minutes simulation time (about 1500-1980 s); each burst replays against every blue team that has a non-empty capture pool.",
 				"score": 4
 			}
 		},
 		{
 			"section": "Active Attacks (Phase 2)",
-			"title": "When (at 1× simulation speed) does the adversarial replay campaign occur?",
+			"title": "When (at 1x simulation speed) does the adversarial replay campaign occur?",
 			"description": "Captures are collected only in the first 15 minutes; replay never overlaps that quiet capture window.",
 			"type": "select",
 			"answer": {
 				"options": [
-					"0–15 minutes only",
-					"Roughly 25–33 minutes simulation time",
-					"Roughly 15–25 minutes only",
-					"Continuously from session start"
+					"0-15 minutes only",
+					"15-25 minutes only",
+					"Continuously from session start",
+					"Roughly 25-33 minutes simulation time"
 				],
-				"value": 1,
+				"value": 3,
 				"reason": [
-					"0–15 minutes is capture-only; no replay fires then.",
-					"Replay is confined to ~1 500–1 980 s (~25–33 min at 1×).",
-					"15–25 minutes is the Dubai-segment broadcast downlink jam, not replay.",
-					"Replay is not continuous from t = 0."
+					"0-15 minutes is capture-only; no replay fires then.",
+					"15-25 minutes is the Dubai-segment broadcast downlink jam, not replay.",
+					"Replay is not continuous from the session start.",
+					"Correct. Replay is confined to about 1500-1980 s (~25-33 min at 1x)."
 				],
 				"score": 5
 			}
@@ -1205,12 +1293,12 @@
 					3
 				],
 				"reason": [
-					"Cyber events tamper APID 100 (Ping State field flips to 'FLAG-OWN') and APID 301 (GPS position zeroed).",
-					"Cyber events tamper APID 100 (Ping State field flips to 'FLAG-OWN') and APID 301 (GPS position zeroed).",
-					"Cyber events tamper APID 100 (Ping State field flips to 'FLAG-OWN') and APID 301 (GPS position zeroed).",
-					"Cyber events tamper APID 100 (Ping State field flips to 'FLAG-OWN') and APID 301 (GPS position zeroed).",
-					"Cyber events tamper APID 100 (Ping State field flips to 'FLAG-OWN') and APID 301 (GPS position zeroed).",
-					"Cyber events tamper APID 100 (Ping State field flips to 'FLAG-OWN') and APID 301 (GPS position zeroed)."
+					"Correct. Select 100 (Ping) for the tampered Ping state field.",
+					"APID 200 (Battery) is not one of the keyed tampers.",
+					"APID 300 (Magnetometer) is not one of the keyed tampers.",
+					"Correct. Select 301 (GPS) for the tampered GPS position block.",
+					"APID 302 (EM Sensor) is not one of the keyed tampers.",
+					"APID 401 (Reaction Wheels) is not one of the keyed tampers."
 				],
 				"score": 6
 			}
@@ -1229,10 +1317,10 @@
 				],
 				"value": 3,
 				"reason": [
-					"Rotating the Caesar key changes the on-board cipher; any previously-captured ciphertext is no longer decodable on the spacecraft, so the replay fails.",
-					"Rotating the Caesar key changes the on-board cipher; any previously-captured ciphertext is no longer decodable on the spacecraft, so the replay fails.",
-					"Rotating the Caesar key changes the on-board cipher; any previously-captured ciphertext is no longer decodable on the spacecraft, so the replay fails.",
-					"Rotating the Caesar key changes the on-board cipher; any previously-captured ciphertext is no longer decodable on the spacecraft, so the replay fails."
+					"Receiver reset does not rotate the on-air cipher; captured traffic can still decode if the key is unchanged.",
+					"Ephemeris rollback does not change the radio encryption key used for uplink acceptance.",
+					"Frequency hop alone does not invalidate previously captured ciphertext for the old channel if the key is unchanged.",
+					"Correct. Rotating the encryption key changes the on-board cipher so previously captured ciphertext no longer decodes on the spacecraft."
 				],
 				"score": 4
 			}
@@ -1251,10 +1339,10 @@
 				],
 				"value": 1,
 				"reason": [
-					"Hopping to a frequency outside the rogue's barrage moves the link off the jammed channel so imagery can downlink on the next clear pass.",
-					"Hopping to a frequency outside the rogue's barrage moves the link off the jammed channel so imagery can downlink on the next clear pass.",
-					"Hopping to a frequency outside the rogue's barrage moves the link off the jammed channel so imagery can downlink on the next clear pass.",
-					"Hopping to a frequency outside the rogue's barrage moves the link off the jammed channel so imagery can downlink on the next clear pass."
+					"Transmitter reset does not by itself move the downlink to an unjammed channel.",
+					"Correct. Hopping the telemetry link off the jammed frequency restores a usable downlink on a later pass.",
+					"Reducing ping interval does not remove wideband downlink jamming.",
+					"Waiting is not the best immediate mitigation when a frequency hop is available."
 				],
 				"score": 4
 			}
@@ -1262,7 +1350,7 @@
 		{
 			"section": "Mitigations",
 			"title": "What action clears a Cyber telemetry-tamper overlay (APID 100 / 301)?",
-			"description": "Both Phase-3 cyber overlays were authored with `Clear On Reset: true`. Which command removes them?",
+			"description": "Both Phase-3 cyber overlays were authored with Clear On Reset true. Which command removes them?",
 			"type": "select",
 			"answer": {
 				"options": [
@@ -1273,10 +1361,10 @@
 				],
 				"value": 0,
 				"reason": [
-					"Resetting the Computer clears every resettable cyber overlay on the asset (per docs/scenarios/events.md § Reset behavior).",
-					"Resetting the Computer clears every resettable cyber overlay on the asset (per docs/scenarios/events.md § Reset behavior).",
-					"Resetting the Computer clears every resettable cyber overlay on the asset (per docs/scenarios/events.md § Reset behavior).",
-					"Resetting the Computer clears every resettable cyber overlay on the asset (per docs/scenarios/events.md § Reset behavior)."
+					"Correct. Resetting the Computer clears resettable cyber overlays that were authored to clear on reset.",
+					"Resetting only the GPS Sensor does not clear the Ping overlay on Computer-owned telemetry.",
+					"A frequency hop does not clear software overlays injected on telemetry packets.",
+					"Rotating encryption does not remove cyber tamper overlays keyed to clear on computer reset."
 				],
 				"score": 4
 			}

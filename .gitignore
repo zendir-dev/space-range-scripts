@@ -215,5 +215,4 @@ logs/
 
 # Scenario capture dumps written beside scenario scripts (any subdirectory)
 captures.json
-# Legacy filename (pre-renamed); do not commit if still present locally
-cyber_defender_captures.json
+replays.json

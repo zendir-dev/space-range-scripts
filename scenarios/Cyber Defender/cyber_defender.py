@@ -129,7 +129,7 @@ def _save_capture_pools(_pools: dict) -> None:
 def _save_replay_log(_log: list) -> None:
     if replay_seq is None:
         return
-    out = os.path.join(_SCRIPT_DIR, "cyber_defender_replays.json")
+    out = os.path.join(_SCRIPT_DIR, "replays.json")
     try:
         replay_seq.save(out)
         printer.info(f"replay: log saved → {out}")

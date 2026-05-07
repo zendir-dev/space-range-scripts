@@ -16,8 +16,8 @@ Epoch **`2026/02/02 08:00 UTC`** — Dubai / Hormuz phasing is **~9 min earlier*
 
 | Phase | Wall | Sim time | Theme |
 | --- | --- | --- | --- |
-| 0 — Familiarisation | 00:00 – ~00:02 | `0 – ~120 s` | Paris pass; connect. **~30 s** GPS spoofing OFF (bootstrap). **~2 min** **solar-array degradation**. |
-| 1 — Passive cyber | ~00:02 – ~00:24 | `~120 – ~1 440 s` | Hormuz GPS spoof/jam/fault from ~**18 min**; AOI jam `T_AOI_1 ≈ 1 260 s`; storage ~**24 min**. MQTT capture **`0 – 900 s`** (rogue idle otherwise). |
+| 0 — Familiarisation | 00:00 – ~00:12 | `0 – ~720 s` | Paris pass; connect. **~30 s** GPS spoofing OFF (bootstrap). **~10 min** solar-array degradation. |
+| 1 — Passive cyber | ~00:12 – ~00:24 | `~720 – ~1 440 s` | Hormuz GPS spoof/jam/fault from ~**18 min**; AOI jam `T_AOI_1 ≈ 1 260 s`; storage ~**26 min**. MQTT capture **`0 – 900 s`** (rogue idle otherwise). |
 | 2a — Rogue capture | ~00:00 – ~00:15 | `0 – 900 s` | PHANTOM subscribes to **all** blue MQTT uplinks (password XOR → JSON pool). |
 | 2b — Rogue replay & jam | ~00:21 – ~00:34 | `~1 280 – ~2 060 s` | **Eight bursts** — **3** random replays per team per burst, **3 s** between teams; pulsed uplink jam; second AOI jam `T_AOI_2 ≈ 2 010 s`. |
 | 3 — Compound | ~00:34 – ~00:36 | `~2 045 – ~2 160 s` | Cyber tamper + reaction wheel + battery pile-on. |
