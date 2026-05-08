@@ -627,17 +627,19 @@ class MqttUplinkCaptureSequence:
 
 class MultiTeamReplaySequence:
     """
-    Schedule N replay **rounds** at random sim-times within ``[start, end]``.
+    Schedule N replay **rounds** at equally spaced sim-times within
+    ``[start, end]``.
 
     Each **round** (one tick of the state machine at a scheduled time):
 
     1. For **every** blue team in the capture sequence, in roster order,
        picks *shots_per_team_per_burst* random wires from **that team's pool**
        (with replacement if the pool is small).
-    2. Tunes the rogue's ground TX to that team's nominal frequency
-       (``set_telemetry``), waits *inter_team_delay_seconds* **wall-clock**
-       seconds before tuning the **next** team (the broker rejects rapid
-       ``set_telemetry``).
+    2. Waits *pre_team_delay_seconds* **wall-clock** seconds before handling
+       each team (including the first team in the burst), then tunes the rogue's
+       ground TX to that team's nominal frequency (``set_telemetry``), then waits
+       *post_tune_delay_seconds* **wall-clock** seconds so the new RF settings
+       settle before transmitting.
     3. For each chosen wire, calls :func:`replay.replay_transmit_bytes` with the captured
        on-air bytes — **unless** the wire came from MQTT JSON capture
        (``capture_source=\"mqtt_json\"``), in which case the stored UTF-8 JSON
@@ -662,23 +664,29 @@ class MultiTeamReplaySequence:
     burst_count:
         How many replay bursts to schedule across the window.
     seed:
-        RNG seed for reproducible random burst times. Default ``None`` = random.
+        Reserved for backwards compatibility (no effect for equally spaced bursts).
     bandwidth_mhz:
         Bandwidth used in the ground-transmitter ``set_telemetry`` snapshot.
     frequency_for_team:
         If set, called as ``frequency_for_team(team)`` to resolve MHz at each
         replay shot (e.g. live admin lookup). Otherwise ``team.frequency``.
+    key_for_team:
+        If set, called as ``key_for_team(team)`` to resolve the RF Caesar key.
+        Otherwise ``team.key``.
+    freeze_rf_at_first_burst:
+        If ``True``, resolve every team's frequency+key once immediately before
+        burst #1 and reuse those values for all later bursts.
     shots_per_team_per_burst:
         How many random replay transmits to send **per team** each round.
     inter_shot_delay_seconds:
-        Wall-clock sleep after **every** ``replay_transmit_bytes`` call (each replay
-        “attack”). Default ``0`` preserves legacy rapid-fire behaviour.
-    inter_team_delay_seconds:
-        Wall-clock sleep before ``set_telemetry`` for the **next** team after
-        finishing a team that tuned/transmitted (default ``3`` avoids
-        "Already changing telemetry settings"). Ignored when
-        ``inter_shot_delay_seconds > 0`` — pacing between teams is already covered
-        by the delay after the previous team's last shot.
+        Wall-clock sleep after **every** ``replay_transmit_bytes`` call. Keep at
+        ``0`` for back-to-back sends within a team.
+    post_tune_delay_seconds:
+        Wall-clock sleep immediately after each successful ``set_telemetry``
+        before replaying that team's commands (default ``1.5``).
+    pre_team_delay_seconds:
+        Wall-clock sleep before each team's live-frequency lookup + tune step.
+        Use this to pace transitions between teams (and before the first team).
     """
 
     def __init__(
@@ -692,9 +700,12 @@ class MultiTeamReplaySequence:
         seed: Optional[int] = None,
         bandwidth_mhz: float = 5.0,
         frequency_for_team: Optional[Callable[["TeamConfig"], float]] = None,
+        key_for_team: Optional[Callable[["TeamConfig"], int]] = None,
+        freeze_rf_at_first_burst: bool = True,
         shots_per_team_per_burst: int = 3,
         inter_shot_delay_seconds: float = 0.0,
-        inter_team_delay_seconds: float = 3.0,
+        post_tune_delay_seconds: float = 1.5,
+        pre_team_delay_seconds: float = 0.0,
     ) -> None:
         if end_at <= start_at:
             raise ValueError("end_at must be > start_at")
@@ -702,8 +713,10 @@ class MultiTeamReplaySequence:
             raise ValueError("burst_count must be >= 1")
         if shots_per_team_per_burst < 1:
             raise ValueError("shots_per_team_per_burst must be >= 1")
-        if inter_team_delay_seconds < 0:
-            raise ValueError("inter_team_delay_seconds must be >= 0")
+        if post_tune_delay_seconds < 0:
+            raise ValueError("post_tune_delay_seconds must be >= 0")
+        if pre_team_delay_seconds < 0:
+            raise ValueError("pre_team_delay_seconds must be >= 0")
         if inter_shot_delay_seconds < 0:
             raise ValueError("inter_shot_delay_seconds must be >= 0")
 
@@ -715,16 +728,22 @@ class MultiTeamReplaySequence:
         self._rng = random.Random(seed)
         self._bandwidth = float(bandwidth_mhz)
         self._frequency_for_team = frequency_for_team
+        self._key_for_team = key_for_team
+        self._freeze_rf_at_first_burst = bool(freeze_rf_at_first_burst)
         self._shots_per_team = int(shots_per_team_per_burst)
         self._inter_shot_delay_seconds = float(inter_shot_delay_seconds)
-        self._inter_team_delay_seconds = float(inter_team_delay_seconds)
+        self._post_tune_delay_seconds = float(post_tune_delay_seconds)
+        self._pre_team_delay_seconds = float(pre_team_delay_seconds)
 
         self._times: list[float] = []
+        self._burst_spacing: float = 0.0
         self._next_idx = 0
         self._lock = threading.Lock()
+        self._tick_lock = threading.Lock()
         self._log: list[dict[str, Any]] = []
         self._armed = False
         self._completed = False
+        self._frozen_rf_by_team_id: Optional[dict[int, RFLinkSnapshot]] = None
 
         self.on_complete: Optional[Callable[[list[dict[str, Any]]], None]] = None
 
@@ -732,21 +751,23 @@ class MultiTeamReplaySequence:
 
     def tick(self, sim_time: float) -> None:
         """Drive the state machine — call from ``on_session``."""
-        if self._completed:
-            return
+        with self._tick_lock:
+            if self._completed:
+                return
 
-        if not self._armed and sim_time >= self._start_at:
-            self._arm_random_bursts()
+            if not self._armed and sim_time >= self._start_at:
+                self._arm_random_bursts()
 
-        if not self._armed:
-            return
+            if not self._armed:
+                return
 
-        while self._next_idx < len(self._times) and sim_time >= self._times[self._next_idx]:
-            self._fire_one(sim_time)
-            self._next_idx += 1
+            # Fire at most one burst per tick, strictly in sequence.
+            if self._next_idx < len(self._times) and sim_time >= self._times[self._next_idx]:
+                self._fire_one(sim_time)
+                self._next_idx += 1
 
-        if self._next_idx >= len(self._times):
-            self._finalise()
+            if self._next_idx >= len(self._times):
+                self._finalise()
 
     def get_log(self) -> list[dict[str, Any]]:
         """Snapshot copy of every replay attempt logged so far."""
@@ -763,15 +784,20 @@ class MultiTeamReplaySequence:
     # --- internals -----------------------------------------------------
 
     def _arm_random_bursts(self) -> None:
-        times = sorted(
-            self._rng.uniform(self._start_at, self._end_at)
-            for _ in range(self._burst_count)
-        )
+        span = self._end_at - self._start_at
+        # "Divide equally apart by the number of bursts":
+        # N bursts => spacing = span / N, with first burst at start_at.
+        self._burst_spacing = span / float(self._burst_count)
+        times = [
+            self._start_at + (i * self._burst_spacing)
+            for i in range(self._burst_count)
+        ]
         self._times = times
         self._armed = True
         printer.info(
-            f"replay: armed {self._burst_count} burst(s) between "
-            f"t={self._start_at:.0f}s and t={self._end_at:.0f}s — "
+            f"replay: armed {self._burst_count} equally spaced burst(s) between "
+            f"t={self._start_at:.0f}s and t={self._end_at:.0f}s "
+            f"(spacing≈{self._burst_spacing:.1f}s) — "
             f"times={[round(x, 1) for x in times]}"
         )
 
@@ -779,6 +805,45 @@ class MultiTeamReplaySequence:
         pools = self._capture.get_pools()
         teams = self._capture._teams
         burst_no = self._next_idx + 1
+
+        # Snapshot RF once right before burst #1 so later user RF/key changes
+        # don't affect subsequent bursts.
+        if (
+            self._freeze_rf_at_first_burst
+            and burst_no == 1
+            and self._frozen_rf_by_team_id is None
+        ):
+            frozen: dict[int, RFLinkSnapshot] = {}
+            for team in teams:
+                freq = (
+                    float(self._frequency_for_team(team))
+                    if self._frequency_for_team is not None
+                    else float(team.frequency)
+                )
+                key = (
+                    int(self._key_for_team(team))
+                    if self._key_for_team is not None
+                    else int(team.key)
+                )
+                frozen[team.id] = RFLinkSnapshot(
+                    frequency_mhz=freq,
+                    key=key,
+                    bandwidth_mhz=self._bandwidth,
+                )
+            self._frozen_rf_by_team_id = frozen
+            printer.info(
+                "replay: frozen RF snapshot at burst #1 → "
+                + str(
+                    {
+                        t.name: {
+                            "frequency_mhz": round(frozen[t.id].frequency_mhz, 6),
+                            "key": frozen[t.id].key,
+                        }
+                        for t in teams
+                        if t.id in frozen
+                    }
+                )
+            )
 
         if not teams:
             printer.warn(
@@ -821,7 +886,6 @@ class MultiTeamReplaySequence:
                 )
             return
 
-        prev_team_used_telemetry = False
         for team in teams:
             tid = team.id
             ws = pools.get(tid, [])
@@ -845,32 +909,61 @@ class MultiTeamReplaySequence:
                     )
                 continue
 
-            # Pace between teams only when shots are back-to-back (no per-shot sleep).
-            if (
-                prev_team_used_telemetry
-                and self._inter_team_delay_seconds > 0
-                and self._inter_shot_delay_seconds <= 0
-            ):
+            if self._pre_team_delay_seconds > 0:
                 printer.info(
-                    f"replay: waiting {self._inter_team_delay_seconds:.1f}s before next team "
-                    f"({team.name}) …"
+                    f"replay: waiting {self._pre_team_delay_seconds:.1f}s before team "
+                    f"'{team.name}' frequency/tune …"
                 )
-                time.sleep(self._inter_team_delay_seconds)
+                time.sleep(self._pre_team_delay_seconds)
 
-            freq = (
-                float(self._frequency_for_team(team))
-                if self._frequency_for_team is not None
-                else float(team.frequency)
+            snap = (
+                self._frozen_rf_by_team_id.get(tid)
+                if self._frozen_rf_by_team_id is not None
+                else None
             )
-            snap = RFLinkSnapshot(
-                frequency_mhz=freq,
-                key=int(team.key),
-                bandwidth_mhz=self._bandwidth,
-            )
+            if snap is None:
+                freq = (
+                    float(self._frequency_for_team(team))
+                    if self._frequency_for_team is not None
+                    else float(team.frequency)
+                )
+                key = (
+                    int(self._key_for_team(team))
+                    if self._key_for_team is not None
+                    else int(team.key)
+                )
+                snap = RFLinkSnapshot(
+                    frequency_mhz=freq,
+                    key=key,
+                    bandwidth_mhz=self._bandwidth,
+                )
+            freq = float(snap.frequency_mhz)
+            rf_key = int(snap.key)
             try:
                 tune_ground(self._client, snap)
             except Exception as e:
                 printer.warn(f"replay: tune_ground failed for '{team.name}': {e}")
+                with self._lock:
+                    self._log.append(
+                        {
+                            "sim_time": sim_time,
+                            "burst_round": burst_no,
+                            "team_id": tid,
+                            "team_name": team.name,
+                            "freq_mhz": freq,
+                            "shot_in_round": None,
+                            "success": False,
+                            "reason": "set_telemetry failed",
+                        }
+                    )
+                continue
+
+            if self._post_tune_delay_seconds > 0:
+                printer.info(
+                    f"replay: '{team.name}' tuned to {freq} MHz; "
+                    f"waiting {self._post_tune_delay_seconds:.1f}s before transmit …"
+                )
+                time.sleep(self._post_tune_delay_seconds)
 
             wires = self._rng.choices(ws, k=self._shots_per_team)
             for shot_idx, wire in enumerate(wires, start=1):
@@ -878,7 +971,7 @@ class MultiTeamReplaySequence:
                     plain = base64.standard_b64decode(wire.payload_b64.encode("ascii"))
                     src = getattr(wire, "capture_source", "intercept")
                     if src == "mqtt_json":
-                        tx_bytes = dc.caesar_encrypt(int(team.key), plain)
+                        tx_bytes = dc.caesar_encrypt(rf_key, plain)
                     else:
                         tx_bytes = plain
                     data_b64 = base64.standard_b64encode(tx_bytes).decode("ascii")
@@ -922,8 +1015,6 @@ class MultiTeamReplaySequence:
 
                 if self._inter_shot_delay_seconds > 0:
                     time.sleep(self._inter_shot_delay_seconds)
-
-            prev_team_used_telemetry = True
 
     def _finalise(self) -> None:
         with self._lock:

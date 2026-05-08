@@ -14,11 +14,11 @@ effect in this scenario:
   team (no RF dwell / no Format-3 intercept). See
   :class:`src.cyber_replay.MqttUplinkCaptureSequence`.
 
-* **Phase 2b — Random replay (minutes 25–33 at 1×).**
-  **Eight bursts** at random sim-times in ``[1 500, 1 980]`` s; **each burst**
-  sends **three** random stored commands **in a row per blue team**, with **3 s**
-  wall-clock spacing before ``set_telemetry`` for the next team. Replay uses
-  data captured in minutes 0–15 only.
+* **Phase 2b — Replay bursts (minutes 25–33 at 1×).**
+  **Eight bursts** equally spaced in ``[1 500, 1 980]`` s; at each burst:
+  loop every blue team, set that team's live frequency, wait **1.5 s** real
+  time, then send **three** random stored commands back-to-back for that team.
+  Replay uses data captured in minutes 0–15 only.
 
 * **Uplink jam** (minutes ~33–38): jammer bore-sighted on the **shared
   defender spacecraft** (first blue asset); **continuous** barrage at **very
@@ -113,8 +113,15 @@ CAPTURE_START = 0.0
 CAPTURE_END = 900.0
 REPLAY_START = 1_500.0
 REPLAY_END = 1_980.0
-# Wall-clock pause after each replay transmit (MultiTeamReplaySequence).
-REPLAY_INTER_SHOT_DELAY = 3.0
+# Replay pacing controls:
+# - wait before each team frequency/tune step
+# - wait after tuning each team to its live frequency
+# - no delay between shots for the same team
+REPLAY_BURST_COUNT = 8
+REPLAY_POST_TUNE_DELAY = 2
+REPLAY_PRE_TEAM_DELAY = REPLAY_POST_TUNE_DELAY
+REPLAY_INTER_SHOT_DELAY = 0.0
+REPLAY_SHOTS_PER_TEAM_PER_BURST = 1
 
 capture: "MqttUplinkCaptureSequence | None" = None
 replay_seq: "MultiTeamReplaySequence | None" = None
@@ -142,6 +149,40 @@ def _save_replay_log(_log: list) -> None:
         printer.warn(f"replay: save failed: {e}")
 
 
+def live_replay_key_for(team) -> int:
+    """
+    Resolve live RF key for one enemy team via admin query_data.
+
+    Used once right before burst #1 to freeze replay keys for all bursts.
+    Falls back to config ``team.key`` on any lookup failure.
+    """
+    fallback = int(team.key)
+    if scenario.client is None:
+        return fallback
+    if not scenario.enemy_asset_ids:
+        scenario.wait_for_enemy_ids(timeout=120.0)
+    if team not in scenario.enemy_teams:
+        return fallback
+    idx = scenario.enemy_teams.index(team)
+    if idx >= len(scenario.enemy_asset_ids):
+        return fallback
+
+    asset_id = scenario.enemy_asset_ids[idx]
+    response = scenario.client.admin.query_data(asset_id, recent=True, timeout=10.0)
+    if response is None:
+        return fallback
+    rows = response.get("args", {}).get("data", [])
+    if not rows:
+        return fallback
+    key = rows[-1].get("communications.key")
+    if key is None:
+        return fallback
+    try:
+        return int(key)
+    except (TypeError, ValueError):
+        return fallback
+
+
 def _build_active_sequences() -> None:
     """Construct the capture / replay sequences once the client is live."""
     global capture, replay_seq
@@ -160,9 +201,14 @@ def _build_active_sequences() -> None:
         capture,
         start_at=REPLAY_START,
         end_at=REPLAY_END,
-        burst_count=8,
+        burst_count=REPLAY_BURST_COUNT,
         seed=20260202,
         frequency_for_team=lambda t: float(scenario.live_enemy_frequency_for(t)),
+        key_for_team=live_replay_key_for,
+        freeze_rf_at_first_burst=True,
+        shots_per_team_per_burst=REPLAY_SHOTS_PER_TEAM_PER_BURST,
+        post_tune_delay_seconds=REPLAY_POST_TUNE_DELAY,
+        pre_team_delay_seconds=REPLAY_PRE_TEAM_DELAY,
         inter_shot_delay_seconds=REPLAY_INTER_SHOT_DELAY,
     )
 
@@ -274,7 +320,7 @@ JAM_DUBAI_START = 900.0
 JAM_DUBAI_END = 1_500.0
 JAM_SINGAPORE_START = 2_400.0
 JAM_SINGAPORE_END = 3_000.0
-BROADCAST_JAM_POWER = 3.0
+BROADCAST_JAM_POWER = 30.0
 
 
 def _add_broadcast_jam_window(label: str, on_at: float, off_at: float, ground_station: str) -> None:
