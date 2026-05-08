@@ -80,7 +80,7 @@
 						0.0,
 						0.0,
 						0.0,
-						0.001
+						0.0001
 					]
 				},
 				"physics": {
@@ -343,7 +343,7 @@
 					"planet": "Earth",
 					"values": [
 						10000.0,
-						0.0151,
+						0.0155,
 						-37,
 						350.0,
 						0.0,
@@ -486,7 +486,8 @@
 						],
 						"data": {
 							"Power": 100.0,
-							"Antenna Gain": 15.0
+							"Antenna Gain": 15.0,
+							"Lookup": "RFPattern.csv"
 						}
 					},
 					{
@@ -557,7 +558,7 @@
 				"latitude": 26.5,
 				"longitude": 56.5,
 				"altitude": 1,
-				"scale": 110,
+				"scale": 70,
 				"color": "#00FF00",
 				"data": {
 					"heading": 95.0,
@@ -572,7 +573,7 @@
 				"latitude": 26.4,
 				"longitude": 56.6,
 				"altitude": 1,
-				"scale": 110,
+				"scale": 70,
 				"color": "#00FF00",
 				"data": {
 					"heading": 95.0,
@@ -587,7 +588,7 @@
 				"latitude": 26.6,
 				"longitude": 56.4,
 				"altitude": 1,
-				"scale": 110,
+				"scale": 70,
 				"color": "#00FF00",
 				"data": {
 					"heading": 100.0,
@@ -602,7 +603,7 @@
 				"latitude": 26.3,
 				"longitude": 56.3,
 				"altitude": 1,
-				"scale": 110,
+				"scale": 70,
 				"color": "#00FF00",
 				"data": {
 					"heading": 86.0,
@@ -617,7 +618,7 @@
 				"latitude": 26.7,
 				"longitude": 56.7,
 				"altitude": 1,
-				"scale": 110,
+				"scale": 70,
 				"color": "#00FF00",
 				"data": {
 					"heading": 92.0,
@@ -632,7 +633,7 @@
 				"latitude": 2.0,
 				"longitude": 102.0,
 				"altitude": 1,
-				"scale": 110,
+				"scale": 70,
 				"color": "#FFFF00",
 				"data": {
 					"heading": 130.0,
@@ -647,7 +648,7 @@
 				"latitude": 1.9,
 				"longitude": 102.01,
 				"altitude": 1,
-				"scale": 110,
+				"scale": 70,
 				"color": "#FFFF00",
 				"data": {
 					"heading": 310.0,
@@ -744,7 +745,7 @@
 				"APID": 300,
 				"SubType": -1,
 				"Offset Bytes": 0,
-				"Payload": "STAR INJECT",
+				"Payload": "STAR INTRUSION",
 				"Encoding": "ascii",
 				"Expiry Seconds": 300.0,
 				"Clear On Reset": true
@@ -813,7 +814,7 @@
 				"SC_OPS"
 			],
 			"Data": {
-				"Capacity": 100000
+				"Capacity": 500000
 			}
 		},
 		{
@@ -901,27 +902,27 @@
 	"questions": [
 		{
 			"section": "GPS Spoofing",
-			"title": "At what time (in minutes from session start) did the GPS spoofing first occur?",
+			"title": "At what time (in minutes from session start) did the single GPS spoofing episode first occur?",
 			"description": "The GPS spoofing first occurred at a point in time. Give elapsed simulation minutes at which this spoofing first occurred.",
 			"type": "number",
 			"answer": {
 				"unit": "min",
-				"value": 10.0,
-				"tolerance": 1.0,
+				"value": 6.7,
+				"tolerance": 1.5,
 				"reason": "This spoofing occurred at 600 seconds into the simulation.",
 				"score": 5
 			}
 		},
 		{
 			"section": "GPS Spoofing",
-			"title": "At what time (in minutes from session start) did the GPS spoofing last occur?",
-			"description": "The GPS spoofing last occurred at a point in time. Give elapsed simulation minutes at which this spoofing last occurred.",
+			"title": "At what time (in minutes from session start) did the single GPS spoofing episode last occur?",
+			"description": "One episode of GPS spoofing occurred. The GPS spoofing last occurred at a point in time. Give elapsed simulation minutes at which this spoofing last occurred.",
 			"type": "number",
 			"answer": {
 				"unit": "min",
-				"value": 14.5,
+				"value": 18.3,
 				"tolerance": 1.5,
-				"reason": "This spoofing ran for 4.5 minutes, starting at 600 seconds into the simulation.",
+				"reason": "This spoofing episode ran for 11.6 minutes, ocurring in a few locations around a particular region.",
 				"score": 5
 			}
 		},
@@ -1015,7 +1016,7 @@
 		},
 		{
 			"section": "Cyber Injects",
-			"title": "Which messages, based on their APID, had injected text due to a cyber attack?",
+			"title": "Two different messages were injected with hidden text. Which messages were affected?",
 			"description": "Some messages had injected text, disrupting the data found within the packets. This was due to a cyber attack. Which messages were affected?",
 			"type": "checkbox",
 			"answer": {
@@ -1058,7 +1059,7 @@
 			"description": "One of the messages had injected text, disrupting the data found within the packets. What was the text that appeared?",
 			"type": "text",
 			"answer": {
-				"value": "STAR INJECT",
+				"value": "STAR INTRUSION",
 				"reason": "The Cyber event at 840 seconds targets APID 300 with Encoding ascii and Payload STAR INJECT for 300 seconds.",
 				"score": 5
 			}
@@ -1078,19 +1079,28 @@
 			"section": "Downlink Jamming",
 			"title": "How many distinct sustained broadcast downlink jam episodes occurred?",
 			"description": "The rogue spacecraft held a saturating barrage jam on your team's frequency. How many episodes of jamming occurred?",
-			"type": "number",
+			"type": "select",
 			"answer": {
-				"unit": "",
-				"value": 2.0,
-				"tolerance": 0,
-				"reason": "The rogue spacecraft held a saturating barrage jam on your team's frequency for two episodes.",
+				"options": [
+					"1",
+					"2",
+					"3",
+					"4"
+				],
+				"value": 1,
+				"reason": [
+					"Incorrect. Two episodes of jamming occurred.",
+					"Correct. One episode of jamming occurred.",
+					"Incorrect. Three episodes of jamming occurred.",
+					"Incorrect. Four episodes of jamming occurred."
+				],
 				"score": 5
 			}
 		},
 		{
 			"section": "Downlink Jamming",
-			"title": "Which ground stations were affected by the downlink jamming attack?",
-			"description": "The rogue spacecraft held a saturating barrage jam on your team's frequency. Which ground stations were affected by the jamming attack?",
+			"title": "Which two ground stations were affected by the downlink jamming attack?",
+			"description": "The rogue spacecraft held a saturating barrage jam on your team's frequency. Which two ground stations were affected by the jamming attack?",
 			"type": "checkbox",
 			"answer": {
 				"options": [
@@ -1170,7 +1180,7 @@
 		},
 		{
 			"section": "Rogue Identification",
-			"title": "What frequency does the rogue spacecraft transmit its data on?",
+			"title": "What frequency (MHz) does the rogue spacecraft transmit its data on?",
 			"description": "The rogue spacecraft transmits on a frequency to its ground stations. What frequency does the rogue spacecraft transmit its data on?",
 			"type": "number",
 			"answer": {
@@ -1185,7 +1195,7 @@
 			"section": "Replay Attacks",
 			"title": "During which ground station's pass did you experience uplink replay attacks?",
 			"description": "Replay traffic appears on your team's uplink frequency without a matching command from your console. When did the replay attacks occur?",
-			"type": "checkbox",
+			"type": "select",
 			"answer": {
 				"options": [
 					"Dubai",
@@ -1196,9 +1206,7 @@
 					"Singapore",
 					"Sydney"
 				],
-				"value": [
-					3
-				],
+				"value": 3,
 				"reason": [
 					"The spacecraft was not connected to Dubai during the replay attack.",
 					"The spacecraft was not connected to Easter Island during the replay attack.",
@@ -1213,7 +1221,7 @@
 		},
 		{
 			"section": "Replay Attacks",
-			"title": "How long did the replay attacks last?",
+			"title": "How long (in minutes) did the replay attacks last?",
 			"description": "The replay attacks lasted for a period of time. How long did they last for in minutes?",
 			"type": "number",
 			"answer": {
@@ -1292,18 +1300,16 @@
 		},
 		{
 			"section": "Reaction Wheels Fault",
-			"title": "Which reaction wheels became stuck?",
-			"description": "At least one of the reaction wheels became stuck. Which wheels became stuck?",
-			"type": "checkbox",
+			"title": "Which reaction wheels, X, Y or Z, became stuck?",
+			"description": "One of the three primary reaction wheels became stuck. Which wheel became stuck?",
+			"type": "select",
 			"answer": {
 				"options": [
 					"Wheel X",
 					"Wheel Y",
 					"Wheel Z"
 				],
-				"value": [
-					0
-				],
+				"value": 0,
 				"reason": [
 					"Correct. This wheel became stuck, where the speed could not be controlled.",
 					"Reaction Wheel Y is not stuck. The stuck condition is where the wheel speed could not be controlled.",
@@ -1381,12 +1387,21 @@
 			"section": "Uplink Jamming",
 			"title": "How many distinct sustained broadcast uplink jam episodes occurred?",
 			"description": "The rogue spacecraft held a saturating barrage jam on your team's frequency. How many episodes of jamming occurred?",
-			"type": "number",
+			"type": "select",
 			"answer": {
-				"unit": "",
-				"value": 1.0,
-				"tolerance": 0,
-				"reason": "The rogue spacecraft held a saturating barrage jam on your team's frequency for one episode.",
+				"options": [
+					"1",
+					"2",
+					"3",
+					"4"
+				],
+				"value": 0,
+				"reason": [
+					"Incorrect. Two episodes of jamming occurred.",
+					"Correct. One episode of jamming occurred.",
+					"Incorrect. Three episodes of jamming occurred.",
+					"Incorrect. Four episodes of jamming occurred."
+				],
 				"score": 5
 			}
 		},
@@ -1427,9 +1442,9 @@
 			"type": "number",
 			"answer": {
 				"unit": "dB",
-				"value": 21.0,
-				"tolerance": 3.0,
-				"reason": "The SNR dropped to 21 dB during the uplink jamming attack. This can be found in the telemetry data on the uplink connection.",
+				"value": 31.0,
+				"tolerance": 5.0,
+				"reason": "The SNR dropped to 31 dB during the uplink jamming attack. This can be found in the telemetry data on the uplink connection.",
 				"score": 7
 			}
 		},

@@ -670,10 +670,15 @@ class MultiTeamReplaySequence:
         replay shot (e.g. live admin lookup). Otherwise ``team.frequency``.
     shots_per_team_per_burst:
         How many random replay transmits to send **per team** each round.
+    inter_shot_delay_seconds:
+        Wall-clock sleep after **every** ``replay_transmit_bytes`` call (each replay
+        “attack”). Default ``0`` preserves legacy rapid-fire behaviour.
     inter_team_delay_seconds:
         Wall-clock sleep before ``set_telemetry`` for the **next** team after
         finishing a team that tuned/transmitted (default ``3`` avoids
-        "Already changing telemetry settings").
+        "Already changing telemetry settings"). Ignored when
+        ``inter_shot_delay_seconds > 0`` — pacing between teams is already covered
+        by the delay after the previous team's last shot.
     """
 
     def __init__(
@@ -688,6 +693,7 @@ class MultiTeamReplaySequence:
         bandwidth_mhz: float = 5.0,
         frequency_for_team: Optional[Callable[["TeamConfig"], float]] = None,
         shots_per_team_per_burst: int = 3,
+        inter_shot_delay_seconds: float = 0.0,
         inter_team_delay_seconds: float = 3.0,
     ) -> None:
         if end_at <= start_at:
@@ -698,6 +704,8 @@ class MultiTeamReplaySequence:
             raise ValueError("shots_per_team_per_burst must be >= 1")
         if inter_team_delay_seconds < 0:
             raise ValueError("inter_team_delay_seconds must be >= 0")
+        if inter_shot_delay_seconds < 0:
+            raise ValueError("inter_shot_delay_seconds must be >= 0")
 
         self._client = client
         self._capture = capture
@@ -708,6 +716,7 @@ class MultiTeamReplaySequence:
         self._bandwidth = float(bandwidth_mhz)
         self._frequency_for_team = frequency_for_team
         self._shots_per_team = int(shots_per_team_per_burst)
+        self._inter_shot_delay_seconds = float(inter_shot_delay_seconds)
         self._inter_team_delay_seconds = float(inter_team_delay_seconds)
 
         self._times: list[float] = []
@@ -836,7 +845,12 @@ class MultiTeamReplaySequence:
                     )
                 continue
 
-            if prev_team_used_telemetry and self._inter_team_delay_seconds > 0:
+            # Pace between teams only when shots are back-to-back (no per-shot sleep).
+            if (
+                prev_team_used_telemetry
+                and self._inter_team_delay_seconds > 0
+                and self._inter_shot_delay_seconds <= 0
+            ):
                 printer.info(
                     f"replay: waiting {self._inter_team_delay_seconds:.1f}s before next team "
                     f"({team.name}) …"
@@ -905,6 +919,9 @@ class MultiTeamReplaySequence:
                         f"shot {shot_idx}/{self._shots_per_team} "
                         f"failed → '{team.name}' @ {freq} MHz: {resp}"
                     )
+
+                if self._inter_shot_delay_seconds > 0:
+                    time.sleep(self._inter_shot_delay_seconds)
 
             prev_team_used_telemetry = True
 

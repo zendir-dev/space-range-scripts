@@ -140,10 +140,15 @@ def guidance_spacecraft(
     spacecraft_id: str,
     alignment: str = "+z",
 ) -> dict:
-    """Point *target* component toward another spacecraft."""
+    """
+    Point *target* component toward another spacecraft (relative / boresight).
+
+    *spacecraft_id* must be the live runtime asset ID (from admin ``list_team``),
+    not a scenario collection id or display name.
+    """
     return _cmd(
         "guidance",
-        {"pointing": "spacecraft", "target": target, "alignment": alignment, "spacecraft": spacecraft_id},
+        {"pointing": "relative", "target": target, "alignment": alignment, "spacecraft": spacecraft_id},
         f"Point '{target}' {alignment} toward spacecraft '{spacecraft_id}'",
     )
 

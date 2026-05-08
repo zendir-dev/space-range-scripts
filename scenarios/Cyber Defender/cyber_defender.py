@@ -113,6 +113,8 @@ CAPTURE_START = 0.0
 CAPTURE_END = 900.0
 REPLAY_START = 1_500.0
 REPLAY_END = 1_980.0
+# Wall-clock pause after each replay transmit (MultiTeamReplaySequence).
+REPLAY_INTER_SHOT_DELAY = 3.0
 
 capture: "MqttUplinkCaptureSequence | None" = None
 replay_seq: "MultiTeamReplaySequence | None" = None
@@ -161,6 +163,7 @@ def _build_active_sequences() -> None:
         burst_count=8,
         seed=20260202,
         frequency_for_team=lambda t: float(scenario.live_enemy_frequency_for(t)),
+        inter_shot_delay_seconds=REPLAY_INTER_SHOT_DELAY,
     )
 
     capture.on_complete = _save_capture_pools
@@ -191,9 +194,10 @@ def live_jammer_args_all(default_args: dict) -> dict:
 
 
 # ---------------------------------------------------------------------------
-# Defender's static asset id (for guidance_spacecraft pointing).
-# Resolved dynamically via the first enemy team's collection so a rename of
-# the config id (e.g. SC_OPS → DEFENDER) requires no script changes.
+# Defender spacecraft target for guidance (live asset ID from admin).
+# The JSON/config ``id`` (e.g. SC_OPS) is not what GetSpacecraftController()
+# expects — we inject the 8-char runtime ID from resolve_enemy_ids() at fire
+# time via pre_trigger (same source as jammer frequency resolution).
 # ---------------------------------------------------------------------------
 
 _defender_assets = (
@@ -201,11 +205,26 @@ _defender_assets = (
     if scenario.enemy_teams
     else []
 )
-DEFENDER_ASSET_ID = _defender_assets[0].id if _defender_assets else "SC_OPS"
+DEFENDER_ASSET_LABEL = _defender_assets[0].name if _defender_assets else "defender"
 printer.info(
-    f"cyber: defender asset resolved → '{DEFENDER_ASSET_ID}' "
-    f"({_defender_assets[0].name if _defender_assets else 'fallback'})"
+    f"cyber: defender target label → '{DEFENDER_ASSET_LABEL}' "
+    f"(live asset ID applied at schedule fire via admin-resolved enemy_asset_ids)"
 )
+
+
+def live_defender_guidance_args(default_args: dict) -> dict:
+    """Replace ``spacecraft`` with the live defender bus ID (first enemy space asset)."""
+    if not scenario.enemy_asset_ids:
+        scenario.wait_for_enemy_ids(timeout=120.0)
+    if not scenario.enemy_asset_ids:
+        printer.warn(
+            "A7: no live defender asset ID — relative pointing may fail "
+            "(admin enemy resolution returned no space assets)."
+        )
+        return default_args
+    live_id = scenario.enemy_asset_ids[0]
+    printer.info(f"A7: guidance spacecraft parameter → live asset ID {live_id}")
+    return {**default_args, "spacecraft": live_id}
 
 
 # ---------------------------------------------------------------------------
@@ -215,19 +234,21 @@ printer.info(
 UPLINK_JAM_START = 1_980.0
 UPLINK_JAM_END = 2_280.0
 # Far below broadcast downlink jam (3 W); enough to perturb links if dry-run proves too faint, bump slightly.
-UPLINK_JAM_POWER = 0.08
+UPLINK_JAM_POWER = 0.4
 
 if not scenario.enemy_teams:
     printer.warn("A7: no enemy teams configured — uplink jam will be skipped")
 else:
     printer.info(
-        f"A7: uplink jam → point at defender '{DEFENDER_ASSET_ID}', "
+        f"A7: uplink jam → point at defender '{DEFENDER_ASSET_LABEL}' "
+        f"(live ID at fire time), "
         f"all blue MHz, {UPLINK_JAM_POWER} W, [{UPLINK_JAM_START:.0f},{UPLINK_JAM_END:.0f}]s"
     )
     scheduler.add_event(
-        name=f"Point Jammer at {DEFENDER_ASSET_ID} (uplink jam prep)",
+        name=f"Point Jammer at {DEFENDER_ASSET_LABEL} (uplink jam prep)",
         trigger_time=UPLINK_JAM_START - 10.0,
-        **commands.guidance_spacecraft("Jammer", DEFENDER_ASSET_ID),
+        pre_trigger=live_defender_guidance_args,
+        **commands.guidance_spacecraft("Jammer", ""),
     )
     scheduler.add_event(
         name="Uplink Jam ON",
