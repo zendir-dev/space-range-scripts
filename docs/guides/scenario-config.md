@@ -4,13 +4,13 @@ A Space Range **scenario** is a single JSON file describing everything Studio ne
 
 This guide is the **narrative tour** of that file — short enough to read end-to-end, focused on the parts authors edit most often. For the **complete field-by-field specification** (every component class, every event-`Data` key, every question scoring rule, recipes, and an agent checklist), see the [Scenario authoring reference](../scenarios/README.md).
 
-The shipped reference scenario at `space-range-scripts/scenarios/orbital_sentinel.json` is a good starting point; quote it freely.
+The shipped reference scenario at `space-range-scripts/scenarios/Orbital Intel/orbital_intel.json` is a good starting point; quote it freely.
 
 ---
 
 ## File location & layout
 
-Scenario JSONs live in Studio's `Scenarios` directory (the location varies by build — check your Studio install). Filenames are usually short snake-case identifiers (`orbital_sentinel.json`). The matching scripted-scenario Python file (e.g. `orbital_sentinel.py`) sits alongside it; see [The scripted-scenario companion](#the-scripted-scenario-companion) at the end.
+Scenario JSONs live in Studio's `Scenarios` directory (the location varies by build — check your Studio install). Filenames are usually short snake-case identifiers (`orbital_intel.json`). The matching scripted-scenario Python file (e.g. `orbital_intel.py`) sits alongside it; see [The scripted-scenario companion](#the-scripted-scenario-companion) at the end.
 
 The top-level shape of every scenario is:
 
@@ -32,7 +32,7 @@ The top-level shape of every scenario is:
 }
 ```
 
-Every section is optional except `teams` and `assets` — without those the scenario can be loaded but no team can do anything. A minimal scenario is ~50 lines; a competition-grade scenario like `orbital_sentinel.json` is ~1300 lines.
+Every section is optional except `teams` and `assets` — without those the scenario can be loaded but no team can do anything. A minimal scenario is ~50 lines; a competition-grade scenario like `orbital_intel.json` is ~1300 lines.
 
 ---
 
@@ -147,7 +147,7 @@ Every team in the scenario gets one entry. The order doesn't matter; the IDs do.
 **Picking team values, in practice:**
 
 - Use random alphanumeric passwords (no patterns, no shared substrings between teams). The XOR layer is weak; defence in depth is to make passwords un-guessable.
-- Spread frequencies across the band (`468–901 MHz` is the typical range used by `orbital_sentinel.json`). Closer-spaced frequencies make jamming exercises more interesting; widely-spaced frequencies make accidents less likely.
+- Spread frequencies across the band (`468–901 MHz` is the typical range used by `orbital_intel.json`). Closer-spaced frequencies make jamming exercises more interesting; widely-spaced frequencies make accidents less likely.
 - Caesar keys can collide between teams without consequence — they're scoped per-team. But keep them random anyway.
 - Reserve small IDs (e.g. `111111`, `222222`) for tutorial/testing scenarios; production scenarios should use larger random IDs to avoid muscle-memory mistakes.
 
@@ -439,7 +439,7 @@ Many scenarios pair the JSON with a Python script (`<scenario>.py`) that schedul
 - Connects via the bundled `space-range-scripts` framework using the team password from the JSON.
 - Schedules commands on the simulation timeline using `scheduler.add_event(...)`.
 
-A trimmed example (from `orbital_sentinel.py`):
+A trimmed example (from `orbital_intel.py`):
 
 ```python
 from src import Scenario, commands
@@ -471,7 +471,7 @@ A full description of the framework is intentionally out of scope here; see `spa
 
 A practical workflow when authoring or editing a scenario:
 
-1. Start from `orbital_sentinel.json`. Strip what you don't need; keep what you do.
+1. Start from `orbital_intel.json`. Strip what you don't need; keep what you do.
 2. Edit `simulation`, `universe`, `ground_stations` to set the world. These rarely change once set.
 3. Build out `teams` and `assets`. Get one team flying with one spacecraft first.
 4. Add `objects.ground[]` decorations as the scenario narrative requires.

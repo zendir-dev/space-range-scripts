@@ -61,12 +61,12 @@ A flat text glyph rendered on the ground at the given lat/lon. Used as a label o
 
 - Ground objects are passive: they do not respond to commands and emit no telemetry beyond the optional EM signature on a vessel.
 - Vessels move in **constant-heading** straight lines on the planet's surface — they don't follow shipping lanes or avoid land. If you need a vessel to follow a path, place it at multiple waypoints at different `Time` events using a scripted scenario, or simply pick `speed: 0` and treat the vessel as stationary.
-- For dense scenes (`Orbital Sentinel` has 22 vessels), keep `id` values monotonic (`GO_001`, `GO_002`, …) so they sort sensibly in admin tools.
+- For dense scenes (`Orbital Intel` has 22 vessels), keep `id` values monotonic (`GO_001`, `GO_002`, …) so they sort sensibly in admin tools.
 - Color choices matter for imagery exercises — choose distinct hues so teams can refer to vessels by colour in Q&A. Avoid placing two same-colored vessels close together unless this ambiguity is the exercise.
 
 ## Example clusters
 
-A small fleet representing a shipping lane (from `Orbital Sentinel`):
+A small fleet representing a shipping lane (from `Orbital Intel`):
 
 ```json
 { "id": "GO_001", "type": "vessel", "name": "EG01", "planet": "Earth",

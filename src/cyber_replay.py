@@ -625,6 +625,45 @@ class MqttUplinkCaptureSequence:
                 printer.error(f"mqtt_capture on_complete: {e}")
 
 
+def _mqtt_plaintext_blocked_from_replay(plain: bytes) -> bool:
+    """
+    True if an MQTT-captured UTF-8 JSON payload must not be replayed.
+
+    Blocks **ground** ``set_telemetry`` requests if they appear on the uplink
+    capture stream: substring match (case-insensitive), or a parsed top-level
+    ``command`` / ``Command`` / ``type`` / ``Type`` field equal to
+    ``set_telemetry``.
+    """
+    try:
+        text = plain.decode("utf-8")
+    except UnicodeDecodeError:
+        return False
+    if "set_telemetry" in text.lower():
+        return True
+    try:
+        obj = json.loads(text)
+    except json.JSONDecodeError:
+        return False
+    if not isinstance(obj, dict):
+        return False
+    for key in ("command", "Command", "type", "Type"):
+        val = obj.get(key)
+        if isinstance(val, str) and val.strip().lower() == "set_telemetry":
+            return True
+    return False
+
+
+def _wire_blocked_from_replay(wire: CapturedWire) -> bool:
+    """Filter helper for :class:`MultiTeamReplaySequence` shot selection."""
+    if getattr(wire, "capture_source", "intercept") != "mqtt_json":
+        return False
+    try:
+        plain = base64.standard_b64decode(wire.payload_b64.encode("ascii"))
+    except Exception:
+        return False
+    return _mqtt_plaintext_blocked_from_replay(plain)
+
+
 class MultiTeamReplaySequence:
     """
     Schedule N replay **rounds** at equally spaced sim-times within
@@ -644,9 +683,12 @@ class MultiTeamReplaySequence:
        on-air bytes — **unless** the wire came from MQTT JSON capture
        (``capture_source=\"mqtt_json\"``), in which case the stored UTF-8 JSON
        is Caesar-encrypted with that team's RF key at transmit time, then sent.
+       MQTT JSON payloads that are ``set_telemetry`` requests (substring or parsed
+       ``command`` / ``type`` field) are **never** replayed.
 
        If a team's pool is empty at round fire-time, that team is skipped
-       for that round (logged).
+       for that round (logged). If every capture for a team is filtered out,
+       that team is skipped similarly (logged).
 
     Logs every transmit for forensics (round index, team, shot index, success).
 
@@ -965,7 +1007,28 @@ class MultiTeamReplaySequence:
                 )
                 time.sleep(self._post_tune_delay_seconds)
 
-            wires = self._rng.choices(ws, k=self._shots_per_team)
+            eligible = [w for w in ws if not _wire_blocked_from_replay(w)]
+            if not eligible:
+                printer.warn(
+                    f"replay: '{team.name}' has only set_telemetry / blocked MQTT payloads "
+                    f"at t={sim_time:.0f}s — round {burst_no}/{self._burst_count} skipped for this team"
+                )
+                with self._lock:
+                    self._log.append(
+                        {
+                            "sim_time": sim_time,
+                            "burst_round": burst_no,
+                            "team_id": tid,
+                            "team_name": team.name,
+                            "freq_mhz": freq,
+                            "shot_in_round": None,
+                            "success": False,
+                            "reason": "no replay-eligible captures (set_telemetry filtered)",
+                        }
+                    )
+                continue
+
+            wires = self._rng.choices(eligible, k=self._shots_per_team)
             for shot_idx, wire in enumerate(wires, start=1):
                 try:
                     plain = base64.standard_b64decode(wire.payload_b64.encode("ascii"))

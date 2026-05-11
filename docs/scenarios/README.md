@@ -172,4 +172,4 @@ Scenario JSON parsing is implemented in:
 - `studio/Plugins/SpaceRange/Source/SpaceRange/Private/Extensions/*.cpp` — per-component data parsing (`Setup_Impl`) and failure handling (`Failure_Impl`).
 - `studio/Plugins/SpaceRange/Resources/Events/Spacecraft.json` and `GPS.json` — the canonical event templates surfaced by Studio's "Add Event" menu.
 
-The example scenarios bundled with Space Range — `Orbital Sentinel`, `Maritime_Surveillance`, `Unresponsive_Satellite`, `Telemetry_Drop`, `Payload_Misalignment`, `Null_Data`, `Command_Rejection`, `Docking_Procedure` — are battle-tested references; copy from them rather than writing from scratch.
+The example scenarios bundled with Space Range — `Orbital Intel`, `Maritime_Surveillance`, `Unresponsive_Satellite`, `Telemetry_Drop`, `Payload_Misalignment`, `Null_Data`, `Command_Rejection`, `Docking_Procedure` — are battle-tested references; copy from them rather than writing from scratch.

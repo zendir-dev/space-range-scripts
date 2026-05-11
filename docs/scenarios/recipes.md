@@ -14,9 +14,9 @@ This page is a working catalogue of complete scenario patterns derived from the 
 | Docking / RPO exercise | `Docking_Procedure.json` | Two spacecraft with `Docking Adapter` components; `enable_rpo: true` on the controller. |
 | Pointing / attitude error | `Payload_Misalignment.json` | Reaction-wheel `Stuck Index` event and guidance noise model. |
 | GPS denial | (see GPS event recipes in [`events.md`](./events.md)) | No shipped scenario uses GPS jamming end-to-end yet — combine the events template with a `Maritime_Surveillance` shell. |
-| Multi-section assessment with full Q&A | `Orbital Sentinel/orbital_sentinel.json` | Long `questions[]`, multiple ground objects, multiple events, multi-team. |
+| Multi-section assessment with full Q&A | `Orbital Intel/orbital_intel.json` | Long `questions[]`, multiple ground objects, multiple events, multi-team. |
 
-The agent-friendly summary: **`Orbital Sentinel` is the most complete reference**. Anything else is a simpler variant.
+The agent-friendly summary: **`Orbital Intel` is the most complete reference**. Anything else is a simpler variant.
 
 ---
 
@@ -242,14 +242,14 @@ Pair with a `select` question asking *"What region was being spoofed?"* with the
 
 ## Recipe 6 — Multi-team assessment with mixed Q&A
 
-`Orbital Sentinel` is the canonical example. Read it end-to-end at `c:\Users\HarrisonVerrios\Downloads\Space Range\Orbital Sentinel\orbital_sentinel.json`. Key features to copy:
+`Orbital Intel` is the canonical example. Read it end-to-end at `space-range-scripts/scenarios/Orbital Intel/orbital_intel.json`. Key features to copy:
 
 - Two enabled teams sharing a collection so they each command the same set of spacecraft.
 - ~22 ground vessels arranged into themed clusters (Red Sea, South China Sea, Venezuela).
 - One scripted Spacecraft event mid-run (`Battery Power Spikes` at `6000s`).
 - Long `questions[]` with all four question types and a clear `section` for each cluster.
 
-Things `Orbital Sentinel` does **not** demonstrate:
+Things `Orbital Intel` does **not** demonstrate:
 
 - GPS spoofing or jamming (use Recipe 5).
 - Docking (use Recipe 4).
@@ -336,4 +336,4 @@ If something is missing, the most likely culprits (in order) are:
 - [`README.md`](./README.md) — the index, with the loading order Studio applies.
 - [`events.md`](./events.md) — full event reference.
 - [`questions.md`](./questions.md) — full Q&A reference.
-- `c:\Users\HarrisonVerrios\Downloads\Space Range\Orbital Sentinel\orbital_sentinel.json` — most complete shipped example.
+- `space-range-scripts/scenarios/Orbital Intel/orbital_intel.json` — most complete shipped example.

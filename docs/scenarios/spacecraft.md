@@ -62,7 +62,7 @@ If `values` has fewer than six entries, the missing ones are zero-filled.
 | Equatorial low-Earth (LEO), circular, 700 km altitude | `[7078.0, 0.0, 0.0, 0.0, 0.0, 0.0]` |
 | Sun-synchronous (SSO), 800 km, 98.6° inclination | `[7178.0, 0.0, 98.6, 90.0, 0.0, 0.0]` |
 | ISS-like, 51.6° inclination | `[6778.0, 0.0, 51.6, 0.0, 0.0, 0.0]` |
-| Mid-LEO, slight eccentricity (used by `Orbital Sentinel`) | `[8200.0, 0.02, 17.3, 283.0, 0.0, 360.0]` |
+| Mid-LEO, slight eccentricity (used by `Orbital Intel`) | `[8200.0, 0.02, 17.3, 283.0, 0.0, 360.0]` |
 | Polar, ~600 km (used by `Telemetry_Drop`) | `[7000.0, 0.0, 97.88, 270.0, 0.0, 320.0]` |
 
 ---

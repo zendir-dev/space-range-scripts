@@ -163,7 +163,7 @@ The `Reaction Wheels` failure event accepts `Stuck Index` to lock one wheel; see
 | `Max Force` | `number` (N) | Saturation force. |
 | `Max Torque` | `number` (N·m) | Saturation torque. |
 
-Useful as an idealised actuator on tutorial / instructor spacecraft (the `Recon` rogue in `Orbital Sentinel` and the `Microsat` in `Docking_Procedure` use it instead of reaction wheels for simpler dynamics).
+Useful as an idealised actuator on tutorial / instructor spacecraft (the `Recon` rogue in `Orbital Intel` and the `Microsat` in `Docking_Procedure` use it instead of reaction wheels for simpler dynamics).
 
 ---
 
@@ -394,7 +394,7 @@ Both the chaser and the target need a `Docking Adapter` component, and both spac
 | `Color` | `string` (hex) | Text color. Accepts `#RRGGBB`. |
 | `Scale` | `number` | Text scale factor. |
 
-Pure visual / labelling — the text has no simulation effect, but teams can read it from a Camera image. This is the trick used by `Orbital Sentinel`'s rogue spacecraft, where the answer to one of the questions is the word painted on its solar panels.
+Pure visual / labelling — the text has no simulation effect, but teams can read it from a Camera image. This is the trick used by `Orbital Intel`'s rogue spacecraft, where the answer to one of the questions is the word painted on its solar panels.
 
 `Text` data fields are parsed by `UPhysicalTextExtension::Setup_Impl` and bypass the generic property loader, so the keys must be exact (case-insensitive but no aliases): `Text`, `Color`, `Scale`.
 

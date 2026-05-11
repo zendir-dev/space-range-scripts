@@ -1,14 +1,14 @@
-# Orbital Sentinel - Scenario Specification
+# Orbital Intel - Scenario Specification
 
 > **Status**: design documentation for the implemented scenario.
 > **Audience**: scenario author, instructor, Python-script maintainer.
-> **Source of truth**: `orbital_sentinel.json` and `orbital_sentinel.py`.
+> **Source of truth**: `orbital_intel.json` and `orbital_intel.py`.
 
 ---
 
 ## 1. One-line Pitch
 
-Orbital Sentinel is a maritime surveillance exercise where multiple blue teams operate a shared imaging / sensing spacecraft, inspect three geographically separated maritime tasking areas, and then identify and mitigate interference from a co-orbital rogue spacecraft.
+Orbital Intel is a maritime surveillance exercise where multiple blue teams operate a shared imaging / sensing spacecraft, inspect three geographically separated maritime tasking areas, and then identify and mitigate interference from a co-orbital rogue spacecraft.
 
 ---
 
@@ -131,7 +131,7 @@ Objects `GO_001` through `GO_011` create the Red Sea piracy tableau.
 | Commercial traffic | `EG01` - `EG07` | Seven large green ships in the strait. |
 | Suspect / non-commercial vessels | `IR01`, `US01`, `US02`, `US03` | Coloured ships used for bad-actor identification. |
 
-Question answers in `orbital_sentinel.json`:
+Question answers in `orbital_intel.json`:
 
 | Question | Answer |
 | --- | --- |
@@ -233,7 +233,7 @@ The rogue effect is downlink jamming. In the question bank, teams identify:
 
 ### 8.2 Script Mechanics
 
-`orbital_sentinel.py` runs as the `Rogue` team and:
+`orbital_intel.py` runs as the `Rogue` team and:
 
 1. Creates a `Scenario(team_name="Rogue", config_path=...)`.
 2. Schedules attitude events for `SC_002`'s `Jammer`.
@@ -274,7 +274,7 @@ The JSON question bank is organized around the task orders plus orbital operatio
 
 ## 10. Implementation Inventory
 
-### `orbital_sentinel.json`
+### `orbital_intel.json`
 
 Contains:
 
@@ -286,7 +286,7 @@ Contains:
 - One battery fault event at `6 000 s`.
 - Full question bank, total score `100`.
 
-### `orbital_sentinel.py`
+### `orbital_intel.py`
 
 Contains:
 
@@ -300,7 +300,7 @@ Contains:
 
 ## 11. Dry-run Checklist
 
-- [ ] Load `orbital_sentinel.json` and verify it parses.
+- [ ] Load `orbital_intel.json` and verify it parses.
 - [ ] Confirm all eight blue teams can connect to `SC_001`.
 - [ ] Confirm `SC_002` is hidden on the default map but can be imaged / detected through intended sensors.
 - [ ] Capture reference screenshots or imagery for all three maritime AOIs.

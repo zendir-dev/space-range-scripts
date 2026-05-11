@@ -2,8 +2,8 @@
 # See the 'LICENSE' file at the root of this git repository
 
 """
-Orbital Sentinel — Space Range scenario script
-===============================================
+Orbital Intel — Space Range scenario script
+==============================================
 Red Team spacecraft performs sun-pointing, nadir-pointing, and then
 jams all enemy teams' uplink frequencies before standing down.
 
@@ -12,11 +12,11 @@ admin API (``admin_query_data`` with ``recent=true``), so the jammer will
 target whatever frequencies the teams are actually using at that time —
 not the frequencies they started with.
 
-The scenario configuration is read from ``scenarios/orbital_sentinel.json``
-(auto-detected by name match).
+The scenario configuration is read from ``orbital_intel.json`` in this
+script's directory (override path via CLI argument).
 
 Run from the project root:
-    python scenarios/orbital_sentinel.py
+    python "scenarios/Orbital Intel/orbital_intel.py"
 """
 
 import sys
@@ -37,14 +37,14 @@ from src import Scenario, commands
 # ---------------------------------------------------------------------------
 # CLI: optional config file override
 # ---------------------------------------------------------------------------
-_parser = argparse.ArgumentParser(description="Orbital Sentinel scenario")
+_parser = argparse.ArgumentParser(description="Orbital Intel scenario")
 _parser.add_argument(
     "config",
     nargs="?",
-    default=os.path.join(_SCRIPT_DIR, "orbital_sentinel.json"),
+    default=os.path.join(_SCRIPT_DIR, "orbital_intel.json"),
     help=(
         "Path to the scenario JSON config file. "
-        "Defaults to orbital_sentinel.json in the same directory as this script. "
+        "Defaults to orbital_intel.json in the same directory as this script. "
         "A bare filename (no path separators) is resolved relative to this script's directory."
     ),
 )
@@ -62,7 +62,7 @@ _config_path = os.path.abspath(_config_path)
 # =============================================================================
 
 # Prompts for game name and admin password (saves/restores defaults),
-# loads scenarios/orbital_sentinel.json, resolves Red Team and its assets,
+# loads orbital_intel.json, resolves Red Team and its assets,
 # and enumerates all other enabled teams as enemies.
 scenario = Scenario(team_name="Rogue", config_path=_config_path)
 

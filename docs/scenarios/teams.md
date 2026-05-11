@@ -47,7 +47,7 @@ Each entry in `teams[]` is one team in the scenario. The order doesn't matter; t
 
 ## Example: a multi-team competition team list
 
-From `Orbital Sentinel`:
+From `Orbital Intel`:
 
 ```json
 "teams": [

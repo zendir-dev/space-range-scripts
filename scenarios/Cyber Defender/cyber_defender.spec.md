@@ -2,7 +2,7 @@
 
 > **Status**: implemented baseline — keep synced with JSON/script edits.
 > **Audience**: scenario author (JSON), Python-script author (rogue agent), instructor.
-> **Sibling references**: `scenarios/Orbital Sentinel/orbital_sentinel.json` & `orbital_sentinel.py` for the closest existing template; this scenario reuses that shape (multiple blue teams sharing one collection + scripted Red team).
+> **Sibling references**: `scenarios/Orbital Intel/orbital_intel.json` & `orbital_intel.py` for the closest existing template; this scenario reuses that shape (multiple blue teams sharing one collection + scripted Red team).
 
 ---
 
@@ -207,7 +207,7 @@ This narrative drives:
 - One clear AOI for imagery in Phase 0.
 - A reason to keep the EM sensor on (used for Phase 2 attribution).
 - A reason to use **EM-sensor / spectrum** on the rogue carrier during replay (call-sign reinforced by mission brief; mesh hidden in stock JSON).
-- A reason for **multiple parallel teams** even though they share a spacecraft ("duty crews"), which fits how *Orbital Sentinel* organises its eight blue teams.
+- A reason for **multiple parallel teams** even though they share a spacecraft ("duty crews"), which fits how *Orbital Intel* organises its eight blue teams.
 
 > **Naming**: `Watchtower` (defender SC) and `PHANTOM` (rogue SC) replace the earlier "Argus" placeholder used in spec drafts. Final names are at the instructor's discretion — change the `name` field on the assets and the `Text` callsign on the rogue without any other code changes.
 
@@ -217,9 +217,9 @@ This narrative drives:
 
 ### 6.1 Team structure
 
-Mirroring *Orbital Sentinel*: **N blue duty-crew teams** all share one spacecraft via the same collection ID, plus **one Rogue team** that owns the adversary spacecraft and is driven by the Python script.
+Mirroring *Orbital Intel*: **N blue duty-crew teams** all share one spacecraft via the same collection ID, plus **one Rogue team** that owns the adversary spacecraft and is driven by the Python script.
 
-We **start with `N = 2` blue teams** to keep the first end-to-end test simple, but the JSON should be structured so growing to 8 (matching *Orbital Sentinel*) is a copy-paste of additional team entries — nothing else has to change.
+We **start with `N = 2` blue teams** to keep the first end-to-end test simple, but the JSON should be structured so growing to 8 (matching *Orbital Intel*) is a copy-paste of additional team entries — nothing else has to change.
 
 | Team | Role | Driver | `collection` |
 | --- | --- | --- | --- |
@@ -230,7 +230,7 @@ We **start with `N = 2` blue teams** to keep the first end-to-end test simple, b
 
 ### 6.2 Why all blue teams share the spacecraft
 
-This is the *Orbital Sentinel* pattern verbatim: every entry in `teams[]` whose `collection` is `Main` references the same spacecraft (`SC_OPS`). Each team still gets its own:
+This is the *Orbital Intel* pattern verbatim: every entry in `teams[]` whose `collection` is `Main` references the same spacecraft (`SC_OPS`). Each team still gets its own:
 
 - **Frequency** — for uplink/downlink RF identity (the rogue can target each separately).
 - **Key** — Caesar key applied to ciphertext (so each team's traffic is distinguishable on-air).
@@ -251,7 +251,7 @@ This means the rogue's replay attack has to **target a specific team's frequency
 ]
 ```
 
-Frequency choices stay **distinct** so jamming/replay targets are unambiguous in EM-sensor telemetry. When extending to 8 blues, pick frequencies spread across the same band to mimic *Orbital Sentinel*.
+Frequency choices stay **distinct** so jamming/replay targets are unambiguous in EM-sensor telemetry. When extending to 8 blues, pick frequencies spread across the same band to mimic *Orbital Intel*.
 
 ---
 
@@ -292,7 +292,7 @@ The APID column matters for Phase 3 telemetry overlays (§ 9, A9-A10 — Magneto
 
 | Component | Why |
 | --- | --- |
-| `Receiver` (`Antenna Gain: 500`) | Wide-coverage RX so foreign uplink intercepts pile up quickly (matches Orbital Sentinel's Recon). |
+| `Receiver` (`Antenna Gain: 500`) | Wide-coverage RX so foreign uplink intercepts pile up quickly (matches Orbital Intel's Recon). |
 | `Transmitter` | For replay-attack on-air re-transmission. |
 | `Jammer` (`Power: 100`, `Antenna Gain: 15`, `Lookup: "RFPattern.csv"`) | Uplink/downlink jamming. |
 | `Computer`, `External Force Torque`, `Battery`, `Solar Panel` | Standard support. |
@@ -317,7 +317,7 @@ The APID column matters for Phase 3 telemetry overlays (§ 9, A9-A10 — Magneto
 
 ### 7.3 Visual concealment
 
-`visualization.hide: true` on `SC_ROGUE` (same pattern as *Orbital Sentinel*'s stock rogue) — the mesh is **not** shown on the default map / 3D pass. Discovery is **EM-sensor and spectrum** during replay/jam, plus mission context for the call-sign question. The `MRO` chassis and `Text` "PHANTOM" components remain in the asset for custom builds that clear `hide`.
+`visualization.hide: true` on `SC_ROGUE` (same pattern as *Orbital Intel*'s stock rogue) — the mesh is **not** shown on the default map / 3D pass. Discovery is **EM-sensor and spectrum** during replay/jam, plus mission context for the call-sign question. The `MRO` chassis and `Text` "PHANTOM" components remain in the asset for custom builds that clear `hide`.
 
 ---
 
@@ -329,7 +329,7 @@ The APID column matters for Phase 3 telemetry overlays (§ 9, A9-A10 — Magneto
 
 **Optional assessment:** the question bank includes a **primary Hormuz cluster count** (= **5**, excluding decoys). Skip it if you want zero overlap with counter-piracy tropes.
 
-Earlier guidance still applies: **fewer** vessels than *Orbital Sentinel* because cyber signatures are the focus.
+Earlier guidance still applies: **fewer** vessels than *Orbital Intel* because cyber signatures are the focus.
 
 ---
 
@@ -533,7 +533,7 @@ When this spec is approved, three artefacts get produced (all in this folder):
 
 ### 11.2 `cyber_defender.py`
 
-Mirrors `orbital_sentinel.py` shape but uses the new multi-team helpers:
+Mirrors `orbital_intel.py` shape but uses the new multi-team helpers:
 
 ```python
 from src import Scenario, commands
@@ -601,8 +601,8 @@ Short page (single screen) giving the instructor:
 
 ## 13. References
 
-- `scenarios/Orbital Sentinel/orbital_sentinel.json` — closest template.
-- `scenarios/Orbital Sentinel/orbital_sentinel.py` — scripted-rogue pattern.
+- `scenarios/Orbital Intel/orbital_intel.json` — closest template.
+- `scenarios/Orbital Intel/orbital_intel.py` — scripted-rogue pattern.
 - `docs/scenarios/events.md` — `Spacecraft`, `GPS`, `Cyber` event reference.
 - `docs/scenarios/recipes.md` — Recipe 5 (GPS spoof), Recipe 3 (component fault).
 - `docs/scenarios/components.md` — Jammer / Receiver / Transmitter `data` keys.

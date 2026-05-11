@@ -79,7 +79,7 @@ The Cyber-event ASCII payloads for Magnetometer (`STAR INJECT`) and EM Sensor (`
 
 ## Extending to 8 blue teams
 
-Add the extra entries to `teams[]` in the JSON (use the *Orbital Sentinel* roster as a template — the colours and frequencies are spread far enough apart to keep the EM-sensor view legible). **No Python changes are required.** `cyber_defender.py` discovers everything from the config + admin API:
+Add the extra entries to `teams[]` in the JSON (use the *Orbital Intel* roster as a template — the colours and frequencies are spread far enough apart to keep the EM-sensor view legible). **No Python changes are required.** `cyber_defender.py` discovers everything from the config + admin API:
 
 - `scenario.enemy_teams` enumerates blue teams from the JSON.
 - `scenario.live_enemy_frequencies_by_team()` admin-queries each team's live frequency at fire-time.

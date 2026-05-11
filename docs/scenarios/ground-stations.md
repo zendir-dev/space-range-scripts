@@ -33,7 +33,7 @@ The `ground_stations` block defines the pool of ground stations available to **e
 
 Studio ships with a comprehensive city table — most major capitals and many secondary cities are available. The shipped scenarios use these patterns:
 
-- **Global coverage** (`Orbital Sentinel`): seven well-spread stations so every spacecraft has a close contact. `Madrid`, `Dubai`, `Singapore`, `Auckland`, `Easter Island`, `Salvador`, `Miami`.
+- **Global coverage** (`Orbital Intel`): seven well-spread stations so every spacecraft has a close contact. `Madrid`, `Dubai`, `Singapore`, `Auckland`, `Easter Island`, `Salvador`, `Miami`.
 - **Regional coverage** (`Docking_Procedure`): a hemisphere-biased cluster for an exercise focused on a particular orbit. `Paris`, `Dubai`, `Colombo`, `Singapore`, `Sydney`, `Auckland`, `Lima`, `New York`.
 - **Polar coverage** (`Telemetry_Drop`): includes `Amundsen-Scott` so that polar-orbit spacecraft are visible at most points of their orbit.
 

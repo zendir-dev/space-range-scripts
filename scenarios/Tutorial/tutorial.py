@@ -2,21 +2,13 @@
 # See the 'LICENSE' file at the root of this git repository
 
 """
-Orbital Sentinel — Space Range scenario script
-===============================================
-Red Team spacecraft performs sun-pointing, nadir-pointing, and then
-jams all enemy teams' uplink frequencies before standing down.
-
-Enemy frequencies are resolved **live** at the moment of jamming via the
-admin API (``admin_query_data`` with ``recent=true``), so the jammer will
-target whatever frequencies the teams are actually using at that time —
-not the frequencies they started with.
-
-The scenario configuration is read from ``scenarios/orbital_sentinel.json``
-(auto-detected by name match).
+Tutorial — Space Range scenario script
+========================================
+Minimal scripted scenario for learning the framework: loads ``tutorial.json``,
+schedules a few example events, and runs until Ctrl+C.
 
 Run from the project root:
-    python scenarios/orbital_sentinel.py
+    python "scenarios/Tutorial/tutorial.py"
 """
 
 import sys
@@ -59,7 +51,7 @@ _config_path = os.path.abspath(_config_path)
 # =============================================================================
 
 # Prompts for game name and admin password (saves/restores defaults),
-# loads scenarios/orbital_sentinel.json, resolves Red Team and its assets,
+# loads tutorial.json, resolves Red Team and its assets,
 # and enumerates all other enabled teams as enemies.
 scenario = Scenario(team_name="Rogue", config_path=_config_path)
 

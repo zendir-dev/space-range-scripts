@@ -237,7 +237,7 @@ If that throws, check whether `Commands` is the literal string `"[]"` (empty lis
 
 **Diagnostic.** Run [`admin_get_scenario_events`](../api-reference/admin-requests.md#admin_get_scenario_events). The response lists every parsed event; if your event is missing, the JSON failed to parse it.
 
-**Fix.** Compare `Target` strings against the working examples in `orbital_sentinel.json`. Use exact spelling.
+**Fix.** Compare `Target` strings against the working examples in `orbital_intel.json`. Use exact spelling.
 
 ### "I changed the scenario JSON but Studio is still using the old one."
 

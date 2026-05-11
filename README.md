@@ -57,9 +57,11 @@ Key behaviours:
 ```
 space-range-scripts/
 │
-├── scenarios/                  # One script + one JSON config per scenario
-│   ├── orbital_sentinel.py     # Example scenario script
-│   └── orbital_sentinel.json   # Scenario configuration (simulation, teams, assets)
+├── scenarios/                  # One folder per scenario (script + JSON + spec)
+│   ├── Orbital Intel/
+│   │   ├── orbital_intel.py    # Example scenario script
+│   │   └── orbital_intel.json  # Scenario configuration (simulation, teams, assets)
+│   └── …
 │
 ├── src/                        # Reusable framework library
 │   ├── __init__.py
@@ -103,12 +105,12 @@ pip install -r requirements.txt
 
 **2. Configure your scenario**
 
-Each scenario has a paired `.json` file (e.g. `scenarios/orbital_sentinel.json`) that defines the simulation parameters, teams, assets, and ground stations. Update the team IDs, passwords, frequencies, and asset IDs to match your Space Range instance.
+Each scenario has a paired `.json` file (e.g. `scenarios/Orbital Intel/orbital_intel.json`) that defines the simulation parameters, teams, assets, and ground stations. Update the team IDs, passwords, frequencies, and asset IDs to match your Space Range instance.
 
 **3. Run a scenario script**
 
 ```bash
-python scenarios/orbital_sentinel.py
+python "scenarios/Orbital Intel/orbital_intel.py"
 ```
 
 On startup you will be prompted for the game/instance name and admin password:
@@ -389,7 +391,7 @@ The `src.printer` module provides coloured ANSI terminal output helpers used thr
 ```python
 from src import printer
 
-printer.banner("SPACE RANGE — Orbital Sentinel")   # bold white banner
+printer.banner("SPACE RANGE — Orbital Intel")   # bold white banner
 printer.info("Connecting to broker…")            # cyan  — connection / instance events
 printer.success("Asset ID resolved: 2D708E04")  # green — resolved IDs, commands sent OK
 printer.warn("Retrying asset resolution…")      # yellow — non-fatal issues
