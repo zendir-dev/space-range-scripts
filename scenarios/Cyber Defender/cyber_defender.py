@@ -280,7 +280,7 @@ def live_defender_guidance_args(default_args: dict) -> dict:
 UPLINK_JAM_START = 1_980.0
 UPLINK_JAM_END = 2_280.0
 # Far below broadcast downlink jam (3 W); enough to perturb links if dry-run proves too faint, bump slightly.
-UPLINK_JAM_POWER = 0.4
+UPLINK_JAM_POWER = 0.3
 
 if not scenario.enemy_teams:
     printer.warn("A7: no enemy teams configured — uplink jam will be skipped")
@@ -320,7 +320,7 @@ JAM_DUBAI_START = 900.0
 JAM_DUBAI_END = 1_500.0
 JAM_SINGAPORE_START = 2_400.0
 JAM_SINGAPORE_END = 3_000.0
-BROADCAST_JAM_POWER = 30.0
+BROADCAST_JAM_POWER = 3.0
 
 
 def _add_broadcast_jam_window(label: str, on_at: float, off_at: float, ground_station: str) -> None:

@@ -902,8 +902,8 @@
 	"questions": [
 		{
 			"section": "GPS Spoofing",
-			"title": "At what time (in minutes from session start) did the single GPS spoofing episode first occur?",
-			"description": "The GPS spoofing first occurred at a point in time. Give elapsed simulation minutes at which this spoofing first occurred.",
+			"title": "At what time (in minutes from session start) did the GPS spoofing start?",
+			"description": "The GPS spoofing event occurred at a point in time. Give elapsed simulation minutes at which this event started.",
 			"type": "number",
 			"answer": {
 				"unit": "min",
@@ -915,8 +915,8 @@
 		},
 		{
 			"section": "GPS Spoofing",
-			"title": "At what time (in minutes from session start) did the single GPS spoofing episode last occur?",
-			"description": "One episode of GPS spoofing occurred. The GPS spoofing last occurred at a point in time. Give elapsed simulation minutes at which this spoofing last occurred.",
+			"title": "At what time (in minutes from session start) did the GPS spoofing end?",
+			"description": "The GPS spoofing event occurred at a point in time. Give elapsed simulation minutes at which this event ended.",
 			"type": "number",
 			"answer": {
 				"unit": "min",
@@ -1055,7 +1055,7 @@
 		},
 		{
 			"section": "Cyber Injects",
-			"title": "What hidden text appeared in the cyber injection around 14 minutes?",
+			"title": "What hidden text appeared in the cyber injection around 14 minutes into the scenario?",
 			"description": "One of the messages had injected text, disrupting the data found within the packets. What was the text that appeared?",
 			"type": "text",
 			"answer": {
@@ -1066,7 +1066,7 @@
 		},
 		{
 			"section": "Cyber Injects",
-			"title": "What hidden text appeared in the cyber injection around 32 minutes?",
+			"title": "What hidden text appeared in the cyber injection around 32 minutes into the scenario?",
 			"description": "One of the messages had injected text, disrupting the data found within the packets. What was the text that appeared?",
 			"type": "text",
 			"answer": {
@@ -1090,9 +1090,9 @@
 				"value": 1,
 				"reason": [
 					"Incorrect. Two episodes of jamming occurred.",
-					"Correct. One episode of jamming occurred.",
-					"Incorrect. Three episodes of jamming occurred.",
-					"Incorrect. Four episodes of jamming occurred."
+					"Correct. Two episodes of jamming occurred.",
+					"Incorrect. Two episodes of jamming occurred.",
+					"Incorrect. Two episodes of jamming occurred."
 				],
 				"score": 5
 			}
@@ -1437,14 +1437,14 @@
 		},
 		{
 			"section": "Uplink Jamming",
-			"title": "What was the lowest signal-to-noise ratio (dB) observed during the uplink jamming attack?",
-			"description": "During the uplink jamming attack, what was the lowest signal-to-noise ratio (dB) observed?",
+			"title": "What was the lowest (non-negative) signal-to-noise ratio (dB) observed during the uplink jamming attack?",
+			"description": "During the uplink jamming attack, what was the lowest signal-to-noise ratio (dB) observed? Exclude SNR values < 5dB, including negative values.",
 			"type": "number",
 			"answer": {
 				"unit": "dB",
-				"value": 31.0,
+				"value": 28.0,
 				"tolerance": 5.0,
-				"reason": "The SNR dropped to 31 dB during the uplink jamming attack. This can be found in the telemetry data on the uplink connection.",
+				"reason": "The SNR dropped to 28 dB during the uplink jamming attack. This can be found in the telemetry data on the uplink connection.",
 				"score": 7
 			}
 		},
