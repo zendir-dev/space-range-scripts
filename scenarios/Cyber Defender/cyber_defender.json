@@ -40,30 +40,90 @@
 		},
 		{
 			"enabled": true,
-			"id": 111111,
-			"password": "AAAAAA",
-			"name": "Blue Team",
-			"key": 73,
+			"id": 473829,
+			"password": "R4K7MZ",
+			"name": "Team Blue",
+			"key": 42,
 			"frequency": 612,
 			"collection": "Main",
-			"color": "#1E90FF"
+			"color": "#0050FF"
 		},
 		{
 			"enabled": true,
-			"id": 222222,
-			"password": "BBBBBB",
-			"name": "Green Team",
-			"key": 119,
+			"id": 916354,
+			"password": "8XTPWN",
+			"name": "Team Green",
+			"key": 87,
 			"frequency": 745,
 			"collection": "Main",
 			"color": "#00FF00"
+		},
+		{
+			"enabled": true,
+			"id": 263718,
+			"password": "5LZQVB",
+			"name": "Team Yellow",
+			"key": 154,
+			"frequency": 889,
+			"collection": "Main",
+			"color": "#FFFF00"
+		},
+		{
+			"enabled": true,
+			"id": 584927,
+			"password": "2WCF9H",
+			"name": "Team Orange",
+			"key": 203,
+			"frequency": 534,
+			"collection": "Main",
+			"color": "#FF7000"
+		},
+		{
+			"enabled": true,
+			"id": 731456,
+			"password": "N6RGYD",
+			"name": "Team Pink",
+			"key": 117,
+			"frequency": 678,
+			"collection": "Main",
+			"color": "#FF8CEC"
+		},
+		{
+			"enabled": true,
+			"id": 629540,
+			"password": "B8WNHQ",
+			"name": "Team White",
+			"key": 72,
+			"frequency": 712,
+			"collection": "Main",
+			"color": "#FFFFFF"
+		},
+		{
+			"enabled": true,
+			"id": 395082,
+			"password": "7SMXKE",
+			"name": "Team Purple",
+			"key": 29,
+			"frequency": 823,
+			"collection": "Main",
+			"color": "#8600FF"
+		},
+		{
+			"enabled": true,
+			"id": 847163,
+			"password": "4PVTZ3",
+			"name": "Team Cyan",
+			"key": 195,
+			"frequency": 561,
+			"collection": "Main",
+			"color": "#00FFFF"
 		}
 	],
 	"assets": {
 		"space": [
 			{
 				"id": "SC_OPS",
-				"name": "Watchtower",
+				"name": "Microsat",
 				"orbit": {
 					"planet": "Earth",
 					"values": [
@@ -338,7 +398,7 @@
 			},
 			{
 				"id": "SC_ROGUE",
-				"name": "Phantom",
+				"name": "Microsat",
 				"orbit": {
 					"planet": "Earth",
 					"values": [

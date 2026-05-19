@@ -359,7 +359,7 @@ _add_broadcast_jam_window(
 
 scheduler.add_event(
     name="Initial Sun Point",
-    trigger_time=0.0,
+    trigger_time=10.0,
     **commands.guidance_sun("Solar Panel"),
 )
 scheduler.add_event(
