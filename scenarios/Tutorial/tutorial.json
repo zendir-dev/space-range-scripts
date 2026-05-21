@@ -438,14 +438,14 @@
 		},
 		{
 			"section": "Examples",
-			"title": "What is the battery capacity of your spacecraft in Wh?",
-			"description": "Using the telemetry data calculate the battery capacity of your spacecraft in Wh.",
+			"title": "What is the battery capacity of your spacecraft in Ah?",
+			"description": "Using the telemetry data calculate the battery capacity of your spacecraft in Ah.",
 			"type": "number",
 			"answer": {
-				"unit": "Wh",
+				"unit": "Ah",
 				"value": 80.0,
 				"tolerance": 1.0,
-				"reason": "80.0 Wh. This can be calculated by the battery specifications.",
+				"reason": "80.0 Ah. This can be calculated by the battery specifications.",
 				"score": 10
 			}
 		}
