@@ -1,4 +1,8 @@
 {
+	"metadata": {
+		"name": "Orbital Intel",
+		"description": "In this scenario, participants will analyze a complex orbital environment with multiple vessels and spacecraft. The scenario includes various events and questions that challenge the participant to identify and analyze the activities of different vessels, as well as their impacts on the overall situation. Participants will need to use their knowledge of orbital mechanics, satellite operations, and maritime activities to successfully navigate the scenario and answer the questions."
+	},
 	"simulation": {
 		"epoch": "2025/04/15 07:30:00",
 		"speed": 5.0,

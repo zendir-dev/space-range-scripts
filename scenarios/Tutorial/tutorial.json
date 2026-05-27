@@ -1,4 +1,8 @@
 {
+	"metadata": {
+		"name": "Tutorial",
+		"description": "This is a tutorial scenario designed to introduce participants to the basics of the Space Range simulation environment. It includes a simple spacecraft in orbit around Earth, with a few basic components and a single ground station. The scenario also includes a few example questions to help participants get familiar with the types of questions they may encounter in the competition."
+	},
 	"simulation": {
 		"epoch": "2025/04/15 07:30:00",
 		"speed": 3.0,

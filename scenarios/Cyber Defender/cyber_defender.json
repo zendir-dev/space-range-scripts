@@ -1,4 +1,8 @@
 {
+	"metadata": {
+		"name": "Cyber Defender",
+		"description": "In this scenario, a spacecraft is operating nominally in orbit when it experiences a solar panel degradation fault and a GPS spoofing attack. The scenario includes various events that challenge the participant to identify and analyze the faults and attacks, as well as their impacts on the spacecraft's performance and operations."
+	},
 	"simulation": {
 		"epoch": "2026/02/02 08:00:00",
 		"speed": 1.0,
