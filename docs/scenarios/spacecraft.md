@@ -19,6 +19,7 @@ Both are parsed by `SpaceAssetFromJson` / `AssetCollectionFromJson` in `studio/P
   "physics":       { ... },
   "visualization": { ... },
   "controller":    { ... },
+  "power":         { ... },
   "components":    [ ... ]
 }
 ```
@@ -31,6 +32,7 @@ Both are parsed by `SpaceAssetFromJson` / `AssetCollectionFromJson` in `studio/P
 | `physics` | no | Mass, centre-of-mass, and 3×3 inertia tensor. Defaults are usable but pick numbers that match the spacecraft scale. |
 | `visualization` | no | Unreal mesh path and rendering scale/offset. Default is a generic chassis. |
 | `controller` | no | Per-spacecraft tuning — battery thresholds, ping interval, RPO flag, etc. |
+| `power` | no | Optional power-bus wiring between components. See [`power`](#power--electrical-bus) below. |
 | `components` | yes (in practice) | The on-board hardware. A spacecraft with no components has nothing for teams to operate. |
 
 ---
@@ -149,6 +151,92 @@ The `controller` block is **optional**; defaults work for most exercises. The ke
 
 ---
 
+## `power` — electrical bus
+
+Studio attaches a `UPowerBus` behaviour to every spacecraft. The optional `power` block on each `assets.space[]` entry defines how **generators** (solar panels and other `APowerSource` children), **batteries**, and the **jammer** (if present) are wired together at load time.
+
+Implementation: `ConstructSpacecraftFromDefinition` in `studio/Plugins/SpaceRange/Source/SpaceRange/Private/Libraries/SpaceRangeDefinitionFunctionLibrary.cpp` (power-bus section ~lines 926–996).
+
+### JSON shape
+
+```json
+"power": {
+  "bus": [
+    {
+      "source_component": "Solar Panel +X",
+      "source_terminal": "out",
+      "target_component": "Battery",
+      "target_terminal": "out"
+    },
+    {
+      "source_component": "Battery",
+      "source_terminal": "out",
+      "target_component": "Jammer",
+      "target_terminal": "in"
+    }
+  ]
+}
+```
+
+| Key | JSON type | Description |
+| --- | --- | --- |
+| `bus` | `object[]` | Ordered list of connections. Each object is one directed link on the bus. |
+
+Per-connection fields (names must match component `name` values on **that** spacecraft):
+
+| Key | JSON type | Default | Description |
+| --- | --- | --- | --- |
+| `source_component` | `string` | — | Source component **name** (resolved via the spacecraft controller's `GetTarget`). |
+| `source_terminal` | `string` | `"out"` | Terminal on the source: `"out"` or `"in"` (case-insensitive). |
+| `target_component` | `string` | — | Target component **name**. |
+| `target_terminal` | `string` | `"out"` | Terminal on the target: `"out"` or `"in"`. |
+
+If either component name cannot be found, Studio logs a warning and **skips** that connection; other connections still apply.
+
+The `power` value is stored as a JSON string on the asset definition (`Asset.Power` in C++). Author it as a nested object in scenario files; the loader reads `power.bus` as an array of connection objects.
+
+### Default behaviour when `bus` is empty or omitted
+
+If `power` is missing, `{}`, or `"bus": []`, Studio **auto-wires** the bus:
+
+1. **More than two batteries** — connect batteries **in series** (`batteries[0]` → `batteries[1]` → …) via `Connect`, which wires **source `out` → target `in`**.
+2. **At least one battery** — connect every child `APowerSource` (including solar panels) to **`batteries[0]`** with **both terminals set to `out`** (`ConnectTerminals(source, batteries[0], Out, Out)`).
+3. **Jammer present** — if there is at least one battery, connect the **last battery** to the spacecraft's `AJammingTransmitter` child via `Connect(last_battery, jammer)` (**battery `out` → jammer `in`**).
+
+Spacecraft with **no batteries and no power sources** get a power bus object but **no connections** from this auto-wiring (for example a jammer-only rogue hull with no solar panel or battery).
+
+Explicit `bus` entries **replace** auto-wiring entirely — they do not merge with defaults. If you define `bus`, you must list every connection you need.
+
+### Typical explicit patterns (match shipped scenarios)
+
+**Dual solar panels + single battery** (defender `Microsat`):
+
+```json
+"power": {
+  "bus": [
+    { "source_component": "Solar Panel +X", "source_terminal": "out", "target_component": "Battery", "target_terminal": "out" },
+    { "source_component": "Solar Panel -X", "source_terminal": "out", "target_component": "Battery", "target_terminal": "out" }
+  ]
+}
+```
+
+**Single solar panel + battery + jammer** (rogue `SC_ROGUE` / `Recon` with panel):
+
+```json
+"power": {
+  "bus": [
+    { "source_component": "Solar Panel", "source_terminal": "out", "target_component": "Battery", "target_terminal": "out" },
+    { "source_component": "Battery", "source_terminal": "out", "target_component": "Jammer", "target_terminal": "in" }
+  ]
+}
+```
+
+**No storage or generation** — omit `power` or use `"bus": []` and rely on auto-wiring (no-op when there are no batteries/sources).
+
+Jamming still draws from the battery when wired; `controller.jamming_multiplier` scales RF interference power consumption in the spacecraft controller.
+
+---
+
 ## `components[]` — on-board hardware
 
 This is the largest part of a scenario. Each entry instantiates one piece of hardware. The full per-class reference is in [components.md](components.md). At a glance:
@@ -234,6 +322,12 @@ A small but complete spacecraft definition — enough to copy/paste as a startin
     "ping_interval":  20.0,
     "reset_interval": 60.0,
     "enable_rpo":     false
+  },
+  "power": {
+    "bus": [
+      { "source_component": "Solar Panel +X", "source_terminal": "out", "target_component": "Battery", "target_terminal": "out" },
+      { "source_component": "Solar Panel -X", "source_terminal": "out", "target_component": "Battery", "target_terminal": "out" }
+    ]
   },
   "components": [
     { "class": "Solar Panel",     "name": "Solar Panel +X", "position": [ 0.8, 0.276313, -0.2], "rotation": [35.0, 0.0, 0.0], "data": { "Area": 0.3, "Efficiency": 0.4, "Mass": 10.0 } },

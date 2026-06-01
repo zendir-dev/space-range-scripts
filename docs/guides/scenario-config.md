@@ -169,6 +169,7 @@ Each spacecraft is the most complex object in the scenario. The shape:
   "physics": { ... },
   "visualization": { ... },
   "controller": { ... },
+  "power": { ... },
   "components": [ ... ]
 }
 ```
@@ -181,6 +182,7 @@ Each spacecraft is the most complex object in the scenario. The shape:
 | `physics` | Mass, centre-of-mass offset, and 3×3 inertia tensor. Drives attitude dynamics. |
 | `visualization` | The Unreal mesh path and scale used to render the spacecraft. `hide: true` hides it visually but keeps it simulating. |
 | `controller` | Per-spacecraft tuning (see below). |
+| `power` | Optional electrical-bus wiring between solar panels, batteries, and jammer. See [spacecraft.md — power](../scenarios/spacecraft.md#power--electrical-bus). |
 | `components` | The on-board hardware list. |
 
 #### `controller`
@@ -206,6 +208,10 @@ Each spacecraft is the most complex object in the scenario. The shape:
 | `reset_interval` | Sim seconds the spacecraft is offline after a `reset` (or after [`encryption`](../api-reference/spacecraft-commands.md#encryption) which causes a reboot). |
 | `jamming_multiplier` | Scales the per-watt RF interference produced by the spacecraft's jammer payload. |
 | `enable_rpo` | `true` enables [`rendezvous`](../api-reference/spacecraft-commands.md#rendezvous) and [`docking`](../api-reference/spacecraft-commands.md#docking). |
+
+#### `power`
+
+Optional. Lists explicit `bus` connections (`source_component`, `source_terminal`, `target_component`, `target_terminal`). Component names must match `components[].name`. If `bus` is omitted or empty, Studio auto-connects solar panels → first battery and battery → jammer (when those parts exist). Full rules and examples: [spacecraft.md — power](../scenarios/spacecraft.md#power--electrical-bus).
 
 #### `components[]`
 

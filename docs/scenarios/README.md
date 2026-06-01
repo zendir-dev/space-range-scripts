@@ -42,7 +42,7 @@ Every scenario JSON has this shape. **Every section is optional** except `teams`
 | `universe` | Atmosphere, magnetosphere, GPS, lighting toggles | [universe.md](universe.md) |
 | `ground_stations` | The pool of receiving sites used by every team | [ground-stations.md](ground-stations.md) |
 | `teams` | Team identity (ID, password, key, frequency, color, collection) | [teams.md](teams.md) |
-| `assets.space` | Spacecraft definitions (orbit, physics, components, controller) | [spacecraft.md](spacecraft.md) |
+| `assets.space` | Spacecraft definitions (orbit, physics, components, controller, power bus) | [spacecraft.md](spacecraft.md) |
 | `assets.collections` | Map of `collection` IDs → spacecraft IDs | [spacecraft.md#collections](spacecraft.md#collections) |
 | `objects.ground` | Vessels, text labels, and other passive ground actors | [ground-objects.md](ground-objects.md) |
 | `events` | Scripted failures and GPS effects on the simulation timeline | [events.md](events.md) |

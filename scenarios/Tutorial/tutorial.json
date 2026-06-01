@@ -190,6 +190,22 @@
 					"jamming_multiplier": 100.0,
 					"enable_rpo": false
 				},
+				"power": {
+					"bus": [
+						{
+							"source_component": "Solar Panel +X",
+							"source_terminal": "out",
+							"target_component": "Battery",
+							"target_terminal": "out"
+						},
+						{
+							"source_component": "Solar Panel -X",
+							"source_terminal": "out",
+							"target_component": "Battery",
+							"target_terminal": "out"
+						}
+					]
+				},
 				"components": [
 					{
 						"class": "Solar Panel",
