@@ -2,10 +2,10 @@
 
 The `assets` block is the part most scenario authoring time is spent on. It has two arrays:
 
-- `assets.space[]` — the spacecraft definitions. Each entry instantiates one `ASpacecraft` actor with attached components.
+- `assets.space[]` — the spacecraft definitions. Each entry creates one spacecraft with its attached components.
 - `assets.collections[]` — the lookup that maps team `collection` strings to spacecraft IDs.
 
-Both are parsed by `SpaceAssetFromJson` / `AssetCollectionFromJson` in `studio/Plugins/SpaceRange/Source/SpaceRange/Private/Libraries/SpaceRangeDefinitionFunctionLibrary.cpp`. Each spacecraft maps to `FSpaceAssetDefinition`.
+Studio reads both arrays when the scenario loads. Each `assets.space[]` entry defines one spacecraft; each `assets.collections[]` entry maps a team collection id to one or more spacecraft ids.
 
 ---
 
@@ -32,7 +32,7 @@ Both are parsed by `SpaceAssetFromJson` / `AssetCollectionFromJson` in `studio/P
 | `physics` | no | Mass, centre-of-mass, and 3×3 inertia tensor. Defaults are usable but pick numbers that match the spacecraft scale. |
 | `visualization` | no | Unreal mesh path and rendering scale/offset. Default is a generic chassis. |
 | `controller` | no | Per-spacecraft tuning — battery thresholds, ping interval, RPO flag, etc. |
-| `power` | no | Optional power-bus wiring between components. See [`power`](#power--electrical-bus) below. |
+| `power` | no | Optional on-board bus wiring (`bus`) and cross-spacecraft links (`interconnects`). See [`power`](#power--electrical-bus) below. |
 | `components` | yes (in practice) | The on-board hardware. A spacecraft with no components has nothing for teams to operate. |
 
 ---
@@ -153,9 +153,7 @@ The `controller` block is **optional**; defaults work for most exercises. The ke
 
 ## `power` — electrical bus
 
-Studio attaches a `UPowerBus` behaviour to every spacecraft. The optional `power` block on each `assets.space[]` entry defines how **generators** (solar panels and other `APowerSource` children), **batteries**, and the **jammer** (if present) are wired together at load time.
-
-Implementation: `ConstructSpacecraftFromDefinition` in `studio/Plugins/SpaceRange/Source/SpaceRange/Private/Libraries/SpaceRangeDefinitionFunctionLibrary.cpp` (power-bus section ~lines 926–996).
+Every spacecraft has an on-board **power bus**. The optional `power` block defines how **solar panels** (and other power sources), **batteries**, and the **jammer** (if present) are wired together when the scenario starts.
 
 ### JSON shape
 
@@ -180,7 +178,8 @@ Implementation: `ConstructSpacecraftFromDefinition` in `studio/Plugins/SpaceRang
 
 | Key | JSON type | Description |
 | --- | --- | --- |
-| `bus` | `object[]` | Ordered list of connections. Each object is one directed link on the bus. |
+| `bus` | `object[]` | Ordered list of on-board connections. Each object is one directed link on that spacecraft's bus. |
+| `interconnects` | `object[]` | Optional cross-spacecraft power links (see [Power interconnects](#power-interconnects-powerinterconnects)). |
 
 Per-connection fields (names must match component `name` values on **that** spacecraft):
 
@@ -193,17 +192,17 @@ Per-connection fields (names must match component `name` values on **that** spac
 
 If either component name cannot be found, Studio logs a warning and **skips** that connection; other connections still apply.
 
-The `power` value is stored as a JSON string on the asset definition (`Asset.Power` in C++). Author it as a nested object in scenario files; the loader reads `power.bus` as an array of connection objects.
+Author `power` as a nested object on each spacecraft entry. Studio reads `power.bus` as an ordered list of connections and `power.interconnects` (when present) as cross-spacecraft links.
 
 ### Default behaviour when `bus` is empty or omitted
 
 If `power` is missing, `{}`, or `"bus": []`, Studio **auto-wires** the bus:
 
-1. **More than two batteries** — connect batteries **in series** (`batteries[0]` → `batteries[1]` → …) via `Connect`, which wires **source `out` → target `in`**.
-2. **At least one battery** — connect every child `APowerSource` (including solar panels) to **`batteries[0]`** with **both terminals set to `out`** (`ConnectTerminals(source, batteries[0], Out, Out)`).
-3. **Jammer present** — if there is at least one battery, connect the **last battery** to the spacecraft's `AJammingTransmitter` child via `Connect(last_battery, jammer)` (**battery `out` → jammer `in`**).
+1. **More than one battery** — connect batteries **in series** along the bus (**first battery `out` → next battery `in`**, and so on).
+2. **At least one battery** — connect every solar panel (and other power source) to the **first battery** with **both terminals set to `out`** (`out` → `out`).
+3. **Jammer present** — if there is at least one battery, connect the **last battery** to the jammer (**battery `out` → jammer `in`**).
 
-Spacecraft with **no batteries and no power sources** get a power bus object but **no connections** from this auto-wiring (for example a jammer-only rogue hull with no solar panel or battery).
+Spacecraft with **no batteries and no power sources** still get a power bus, but auto-wiring creates **no connections** (for example a jammer-only rogue hull with no solar panel or battery).
 
 Explicit `bus` entries **replace** auto-wiring entirely — they do not merge with defaults. If you define `bus`, you must list every connection you need.
 
@@ -234,6 +233,90 @@ Explicit `bus` entries **replace** auto-wiring entirely — they do not merge wi
 **No storage or generation** — omit `power` or use `"bus": []` and rely on auto-wiring (no-op when there are no batteries/sources).
 
 Jamming still draws from the battery when wired; `controller.jamming_multiplier` scales RF interference power consumption in the spacecraft controller.
+
+### Power interconnects (`power.interconnects`)
+
+A **Power Interconnect** bridges two spacecraft **power buses** when the scenario loads so they start as one electrical network (for example a **pre-docked** pair before RPO/docking choreography is modelled separately). Cross links are applied **after** every spacecraft in the scenario exists.
+
+#### Component on both spacecraft
+
+Add a `Power Interconnect` component to **`components[]` on each spacecraft** that should share power:
+
+```json
+{ "class": "Power Interconnect", "name": "Interconnect" }
+```
+
+Names must match what you use in `power.bus` and `power.interconnects` (here `"Interconnect"`).
+
+#### Wire each interconnect onto its local bus first
+
+Before any cross-spacecraft link, **each** interconnect must be part of that spacecraft's bus — typically fed from a battery or other power source:
+
+```json
+{
+  "source_component": "Battery",
+  "source_terminal": "out",
+  "target_component": "Interconnect",
+  "target_terminal": "in"
+}
+```
+
+Upstream neighbours connect to the interconnect **`in`** terminal on the same bus. The interconnect's **`out`** terminal is used for downstream loads on the same bus; the cross-spacecraft bridge to the partner hull is created by `power.interconnects[]`, not by an extra `bus[]` row to the other spacecraft.
+
+If the interconnect is not wired on the local bus first, the cross-spacecraft link is **skipped** and Studio logs a warning.
+
+#### Declare the cross-spacecraft link on **one** spacecraft only
+
+Add an `interconnects` array beside `bus` inside the same `power` object. **One entry is enough** — Studio links the pair once; you do not repeat the block on the other spacecraft.
+
+```json
+"power": {
+  "bus": [
+    { "source_component": "Solar Panel +X", "source_terminal": "out", "target_component": "Battery", "target_terminal": "out" },
+    { "source_component": "Solar Panel -X", "source_terminal": "out", "target_component": "Battery", "target_terminal": "out" },
+    { "source_component": "Battery", "source_terminal": "out", "target_component": "Interconnect", "target_terminal": "in" }
+  ],
+  "interconnects": [
+    {
+      "source_component": "Interconnect",
+      "target_spacecraft": "Bravo",
+      "target_component": "Interconnect"
+    }
+  ]
+}
+```
+
+| Key | JSON type | Description |
+| --- | --- | --- |
+| `interconnects` | `object[]` | Cross-bus links to apply after local `bus` wiring. Optional; default is no links. |
+
+Per-interconnect fields:
+
+| Key | JSON type | Description |
+| --- | --- | --- |
+| `source_component` | `string` | **Local** interconnect `name` on the spacecraft that owns this `power` block. |
+| `target_spacecraft` | `string` | **`name` from the target's `assets.space[]` entry** (e.g. `"Bravo"`), **not** the collection id (`ALPHA`) and not the runtime hex asset id. |
+| `target_component` | `string` | Interconnect `name` on the target spacecraft. |
+
+Studio resolves the target hull as **`{team display name} + " " + {target_spacecraft}`** (e.g. team `Team Blue` + asset `Bravo` → `"Team Blue Bravo"`). If that actor is not found, the link is skipped with a warning.
+
+#### Requirements and restrictions
+
+| Rule | Detail |
+| --- | --- |
+| **Same team** | Both spacecraft must belong to the **same team** (same `teams[]` entry / collection the operator uses). Interconnects do not link across opposing teams or separate team identities. |
+| **Both hulls need an interconnect** | Each spacecraft must have a `Power Interconnect` component; `source_component` and `target_component` must name those components. |
+| **Local bus wiring on both sides** | Each interconnect must already appear on its own `power.bus` before the cross link is applied. |
+| **One `interconnects[]` row** | Define the link on **one** spacecraft only; Studio pairs the two interconnects once. |
+| **Different spacecraft** | Cannot link two interconnects on the **same** spacecraft. |
+| **One partner each** | Each interconnect may pair with at most one partner at load time. |
+| **Target must exist** | The target spacecraft must be defined in `assets.space[]` and assigned to the same team; Studio resolves it by team display name plus asset `name`. |
+
+Failed lookups (missing target name, wrong team, missing component, non-interconnect class) log a warning and **skip** that row; other scenario content still loads.
+
+#### Docking / RPO scenarios
+
+For exercises that start **physically docked** or share a depot bus (e.g. `Docking_Procedure`), add matching interconnect components on chaser and target, wire each into its local `power.bus`, and declare **one** `interconnects` entry so both buses merge at t=0. See [Recipe 4 — Docking / RPO](recipes.md#recipe-4--docking--rpo-exercise) and [Power Interconnect](components.md#power-interconnect).
 
 ---
 

@@ -1,6 +1,6 @@
 # `questions[]` — scenario Q&A
 
-The `questions[]` array holds the assessment that operators submit answers against during the run. Each entry is parsed into `FSpaceRangeScenarioQuestion` (`studio/Plugins/SpaceRange/Source/SpaceRange/Public/Structs/SpaceRangeScenarioQuestion.h`) by `LoadFromScenarioDefinitionJson`, scored by `EvaluateSubmission`, and surfaced to clients via `ToClientListEntryJson`.
+The `questions[]` array holds the assessment that operators submit answers against during the run. Studio loads each entry, scores submissions against the configured `answer`, and exposes the list to teams via [`list_questions`](../api-reference/ground-requests.md#list_questions).
 
 Question IDs are **assigned automatically** in load order (1, 2, 3, …). Authors do not write `id` into the JSON.
 
@@ -233,4 +233,4 @@ A complete `questions` block from a real scenario:
 
 - [`events.md`](./events.md) — design fault events that questions can probe.
 - [`README.md`](./README.md) — note about question IDs being auto-assigned.
-- `studio/Plugins/SpaceRange/Source/SpaceRange/Private/Structs/SpaceRangeScenarioQuestion.cpp` — exact scoring code.
+- [ground-requests.md — submit_answer](../api-reference/ground-requests.md#submit_answer) — how teams submit answers at runtime.

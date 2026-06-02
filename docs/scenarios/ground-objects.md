@@ -2,7 +2,7 @@
 
 The `objects.ground[]` array defines passive ground actors — vessels, text labels, and any other object placed at a lat/lon. Ground objects do not generate telemetry, cannot be commanded, and are not part of the team configuration. They exist to give imagery and EM-sensor exercises something realistic to find.
 
-Each entry maps to `FGroundObjectDefinition` (`studio/Plugins/SpaceRange/Source/SpaceRange/Public/Definitions/GroundObjectDefinition.h`), parsed by `GroundObjectDefinitionFromJson`.
+Each entry is loaded when the scenario starts.
 
 ```json
 {
@@ -36,7 +36,7 @@ Each entry maps to `FGroundObjectDefinition` (`studio/Plugins/SpaceRange/Source/
 
 ## Type-specific `data`
 
-Vessel and text have different `data` keys (parsed in `SpaceRangeDefinitionFunctionLibrary.cpp` lines 1143–1166).
+Vessel and text use different `data` keys:
 
 ### `type: "vessel"`
 

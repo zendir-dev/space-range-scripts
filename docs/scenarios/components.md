@@ -1,10 +1,10 @@
 # Components reference
 
-Every entry in a spacecraft's `components[]` array becomes one `APhysicalObject` actor on that spacecraft. The `class` field selects which simulation module is constructed — see the table below for the full list of accepted classes and their aliases.
+Every entry in a spacecraft's `components[]` array adds one piece of on-board hardware. The `class` field selects which component type is created — see the table below for accepted classes and aliases.
 
-The `data` object is **class-specific** tuning. `Mass` is the only universal key (every component has mass). Other keys map directly to C++ properties on the underlying class, with whitespace ignored when matching (`"Antenna Gain"` matches the `AntennaGain` property).
+The `data` object is **class-specific** tuning. `Mass` is the only universal key (every component has mass). Other keys set component parameters at load time; spaces in a key are ignored when matching (`"Antenna Gain"` and `"AntennaGain"` are equivalent).
 
-This page documents the data fields used by every shipped scenario plus every class-specific extension override surfaced through `Setup_Impl` (initial-load) and `Failure_Impl` (event-driven mutation).
+This page documents the `data` fields used in shipped scenarios and the keys that scripted `events[]` entries can change at runtime.
 
 ---
 
@@ -12,44 +12,43 @@ This page documents the data fields used by every shipped scenario plus every cl
 
 The `class` field is matched case-insensitive after spaces are stripped. The shipped scenarios spell classes with spaces (`"Solar Panel"`); shorter aliases also work.
 
-Source: `USpaceRangeLibrary::GetPhysicalObjectClass` in `studio/Plugins/SpaceRange/Source/SpaceRange/Private/Libraries/SpaceRangeLibrary.cpp`.
+| Class (canonical) | Aliases | Notes |
+| --- | --- | --- |
+| `Solar Panel` | — | Power source. |
+| `Battery` | — | Power store. Required for any spacecraft that does not run on solar alone. |
+| `Computer` | `Guidance Computer` | Brain — handles software modes (navigation, pointing, controller). |
+| `Reaction Wheels` | `RW` | Attitude actuator. |
+| `External Force Torque` | `External Force` | Generic force/torque actuator (stand-in for thrusters or RWs). |
+| `Cold Gas Thruster` | `Thruster` | Discrete-pulse thruster. |
+| `Ion Thruster` | — | Continuous low-thrust electric propulsion. |
+| `Receiver` | — | RF downlink/uplink receiver. |
+| `Transmitter` | — | RF transmitter. |
+| `Jammer` | `Jamming Transmitter` | Hostile RF emitter. |
+| `Storage` | `Partitioned Data Storage` | Onboard data buffer. |
+| `Camera` | `Optical Camera`, `Event Camera` | Visible-light camera. |
+| `Heatmap Camera` | `Infrared Camera` | Thermal-imagery camera. |
+| `EM Sensor` | `Electromagnetic Sensor` | RF-spectrum sensor (lets teams see radio sources). |
+| `GPS Sensor` | `GPS` | Position/velocity from the constellation. |
+| `Magnetometer` | — | Magnetic-field measurement. |
+| `Gyroscope` | `IMU` | Body-rate measurement. |
+| `Charge Coupled Device` | `CCD` | Low-level imaging sensor (more often used as a `Camera` model). |
+| `Docking Adapter` | `Docking` | RPO end-effector. Both vehicles need one to exchange a docking handshake. |
+| `Power Interconnect` | `PowerInterconnect` | Cross-bus connector; pairs two spacecraft power networks at load. See [Power Interconnect](#power-interconnect). |
+| `Text` | `Physical Text` | Pure-visual label (e.g. callsign written across the chassis). |
 
-| Class (canonical) | Aliases | Underlying C++ class | Notes |
-| --- | --- | --- | --- |
-| `Solar Panel` | — | `ASolarPanel` | Power source. |
-| `Battery` | — | `ABattery` | Power store. Required for any spacecraft that does not run on solar alone. |
-| `Computer` | `Guidance Computer` | `AGuidanceComputer` | Brain — handles software modes (navigation, pointing, controller). |
-| `Reaction Wheels` | `RW` | `AReactionWheelArray` | Attitude actuator. Implies an attitude-control mapping is set up automatically by the computer. |
-| `External Force Torque` | `External Force` | `AExternalForceTorque` | Generic force/torque actuator (used as an idealised stand-in for thrusters or RWs). |
-| `Cold Gas Thruster` | `Thruster` | `AColdGasThruster` | Discrete-pulse thruster. |
-| `Ion Thruster` | — | `AIonThruster` | Continuous low-thrust electric propulsion. |
-| `Receiver` | — | `AReceiver` | RF downlink/uplink receiver. |
-| `Transmitter` | — | `ATransmitter` | RF transmitter. |
-| `Jammer` | `Jamming Transmitter` | `AJammingTransmitter` | Hostile RF emitter. |
-| `Storage` | `Partitioned Data Storage` | `APartitionedDataStorage` | Onboard data buffer. |
-| `Camera` | `Optical Camera`, `Event Camera` | `ACamera` | Visible-light camera. |
-| `Heatmap Camera` | `Infrared Camera` | `AHeatmapCamera` | Thermal-imagery camera. |
-| `EM Sensor` | `Electromagnetic Sensor` | `AElectromagneticSensor` | RF-spectrum sensor (lets teams see radio sources). |
-| `GPS Sensor` | `GPS` | `AGPSSensor` | Position/velocity from the constellation. |
-| `Magnetometer` | — | `AMagnetometer` | Magnetic-field measurement. |
-| `Gyroscope` | `IMU` | `AGyroscope` | Body-rate measurement. |
-| `Charge Coupled Device` | `CCD` | `AChargeCoupledDevice` | Low-level imaging sensor (more often used as a `Camera` model). |
-| `Docking Adapter` | `Docking` | `ADockingAdapter` | RPO end-effector. Both vehicles need one to exchange a docking handshake. |
-| `Text` | `Physical Text` | `APhysicalText` | Pure-visual label (e.g. callsign written across the chassis). |
-
-You can also reference any other `APhysicalObject` subclass by its short C++ name as a fallback. If the class isn't recognised, Studio logs a warning and instantiates the base `APhysicalObject` (which is just a placeholder).
+If the `class` value is not recognised, Studio logs a warning and the component may not behave as intended.
 
 ---
 
 ## Universal `data` keys
 
-Every component accepts these keys in its `data` object. Internally each one corresponds to a `UVariableLibrary` property on the component; spaces in the JSON key are stripped before matching.
+Every component accepts these keys in its `data` object. Spaces in the JSON key are stripped before matching.
 
 | Key | Type | Default | Description |
 | --- | --- | --- | --- |
 | `Mass` | `number` (kg) | depends on class | Component mass. Summed into the spacecraft total when `physics.override_mass` is `false`. |
 
-Many components also expose direct properties such as `Sample Rate`, `Bit Rate`, `Antenna Gain`, etc. — these are listed per class below. The general rule is: any `Bool`, `Int`, `Float`, or `Enum` UPROPERTY on the C++ class is settable from `data`. Arrays, strings, and complex types are not (unless explicitly handled by `Setup_Impl`).
+Many components also expose tuning keys such as `Sample Rate`, `Bit Rate`, `Antenna Gain`, etc. — these are listed per class below. Keys not documented for a class are usually ignored at load time.
 
 ---
 
@@ -115,7 +114,7 @@ Battery error-model events: `Battery-IntermittentConnectionErrorModel` (power sp
 }
 ```
 
-The computer has no other authoring-time `data` keys. Its software modes (navigation, pointing, controller) are configured in code at startup (see `UGuidanceComputerExtension::Setup_Impl`):
+The computer has no other authoring-time `data` keys. Its software modes (navigation, pointing, controller) are configured at scenario load:
 
 - `NavigationMode = Simple`
 - `PointingMode = Inertial`
@@ -226,7 +225,7 @@ Authoring-time keys are limited to `Mass`. Thrust magnitude and Isp are class de
 | `Antenna Gain` | `number` (dBi) | Transmit-antenna gain. |
 | `Bit Rate` | `number` (bits/s) | Downlink bit rate. Affects how quickly the storage drain during downlink. |
 | `Mass` | `number` (kg) | Component mass. |
-| `Lookup` | `string` | Optional CSV lookup file name to configure the EM antenna pattern. Loaded by `UTransmitterExtension::Setup_Impl`. Most scenarios omit this. |
+| `Lookup` | `string` | Optional CSV lookup file name to configure the EM antenna pattern. Most scenarios omit this. |
 
 `Frequency` is excluded from generic parsing — set by the team config (`teams[].frequency`) and rotated at runtime via [`telemetry`](../api-reference/spacecraft-commands.md#telemetry) (from ground) or [`encryption`](../api-reference/spacecraft-commands.md#encryption) (from the spacecraft).
 
@@ -254,7 +253,7 @@ The `Transmitter-TransmitterPacketCorruptionErrorModel` event injects per-packet
 | --- | --- | --- |
 | `Power` | `number` (W) | Output power. |
 | `Antenna Gain` | `number` (dBi) | Antenna gain. |
-| `Lookup` | `string` | CSV lookup file describing the EM emission pattern, loaded by `UJammerExtension::Setup_Impl`. The shipped scenarios use `"RFPattern.csv"`. |
+| `Lookup` | `string` | CSV lookup file describing the EM emission pattern. The shipped scenarios use `"RFPattern.csv"`. |
 | `Mass` | `number` (kg) | Component mass. |
 
 `Frequency` is excluded from generic parsing — set at runtime by the [`jammer`](../api-reference/spacecraft-commands.md#jammer) command (`Mode: start`/`stop` with one or more frequencies).
@@ -341,7 +340,7 @@ These four sensor classes all share the same minimal `data` schema:
 
 Each accepts a `Fault State` event to inject sensor faults at runtime (see [events.md#canonical-spacecraft-event-recipes](events.md#canonical-spacecraft-event-recipes)).
 
-The `Electromagnetic Sensor` is started disabled with a `Nominal` fault state — teams must explicitly enable it through their guidance computer to use it. This is by design (`UElectromagneticSensorExtension::Setup_Impl`).
+The `Electromagnetic Sensor` is started disabled with a `Nominal` fault state — teams must explicitly enable it through their guidance computer to use it.
 
 ---
 
@@ -371,6 +370,33 @@ Both the chaser and the target need a `Docking Adapter` component, and both spac
 
 ---
 
+## Power Interconnect
+
+A **Power Interconnect** is a power-bus connector that can **link to another interconnect on a different spacecraft**, merging the two buses into one electrical network when the scenario starts.
+
+```json
+{ "class": "Power Interconnect", "name": "Interconnect" }
+```
+
+No class-specific `data` keys are required for typical scenarios.
+
+### Terminal usage (same spacecraft)
+
+| Terminal | Wiring |
+| --- | --- |
+| **`in`** | Upstream components on **this** bus connect **to** the interconnect here (e.g. `Battery` `out` → `Interconnect` `in`). Required before a cross-spacecraft link. |
+| **`out`** | Used for downstream loads on the same bus (series continuation). The cross-spacecraft bridge to the partner bus is created by `power.interconnects[]`, not by an extra `bus[]` row to the other hull. |
+
+Wire upstream feeds into **`in`**; use **`out`** for downstream loads on the same bus and for the partner link declared in `interconnects`.
+
+### Cross-spacecraft link (scenario JSON)
+
+Configure in the owning spacecraft's `power.interconnects[]` (not in `components[]`). Full rules, team matching, and a worked example: [spacecraft.md — Power interconnects](spacecraft.md#power-interconnects-powerinterconnects).
+
+**Suggested use:** docking / depot scenarios where two hulls should **start** with a shared power network (e.g. `Docking_Procedure`) before or alongside RPO commands.
+
+---
+
 ## Text (Physical Text)
 
 ```json
@@ -396,7 +422,7 @@ Both the chaser and the target need a `Docking Adapter` component, and both spac
 
 Pure visual / labelling — the text has no simulation effect, but teams can read it from a Camera image. This is the trick used by `Orbital Intel`'s rogue spacecraft, where the answer to one of the questions is the word painted on its solar panels.
 
-`Text` data fields are parsed by `UPhysicalTextExtension::Setup_Impl` and bypass the generic property loader, so the keys must be exact (case-insensitive but no aliases): `Text`, `Color`, `Scale`.
+`Text` uses dedicated keys only (case-insensitive, no aliases): `Text`, `Color`, `Scale`.
 
 ---
 

@@ -1,6 +1,6 @@
 # `ground_stations` — receiving network
 
-The `ground_stations` block defines the pool of ground stations available to **every** team. There is no per-team ground network — every station is shared. It maps to `FGroundStationsDefinition` in `studio/Plugins/SpaceRange/Source/SpaceRange/Public/Definitions/GroundStationsDefinition.h`.
+The `ground_stations` block defines the pool of ground stations available to **every** team. There is no per-team ground network — every station is shared.
 
 ```json
 "ground_stations": {
@@ -43,7 +43,7 @@ If a city name is not recognised, Studio logs a warning and skips it during load
 
 ## Built-in location catalog
 
-The full table below is the authoritative city list, mirrored from `studio/Plugins/ZendirForUnreal/Source/ZenFramework/Private/Libraries/GeodeticLibrary.cpp` (`UGeodeticLibrary::GetGeodeticLocations`). Names are matched **case-sensitive** — spell them exactly as listed.
+The full table below is the built-in city list Studio recognises when a scenario loads. Names are matched **case-sensitive** — spell them exactly as listed.
 
 Coordinates are geodetic `(lat°, lon°, alt m)` on each planet's WGS-84-equivalent reference ellipsoid. Altitude is `0.0 m` unless noted.
 

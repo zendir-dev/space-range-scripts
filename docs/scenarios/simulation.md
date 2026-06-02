@@ -1,6 +1,6 @@
 # `simulation` — clock & solver
 
-The `simulation` block sets the simulation time origin, how fast simulated time runs by default, and what integrator advances the dynamics. It maps to `FSimulationDefinition` in `studio/Plugins/SpaceRange/Source/SpaceRange/Public/Definitions/SimulationDefinition.h`, parsed by `SimulationDefinitionFromJson` in `SpaceRangeDefinitionFunctionLibrary.cpp`.
+The `simulation` block sets the simulation time origin, how fast simulated time runs by default, and what integrator advances the dynamics.
 
 ```json
 "simulation": {
@@ -24,7 +24,7 @@ The `simulation` block sets the simulation time origin, how fast simulated time 
 
 ## Notes
 
-- `epoch` is parsed by `UJSONLibrary::GetDateTimeValue`, which accepts the `YYYY/MM/DD HH:MM:SS` format used in every shipped scenario. Other Unreal-supported `FDateTime` formats also parse.
+- `epoch` accepts the `YYYY/MM/DD HH:MM:SS` format used in every shipped scenario. Other common date/time string formats may also parse.
 - `speed`, `step_size`, and `end_time` are doubles internally. Whole-number values are fine without a decimal point but the convention in shipped scenarios is to write them as floats (`5.0` rather than `5`).
 - `integrator` is converted to lower-case before comparison; only `rk4` selects RK4. Anything else falls back to Euler.
 - `simulation` is loaded *first* during scenario load, so any clock-dependent setup elsewhere in the file (e.g. event `Time` values, sun-angle-based imagery exercises) sees this clock.

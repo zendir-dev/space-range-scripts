@@ -10,7 +10,7 @@ If you have not authored a scenario before, read [Scenario configuration](../gui
 
 A scenario is a single JSON file Studio loads to set up an exercise: simulation parameters, the universe model, ground stations, teams and their credentials, spacecraft and their components, ground decorations (vessels, text), scripted failure events, and (optionally) Q&A questions for scoring.
 
-Studio applies a scenario by parsing the JSON into the C++ definition structs in `studio/Plugins/SpaceRange/Source/SpaceRange/Public/Definitions/` and instantiating the corresponding actors and controllers.
+Studio loads the JSON and builds the simulation: teams, spacecraft, ground objects, scripted events, and scoring questions.
 
 ---
 
@@ -53,7 +53,7 @@ Every scenario JSON has this shape. **Every section is optional** except `teams`
 
 ## Casing, key matching, and whitespace
 
-The simulation parses every section through `UJSONLibrary` (`studio/Plugins/ZendirForUnreal/Source/ZenFramework/Public/Libraries/JSONLibrary.h`). Two rules follow from how it is implemented:
+Studio parses every section when the scenario file is loaded. Two rules to keep in mind:
 
 1. **Keys are case-insensitive.** `enabled`, `Enabled`, and `ENABLED` all match. The shipped templates and example files mix `lowercase` (`simulation`, `teams`, `universe`) and `PascalCase` (`Enabled`, `Name`, `Time`, `Type` inside `events[]`). Both load. **Pick one casing per section and keep it consistent** so JSON diffs stay readable.
 2. **Nested keys are reachable via dots.** Internally Studio writes `"orbit.values"`, `"physics.mass"`, `"visualization.mesh"`, etc. — so when authoring you can either nest the JSON normally:
@@ -74,7 +74,7 @@ The simulation parses every section through `UJSONLibrary` (`studio/Plugins/Zend
 There are two important exceptions to "any casing works":
 
 - The **`questions[]` `type` field** is matched case-insensitively but must be one of `text`, `number` (alias `numeric`), `select`, `checkbox`. See [questions.md](questions.md).
-- The **`events[]` `Data` keys** are case-sensitive when fed to the failure handler — Studio compares them literally to C++ variable names with whitespace stripped. `"Stuck Index"` and `"StuckIndex"` both work (whitespace is stripped before matching), but `"stuckindex"` does **not**, because the underlying property is `StuckIndex`. See [events.md](events.md).
+- The **`events[]` `Data` keys** must match the property names the event type expects (whitespace in the key is ignored). `"Stuck Index"` and `"StuckIndex"` both work, but `"stuckindex"` does **not** if the canonical name is `StuckIndex`. See [events.md](events.md).
 
 Trailing commas, comments, and bare keys are **not** allowed — Studio uses a strict JSON parser. Lint your file before loading.
 
@@ -82,7 +82,7 @@ Trailing commas, comments, and bare keys are **not** allowed — Studio uses a s
 
 ## How a scenario loads (so you know what to debug)
 
-When the scenario JSON is loaded by Studio (via the Studio UI scenario picker, or programmatically by `USpaceRangeSubsystem::SetScenarioJson` in the C++ plugin), it is dispatched in this order:
+When the scenario JSON is loaded (Studio UI scenario picker or admin/scenario API), sections are applied in this order:
 
 1. `simulation` is applied to the clock and integrator.
 2. `universe` flags are applied to the world.
@@ -150,7 +150,7 @@ When generating a scenario from a brief, work in this order. Each step is small 
 1. **Clock & world** — `simulation`, `universe`, `ground_stations`. These rarely change once set; copy them from a similar shipped scenario.
 2. **Teams** — one per side / observer. Pick distinct `id`, `password`, `frequency`, `color`. See [teams.md](teams.md).
 3. **One spacecraft** — define `assets.space[0]` end-to-end and add a single-entry `assets.collections[0]` linking it to one team. Get this working before adding more spacecraft. See [spacecraft.md](spacecraft.md).
-4. **Components** — start with the canonical 6: `Solar Panel`, `Battery`, `Computer`, `Receiver`, `Transmitter`, `Storage`. Add `Camera`, `GPS Sensor`, `Reaction Wheels`, `Jammer`, `Docking Adapter`, etc. as the scenario requires. See [components.md](components.md).
+4. **Components** — start with the canonical 6: `Solar Panel`, `Battery`, `Computer`, `Receiver`, `Transmitter`, `Storage`. Add `Camera`, `GPS Sensor`, `Reaction Wheels`, `Jammer`, `Docking Adapter`, `Power Interconnect`, etc. as the scenario requires. See [components.md](components.md). If two hulls on the **same team** should share power at load, wire each `Power Interconnect` on `power.bus` and add one `power.interconnects` row — [spacecraft.md — Power interconnects](spacecraft.md#power-interconnects-powerinterconnects).
 5. **More spacecraft and collections** — duplicate the first spacecraft, vary `id` / `name` / `orbit`, and assign each to a team via collections.
 6. **Ground objects** — add vessels, labels, and decorations to support imagery exercises. See [ground-objects.md](ground-objects.md).
 7. **Events** — add scripted failures *one at a time*. Test each by lowering its `Time` and watching the admin event stream. See [events.md](events.md).
@@ -160,16 +160,10 @@ Patterns for whole-scenario shapes (counter-piracy, telemetry-drop, docking, GPS
 
 ---
 
-## Where the source of truth lives
+## Reference scenarios
 
-Scenario JSON parsing is implemented in:
+The best references for valid JSON shape and field names are the **shipped scenario files** in the Space Range scenarios bundle and the pages in this section (`simulation`, `teams`, `spacecraft`, `components`, `events`, etc.).
 
-- `studio/Plugins/SpaceRange/Source/SpaceRange/Public/Definitions/` — the C++ `USTRUCT` definitions for each section.
-- `studio/Plugins/SpaceRange/Source/SpaceRange/Public/Structs/` — `FTeamConfig`, `FScenarioEvent`, `FSpaceRangeScenarioQuestion`.
-- `studio/Plugins/SpaceRange/Source/SpaceRange/Private/Libraries/SpaceRangeDefinitionFunctionLibrary.cpp` — every `*FromJson` and `*ToJson` function.
-- `studio/Plugins/SpaceRange/Source/SpaceRange/Private/Subsystems/SpaceRangeSubsystem.cpp` — `SetScenarioJson()` (the dispatch order described above).
-- `studio/Plugins/SpaceRange/Source/SpaceRange/Private/Controllers/SpacecraftController.cpp` — `ExecuteEvent()` (event dispatching).
-- `studio/Plugins/SpaceRange/Source/SpaceRange/Private/Extensions/*.cpp` — per-component data parsing (`Setup_Impl`) and failure handling (`Failure_Impl`).
-- `studio/Plugins/SpaceRange/Resources/Events/Spacecraft.json` and `GPS.json` — the canonical event templates surfaced by Studio's "Add Event" menu.
+Example scenarios to copy from: `Orbital Intel`, `Maritime_Surveillance`, `Unresponsive_Satellite`, `Telemetry_Drop`, `Payload_Misalignment`, `Null_Data`, `Command_Rejection`, `Docking_Procedure`, `Cyber Defender`, `Tutorial`.
 
-The example scenarios bundled with Space Range — `Orbital Intel`, `Maritime_Surveillance`, `Unresponsive_Satellite`, `Telemetry_Drop`, `Payload_Misalignment`, `Null_Data`, `Command_Rejection`, `Docking_Procedure` — are battle-tested references; copy from them rather than writing from scratch.
+In Studio, the **Add Event** menu lists canonical event templates (Spacecraft, GPS, Cyber) that match the `events[]` shapes documented in [events.md](events.md).

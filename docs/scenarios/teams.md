@@ -1,6 +1,6 @@
 # `teams[]` — units of identity
 
-Each entry in `teams[]` is one team in the scenario. The order doesn't matter; the IDs do. Each team maps to one `FTeamConfig` (`studio/Plugins/SpaceRange/Source/SpaceRange/Public/Structs/TeamConfig.h`), parsed by `TeamConfigFromJson`.
+Each entry in `teams[]` is one team in the scenario. The order doesn't matter; the IDs do.
 
 ```json
 "teams": [
