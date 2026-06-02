@@ -213,7 +213,7 @@ Each spacecraft is the most complex object in the scenario. The shape:
 
 Optional. Two optional arrays inside the same `power` object:
 
-- **`bus`** — on-board connections (`source_component`, `source_terminal`, `target_component`, `target_terminal`). Component names must match `components[].name`. If `bus` is omitted or empty, Studio auto-connects solar panels → first battery and battery → jammer (when those parts exist).
+- **`bus`** — on-board connections (`source_component`, `source_terminal`, `target_component`, `target_terminal`). Component names must match `components[].name`. Bus-capable classes include `Solar Panel`, `Battery`, `Power Switch`, `Power Fuse`, `Power Diode`, `Power Current Limiter`, `Power Voltage Regulator`, `Power Sink`, `Power Interconnect`, and payload types that participate in the bus (e.g. `Camera`, `Transmitter`). See [Power bus network components](../scenarios/components.md#power-bus-network-components). If `bus` is omitted or empty, Studio auto-connects solar panels → first battery and battery → jammer (when those parts exist).
 - **`interconnects`** — cross-spacecraft links between `Power Interconnect` components. Declare on **one** spacecraft only; both hulls need an interconnect wired on their local `bus`; both must be on the **same team**. Target hull is identified by asset **`name`**, not collection id.
 
 Full rules, restrictions, and docking guidance: [spacecraft.md — power](../scenarios/spacecraft.md#power--electrical-bus) and [Power interconnects](../scenarios/spacecraft.md#power-interconnects-powerinterconnects).

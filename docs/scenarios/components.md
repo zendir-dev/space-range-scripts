@@ -2,7 +2,7 @@
 
 Every entry in a spacecraft's `components[]` array adds one piece of on-board hardware. The `class` field selects which component type is created — see the table below for accepted classes and aliases.
 
-The `data` object is **class-specific** tuning. `Mass` is the only universal key (every component has mass). Other keys set component parameters at load time; spaces in a key are ignored when matching (`"Antenna Gain"` and `"AntennaGain"` are equivalent).
+The `data` object is **class-specific** tuning. `Mass` is the only universal key (every component has mass). Other keys set component parameters at load time. **Prefer spaced names** in JSON (`"Is Open"`, `"Nominal Capacity"`); Studio ignores spaces when matching, so `"IsOpen"` also works.
 
 This page documents the `data` fields used in shipped scenarios and the keys that scripted `events[]` entries can change at runtime.
 
@@ -16,6 +16,12 @@ The `class` field is matched case-insensitive after spaces are stripped. The shi
 | --- | --- | --- |
 | `Solar Panel` | — | Power source. |
 | `Battery` | — | Power store. Required for any spacecraft that does not run on solar alone. |
+| `Power Switch` | — | On-bus switch; open/closed. |
+| `Power Fuse` | — | Over-current protection with optional auto-reset. |
+| `Power Current Limiter` | — | Limits branch current above a threshold. |
+| `Power Diode` | — | One-way conduction on the bus. |
+| `Power Sink` | — | Configurable load (watts / voltage drop). |
+| `Power Voltage Regulator` | — | Regulates downstream voltage. |
 | `Computer` | `Guidance Computer` | Brain — handles software modes (navigation, pointing, controller). |
 | `Reaction Wheels` | `RW` | Attitude actuator. |
 | `External Force Torque` | `External Force` | Generic force/torque actuator (stand-in for thrusters or RWs). |
@@ -33,7 +39,7 @@ The `class` field is matched case-insensitive after spaces are stripped. The shi
 | `Gyroscope` | `IMU` | Body-rate measurement. |
 | `Charge Coupled Device` | `CCD` | Low-level imaging sensor (more often used as a `Camera` model). |
 | `Docking Adapter` | `Docking` | RPO end-effector. Both vehicles need one to exchange a docking handshake. |
-| `Power Interconnect` | `PowerInterconnect` | Cross-bus connector; pairs two spacecraft power networks at load. See [Power Interconnect](#power-interconnect). |
+| `Power Interconnect` | — | Cross-bus connector; pairs two spacecraft power networks at load. See [Power Interconnect](#power-interconnect). |
 | `Text` | `Physical Text` | Pure-visual label (e.g. callsign written across the chassis). |
 
 If the `class` value is not recognised, Studio logs a warning and the component may not behave as intended.
@@ -104,13 +110,183 @@ Battery error-model events: `Battery-IntermittentConnectionErrorModel` (power sp
 
 ---
 
+## Power bus network components
+
+These components attach to the spacecraft **power bus** and are wired with `power.bus[]` on the spacecraft entry (see [spacecraft.md — power](spacecraft.md#power--electrical-bus)). Each has **`in`** and **`out`** terminals unless noted. Chain them in series from the battery (or solar) toward loads; use a **`Power Diode`** when current must only flow one way.
+
+**Generation and storage** (`Solar Panel`, `Battery`) are documented above. **Cross-spacecraft links** use `Power Interconnect` ([below](#power-interconnect)).
+
+Payload hardware (`Camera`, `Transmitter`, sensors, etc.) can also be listed on `power.bus[]` when those types participate in the electrical model — same `source_component` / `target_component` rules as switches and sinks.
+
+### Power Switch
+
+User-operable (or scenario-initialised) switch on the bus. When **open**, the branch is disconnected; when **closed**, current can flow.
+
+```json
+{
+  "class": "Power Switch",
+  "name": "EPS Switch",
+  "data": {
+    "Is Open":    false,
+    "Resistance": 1.0,
+    "Mass":       0.5
+  }
+}
+```
+
+| `data` key | Type | Default | Description |
+| --- | --- | --- | --- |
+| `Is Open` | `bool` | `false` | `true` = open (no conduction); `false` = closed. |
+| `Resistance` | `number` (Ω) | `1.0` | Series resistance when closed. |
+| `Mass` | `number` (kg) | — | Component mass. |
+
+`Power Interconnect` is a specialised switch used for cross-spacecraft pairing; see [Power Interconnect](#power-interconnect).
+
+### Power Fuse
+
+Opens the circuit when branch current exceeds a threshold for long enough. Optional timed reset after a blow.
+
+```json
+{
+  "class": "Power Fuse",
+  "name": "EPS Fuse",
+  "data": {
+    "Current Threshold":   2.0,
+    "Threshold Duration":  5.0,
+    "Reset Duration":      60.0,
+    "Resistance":          1.0,
+    "Mass":                0.5
+  }
+}
+```
+
+| `data` key | Type | Default | Description |
+| --- | --- | --- | --- |
+| `Current Threshold` | `number` (A) | `0.0` | Current above which the fuse may blow. |
+| `Threshold Duration` | `number` (s) | `0.0` | Time the threshold must be exceeded before blowing. |
+| `Reset Duration` | `number` (s) | `0.0` | Time after a blow before auto-reset; `0` = no auto-reset. |
+| `Resistance` | `number` (Ω) | `1.0` | Resistance while closed. |
+| `Mass` | `number` (kg) | — | Component mass. |
+
+`Is Fuse Blown` is runtime state (read-only), not normally set in scenario JSON.
+
+### Power Current Limiter
+
+Reduces or blocks current when the branch exceeds `Current Limit`.
+
+```json
+{
+  "class": "Power Current Limiter",
+  "name": "Bus Limiter",
+  "data": {
+    "Current Limit": 5.0,
+    "Resistance":    1.0,
+    "Mass":          0.5
+  }
+}
+```
+
+| `data` key | Type | Default | Description |
+| --- | --- | --- | --- |
+| `Current Limit` | `number` (A) | `0.0` | Limit above which limiting engages. |
+| `Resistance` | `number` (Ω) | `1.0` | Series resistance. |
+| `Mass` | `number` (kg) | — | Component mass. |
+
+### Power Diode
+
+One-way valve: forward current flows **`in` → `out`**; reverse current is blocked (within model limits). Use for OR-ing sources, blocking back-feed, or protecting branches.
+
+```json
+{
+  "class": "Power Diode",
+  "name": "Bus Diode",
+  "data": {
+    "Resistance": 1.0,
+    "Mass":       0.5
+  }
+}
+```
+
+| `data` key | Type | Default | Description |
+| --- | --- | --- | --- |
+| `Resistance` | `number` (Ω) | `1.0` | Small-signal / parasitic resistance. |
+| `Saturation Current` | `number` (A) | `2.52e-9` | Diode saturation current (IS). |
+| `Emission Coefficient` | `number` | `1.984` | Emission coefficient (N). |
+| `Junction Capacitance` | `number` (F) | `35e-12` | Zero-bias junction capacitance (CJO). |
+| `Junction Potential` | `number` (V) | `0.75` | Junction potential (VJ). |
+| `Grading Coefficient` | `number` | `0.333` | Grading coefficient (M). |
+| `Bandgap Voltage` | `number` (V) | `1.11` | Bandgap voltage (EG). |
+| `Breakdown Voltage` | `number` (V) | `400.0` | Reverse breakdown voltage (BV). |
+| `Breakdown Current` | `number` (A) | `1e-6` | Current at breakdown (IBV). |
+| `Transit Time` | `number` (s) | `2.52e-7` | Transit time (TT); advanced. |
+| `Flicker Noise Coefficient` | `number` | `0.0` | Flicker noise coefficient (KF); advanced. |
+| `Flicker Noise Exponent` | `number` | `1.0` | Flicker noise exponent (AF); advanced. |
+| `Forward Bias Depletion Cap Coeff` | `number` | `0.5` | Forward-bias depletion capacitance coefficient (FC); advanced. |
+| `Mass` | `number` (kg) | — | Component mass. |
+
+Only `Resistance` and `Mass` are needed for most scenarios; omit the diode model keys to keep defaults (1N4004-like).
+
+Wire with upstream on **`in`** and downstream on **`out`** so forward power flows toward the load.
+
+### Power Sink
+
+Fixed or commanded electrical load on the bus (heaters, avionics blocks, or stand-ins for payload draw).
+
+```json
+{
+  "class": "Power Sink",
+  "name": "Camera Load",
+  "data": {
+    "Is Active":              true,
+    "Nominal Voltage Drop":   12.0,
+    "Nominal Power":          8.0,
+    "Resistance":             1.0,
+    "Mass":                   0.5
+  }
+}
+```
+
+| `data` key | Type | Default | Description |
+| --- | --- | --- | --- |
+| `Is Active` | `bool` | `true` | When `false`, nominal draw is zero. |
+| `Nominal Voltage Drop` | `number` (V) | `12.0` | Target voltage drop across the sink. |
+| `Nominal Power` | `number` (W) | `0.0` | Target power consumption when active. |
+| `Resistance` | `number` (Ω) | `1.0` | Series resistance. |
+| `Mass` | `number` (kg) | — | Component mass. |
+
+### Power Voltage Regulator
+
+Holds downstream voltage near `Regulation Voltage` when input is high enough; otherwise output follows input minus resistive drop. Efficiency is derived at runtime (not authored).
+
+```json
+{
+  "class": "Power Voltage Regulator",
+  "name": "Bus Regulator",
+  "data": {
+    "Regulation Voltage": 28.0,
+    "Resistance":         1.0,
+    "Mass":               0.5
+  }
+}
+```
+
+| `data` key | Type | Default | Description |
+| --- | --- | --- | --- |
+| `Regulation Voltage` | `number` (V) | `0.0` | Regulation set-point. |
+| `Resistance` | `number` (Ω) | `1.0` | Series resistance. |
+| `Mass` | `number` (kg) | — | Component mass. |
+
+---
+
 ## Computer (Guidance Computer)
 
 ```json
 {
   "class": "Computer",
   "name":  "Computer",
-  "data":  { "Mass": 2.0 }
+  "data":  { 
+    "Mass": 2.0 
+  }
 }
 ```
 
@@ -133,7 +309,9 @@ The `Computer-GuidanceComputerNoiseErrorModel` event injects pointing noise; see
 {
   "class": "Reaction Wheels",
   "name":  "Reaction Wheels",
-  "data":  { "Mass": 9.0 }
+  "data":  { 
+    "Mass": 9.0 
+  }
 }
 ```
 
@@ -174,7 +352,9 @@ Useful as an idealised actuator on tutorial / instructor spacecraft (the `Recon`
   "name":  "Thruster +Z",
   "position": [0.0, 0.0, -0.5],
   "rotation": [0.0, 0.0, 0.0],
-  "data":  { "Mass": 1.5 }
+  "data":  { 
+    "Mass": 1.5 
+  }
 }
 ```
 
@@ -266,7 +446,9 @@ The `Transmitter-TransmitterPacketCorruptionErrorModel` event injects per-packet
 {
   "class": "Storage",
   "name":  "Storage",
-  "data":  { "Mass": 4.0 }
+  "data":  { 
+    "Mass": 4.0 
+  }
 }
 ```
 
@@ -329,9 +511,27 @@ The `GPS Sensor` failure event accepts `Fault State` to put the sensor into a de
 These four sensor classes all share the same minimal `data` schema:
 
 ```json
-{ "class": "Magnetometer", "name": "Magnetometer", "data": { "Mass": 2.0 } }
-{ "class": "Gyroscope",    "name": "Gyroscope",    "data": { "Mass": 1.0 } }
-{ "class": "EM Sensor",    "name": "EM Sensor",    "data": { "Mass": 2.0 } }
+{
+  "class": "Magnetometer",
+  "name": "Magnetometer",
+  "data": { "Mass": 2.0 }
+}
+```
+
+```json
+{
+  "class": "Gyroscope",
+  "name": "Gyroscope",
+  "data": { "Mass": 1.0 }
+}
+```
+
+```json
+{
+  "class": "EM Sensor",
+  "name": "EM Sensor",
+  "data": { "Mass": 2.0 }
+}
 ```
 
 | `data` key | Type | Description |
@@ -375,7 +575,10 @@ Both the chaser and the target need a `Docking Adapter` component, and both spac
 A **Power Interconnect** is a power-bus connector that can **link to another interconnect on a different spacecraft**, merging the two buses into one electrical network when the scenario starts.
 
 ```json
-{ "class": "Power Interconnect", "name": "Interconnect" }
+{
+  "class": "Power Interconnect",
+  "name": "Interconnect"
+}
 ```
 
 No class-specific `data` keys are required for typical scenarios.

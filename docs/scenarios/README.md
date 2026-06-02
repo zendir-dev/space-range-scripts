@@ -164,6 +164,6 @@ Patterns for whole-scenario shapes (counter-piracy, telemetry-drop, docking, GPS
 
 The best references for valid JSON shape and field names are the **shipped scenario files** in the Space Range scenarios bundle and the pages in this section (`simulation`, `teams`, `spacecraft`, `components`, `events`, etc.).
 
-Example scenarios to copy from: `Orbital Intel`, `Maritime_Surveillance`, `Unresponsive_Satellite`, `Telemetry_Drop`, `Payload_Misalignment`, `Null_Data`, `Command_Rejection`, `Docking_Procedure`, `Cyber Defender`, `Tutorial`.
+Example scenarios to copy from: `Orbital Intel`, `Maritime_Surveillance`, `Unresponsive_Satellite`, `Telemetry_Drop`, `Payload_Misalignment`, `Null_Data`, `Command_Rejection`, `Docking_Procedure`, `Cyber Defender`, `Tutorial`. Power-bus harness: `Testing/test_power_scenario`.
 
 In Studio, the **Add Event** menu lists canonical event templates (Spacecraft, GPS, Cyber) that match the `events[]` shapes documented in [events.md](events.md).

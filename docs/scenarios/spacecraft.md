@@ -153,7 +153,7 @@ The `controller` block is **optional**; defaults work for most exercises. The ke
 
 ## `power` — electrical bus
 
-Every spacecraft has an on-board **power bus**. The optional `power` block defines how **solar panels** (and other power sources), **batteries**, and the **jammer** (if present) are wired together when the scenario starts.
+Every spacecraft has an on-board **power bus**. The optional `power` block defines how **solar panels** (and other power sources), **batteries**, **bus components** (switches, fuses, diodes, limiters, regulators, sinks), **payloads** wired as loads, and the **jammer** (if present) are connected when the scenario starts. Component classes and `data` keys: [components.md — Power bus network components](components.md#power-bus-network-components).
 
 ### JSON shape
 

@@ -1,0 +1,467 @@
+{
+	"metadata": {
+		"name": "Test Power Scenario",
+		"description": "Minimal single-team power-bus harness: common battery bus (switch + fuse), then parallel camera and transmitter branches with different limiters, regulators, and protection (diode on TX only). GEO over Earth, one ground station."
+	},
+	"simulation": {
+		"epoch": "2026/04/27 12:00:00",
+		"speed": 10.0,
+		"step_size": 0.1,
+		"integrator": "Euler",
+		"end_time": 0.0
+	},
+	"universe": {
+		"atmosphere": false,
+		"magnetosphere": false,
+		"gps": true,
+		"cloud_opacity": 0.7,
+		"cloud_contrast": 2.5,
+		"ambient_light": 0.25
+	},
+	"ground_stations": {
+		"locations": [
+			"Paris"
+		],
+		"min_elevation": 0,
+		"max_range": 0,
+		"scale": 100
+	},
+	"teams": [
+		{
+			"enabled": true,
+			"id": 111111,
+			"password": "AAAAAA",
+			"name": "Team Blue",
+			"key": 42,
+			"frequency": 612,
+			"collection": "Main",
+			"color": "#0050FF"
+		}
+	],
+	"assets": {
+		"space": [
+			{
+				"id": "SC_POWER_TEST",
+				"name": "Microsat",
+				"orbit": {
+					"planet": "Earth",
+					"values": [
+						42164.0,
+						0.0,
+						0.0,
+						0.0,
+						0.0,
+						0.0
+					],
+					"offset": [
+						0.0,
+						0.0,
+						0.0,
+						0.0,
+						0.0,
+						0.0
+					]
+				},
+				"physics": {
+					"override_mass": true,
+					"mass": 120.0,
+					"center_of_mass": [
+						0.0,
+						0.0,
+						0.0
+					],
+					"inertia_tensor": [
+						[
+							12.0,
+							0.0,
+							0.0
+						],
+						[
+							0.0,
+							12.0,
+							0.0
+						],
+						[
+							0.0,
+							0.0,
+							12.0
+						]
+					]
+				},
+				"visualization": {
+					"mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/ZenSat/BP_Z_SC_ZenSat_Chassis",
+					"scale": 1.0,
+					"offset": [
+						0.0,
+						0.0,
+						0.12
+					]
+				},
+				"controller": {
+					"safe_fraction": 0.1,
+					"capture_tax": 0.001,
+					"downlink_tax": 0.01,
+					"ping_interval": 20.0,
+					"reset_interval": 60.0,
+					"jamming_multiplier": 1.0,
+					"enable_rpo": false
+				},
+				"power": {
+					"bus": [
+						{
+							"source_component": "Solar Panel +X",
+							"source_terminal": "out",
+							"target_component": "Battery",
+							"target_terminal": "out"
+						},
+						{
+							"source_component": "Solar Panel -X",
+							"source_terminal": "out",
+							"target_component": "Battery",
+							"target_terminal": "out"
+						},
+						{
+							"source_component": "Battery",
+							"source_terminal": "out",
+							"target_component": "EPS Switch",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "EPS Switch",
+							"source_terminal": "out",
+							"target_component": "EPS Fuse",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "EPS Fuse",
+							"source_terminal": "out",
+							"target_component": "Camera Limiter",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "Camera Limiter",
+							"source_terminal": "out",
+							"target_component": "Camera Regulator",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "Camera Regulator",
+							"source_terminal": "out",
+							"target_component": "Camera Switch",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "Camera Switch",
+							"source_terminal": "out",
+							"target_component": "Camera Load",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "Camera Switch",
+							"source_terminal": "out",
+							"target_component": "Camera",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "EPS Fuse",
+							"source_terminal": "out",
+							"target_component": "TX Diode",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "TX Diode",
+							"source_terminal": "out",
+							"target_component": "TX Limiter",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "TX Limiter",
+							"source_terminal": "out",
+							"target_component": "TX Regulator",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "TX Regulator",
+							"source_terminal": "out",
+							"target_component": "TX Switch",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "TX Switch",
+							"source_terminal": "out",
+							"target_component": "Transmitter Load",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "TX Switch",
+							"source_terminal": "out",
+							"target_component": "Transmitter",
+							"target_terminal": "in"
+						}
+					]
+				},
+				"components": [
+					{
+						"class": "Solar Panel",
+						"name": "Solar Panel +X",
+						"enabled": true,
+						"position": [
+							0.8,
+							0.276313,
+							-0.2
+						],
+						"rotation": [
+							35.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Area": 0.5,
+							"Efficiency": 0.35,
+							"Mass": 8.0
+						}
+					},
+					{
+						"class": "Solar Panel",
+						"name": "Solar Panel -X",
+						"enabled": true,
+						"position": [
+							-0.8,
+							0.276313,
+							-0.2
+						],
+						"rotation": [
+							35.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Area": 0.5,
+							"Efficiency": 0.35,
+							"Mass": 8.0
+						}
+					},
+					{
+						"class": "Battery",
+						"name": "Battery",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Nominal Capacity": 120.0,
+							"Charge Fraction": 0.9,
+							"Mass": 8.0
+						}
+					},
+					{
+						"class": "Power Switch",
+						"name": "EPS Switch",
+						"enabled": true,
+						"data": {
+							"Is Open": false,
+							"Resistance": 0.01,
+							"Mass": 0.2
+						}
+					},
+					{
+						"class": "Power Fuse",
+						"name": "EPS Fuse",
+						"enabled": true,
+						"data": {
+							"Current Threshold": 50.0,
+							"Threshold Duration": 30.0,
+							"Reset Duration": 120.0,
+							"Resistance": 0.01,
+							"Mass": 0.2
+						}
+					},
+					{
+						"class": "Power Current Limiter",
+						"name": "Camera Limiter",
+						"enabled": true,
+						"data": {
+							"Current Limit": 3.0,
+							"Resistance": 0.01,
+							"Mass": 0.2
+						}
+					},
+					{
+						"class": "Power Voltage Regulator",
+						"name": "Camera Regulator",
+						"enabled": true,
+						"data": {
+							"Regulation Voltage": 12.0,
+							"Resistance": 0.1,
+							"Mass": 0.3
+						}
+					},
+					{
+						"class": "Power Switch",
+						"name": "Camera Switch",
+						"enabled": true,
+						"data": {
+							"Is Open": false,
+							"Resistance": 0.01,
+							"Mass": 0.2
+						}
+					},
+					{
+						"class": "Power Diode",
+						"name": "TX Diode",
+						"enabled": true,
+						"data": {
+							"Resistance": 0.1,
+							"Mass": 0.1
+						}
+					},
+					{
+						"class": "Power Current Limiter",
+						"name": "TX Limiter",
+						"enabled": true,
+						"data": {
+							"Current Limit": 8.0,
+							"Resistance": 0.01,
+							"Mass": 0.2
+						}
+					},
+					{
+						"class": "Power Voltage Regulator",
+						"name": "TX Regulator",
+						"enabled": true,
+						"data": {
+							"Regulation Voltage": 28.0,
+							"Resistance": 0.1,
+							"Mass": 0.3
+						}
+					},
+					{
+						"class": "Power Switch",
+						"name": "TX Switch",
+						"enabled": true,
+						"data": {
+							"Is Open": false,
+							"Resistance": 0.01,
+							"Mass": 0.2
+						}
+					},
+					{
+						"class": "Power Sink",
+						"name": "Camera Load",
+						"enabled": true,
+						"data": {
+							"Is Active": true,
+							"Nominal Voltage Drop": 12.0,
+							"Nominal Power": 6.0,
+							"Resistance": 5.0,
+							"Mass": 0.2
+						}
+					},
+					{
+						"class": "Power Sink",
+						"name": "Transmitter Load",
+						"enabled": true,
+						"data": {
+							"Is Active": true,
+							"Nominal Voltage Drop": 12.0,
+							"Nominal Power": 12.0,
+							"Resistance": 3.0,
+							"Mass": 0.2
+						}
+					},
+					{
+						"class": "Reaction Wheels",
+						"name": "Reaction Wheels",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Mass": 9.0
+						}
+					},
+					{
+						"class": "Computer",
+						"name": "Computer",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Camera",
+						"name": "Camera",
+						"enabled": true,
+						"position": [
+							0.0,
+							-0.36,
+							-0.16
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Mass": 5.0
+						}
+					},
+					{
+						"class": "Receiver",
+						"name": "Receiver",
+						"enabled": true,
+						"position": [
+							0.0,
+							-0.36,
+							-0.16
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Antenna Gain": 3.0,
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Transmitter",
+						"name": "Transmitter",
+						"enabled": true,
+						"position": [
+							0.0,
+							-0.36,
+							-0.16
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Mass": 1.0
+						}
+					}
+				]
+			}
+		],
+		"collections": [
+			{
+				"id": "Main",
+				"space_assets": [
+					"SC_POWER_TEST"
+				]
+			}
+		]
+	}
+}
