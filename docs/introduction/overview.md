@@ -18,7 +18,8 @@ Space Range is built around four capability surfaces, each available over MQTT:
 1. **Spacecraft command and control** — uplink commands to a spacecraft (attitude, propulsion, payloads, telemetry configuration, scheduling, etc.) and receive RF-realistic downlinked telemetry.
 2. **Ground operations** — query asset metadata, ground-station configuration, telemetry settings, transmit raw bytes, run AI chat queries, and answer scenario questions.
 3. **Admin / scenario control** — read global simulation state, query historical events, trigger scenario events, list teams and assets, and start/stop/reset the simulation.
-4. **Session timing** — a single, unencrypted broadcast that publishes the current simulation time and instance ID.
+4. **Session timing** — a single, unencrypted broadcast (~every 0.3 s) with simulation time, simulation UTC, real-time `timestamp`, `state` (`running` / `standby` / `paused` / `ended`), and `instance` ID.
+5. **Info** — an unencrypted, event-driven broadcast with game metadata and team score totals when the roster or scoring changes.
 
 Spacecraft and tools are organized into **teams** (red, blue, white-cell, etc.). Each team has its own credentials, its own MQTT topics, and its own visibility rules over the scenario.
 

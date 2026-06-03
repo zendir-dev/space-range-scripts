@@ -77,7 +77,9 @@ The simulation clock is published in the clear on:
 Zendir/SpaceRange/<GAME>/Session
 ```
 
-If a scenario is running, you will see one packet every ~0.33 seconds. If you see nothing for more than a couple of seconds, the simulation isn't running (or you have the wrong game name).
+While Studio is connected, you should see one packet every **~0.3 seconds**. If you see nothing for more than a couple of seconds, Studio is not connected or the game name is wrong.
+
+Each message includes **`state`** (`running`, `standby`, `paused`, `ended`). Only `running` means simulation time is advancing. Do not use the deprecated **`running`** boolean if present in older builds.
 
 ```python
 import json
@@ -86,7 +88,10 @@ SESSION_TOPIC = f"Zendir/SpaceRange/{GAME}/Session"
 
 def on_session(client, userdata, msg):
     pkt = json.loads(msg.payload.decode("utf-8"))
-    print(f"t={pkt['time']:.2f}s  utc={pkt['utc']}  instance={pkt['instance']}")
+    print(
+        f"state={pkt['state']}  t={pkt['time']:.2f}s  "
+        f"utc={pkt['utc']}  instance={pkt['instance']}"
+    )
 
 client.message_callback_add(SESSION_TOPIC, on_session)
 client.subscribe(SESSION_TOPIC)
@@ -99,7 +104,10 @@ client.subscribe(SESSION_TOPIC);
 client.on("message", (topic, payload) => {
   if (topic === SESSION_TOPIC) {
     const pkt = JSON.parse(payload.toString("utf-8"));
-    console.log(`t=${pkt.time.toFixed(2)}s  utc=${pkt.utc}  instance=${pkt.instance}`);
+    console.log(
+      `state=${pkt.state}  t=${pkt.time.toFixed(2)}s  ` +
+      `utc=${pkt.utc}  instance=${pkt.instance}`
+    );
   }
 });
 ```
@@ -107,12 +115,14 @@ client.on("message", (topic, payload) => {
 You should see lines like:
 
 ```text
-t=14.33s  utc=2026/01/26 13:23:13  instance=10234141
-t=14.66s  utc=2026/01/26 13:23:13  instance=10234141
-t=14.99s  utc=2026/01/26 13:23:13  instance=10234141
+state=running  t=14.33s  utc=2026/01/26 13:23:13  instance=10234141
+state=running  t=14.66s  utc=2026/01/26 13:23:13  instance=10234141
+state=paused   t=14.66s  utc=2026/01/26 13:23:13  instance=10234141
 ```
 
-If you see them, everything below the team layer is fine. **Note the instance ID** — when it changes, the scenario has been reset; see [Concepts → Simulation clock](../concepts/simulation-clock.md#instance-id-and-resets).
+If ticks arrive, the broker and game name are correct. **Note the instance ID** — when it changes, the scenario has been reset; see [Concepts → Simulation clock](../concepts/simulation-clock.md#instance-id-and-resets).
+
+**Optional — scoreboard:** subscribe to `Zendir/SpaceRange/<GAME>/Info` for scenario title, duration, and team scores. Messages arrive only when the game or scores change; parse each team's `score` string as JSON (`correct` / `incorrect` points). See [Info stream](../api-reference/info-stream.md).
 
 ---
 
@@ -281,7 +291,8 @@ c.loop_forever()
 | Symptom | Likely cause |
 | --- | --- |
 | `on("connect")` never fires, no error | Wrong host or port; firewall blocking outbound 1883. |
-| Session topic is silent | No scenario running; wrong game name; off by case. |
+| Session topic is silent | Studio not connected; wrong game name; off by case. |
+| Session shows `state=paused` or `standby` | Broker OK — wait for instructor to set `Running` via admin. |
 | Garbled JSON on Response | Wrong team password. Confirm 6 chars exactly, and that you're using the team password (not the admin password). |
 | No Response after a Request | Wrong team ID; team disabled in scenario; broker dropped the publish (check `client.publish()` return). |
 | Downlink payloads decode to garbage | Caesar key or frequency mismatch. Telemetry needs both layers; see [Concepts → Telemetry](../concepts/telemetry.md). |

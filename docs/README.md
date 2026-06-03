@@ -44,7 +44,8 @@ This documentation is for **users** of Space Range — operators, integrators, a
 
 ### API reference
 - [MQTT topics](api-reference/mqtt-topics.md) — full topic map with encryption keys.
-- [Session stream](api-reference/session-stream.md) — simulation clock packet.
+- [Session stream](api-reference/session-stream.md) — simulation clock, `state`, and `instance` packet.
+- [Info stream](api-reference/info-stream.md) — game metadata and team scoreboard.
 - [Spacecraft commands](api-reference/spacecraft-commands.md) — uplink command reference.
 - [Ground requests](api-reference/ground-requests.md) — per-team request/response API.
 - [Admin requests](api-reference/admin-requests.md) — instructor / constructive-agent API.

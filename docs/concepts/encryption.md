@@ -19,7 +19,7 @@ This page describes each layer, why both exist, what is and isn't encrypted, and
 
 Every JSON payload published on a team's `Uplink`, `Downlink`, `Request`, or `Response` topic is XOR-encrypted with the team's **password**. The same applies to admin payloads on `Admin/Request` and `Admin/Response` using the **admin password**.
 
-The **session topic** is *not* encrypted — it carries no team-specific information.
+The **session** and **info** topics are *not* encrypted — they carry no team-specific secrets (clock/state and public scoreboard metadata respectively).
 
 ### How it works
 
@@ -193,7 +193,8 @@ A walkthrough of a clean rotation is in [Guides → Encryption walkthrough](../g
 
 For completeness, here is what travels in the clear:
 
-- The **session topic** (`<GAME>/Session`) — simulation time, UTC, instance ID.
+- The **session topic** (`<GAME>/Session`) — `timestamp` (real-time UNIX), `time` (sim seconds), `utc` (sim calendar), `state`, `instance` ID.
+- The **info topic** (`<GAME>/Info`) — `game` metadata and `teams[]` scores. See [Info stream](../api-reference/info-stream.md).
 - **MQTT topic strings themselves** — anyone watching the broker can see which teams are active and how often each is publishing. Topic-level metadata is part of the threat model.
 - **Message timing** — even with valid encryption, the timing of publishes leaks information (e.g., "the red team just sent a command").
 

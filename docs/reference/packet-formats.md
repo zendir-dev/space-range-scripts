@@ -435,7 +435,7 @@ for i in 0 .. len(data) - 1:
 
 ### Topics that use it
 
-Every team-scoped or admin-scoped topic except `Session`. See [MQTT topics](../api-reference/mqtt-topics.md) for the full list.
+Every team-scoped or admin-scoped topic except `Session` and `Info`. See [MQTT topics](../api-reference/mqtt-topics.md) for the full list.
 
 ---
 
@@ -469,23 +469,27 @@ The team's current Caesar key can be fetched at runtime via [`get_telemetry`](..
 
 ## Session topic payload
 
-The unencrypted heartbeat on `Zendir/SpaceRange/<GAME>/Session` is a UTF-8 JSON object, ~80–110 bytes:
+The unencrypted heartbeat on `Zendir/SpaceRange/<GAME>/Session` is a UTF-8 JSON object published every **~0.3 s** of real time:
 
 ```json
 {
-  "time":     742.18,
-  "utc":      "2026-04-15T08:30:12Z",
-  "instance": 3
+  "timestamp": 213214214121.0,
+  "time":      742.18,
+  "utc":       "2026/04/15 08:30:12",
+  "instance":  12345678,
+  "state":     "running"
 }
 ```
 
 | Field | Type | Description |
 | --- | --- | --- |
-| `time` | `float64` | Seconds since `t = 0` for the current scenario instance. |
-| `utc` | `string` | ISO-8601 UTC time of the same moment. |
-| `instance` | `int32` | Monotonic counter; increments on every `admin_set_simulation` `Stopped`. |
+| `timestamp` | `float64` | Real-time UNIX epoch seconds (wall clock at publish). Not simulation time. |
+| `time` | `float64` | Simulation seconds since `t = 0` for the current `instance`. |
+| `utc` | `string` | Simulation UTC at `time`, format `YYYY/MM/DD HH:MM:SS`. |
+| `instance` | `int32` | Scenario instance ID; changes on reset — clients should clear cached state. |
+| `state` | `string` | `running`, `standby`, `paused`, or `ended`. |
 
-Cadence is ~3 Hz. See [Session stream](../api-reference/session-stream.md) for the consumer-side details.
+The legacy boolean `running` is **deprecated** — use `state` instead. See [Session stream](../api-reference/session-stream.md) for consumer-side details.
 
 ---
 

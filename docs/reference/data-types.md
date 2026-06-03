@@ -45,7 +45,11 @@ Every entity in Space Range has at least one identifier. They have specific shap
 | **Command ID** | integer | `123456` | Spacecraft-assigned; `ID` in Ping/Schedule Report `Commands` arrays and in `Args` for [`update_command`](../api-reference/spacecraft-commands.md#update_command) / [`remove_command`](../api-reference/spacecraft-commands.md#remove_command); matches `command_executed` events. |
 | **Intercept enabled** | boolean | `true` / `false` | Scenario/controller flag `enable_intercept`. Surfaced in API responses as `intercept_enabled` on [`list_assets`](../api-reference/ground-requests.md#list_assets), [`admin_list_team`](../api-reference/admin-requests.md#admin_list_team), [`admin_query_data`](../api-reference/admin-requests.md#admin_query_data), and (when filtering by asset) [`admin_query_events`](../api-reference/admin-requests.md#admin_query_events). When `true`, the spacecraft retains raw uplink intercept records for SIGINT / replay. |
 | **Request ID** | integer (echoed) | `42` | `req_id` field. Free for the client to use to correlate requests with responses. |
-| **Instance** | integer, monotonic | `3` | `instance` field of Session topic; increments on simulation reset. |
+| **Instance** | integer | `12345678` | `instance` field of Session topic; changes on simulation reset — clear UI caches when it changes. |
+| **Session state** | string | `running` | `state` on Session topic: `running`, `standby`, `paused`, `ended`. Replaces deprecated `running` boolean. |
+| **Session timestamp** | number (UNIX s) | `213214214121.0` | Real-time wall clock at publish (`timestamp`). Not simulation time. |
+| **Team score (Info)** | JSON string on wire | `{"correct":10,"incorrect":5}` | `teams[].score` on [Info](../api-reference/info-stream.md): parse as JSON; `correct` = points earned, `incorrect` = points lost. |
+| **Team color (Info)** | 8 hex digits | `0098FFFF` | `AARRGGBB` without `#`; on Info and often mirrored in scenario `teams[].color`. |
 
 ### Asset ID derivation
 
@@ -68,21 +72,24 @@ Three time bases coexist; they are **not** interchangeable.
 
 | Type | Unit | Origin | Where you see it |
 | --- | --- | --- | --- |
-| **Simulation time** | seconds since `t = 0` of the current instance | Studio's clock | `time` field of session, `Time` field of commands, `SimulationTime` in CCSDS secondary header, `sim_time` in admin events. |
-| **UTC** | ISO-8601 datetime | wall clock | `utc` field of session, secondary-header `CoarseTime + FineTime`, `time` field of `admin_query_*` responses. |
-| **Real time** | seconds since wall-clock epoch (varies) | client only | Internal to your client code. **Never** appears on the wire. |
+| **Simulation time** | seconds since `t = 0` of the current instance | Studio's clock | `time` field of Session, `Time` field of commands, `SimulationTime` in CCSDS secondary header, `sim_time` in admin events. |
+| **Simulation UTC** | `YYYY/MM/DD HH:MM:SS` string | scenario epoch + `time` | `utc` field of Session (display/orbits). |
+| **Real time (wire)** | UNIX seconds | wall clock at publish | `timestamp` field of Session only. |
+| **Real time (client)** | varies | your machine | `time.time()`, etc. — not interchangeable with Session `time`. |
 
 ### Conversion
 
-The session topic is the bridge — every Session message gives you both:
+The session topic is the bridge — every Session message gives you:
 
 ```python
-sim_time   = msg["time"]    # 742.18
-utc_time   = msg["utc"]     # "2026-04-15T08:30:12Z"
-instance   = msg["instance"]
+wall_unix  = msg["timestamp"]  # real-time UNIX at publish
+sim_time   = msg["time"]       # 742.18 — use for commands/telemetry
+sim_utc    = msg["utc"]        # "2026/04/15 08:30:12" — simulation calendar
+instance   = msg["instance"]   # reset detection
+state      = msg["state"]      # "running" | "standby" | "paused" | "ended"
 ```
 
-Use `sim_time` for everything that needs to interoperate with command schedules, telemetry timestamps, and link-budget calculations. Use `utc_time` only for human-readable logs or correlation with external systems.
+Use **`time`** for command schedules, telemetry alignment, and link-budget math. Use **`timestamp`** only for staleness or wall-clock logging. Use **`utc`** for human-readable simulation calendar display. Do **not** use the deprecated **`running`** boolean — use **`state`**.
 
 ### Speed
 
@@ -204,12 +211,23 @@ The string values that show up as enums on the wire.
 | `2` | `Media` | 50-byte name header + file bytes. |
 | `3` | `UplinkIntercept` | 32-byte intercept header + raw on-air bytes. |
 
+### Session `state` (Session MQTT topic)
+
+| Value | Meaning |
+| --- | --- |
+| `running` | Simulation clock advancing. |
+| `standby` | Loaded; clock not advancing. |
+| `paused` | Time frozen. |
+| `ended` | Run finished or torn down. |
+
+The legacy boolean `running` on the same payload is **deprecated** — use `state` only.
+
 ### Simulation state (`admin_get_simulation` / `admin_set_simulation`)
 
 | Value | Meaning |
 | --- | --- |
-| `Running` | Time advancing at `speed × real-time`. |
-| `Paused` | Time frozen. State preserved. |
+| `Running` | Time advancing at `speed × real-time`. Session `state` typically `running`. |
+| `Paused` | Time frozen. State preserved. Session `state` typically `paused`. |
 | `Stopped` | **Reset.** All state wiped, `t = 0`, `instance` increments. |
 
 ### Pointing modes (`guidance` command)
@@ -339,7 +357,7 @@ The maximum payload size is bounded by the frame format on the air — frames lo
 
 | Constant | Value | Meaning |
 | --- | --- | --- |
-| `Session` cadence | ~3 Hz | Heartbeat rate of the unencrypted Session topic. |
+| `Session` cadence | ~0.3 s real time | Heartbeat rate of the unencrypted Session topic (~3.3 Hz). |
 | Default `ping_interval` | `20.0` sim s | Ping cadence per spacecraft, scenario-configurable. |
 | Default `reset_interval` | `60.0` sim s | Time spacecraft stays offline after a `reset`. |
 | Default secondary header | 24 bytes | Sized in [Packet formats → Secondary Header](packet-formats.md#secondary-header-default-24-bytes). |

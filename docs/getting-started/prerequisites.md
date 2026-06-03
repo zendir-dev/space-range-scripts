@@ -9,7 +9,7 @@ Before connecting to a Space Range scenario you need a small amount of infrastru
 | Item | Why | Where it comes from |
 | --- | --- | --- |
 | A reachable **MQTT broker** | All Space Range traffic flows over MQTT. | Hosted broker (e.g. `mqtt.zendir.io`), or your own (Mosquitto, EMQX, HiveMQ, NanoMQ). |
-| A running **Studio** instance with a scenario loaded and connected to that broker | Studio is the authoritative simulation. Without it, no session ticks, no telemetry, no command processing. | Operated by the instructor / scenario host. |
+| A **Studio** instance with a scenario loaded and connected to that broker | Studio is the authoritative simulation. Without it, no session ticks, no telemetry, no command processing. Session `state` must be `running` for sim time to advance. | Operated by the instructor / scenario host. |
 | The **game name** | Used as the namespace for every MQTT topic (`Zendir/SpaceRange/<GAME>/...`). | Configured in Studio at scenario launch. |
 | Your **team ID** | Identifies your team on the broker (`<TEAM>` segment of every team-scoped topic). | Configured in the scenario JSON; given to you by the instructor. |
 | Your **team password** | XOR key for all of your team's traffic. | Same — issued by the instructor. |

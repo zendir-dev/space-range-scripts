@@ -1,6 +1,6 @@
 # `questions[]` — scenario Q&A
 
-The `questions[]` array holds the assessment that operators submit answers against during the run. Studio loads each entry, scores submissions against the configured `answer`, and exposes the list to teams via [`list_questions`](../api-reference/ground-requests.md#list_questions).
+The `questions[]` array holds the assessment that operators submit answers against during the run. Studio loads each entry, scores submissions against the configured `answer`, and exposes the list to teams via [`list_questions`](../api-reference/ground-requests.md#list_questions). Running **correct** and **incorrect** point totals per team are also published on the MQTT [Info](../api-reference/info-stream.md) topic when scores change.
 
 Question IDs are **assigned automatically** in load order (1, 2, 3, …). Authors do not write `id` into the JSON.
 
