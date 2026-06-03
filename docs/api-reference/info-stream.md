@@ -88,9 +88,9 @@ Between those events, **no repeat publishes** are sent. If you subscribe after t
 | `color` | `string` | Team colour as **8 hex digits** `AARRGGBB` (alpha, red, green, blue), no `#` prefix. Example: `0098FFFF`. |
 | `score` | `string` | JSON **string** (escaped) encoding point totals — parse it as JSON (see below). |
 
-### `score` string
+### `score` object
 
-The `score` field is a string containing JSON, not a nested object. After parsing:
+The `score` field is a nest JSON object containing score information.
 
 | Key | Type | Meaning |
 | --- | --- | --- |
@@ -156,7 +156,6 @@ client.on("message", (topic, payload) => {
 
 ## Common pitfalls
 
-- **Treating `score` as an object.** It is a string — `JSON.parse(team.score)` (or equivalent) is required.
 - **Expecting a steady heartbeat.** Unlike Session (~0.3 s), Info is quiet until something changes. Build UI around the last message received, not periodic ticks.
 - **Confusing `game.id` and `<GAME>`.** The MQTT path uses the Studio game name; `game.id` is an internal short code.
 - **XOR-decrypting Info.** It is plain JSON — same as Session.
