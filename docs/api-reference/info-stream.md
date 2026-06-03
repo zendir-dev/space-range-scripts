@@ -40,7 +40,7 @@ Between those events, **no repeat publishes** are sent. If you subscribe after t
 ```json
 {
   "game": {
-    "timestamp": 1780458232,
+    "timestamp": 1780458776,
     "id": "MRX",
     "name": "Cyber Defender",
     "description": "No description provided.",

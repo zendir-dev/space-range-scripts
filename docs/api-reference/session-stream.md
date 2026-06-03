@@ -27,7 +27,7 @@ Messages continue at this cadence across all simulation states; use the **`state
 
 ```json
 {
-  "timestamp": 213214214121.0,
+  "timestamp": 1780458776,
   "time":      321.3,
   "utc":       "2024/05/23 12:01:32",
   "instance":  12345678,
