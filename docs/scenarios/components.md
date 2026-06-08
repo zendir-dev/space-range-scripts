@@ -120,7 +120,7 @@ These components attach to the spacecraft **power bus** and are wired with `powe
 
 **Generation and storage** (`Solar Panel`, `Battery`) are documented above. **Cross-spacecraft links** use `Power Interconnect` ([below](#power-interconnect)).
 
-**Runtime operator state** (switch open/closed, fuse threshold, limiter set-point, guidance pointing modes, imager settings, etc.) is not static scenario `data` — it changes during the exercise via spacecraft [`power`](../api-reference/spacecraft-commands.md#power), [`guidance`](../api-reference/spacecraft-commands.md#guidance), and [`camera`](../api-reference/spacecraft-commands.md#camera) / [`capture`](../api-reference/spacecraft-commands.md#capture) commands. Clients pull the current snapshot with [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration) (omit `scope` for all sections, or filter by `scope`). Static keys in the tables below are authored at load time; session-mutable fields are in the [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration) report shape (`power`, `computer`, `camera`).
+**Runtime operator state** (switch open/closed, fuse threshold, limiter set-point, valve/pump state, guidance pointing modes, imager settings, etc.) is not static scenario `data` — it changes during the exercise via spacecraft [`power_bus`](../api-reference/spacecraft-commands.md#power_bus), [`fuel_bus`](../api-reference/spacecraft-commands.md#fuel_bus), [`guidance`](../api-reference/spacecraft-commands.md#guidance), and [`camera`](../api-reference/spacecraft-commands.md#camera) / [`capture`](../api-reference/spacecraft-commands.md#capture) commands. Clients pull the current snapshot with [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration) (omit `scope` for all sections, or filter by `scope`). Static keys in the tables below are authored at load time; session-mutable fields are in the [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration) report shape (`power_bus`, `fuel_bus`, `computer`, `camera`).
 
 Payload hardware (`Camera`, `Transmitter`, sensors, etc.) can also be listed on `power.bus[]` when those types participate in the electrical model — same `source_component` / `target_component` rules as switches and sinks.
 
@@ -174,7 +174,7 @@ Opens the circuit when branch current exceeds a threshold for long enough. Optio
 | `Resistance` | `number` (Ω) | `1.0` | Resistance while closed. |
 | `Mass` | `number` (kg) | — | Component mass. |
 
-`Is Fuse Blown` is runtime state (read-only), not normally set in scenario JSON. Operators read it via [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration) and clear a blown fuse with [`power`](../api-reference/spacecraft-commands.md#power) `action: "reset"` (or wait for auto-reset when `Reset Duration` &gt; 0 and branch current is below threshold).
+`Is Fuse Blown` is runtime state (read-only), not normally set in scenario JSON. Operators read it via [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration) and clear a blown fuse with [`power_bus`](../api-reference/spacecraft-commands.md#power_bus) `action: "reset"` (or wait for auto-reset when `Reset Duration` &gt; 0 and branch current is below threshold).
 
 ### Power Current Limiter
 
@@ -578,7 +578,7 @@ Both the chaser and the target need a `Docking Adapter` component, and both spac
 
 ## Fuel network components
 
-Static topology is authored in each spacecraft's `fuel.bus[]` (see [spacecraft.md — fuel](spacecraft.md#fuel--propellant-bus)). Runtime valve/pump commands are not wired yet — set initial state in `data` where noted.
+Static topology is authored in each spacecraft's `fuel.bus[]` (see [spacecraft.md — fuel](spacecraft.md#fuel--propellant-bus)). Runtime valve/pump state changes via [`fuel_bus`](../api-reference/spacecraft-commands.md#fuel_bus) and [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration) (`scope: "fuel_bus"`). Set initial state in `data` where noted.
 
 ### Fuel Source
 

@@ -83,7 +83,8 @@ Forms surfaced (one panel each):
 | **Thruster** | [`thrust`](../api-reference/spacecraft-commands.md#thrust) | Burn config. Only shown if a thruster is present. |
 | **Rendezvous** | [`rendezvous`](../api-reference/spacecraft-commands.md#rendezvous) | Target asset selection. Only shown if RPO is enabled and ≥2 assets exist. |
 | **Docking** | [`docking`](../api-reference/spacecraft-commands.md#docking) | Phases of docking. Requires a docking adapter and RPO. |
-| **Power** | [`power`](../api-reference/spacecraft-commands.md#power) + [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration) | Switches, fuses, limiters, regulators, and loads by bus branch. See [Power](#power) below. |
+| **Power Bus Configuration** | [`power_bus`](../api-reference/spacecraft-commands.md#power_bus) + [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration) | Switches, fuses, limiters, regulators, and loads by bus branch. Shown when the asset has a switch, limiter, regulator, fuse, or diode. See [Power Bus Configuration](#power-bus-configuration) below. |
+| **Fuel Bus Configuration** | [`fuel_bus`](../api-reference/spacecraft-commands.md#fuel_bus) + [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration) | Valves and pumps on the propellant network. Shown when the asset has a valve or pump. See [Fuel Bus Configuration](#fuel-bus-configuration) below. |
 
 Every form has the same submit pattern:
 
@@ -96,15 +97,15 @@ Forms only show fields the API supports; if you can't find a knob in the UI, it'
 
 ---
 
-## Power
+## Power Bus Configuration
 
-The **Power** panel (under **Control**) edits session-mutable bus configuration — switch open/closed, fuse thresholds, current limits, regulation voltage, and load power. It does **not** show static scenario `data` (like `Mass` or `Resistance`) or live simulation telemetry (voltages, currents, battery state of charge).
+The **Power Bus Configuration** panel (under **Control**) edits session-mutable bus configuration — switch open/closed, fuse thresholds, current limits, regulation voltage, and load power. The panel appears only when the asset includes at least one **Power Switch**, **Power Current Limiter**, **Power Voltage Regulator**, **Power Fuse**, or **Power Diode** (from [`list_entity`](../api-reference/ground-requests.md#list_entity)). It does **not** show static scenario `data` (like `Mass` or `Resistance`) or live simulation telemetry (voltages, currents, battery state of charge).
 
 ### How state is loaded
 
-1. When the scenario first loads component data for an asset ([`list_entity`](../api-reference/ground-requests.md#list_entity)), the UI automatically uplinks [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration) with no `scope` (power + computer + camera, once per asset per session).
+1. When the scenario first loads component data for an asset ([`list_entity`](../api-reference/ground-requests.md#list_entity)), the UI automatically uplinks [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration) with no `scope` (power_bus + fuel_bus + computer + camera, once per asset per session).
 2. The spacecraft replies with a **Configuration Report** (APID 102) on Downlink when RF allows.
-3. The UI stores the parsed snapshot per asset and fills the Power controls from that buffer.
+3. The UI stores the parsed snapshot per asset and fills the Power Bus controls from that buffer.
 
 Until the first report arrives, controls show type defaults (e.g. switches closed, limiter at 5 A). After a report lands, values reflect the spacecraft.
 
@@ -112,9 +113,9 @@ Until the first report arrives, controls show type defaults (e.g. switches close
 
 Every operator on the team subscribes to the same **Downlink** topic. When any operator's Configuration Report is downlinked, **all** connected UIs update their local buffer and refresh unchanged controls.
 
-- **Refresh** (sync icon in the Power panel header) — sends `get_configuration` with `scope: "power"` for the selected asset.
-- **Update Circuit** — sends one [`power`](../api-reference/spacecraft-commands.md#power) command with a `values` array (one entry per changed component). The spacecraft automatically downlinks a Configuration Report for `scope: "power"` so other operators pick up the new state on the next pass.
-- **Reset** (fuse rows only) — enabled when `Is Fuse Blown` is true; sends `power` with `action: "reset"` (which also triggers the automatic Configuration Report). Shows a **BLOWN** label while the fuse is open.
+- **Refresh** (sync icon in the panel header) — sends `get_configuration` with `scope: "power_bus"` for the selected asset.
+- **Update Bus** — sends one [`power_bus`](../api-reference/spacecraft-commands.md#power_bus) command with a `values` array (one entry per changed component). The spacecraft automatically downlinks a Configuration Report for `scope: "power_bus"` so other operators pick up the new state on the next pass.
+- **Reset** (fuse rows only) — enabled when `Is Fuse Blown` is true; sends `power_bus` with `action: "reset"` (which also triggers the automatic Configuration Report). Shows a **BLOWN** label while the fuse is open.
 
 If you don't see updates immediately, the report may still be queued on board — trigger a [`downlink`](../api-reference/spacecraft-commands.md#downlink) or wait for auto-downlink on ping.
 
@@ -125,6 +126,17 @@ If you are actively editing a control (draft differs from the last applied value
 ### Wire format
 
 See [Concepts → Telemetry → Configuration Report](../concepts/telemetry.md#configuration-report) and [Reference → Packet formats → Configuration Report](../reference/packet-formats.md#configuration-report-packet).
+
+---
+
+## Fuel Bus Configuration
+
+The **Fuel Bus Configuration** panel edits valve commanded openness (0–100%) and pump enabled/disabled state. The panel appears only when the asset includes at least one **Fuel Valve** or **Fuel Pump**.
+
+State loading, multi-operator sync, and in-progress edit protection work the same way as [Power Bus Configuration](#power-bus-configuration):
+
+- **Refresh** — `get_configuration` with `scope: "fuel_bus"`.
+- **Update Bus** — one [`fuel_bus`](../api-reference/spacecraft-commands.md#fuel_bus) command with all pending `values[]` entries; automatic Configuration Report follows on success.
 
 ---
 

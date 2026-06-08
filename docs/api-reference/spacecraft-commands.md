@@ -62,7 +62,7 @@ Maintenance
 : [`reset`](#reset) — reboot a malfunctioning component.
 
 Power bus
-: [`power`](#power) — set switch state, fuse threshold, limiter, regulator, or load power.
+: [`power_bus`](#power_bus) — set switch state, fuse threshold, limiter, regulator, or load power; [`fuel_bus`](#fuel_bus) — valve and pump state.
 : [`get_configuration`](#get_configuration) — read back session-mutable operator settings (power bus + guidance; Configuration Report).
 
 Propulsion
@@ -465,11 +465,11 @@ No arguments are read.
 
 ---
 
-## `power`
+## `power_bus`
 
 Sets session-mutable values and imperative actions on power-bus components. Targets are matched by **component name** (case-insensitive), same as [`list_entity`](ground-requests.md#list_entity).
 
-Every `power` command uses a single `values` array. Each element describes **one** component change:
+Every `power_bus` command uses a single `values` array. Each element describes **one** component change:
 
 | Field (per entry) | Description |
 | --- | --- |
@@ -478,14 +478,14 @@ Every `power` command uses a single `values` array. Each element describes **one
 | `target` | Component name. |
 | *(configure only)* | One type-specific parameter key (see registry below). Additional keys may be added per type in future. |
 
-Send **one** uplink per logical operation (e.g. one **Update Circuit** with every pending change). Entries are applied **in array order** (first to last). Invalid entries are skipped silently; duplicate `target` entries — last wins. An empty or missing `values` array is a silent no-op.
+Send **one** uplink per logical operation (e.g. one **Update Bus** with every pending change). Entries are applied **in array order** (first to last). Invalid entries are skipped silently; duplicate `target` entries — last wins. An empty or missing `values` array is a silent no-op.
 
 ### Example — multiple changes in one command
 
 ```json
 {
   "Asset": "A3F2C014",
-  "Command": "power",
+  "Command": "power_bus",
   "Time": 0,
   "Args": {
     "values": [
@@ -541,7 +541,7 @@ Send **one** uplink per logical operation (e.g. one **Update Circuit** with ever
 ```json
 {
   "Asset": "A3F2C014",
-  "Command": "power",
+  "Command": "power_bus",
   "Time": 0,
   "Args": {
     "values": [
@@ -557,9 +557,57 @@ Send **one** uplink per logical operation (e.g. one **Update Circuit** with ever
 
 This is separate from **auto-reset** (`Reset Duration` in scenario `data`), which the simulation handles when current drops.
 
-After a successful `power` command, the spacecraft **automatically** queues a Configuration Report for `scope: "power"` (same as [`get_configuration`](#get_configuration) with that scope). Scripts and other clients can also call `get_configuration` explicitly. The Operator UI still uses **Refresh** for on-demand sync and requests an initial snapshot when components are first loaded.
+After a successful `power_bus` command, the spacecraft **automatically** queues a Configuration Report for `scope: "power_bus"` (same as [`get_configuration`](#get_configuration) with that scope). Scripts and other clients can also call `get_configuration` explicitly. The Operator UI still uses **Refresh** for on-demand sync and requests an initial snapshot when components are first loaded.
 
-Python helpers: `commands.power_configure_values(...)`, `commands.power_configure(...)`, `commands.power_fuse_reset(...)` in [`src/commands.py`](../src/commands.py).
+Python helpers: `commands.power_bus_configure_values(...)`, `commands.power_bus_configure(...)`, `commands.power_bus_fuse_reset(...)` in [`src/commands.py`](../src/commands.py).
+
+---
+
+## `fuel_bus`
+
+Sets session-mutable values on fuel-bus components (valves and pumps). Same `values[]` batching model as [`power_bus`](#power_bus).
+
+```json
+{
+  "Asset": "A3F2C014",
+  "Command": "fuel_bus",
+  "Time": 0,
+  "Args": {
+    "values": [
+      {
+        "type": "valve",
+        "action": "configure",
+        "target": "Main Valve",
+        "commanded_percent_open": 1.0
+      },
+      {
+        "type": "pump",
+        "action": "configure",
+        "target": "Feed Pump",
+        "is_pump_enabled": true
+      }
+    ]
+  }
+}
+```
+
+### `configure` parameter keys
+
+| `type` | Parameter key | Type | Meaning | Classes |
+| --- | --- | --- | --- | --- |
+| `valve` | `commanded_percent_open` | `number` `0–1` | Target openness (`0` = closed, `1` = fully open) | `Fuel Valve` |
+| `pump` | `is_pump_enabled` | `bool` | Whether the pump is enabled | `Fuel Pump` |
+
+### Convenience valve actions
+
+| `type` | `action` | Effect |
+| --- | --- | --- |
+| `valve` | `open` | Sets `commanded_percent_open` to `1.0` |
+| `valve` | `close` | Sets `commanded_percent_open` to `0.0` |
+
+After a successful `fuel_bus` command, the spacecraft automatically queues a Configuration Report for `scope: "fuel_bus"`.
+
+Python helpers: `commands.fuel_bus_configure_values(...)`, `commands.fuel_bus_configure(...)` in [`src/commands.py`](../src/commands.py).
 
 ---
 
@@ -573,7 +621,7 @@ Asks the spacecraft to report **session-mutable operator configuration** — val
   "Command": "get_configuration",
   "Time": 0,
   "Args": {
-    "scope": "power",
+    "scope": "power_bus",
     "components": ["EPS Switch"]
   }
 }
@@ -581,18 +629,25 @@ Asks the spacecraft to report **session-mutable operator configuration** — val
 
 | Argument | Description |
 | --- | --- |
-| `scope` | Optional filter. Omit or `"all"` → **power**, **computer**, and **camera**. `"power"`, `"computer"`, or `"camera"` → that section only. Unknown scopes are ignored and **no report is sent**. |
-| `components` | Optional string array (**power** and **camera** scopes). One component = one element. Omit or `[]` for all matching components. Names are matched case-insensitively (same as `target` elsewhere). |
+| `scope` | Optional filter. Omit or `"all"` → **power_bus**, **fuel_bus**, **computer**, and **camera**. `"power_bus"`, `"fuel_bus"`, `"computer"`, or `"camera"` → that section only. Unknown scopes are ignored and **no report is sent**. |
+| `components` | Optional string array (**power_bus**, **fuel_bus**, and **camera** scopes). One component = one element. Omit or `[]` for all matching components. Names are matched case-insensitively (same as `target` elsewhere). |
 
 ### Report shape (`Data` JSON)
 
 ```json
 {
-  "power": [
+  "power_bus": [
     {
       "name": "EPS Switch",
       "class": "Power Switch",
       "configuration": { "Is Open": false }
+    }
+  ],
+  "fuel_bus": [
+    {
+      "name": "Main Valve",
+      "class": "Fuel Valve",
+      "configuration": { "Commanded Percent Open": 1.0, "Percent Open": 1.0 }
     }
   ],
   "computer": {
@@ -631,7 +686,8 @@ Asks the spacecraft to report **session-mutable operator configuration** — val
 }
 ```
 
-- **`power`** — array of per-component entries (see table below).
+- **`power_bus`** — array of per-component power entries (see table below).
+- **`fuel_bus`** — array of per-component fuel entries (valves and pumps).
 - **`computer`** — guidance computer operator state (stored from successful [`guidance`](#guidance) command Args, not from simulation internals):
   - **`pointing`** — active mode (`idle`, `inertial`, `velocity`, `sun`, `nadir`, `ground`, `location`, `relative`).
   - **`configs`** — last-applied settings **per mode** (only modes that have been configured at least once). Keys match [`guidance`](#guidance) Args for that mode (without repeating `pointing`). Includes `target` component names and normalised `alignment` strings (`+z`, `-x`, …). Switching modes in the UI can restore these saved values.
@@ -641,9 +697,9 @@ Asks the spacecraft to report **session-mutable operator configuration** — val
   - **`configuration`** — last-applied settings using [`camera`](#camera) Arg names (`monochromatic`, `resolution`, `fov`, …). **`Charge Coupled Device`** entries include `fov` only. Capture `name` (filename) and `sample` are not stored.
   - Cleared when the scenario instance resets. Only imagers configured at least once appear.
 
-Configuration Reports are also queued automatically after successful [`power`](#power) (`scope: "power"`), [`guidance`](#guidance) (`scope: "computer"`), and [`camera`](#camera) / [`capture`](#capture) (`scope: "camera"`) commands.
+Configuration Reports are also queued automatically after successful [`power_bus`](#power_bus) (`scope: "power_bus"`), [`fuel_bus`](#fuel_bus) (`scope: "fuel_bus"`), [`guidance`](#guidance) (`scope: "computer"`), and [`camera`](#camera) / [`capture`](#capture) (`scope: "camera"`) commands.
 
-### Power fields
+### Power bus fields
 
 Only components with session-mutable configuration are included. Components with nothing to report are omitted.
 
@@ -655,7 +711,16 @@ Only components with session-mutable configuration are included. Components with
 | `Power Voltage Regulator` | `Regulation Voltage` |
 | `Power Sink` | `Nominal Power` |
 
-These align with the spacecraft `power` command `configure` actions (`switch`, `fuse`, `current_limiter`, `voltage_regulator`, `load`). `Is Fuse Blown` is updated by simulation and cleared by `power` + `action: "reset"`.
+These align with the spacecraft `power_bus` command `configure` actions (`switch`, `fuse`, `current_limiter`, `voltage_regulator`, `load`). `Is Fuse Blown` is updated by simulation and cleared by `power_bus` + `action: "reset"`.
+
+### Fuel bus fields
+
+| Class | `configuration` fields |
+| --- | --- |
+| `Fuel Valve` | `Commanded Percent Open`, `Percent Open` (actual; read-only) |
+| `Fuel Pump` | `Is Pump Enabled` |
+
+These align with the spacecraft `fuel_bus` command `configure` actions (`valve`, `pump`).
 
 ### Notes
 
@@ -665,10 +730,11 @@ These align with the spacecraft `power` command `configure` actions (`switch`, `
 
 ### Operator UI
 
-The bundled Operator UI uses this command to keep **Power**, **Guidance**, and **Camera** in sync across operators:
+The bundled Operator UI uses this command to keep **Power Bus Configuration**, **Fuel Bus Configuration**, **Guidance**, and **Camera** in sync across operators:
 
-- Requests `get_configuration` (no `scope` → power + computer + camera) once when each asset's components are first loaded (`list_entity`).
-- **Power** — picks up updates from automatic reports after each `power` command; **Refresh** on the Power panel requests `scope: "power"` on demand.
+- Requests `get_configuration` (no `scope` → power_bus + fuel_bus + computer + camera) once when each asset's components are first loaded (`list_entity`).
+- **Power Bus Configuration** — shown when the asset has a switch, limiter, regulator, fuse, or diode; picks up updates after each `power_bus` command; **Refresh** requests `scope: "power_bus"`.
+- **Fuel Bus Configuration** — shown when the asset has a valve or pump; picks up updates after each `fuel_bus` command; **Refresh** requests `scope: "fuel_bus"`.
 - **Guidance** — picks up updates from automatic reports after each executed `guidance` command; per-mode values in `configs` repopulate the form when switching pointing mode.
 - **Camera** — picks up updates after each `camera` / `capture`; switching imager in the dropdown restores that component's saved `configuration`.
 - Parses APID 102 on Downlink into a per-asset buffer; see [Guides → Operator UI](../guides/operator-ui-guide.md).

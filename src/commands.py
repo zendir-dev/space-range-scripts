@@ -405,16 +405,16 @@ _CONFIGURE_ENTRY_KEYS = {
 }
 
 
-def power_configure_values(entries: list[dict]) -> dict:
-    """Apply multiple power-bus changes in a single `power` command."""
+def power_bus_configure_values(entries: list[dict]) -> dict:
+    """Apply multiple power-bus changes in a single `power_bus` command."""
     return _cmd(
-        "power",
+        "power_bus",
         {"values": entries},
-        f"power → {len(entries)} change(s)",
+        f"power_bus → {len(entries)} change(s)",
     )
 
 
-def power_configure(
+def power_bus_configure(
     component_type: Literal[
         "switch",
         "fuse",
@@ -427,7 +427,7 @@ def power_configure(
 ) -> dict:
     """Configure one power-bus component (single-entry batch)."""
     param_key = _CONFIGURE_ENTRY_KEYS[component_type]
-    return power_configure_values([
+    return power_bus_configure_values([
         {
             "type": component_type,
             "action": "configure",
@@ -437,10 +437,42 @@ def power_configure(
     ])
 
 
-def power_fuse_reset(target: str) -> dict:
+def power_bus_fuse_reset(target: str) -> dict:
     """Manually reset one blown fuse."""
-    return power_configure_values([
+    return power_bus_configure_values([
         {"type": "fuse", "action": "reset", "target": target},
+    ])
+
+
+_FUEL_CONFIGURE_ENTRY_KEYS = {
+    "valve": "commanded_percent_open",
+    "pump": "is_pump_enabled",
+}
+
+
+def fuel_bus_configure_values(entries: list[dict]) -> dict:
+    """Apply multiple fuel-bus changes in a single `fuel_bus` command."""
+    return _cmd(
+        "fuel_bus",
+        {"values": entries},
+        f"fuel_bus → {len(entries)} change(s)",
+    )
+
+
+def fuel_bus_configure(
+    component_type: Literal["valve", "pump"],
+    target: str,
+    value,
+) -> dict:
+    """Configure one fuel-bus component (single-entry batch)."""
+    param_key = _FUEL_CONFIGURE_ENTRY_KEYS[component_type]
+    return fuel_bus_configure_values([
+        {
+            "type": component_type,
+            "action": "configure",
+            "target": target,
+            param_key: value,
+        },
     ])
 
 
@@ -460,9 +492,9 @@ def get_configuration(
 ) -> dict:
     """Request session-mutable operator configuration (Configuration Report telemetry).
 
-    Omit ``scope`` for ``power``, ``computer``, and ``camera`` sections, or pass
-    ``"power"`` / ``"computer"`` / ``"camera"`` for one section. ``components``
-    filters power and camera entries.
+    Omit ``scope`` for ``power_bus``, ``fuel_bus``, ``computer``, and ``camera``
+    sections, or pass one scope for a single section. ``components`` filters
+    power_bus, fuel_bus, and camera entries.
     """
     args: dict = {}
     if scope is not None:

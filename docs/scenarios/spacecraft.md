@@ -279,7 +279,7 @@ Per-connection fields (names must match component `name` values on **that** spac
 
 If either component name cannot be found, Studio logs a warning and **skips** that connection.
 
-**Fuel pumps** also draw electrical power when enabled — wire the pump on `power.bus[]` separately (same `in` / `out` terminals as other loads).
+**Fuel pumps** also draw electrical power when enabled — wire the pump on `power.bus[]` separately (same `in` / `out` terminals as other loads). Runtime valve/pump state is changed via [`fuel_bus`](../api-reference/spacecraft-commands.md#fuel_bus) and read back with [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration) (`scope: "fuel_bus"`).
 
 ### Default behaviour when `bus` is empty or omitted
 

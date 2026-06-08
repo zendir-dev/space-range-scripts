@@ -74,7 +74,7 @@ Space Range emits two distinct Message types out of the box:
 | --- | --- | --- |
 | **Ping** | Periodically (cadence is a per-spacecraft setting), and on demand via the `downlink` command with `ping=true`. | `Ping` |
 | **Schedule Report** | In response to the [`get_schedule`](../api-reference/spacecraft-commands.md#get_schedule) command. | `ScheduleReport` |
-| **Configuration Report** | After [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration), or automatically after [`power`](../api-reference/spacecraft-commands.md#power) / [`guidance`](../api-reference/spacecraft-commands.md#guidance) / [`camera`](../api-reference/spacecraft-commands.md#camera) / [`capture`](../api-reference/spacecraft-commands.md#capture), when there is configuration to report. | `ConfigurationReport` |
+| **Configuration Report** | After [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration), or automatically after [`power_bus`](../api-reference/spacecraft-commands.md#power_bus) / [`fuel_bus`](../api-reference/spacecraft-commands.md#fuel_bus) / [`guidance`](../api-reference/spacecraft-commands.md#guidance) / [`camera`](../api-reference/spacecraft-commands.md#camera) / [`capture`](../api-reference/spacecraft-commands.md#capture), when there is configuration to report. | `ConfigurationReport` |
 
 All ride the same path and are demultiplexed on the client side using the **APID** field of the Space Packet primary header. The XTCE schema tells you which APID corresponds to which message.
 
@@ -114,7 +114,7 @@ A Configuration Report is a one-shot snapshot of **session-mutable operator conf
 | --- | --- | --- |
 | `Data` | string (JSON) | Configuration snapshot. May include `power`, `computer` (guidance), and/or `camera` (imager settings), depending on `scope`. Defaults to `"{}"`. |
 
-A Configuration Report is generated after [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration) or automatically after a successful [`power`](../api-reference/spacecraft-commands.md#power), [`guidance`](../api-reference/spacecraft-commands.md#guidance), [`camera`](../api-reference/spacecraft-commands.md#camera), or [`capture`](../api-reference/spacecraft-commands.md#capture) command, and **only when** the requested scope has data to report. If nothing matches, no packet is sent.
+A Configuration Report is generated after [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration) or automatically after a successful [`power_bus`](../api-reference/spacecraft-commands.md#power_bus), [`fuel_bus`](../api-reference/spacecraft-commands.md#fuel_bus), [`guidance`](../api-reference/spacecraft-commands.md#guidance), [`camera`](../api-reference/spacecraft-commands.md#camera), or [`capture`](../api-reference/spacecraft-commands.md#capture) command, and **only when** the requested scope has data to report. If nothing matches, no packet is sent.
 
 > **`Data` is a JSON-encoded string, not a nested object.** After XTCE-parsing the packet, call `JSON.parse(packet.Data)` to access the snapshot (same pattern as Schedule Report `Commands`).
 

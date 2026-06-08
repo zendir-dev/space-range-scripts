@@ -181,7 +181,7 @@ Source: `USpaceRangeSubsystem::InitializeSpacePacketDefinitions` (`studio/Plugin
 | **System (100-199)** | | | | |
 | 100 | Ping | `PingMessage` | `System` | Periodic; every `controller.ping_interval`. |
 | 101 | Schedule Report | `ScheduleReportMessage` | `System` | Reply to [`get_schedule`](../api-reference/spacecraft-commands.md#get_schedule). |
-| 102 | Configuration Report | `ConfigurationReportMessage` | `System` | Reply to [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration), or automatically after [`power`](../api-reference/spacecraft-commands.md#power) / [`guidance`](../api-reference/spacecraft-commands.md#guidance) / [`camera`](../api-reference/spacecraft-commands.md#camera) / [`capture`](../api-reference/spacecraft-commands.md#capture). Omitted when there is nothing to report. |
+| 102 | Configuration Report | `ConfigurationReportMessage` | `System` | Reply to [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration), or automatically after [`power_bus`](../api-reference/spacecraft-commands.md#power_bus) / [`fuel_bus`](../api-reference/spacecraft-commands.md#fuel_bus) / [`guidance`](../api-reference/spacecraft-commands.md#guidance) / [`camera`](../api-reference/spacecraft-commands.md#camera) / [`capture`](../api-reference/spacecraft-commands.md#capture). Omitted when there is nothing to report. |
 | **Power (200-299)** | | | | |
 | 200 | Battery | `BatteryMessage` | `PowerSystem` | Has a `Battery` component. |
 | 201 | Power Source | `PowerMessage` | `PowerSystem` | Per-source power (`Solar Panel`, etc.). |
@@ -340,7 +340,7 @@ The same JSON-string-of-array trick as Ping — `json.loads(report["Commands"])`
 
 ## Configuration Report packet
 
-Sent in response to [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration), or automatically after a successful [`power`](../api-reference/spacecraft-commands.md#power), [`guidance`](../api-reference/spacecraft-commands.md#guidance), [`camera`](../api-reference/spacecraft-commands.md#camera), or [`capture`](../api-reference/spacecraft-commands.md#capture) command, and **only when** the requested scope has configuration to report.
+Sent in response to [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration), or automatically after a successful [`power_bus`](../api-reference/spacecraft-commands.md#power_bus), [`fuel_bus`](../api-reference/spacecraft-commands.md#fuel_bus), [`guidance`](../api-reference/spacecraft-commands.md#guidance), [`camera`](../api-reference/spacecraft-commands.md#camera), or [`capture`](../api-reference/spacecraft-commands.md#capture) command, and **only when** the requested scope has configuration to report.
 
 ### XTCE field order
 
@@ -350,11 +350,11 @@ Sent in response to [`get_configuration`](../api-reference/spacecraft-commands.m
 
 ### `Data` JSON shape
 
-After XTCE decode, parse with `json.loads(report["Data"])`. Scope controls which top-level keys appear (`power`, `computer`, `camera`, or any combination):
+After XTCE decode, parse with `json.loads(report["Data"])`. Scope controls which top-level keys appear (`power_bus`, `fuel_bus`, `computer`, `camera`, or any combination):
 
 ```json
 {
-  "power": [
+  "power_bus": [
     {
       "name": "EPS Switch",
       "class": "Power Switch",
@@ -368,6 +368,16 @@ After XTCE decode, parse with `json.loads(report["Data"])`. Scope controls which
       "configuration": {
         "Current Threshold": 2.0,
         "Is Fuse Blown": false
+      }
+    }
+  ],
+  "fuel_bus": [
+    {
+      "name": "Main Valve",
+      "class": "Fuel Valve",
+      "configuration": {
+        "Commanded Percent Open": 1.0,
+        "Percent Open": 1.0
       }
     }
   ],
@@ -404,10 +414,14 @@ After XTCE decode, parse with `json.loads(report["Data"])`. Scope controls which
 
 | Field | Type | Description |
 | --- | --- | --- |
-| `power` | array | Power-bus components with session-mutable configuration. Omitted when scope excludes power or every candidate component has nothing to report. |
-| `power[].name` | string | Component name (matches [`list_entity`](../api-reference/ground-requests.md#list_entity)). |
-| `power[].class` | string | Component class (e.g. `Power Switch`, `Power Fuse`). |
-| `power[].configuration` | object | Current operator-mutable values only — not static scenario parameters or simulation telemetry. Keys use spaced names (`Is Open`, `Current Threshold`, …). |
+| `power_bus` | array | Power-bus components with session-mutable configuration. Omitted when scope excludes power_bus or every candidate component has nothing to report. |
+| `power_bus[].name` | string | Component name (matches [`list_entity`](../api-reference/ground-requests.md#list_entity)). |
+| `power_bus[].class` | string | Component class (e.g. `Power Switch`, `Power Fuse`). |
+| `power_bus[].configuration` | object | Current operator-mutable values only — not static scenario parameters or simulation telemetry. Keys use spaced names (`Is Open`, `Current Threshold`, …). |
+| `fuel_bus` | array | Fuel-bus components (valves, pumps) with session-mutable configuration. Omitted when scope excludes fuel_bus or every candidate component has nothing to report. |
+| `fuel_bus[].name` | string | Component name. |
+| `fuel_bus[].class` | string | `Fuel Valve` or `Fuel Pump`. |
+| `fuel_bus[].configuration` | object | `Commanded Percent Open`, `Percent Open` (valve); `Is Pump Enabled` (pump). |
 | `computer` | object | Guidance operator state: `pointing` (active mode) and `configs` (last-applied Args per mode, without repeating `pointing`). Stored from executed [`guidance`](../api-reference/spacecraft-commands.md#guidance) commands; cleared on scenario reset. |
 | `computer.pointing` | string | Active pointing mode (`idle`, `inertial`, `velocity`, `sun`, `nadir`, `ground`, `location`, `relative`). |
 | `computer.configs` | object | Per-mode settings. Keys match [`guidance`](../api-reference/spacecraft-commands.md#guidance) Args for that mode (e.g. `target`, `alignment`, `pitch`/`roll`/`yaw`, `station`, `spacecraft`). |

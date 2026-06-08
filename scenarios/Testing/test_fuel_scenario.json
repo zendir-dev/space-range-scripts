@@ -29,11 +29,11 @@
 	"teams": [
 		{
 			"enabled": true,
-			"id": 111112,
-			"password": "BBBBBB",
+			"id": 111111,
+			"password": "AAAAAA",
 			"name": "Team Blue",
-			"key": 43,
-			"frequency": 613,
+			"key": 42,
+			"frequency": 612,
 			"collection": "Main",
 			"color": "#0050FF"
 		}
