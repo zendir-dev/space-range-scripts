@@ -83,6 +83,7 @@ Forms surfaced (one panel each):
 | **Thruster** | [`thrust`](../api-reference/spacecraft-commands.md#thrust) | Burn config. Only shown if a thruster is present. |
 | **Rendezvous** | [`rendezvous`](../api-reference/spacecraft-commands.md#rendezvous) | Target asset selection. Only shown if RPO is enabled and ≥2 assets exist. |
 | **Docking** | [`docking`](../api-reference/spacecraft-commands.md#docking) | Phases of docking. Requires a docking adapter and RPO. |
+| **Power** | [`power`](../api-reference/spacecraft-commands.md#power) + [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration) | Switches, fuses, limiters, regulators, and loads by bus branch. See [Power](#power) below. |
 
 Every form has the same submit pattern:
 
@@ -92,6 +93,37 @@ Every form has the same submit pattern:
 4. Watch the response in **Log** ("Sent" entry) and the next Ping in **Data** for the execution result.
 
 Forms only show fields the API supports; if you can't find a knob in the UI, it's because the wire API doesn't accept it. Drop to a custom client if you need something niche.
+
+---
+
+## Power
+
+The **Power** panel (under **Control**) edits session-mutable bus configuration — switch open/closed, fuse thresholds, current limits, regulation voltage, and load power. It does **not** show static scenario `data` (like `Mass` or `Resistance`) or live simulation telemetry (voltages, currents, battery state of charge).
+
+### How state is loaded
+
+1. When the scenario first loads component data for an asset ([`list_entity`](../api-reference/ground-requests.md#list_entity)), the UI automatically uplinks [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration) with `scope: "power"` (once per asset per session).
+2. The spacecraft replies with a **Configuration Report** (APID 102) on Downlink when RF allows.
+3. The UI stores the parsed snapshot per asset and fills the Power controls from that buffer.
+
+Until the first report arrives, controls show type defaults (e.g. switches closed, limiter at 5 A). After a report lands, values reflect the spacecraft.
+
+### Multi-operator sync
+
+Every operator on the team subscribes to the same **Downlink** topic. When any operator's Configuration Report is downlinked, **all** connected UIs update their local buffer and refresh unchanged controls.
+
+- **Refresh** (sync icon in the Power panel header) — sends `get_configuration` with `scope: "power"` for the selected asset.
+- **Update Circuit** — sends batched [`power`](../api-reference/spacecraft-commands.md#power) commands for changed values, then requests `get_configuration` again so other operators can pick up the new state on the next downlink.
+
+If you don't see updates immediately, the report may still be queued on board — trigger a [`downlink`](../api-reference/spacecraft-commands.md#downlink) or wait for auto-downlink on ping.
+
+### In-progress edits
+
+If you are actively editing a control (draft differs from the last applied value), an incoming Configuration Report **does not** overwrite that field. All other unchanged fields are updated from the report. This lets two operators work on different branches without clobbering each other's partial edits.
+
+### Wire format
+
+See [Concepts → Telemetry → Configuration Report](../concepts/telemetry.md#configuration-report) and [Reference → Packet formats → Configuration Report](../reference/packet-formats.md#configuration-report-packet).
 
 ---
 

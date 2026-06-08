@@ -461,6 +461,7 @@ def _random_command_for_asset(asset: _Asset, *, allow_reset: bool = True) -> dic
         ("downlink",     {"downlink": random.choice([True, False]),
                           "ping":     random.choice([True, False])}),
         ("get_schedule", {}),
+        ("get_configuration", {"scope": "power"}),
     ]
 
     if asset.has_jammer():

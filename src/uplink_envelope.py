@@ -122,6 +122,7 @@ command_docking_dock = _commands.docking_dock
 command_docking_undock = _commands.docking_undock
 
 command_get_schedule = _commands.get_schedule
+command_get_configuration = _commands.get_configuration
 command_remove_by_id = _commands.remove_command_by_id
 command_remove_by_time_command = _commands.remove_command_by_time_command
 command_update = _commands.update_command

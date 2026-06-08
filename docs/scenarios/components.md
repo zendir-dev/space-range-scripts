@@ -116,6 +116,8 @@ These components attach to the spacecraft **power bus** and are wired with `powe
 
 **Generation and storage** (`Solar Panel`, `Battery`) are documented above. **Cross-spacecraft links** use `Power Interconnect` ([below](#power-interconnect)).
 
+**Runtime operator state** (switch open/closed, fuse threshold, limiter set-point, etc.) is not static scenario `data` — it changes during the exercise via the spacecraft [`power`](../api-reference/spacecraft-commands.md#power) command. Clients pull the current snapshot with [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration) (`scope: "power"`); the Operator UI does this automatically for the Power panel. Static keys in the tables below are authored at load time; session-mutable fields are listed in the [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration) power-field table.
+
 Payload hardware (`Camera`, `Transmitter`, sensors, etc.) can also be listed on `power.bus[]` when those types participate in the electrical model — same `source_component` / `target_component` rules as switches and sinks.
 
 ### Power Switch

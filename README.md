@@ -454,6 +454,8 @@ Every helper in `src/commands.py` returns a `dict` that unpacks directly into `s
 | Rendezvous | `rendezvous_start(target_id, dx, dy, dz)`, `rendezvous_stop(target_id)` | Hold an LVLH offset (m) from another spacecraft. Requires `enable_rpo: true`. |
 | Docking | `docking_dock(target_id, component)`, `docking_undock(target_id, component)` | Physically dock / undock with a named component on another spacecraft. |
 | Reset | `component_reset(target)` | Reboot a single component (or the whole bus, if you reset `Computer`). |
+| Schedule | `get_schedule()`, `remove_command_by_id(id)`, `remove_command_by_time_command(time, command)`, `update_command(...)` | Inspect and manage the on-board command queue (reply: Schedule Report, APID 101). |
+| Configuration | `get_configuration(scope=None, components=None)` | Request session-mutable operator settings (reply: Configuration Report, APID 102). Phase 1: `scope="power"`. |
 
 > All helpers accept the same `target` argument as the underlying commands — the **component name** (as configured in your scenario JSON), not a class alias. `alignment` defaults to `+z` for guidance helpers.
 

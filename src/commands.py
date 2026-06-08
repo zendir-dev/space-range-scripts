@@ -402,6 +402,19 @@ def get_schedule() -> dict:
     return _cmd("get_schedule", {}, "Request on-board schedule (Schedule Report telemetry)")
 
 
+def get_configuration(
+    scope: str | None = None,
+    components: list[str] | None = None,
+) -> dict:
+    """Request session-mutable operator configuration (Configuration Report telemetry)."""
+    args: dict = {}
+    if scope is not None:
+        args["scope"] = scope
+    if components is not None:
+        args["components"] = components
+    return _cmd("get_configuration", args, "Request operator configuration (Configuration Report telemetry)")
+
+
 def remove_command_by_id(command_id: int) -> dict:
     """Remove a pending command by spacecraft-assigned ``ID``."""
     return _cmd("remove_command", {"ID": command_id}, f"remove_command ID={command_id}")

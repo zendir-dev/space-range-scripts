@@ -67,7 +67,7 @@ After XOR-decryption, **before** Caesar decryption, the first 5 bytes describe t
 | Value | Symbol | Inner payload |
 | --- | --- | --- |
 | `0` | `None` | Empty / sentinel. Discard. |
-| `1` | `Message` | CCSDS Space Packet (Ping, Schedule Report, or any other XTCE-defined message). |
+| `1` | `Message` | CCSDS Space Packet (Ping, Schedule Report, Configuration Report, or any other XTCE-defined message). |
 | `2` | `Media` | 50-byte name header + file bytes. |
 | `3` | `UplinkIntercept` | 32-byte intercept header + raw on-air bytes. |
 
@@ -181,6 +181,7 @@ Source: `USpaceRangeSubsystem::InitializeSpacePacketDefinitions` (`studio/Plugin
 | **System (100-199)** | | | | |
 | 100 | Ping | `PingMessage` | `System` | Periodic; every `controller.ping_interval`. |
 | 101 | Schedule Report | `ScheduleReportMessage` | `System` | Reply to [`get_schedule`](../api-reference/spacecraft-commands.md#get_schedule). |
+| 102 | Configuration Report | `ConfigurationReportMessage` | `System` | Reply to [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration). Omitted when there is nothing to report. |
 | **Power (200-299)** | | | | |
 | 200 | Battery | `BatteryMessage` | `PowerSystem` | Has a `Battery` component. |
 | 201 | Power Source | `PowerMessage` | `PowerSystem` | Per-source power (`Solar Panel`, etc.). |
@@ -334,6 +335,51 @@ Each entry:
 | `Args` | string (JSON) | Arguments, redacted of sensitive keys. |
 
 The same JSON-string-of-array trick as Ping — `json.loads(report["Commands"])` to access the list.
+
+---
+
+## Configuration Report packet
+
+Sent only in response to [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration), and **only when** at least one matching component has session-mutable configuration to report.
+
+### XTCE field order
+
+| # | Field | XTCE type | Range / unit | Description |
+| --- | --- | --- | --- | --- |
+| 1 | `Data` | String | JSON object | Configuration snapshot. |
+
+### `Data` JSON shape
+
+After XTCE decode, parse with `json.loads(report["Data"])`. Phase 1 includes a `power` key when `scope` is omitted, `"all"`, or `"power"`:
+
+```json
+{
+  "power": [
+    {
+      "name": "EPS Switch",
+      "class": "Power Switch",
+      "configuration": {
+        "Is Open": false
+      }
+    },
+    {
+      "name": "EPS Fuse",
+      "class": "Power Fuse",
+      "configuration": {
+        "Current Threshold": 2.0,
+        "Is Fuse Blown": false
+      }
+    }
+  ]
+}
+```
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `power` | array | Power-bus components with session-mutable configuration. Omitted from the request side when scope is unsupported; omitted from the report when every candidate component has nothing to report (no packet sent). |
+| `power[].name` | string | Component name (matches [`list_entity`](../api-reference/ground-requests.md#list_entity)). |
+| `power[].class` | string | Component class (e.g. `Power Switch`, `Power Fuse`). |
+| `power[].configuration` | object | Current operator-mutable values only — not static scenario parameters or simulation telemetry. Keys use spaced names (`Is Open`, `Current Threshold`, …). |
 
 ---
 

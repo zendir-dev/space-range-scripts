@@ -61,6 +61,10 @@ Communications
 Maintenance
 : [`reset`](#reset) — reboot a malfunctioning component.
 
+Power bus
+: [`power`](#power) — set switch state, fuse threshold, limiter, regulator, or load power.
+: [`get_configuration`](#get_configuration) — read back session-mutable power settings (Configuration Report).
+
 Propulsion
 : [`thrust`](#thrust) — fire a thruster for a duration.
 
@@ -454,6 +458,90 @@ No arguments are read.
 
 - The reply is delivered via the normal Downlink path, so it's subject to RF availability. If you don't see one, you may need to wait for a pass or downlink window.
 - Sensitive `Args` (passwords, etc.) are redacted in the report.
+
+---
+
+## `power`
+
+Sets session-mutable values on power-bus components. Targets are matched by **component name** (case-insensitive), same as [`list_entity`](ground-requests.md#list_entity). Batched by `type` — send one command per type with parallel `targets` and `values` arrays.
+
+```json
+{
+  "Asset": "A3F2C014",
+  "Command": "power",
+  "Time": 0,
+  "Args": {
+    "type": "switch",
+    "targets": ["EPS Switch", "TX Switch"],
+    "values": [true, false]
+  }
+}
+```
+
+| `type` | `values` | Affected classes |
+| --- | --- | --- |
+| `switch` | `bool` — `true` = open, `false` = closed | `Power Switch`, `Power Interconnect` |
+| `fuse` | `number` (A) — current threshold | `Power Fuse` |
+| `current_limiter` | `number` (A) | `Power Current Limiter` |
+| `voltage_regulator` | `number` (V) | `Power Voltage Regulator` |
+| `load` | `number` (W) — nominal power | `Power Sink` |
+
+`targets` and `values` must have the same length (extras are ignored). Unknown `type` is a silent no-op.
+
+After changing power settings, use [`get_configuration`](#get_configuration) to pull the current snapshot for other operators or clients. The Operator UI does this automatically after **Update Circuit**.
+
+---
+
+## `get_configuration`
+
+Asks the spacecraft to report **session-mutable operator configuration** — values that can change during the exercise via operator commands, not static scenario parameters (like `Mass`) and not simulation telemetry (voltages, sensor readings, battery state of charge). The spacecraft replies with a **Configuration Report** telemetry message when there is configuration to report; see [Concepts → Telemetry](../concepts/telemetry.md#configuration-report) for the wire format.
+
+```json
+{
+  "Asset": "A3F2C014",
+  "Command": "get_configuration",
+  "Time": 0,
+  "Args": {
+    "scope": "power",
+    "components": ["EPS Switch"]
+  }
+}
+```
+
+| Argument | Description |
+| --- | --- |
+| `scope` | Optional filter. Phase 1 supports `power` only. Omit, set to `"all"`, or use `"power"` to include the `power` section in the report. Any other scope is ignored and **no report is sent**. |
+| `components` | Optional string array. One component = one element. Omit or `[]` for all components within the active scope. Names are matched case-insensitively (same as `target` elsewhere). |
+
+### Phase 1 power fields
+
+Only components with session-mutable configuration are included. Components with nothing to report are omitted.
+
+| Class | `configuration` fields |
+| --- | --- |
+| `Power Switch`, `Power Interconnect` | `Is Open` |
+| `Power Fuse` | `Current Threshold`, `Is Fuse Blown` |
+| `Power Current Limiter` | `Current Limit` |
+| `Power Voltage Regulator` | `Regulation Voltage` |
+| `Power Sink` | `Nominal Power` |
+
+These align with the spacecraft `power` command types (`switch`, `fuse`, `current_limiter`, `voltage_regulator`, `load`).
+
+### Notes
+
+- The reply is delivered via the normal Downlink path (RF), same as [`get_schedule`](#get_schedule).
+- If no matching components have configuration data, **no Configuration Report is sent** (silent no-op).
+- Use [`list_entity`](../api-reference/ground-requests.md#list_entity) to discover component names before filtering `components`.
+
+### Operator UI
+
+The bundled Operator UI uses this command to keep the **Power** panel in sync across operators:
+
+- Requests `get_configuration` with `scope: "power"` once when each asset's components are first loaded (`list_entity`).
+- Re-requests after **Update Circuit** and when the operator clicks **Refresh** on the Power panel.
+- Parses APID 102 on Downlink into a per-asset buffer; see [Guides → Operator UI → Power](../guides/operator-ui-guide.md#power).
+
+Python: `commands.get_configuration(scope="power")` in [`src/commands.py`](../src/commands.py).
 
 ---
 

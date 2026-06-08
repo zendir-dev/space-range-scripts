@@ -72,7 +72,7 @@ This documentation is for **users** of Space Range — operators, integrators, a
 - [Recipes & agent checklist](scenarios/recipes.md) — annotated end-to-end patterns and an agent-author checklist.
 
 ### Reference
-- [Packet formats](reference/packet-formats.md) — Ping, Schedule Report, Uplink Intercept binary layouts.
+- [Packet formats](reference/packet-formats.md) — Ping, Schedule Report, Configuration Report, Uplink Intercept binary layouts.
 - [Data types](reference/data-types.md) — variable types, units, and ranges used across the API.
 
 ---

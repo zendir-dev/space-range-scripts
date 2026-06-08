@@ -11,7 +11,7 @@ You should already be comfortable with [Encryption walkthrough](encryption-walkt
 | Format byte | Payload | What it carries |
 | --- | --- | --- |
 | `0` (`None`) | empty | Heartbeat / sentinel. Ignore. |
-| `1` (`Message`) | CCSDS Space Packet | **Ping** (periodic spacecraft status) and **Schedule Report** (queued commands), described by the team's XTCE schemas. |
+| `1` (`Message`) | CCSDS Space Packet | **Ping** (periodic spacecraft status), **Schedule Report** (queued commands), and **Configuration Report** (operator configuration), described by the team's XTCE schemas. |
 | `2` (`Media`) | 50-byte name + file bytes | Imagery and other binary payloads. |
 | `3` (`Uplink Intercept`) | 32-byte header + raw RF bytes | Frames captured off the air, used for SIGINT exercises. |
 
@@ -119,7 +119,7 @@ The team's XTCE schemas assign each packet type a specific APID. The Studio defa
 
 | Range | Category | Examples |
 | --- | --- | --- |
-| 100–199 | System | Ping, Schedule Report |
+| 100–199 | System | Ping, Schedule Report, Configuration Report |
 | 200–299 | Power System | Battery, Power Source, Power Node |
 | 300–399 | Sensors | Magnetometer, GPS, EM Sensor, CCD, Gyroscope |
 | 400–499 | ADCS | Computer, Reaction Wheels, Dynamics, Thruster, Formation Flying |
@@ -165,6 +165,20 @@ Schedule Report is the response to [`get_schedule`](../api-reference/spacecraft-
 | `Commands` | string (JSON) | JSON array of pending commands; each has `Asset`, `ID`, `Time`, `Command`, `Args` (redacted). |
 
 Same JSON-string-of-array trick. Same `json.loads` after parse.
+
+### The Configuration Report payload
+
+Configuration Report (APID 102) is the response to [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration), sent only when at least one matching component has session-mutable configuration:
+
+| Field | Type | Meaning |
+| --- | --- | --- |
+| `Data` | string (JSON) | Configuration snapshot; phase 1 includes a `power` array when scope is omitted, `"all"`, or `"power"`. |
+
+```python
+report["Data"] = json.loads(report["Data"])  # e.g. {"power": [{"name": "...", "class": "...", "configuration": {...}}]}
+```
+
+If no matching configuration exists, no packet is sent.
 
 ### Worked example with the bundled parser
 
