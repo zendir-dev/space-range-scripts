@@ -465,22 +465,18 @@ No arguments are read.
 
 Sets session-mutable values and imperative actions on power-bus components. Targets are matched by **component name** (case-insensitive), same as [`list_entity`](ground-requests.md#list_entity).
 
-Every `power` command uses:
+Every `power` command uses a single `values` array. Each element describes **one** component change:
 
-| Field | Description |
+| Field (per entry) | Description |
 | --- | --- |
 | `type` | Component family (`switch`, `fuse`, `current_limiter`, `voltage_regulator`, `load`). |
 | `action` | Verb for that family (`configure`, `reset`, …). |
-| `targets` | String array of component names. |
-| `parameters` | Object of action-specific arrays (parallel to `targets`). Omitted when the action needs no data. |
+| `target` | Component name. |
+| *(configure only)* | One type-specific parameter key (see registry below). Additional keys may be added per type in future. |
 
-Send one uplink per `type` + `action` pair. Unknown combinations are a silent no-op.
+Send **one** uplink per logical operation (e.g. one **Update Circuit** with every pending change). Entries are applied **in array order** (first to last). Invalid entries are skipped silently; duplicate `target` entries — last wins. An empty or missing `values` array is a silent no-op.
 
-### `configure` actions
-
-Set operator-mutable values. Each `parameters` array must match `targets` length (extras are ignored).
-
-**Switch**
+### Example — multiple changes in one command
 
 ```json
 {
@@ -488,109 +484,51 @@ Set operator-mutable values. Each `parameters` array must match `targets` length
   "Command": "power",
   "Time": 0,
   "Args": {
-    "type": "switch",
-    "action": "configure",
-    "targets": ["EPS Switch", "TX Switch"],
-    "parameters": {
-      "states": [true, false]
-    }
+    "values": [
+      {
+        "type": "switch",
+        "action": "configure",
+        "target": "EPS Switch",
+        "state": false
+      },
+      {
+        "type": "fuse",
+        "action": "configure",
+        "target": "EPS Fuse",
+        "current_threshold": 50.0
+      },
+      {
+        "type": "current_limiter",
+        "action": "configure",
+        "target": "Camera Limiter",
+        "current_limit": 2.3
+      },
+      {
+        "type": "voltage_regulator",
+        "action": "configure",
+        "target": "Camera Regulator",
+        "regulation_voltage": 12.0
+      },
+      {
+        "type": "load",
+        "action": "configure",
+        "target": "Camera Load",
+        "nominal_power": 5.7
+      }
+    ]
   }
 }
 ```
 
-| `parameters` key | Type | Meaning |
-| --- | --- | --- |
-| `states` | `bool[]` | `true` = open, `false` = closed |
+### `configure` parameter keys
 
-Classes: `Power Switch`, `Power Interconnect`.
-
-**Fuse**
-
-```json
-{
-  "Asset": "A3F2C014",
-  "Command": "power",
-  "Time": 0,
-  "Args": {
-    "type": "fuse",
-    "action": "configure",
-    "targets": ["EPS Fuse"],
-    "parameters": {
-      "current_thresholds": [2.0]
-    }
-  }
-}
-```
-
-| `parameters` key | Type | Meaning |
-| --- | --- | --- |
-| `current_thresholds` | `number[]` (A) | Over-current threshold |
-
-**Current limiter**
-
-```json
-{
-  "Asset": "A3F2C014",
-  "Command": "power",
-  "Time": 0,
-  "Args": {
-    "type": "current_limiter",
-    "action": "configure",
-    "targets": ["EPS L1", "TX L1"],
-    "parameters": {
-      "current_limits": [1.0, 2.0]
-    }
-  }
-}
-```
-
-| `parameters` key | Type | Meaning |
-| --- | --- | --- |
-| `current_limits` | `number[]` (A) | Branch current limit |
-
-**Voltage regulator**
-
-```json
-{
-  "Asset": "A3F2C014",
-  "Command": "power",
-  "Time": 0,
-  "Args": {
-    "type": "voltage_regulator",
-    "action": "configure",
-    "targets": ["Bus Regulator"],
-    "parameters": {
-      "regulation_voltages": [28.0]
-    }
-  }
-}
-```
-
-| `parameters` key | Type | Meaning |
-| --- | --- | --- |
-| `regulation_voltages` | `number[]` (V) | Regulation set-point |
-
-**Load**
-
-```json
-{
-  "Asset": "A3F2C014",
-  "Command": "power",
-  "Time": 0,
-  "Args": {
-    "type": "load",
-    "action": "configure",
-    "targets": ["Camera Load"],
-    "parameters": {
-      "nominal_powers": [8.0]
-    }
-  }
-}
-```
-
-| `parameters` key | Type | Meaning |
-| --- | --- | --- |
-| `nominal_powers` | `number[]` (W) | Nominal load power |
+| `type` | Parameter key | Type | Meaning | Classes |
+| --- | --- | --- | --- | --- |
+| `switch` | `state` | `bool` | `true` = open, `false` = closed | `Power Switch`, `Power Interconnect` |
+| `fuse` | `current_threshold` | `number` (A) | Over-current threshold | `Power Fuse` |
+| `current_limiter` | `current_limit` | `number` (A) | Branch current limit | `Power Current Limiter` |
+| `voltage_regulator` | `regulation_voltage` | `number` (V) | Regulation set-point | `Power Voltage Regulator` |
+| `load` | `nominal_power` | `number` (W) | Nominal load power | `Power Sink` |
 
 ### `reset` actions
 
@@ -602,29 +540,22 @@ Classes: `Power Switch`, `Power Interconnect`.
   "Command": "power",
   "Time": 0,
   "Args": {
-    "type": "fuse",
-    "action": "reset",
-    "targets": ["EPS Fuse"]
+    "values": [
+      {
+        "type": "fuse",
+        "action": "reset",
+        "target": "EPS Fuse"
+      }
+    ]
   }
 }
 ```
 
 This is separate from **auto-reset** (`Reset Duration` in scenario `data`), which the simulation handles when current drops.
 
-### Action registry (phase 1)
+After a successful `power` command, the spacecraft **automatically** queues a Configuration Report for `scope: "power"` (same as [`get_configuration`](#get_configuration) with that scope). Scripts and other clients can also call `get_configuration` explicitly. The Operator UI still uses **Refresh** for on-demand sync and requests an initial snapshot when components are first loaded.
 
-| `type` | `action` | `parameters` | Classes |
-| --- | --- | --- | --- |
-| `switch` | `configure` | `states` | `Power Switch`, `Power Interconnect` |
-| `fuse` | `configure` | `current_thresholds` | `Power Fuse` |
-| `fuse` | `reset` | *(none)* | `Power Fuse` |
-| `current_limiter` | `configure` | `current_limits` | `Power Current Limiter` |
-| `voltage_regulator` | `configure` | `regulation_voltages` | `Power Voltage Regulator` |
-| `load` | `configure` | `nominal_powers` | `Power Sink` |
-
-After changing power settings or resetting a fuse, use [`get_configuration`](#get_configuration) to pull the current snapshot for other operators or clients. The Operator UI does this automatically after **Update Circuit** and **Reset**.
-
-Python helpers: `commands.power_configure(...)`, `commands.power_fuse_reset(...)` in [`src/commands.py`](../src/commands.py).
+Python helpers: `commands.power_configure_values(...)`, `commands.power_configure(...)`, `commands.power_fuse_reset(...)` in [`src/commands.py`](../src/commands.py).
 
 ---
 
@@ -674,7 +605,7 @@ These align with the spacecraft `power` command `configure` actions (`switch`, `
 The bundled Operator UI uses this command to keep the **Power** panel in sync across operators:
 
 - Requests `get_configuration` with `scope: "power"` once when each asset's components are first loaded (`list_entity`).
-- Re-requests after **Update Circuit**, **Reset** (blown fuse), and when the operator clicks **Refresh** on the Power panel.
+- Picks up updates from the Configuration Report the spacecraft sends automatically after each `power` command; **Refresh** requests an explicit snapshot on demand.
 - Shows **BLOWN** and enables **Reset** when `Is Fuse Blown` is true in the configuration snapshot.
 - Parses APID 102 on Downlink into a per-asset buffer; see [Guides → Operator UI → Power](../guides/operator-ui-guide.md#power).
 

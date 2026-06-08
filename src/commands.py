@@ -396,13 +396,22 @@ def encryption_rotate(password: str, frequency: float, key: int) -> dict:
 # Power bus
 # ---------------------------------------------------------------------------
 
-_CONFIGURE_PARAM_KEYS = {
-    "switch": "states",
-    "fuse": "current_thresholds",
-    "current_limiter": "current_limits",
-    "voltage_regulator": "regulation_voltages",
-    "load": "nominal_powers",
+_CONFIGURE_ENTRY_KEYS = {
+    "switch": "state",
+    "fuse": "current_threshold",
+    "current_limiter": "current_limit",
+    "voltage_regulator": "regulation_voltage",
+    "load": "nominal_power",
 }
+
+
+def power_configure_values(entries: list[dict]) -> dict:
+    """Apply multiple power-bus changes in a single `power` command."""
+    return _cmd(
+        "power",
+        {"values": entries},
+        f"power → {len(entries)} change(s)",
+    )
 
 
 def power_configure(
@@ -413,34 +422,26 @@ def power_configure(
         "voltage_regulator",
         "load",
     ],
-    targets: list[str],
-    values: list,
+    target: str,
+    value,
 ) -> dict:
-    """Configure session-mutable power-bus settings for one or more components."""
-    param_key = _CONFIGURE_PARAM_KEYS[component_type]
-    return _cmd(
-        "power",
+    """Configure one power-bus component (single-entry batch)."""
+    param_key = _CONFIGURE_ENTRY_KEYS[component_type]
+    return power_configure_values([
         {
             "type": component_type,
             "action": "configure",
-            "targets": targets,
-            "parameters": {param_key: values},
+            "target": target,
+            param_key: value,
         },
-        f"power configure {component_type} → {list(zip(targets, values))}",
-    )
+    ])
 
 
-def power_fuse_reset(targets: list[str]) -> dict:
-    """Manually reset one or more blown fuses."""
-    return _cmd(
-        "power",
-        {
-            "type": "fuse",
-            "action": "reset",
-            "targets": targets,
-        },
-        f"power fuse reset → {targets}",
-    )
+def power_fuse_reset(target: str) -> dict:
+    """Manually reset one blown fuse."""
+    return power_configure_values([
+        {"type": "fuse", "action": "reset", "target": target},
+    ])
 
 
 # ---------------------------------------------------------------------------

@@ -181,7 +181,7 @@ Source: `USpaceRangeSubsystem::InitializeSpacePacketDefinitions` (`studio/Plugin
 | **System (100-199)** | | | | |
 | 100 | Ping | `PingMessage` | `System` | Periodic; every `controller.ping_interval`. |
 | 101 | Schedule Report | `ScheduleReportMessage` | `System` | Reply to [`get_schedule`](../api-reference/spacecraft-commands.md#get_schedule). |
-| 102 | Configuration Report | `ConfigurationReportMessage` | `System` | Reply to [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration). Omitted when there is nothing to report. |
+| 102 | Configuration Report | `ConfigurationReportMessage` | `System` | Reply to [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration), or automatically after [`power`](../api-reference/spacecraft-commands.md#power) (`scope: "power"`). Omitted when there is nothing to report. |
 | **Power (200-299)** | | | | |
 | 200 | Battery | `BatteryMessage` | `PowerSystem` | Has a `Battery` component. |
 | 201 | Power Source | `PowerMessage` | `PowerSystem` | Per-source power (`Solar Panel`, etc.). |
