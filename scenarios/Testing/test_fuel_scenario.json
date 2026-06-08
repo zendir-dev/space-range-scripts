@@ -1,0 +1,356 @@
+{
+	"metadata": {
+		"name": "Test Fuel Scenario",
+		"description": "Fuel-bus harness: two tanks (main + RCS), valves, a feed pump, and three cold-gas thrusters on explicit fuel.bus wiring. Minimal battery powers the pump motor. GEO over Earth, one ground station."
+	},
+	"simulation": {
+		"epoch": "2026/04/27 12:00:00",
+		"speed": 10.0,
+		"step_size": 0.1,
+		"integrator": "Euler",
+		"end_time": 0.0
+	},
+	"universe": {
+		"atmosphere": false,
+		"magnetosphere": false,
+		"gps": true,
+		"cloud_opacity": 0.7,
+		"cloud_contrast": 2.5,
+		"ambient_light": 0.25
+	},
+	"ground_stations": {
+		"locations": [
+			"Paris"
+		],
+		"min_elevation": 0,
+		"max_range": 0,
+		"scale": 100
+	},
+	"teams": [
+		{
+			"enabled": true,
+			"id": 111112,
+			"password": "BBBBBB",
+			"name": "Team Blue",
+			"key": 43,
+			"frequency": 613,
+			"collection": "Main",
+			"color": "#0050FF"
+		}
+	],
+	"assets": {
+		"space": [
+			{
+				"id": "SC_FUEL_TEST",
+				"name": "Microsat",
+				"orbit": {
+					"planet": "Earth",
+					"values": [
+						42164.0,
+						0.0,
+						0.0,
+						0.0,
+						0.0,
+						0.0
+					],
+					"offset": [
+						0.0,
+						0.0,
+						0.0,
+						0.0,
+						0.0,
+						0.0
+					]
+				},
+				"physics": {
+					"override_mass": true,
+					"mass": 120.0,
+					"center_of_mass": [
+						0.0,
+						0.0,
+						0.0
+					],
+					"inertia_tensor": [
+						[
+							12.0,
+							0.0,
+							0.0
+						],
+						[
+							0.0,
+							12.0,
+							0.0
+						],
+						[
+							0.0,
+							0.0,
+							12.0
+						]
+					]
+				},
+				"visualization": {
+					"mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/ZenSat/BP_Z_SC_ZenSat_Chassis",
+					"scale": 1.0,
+					"offset": [
+						0.0,
+						0.0,
+						0.12
+					]
+				},
+				"controller": {
+					"safe_fraction": 0.1,
+					"capture_tax": 0.001,
+					"downlink_tax": 0.01,
+					"ping_interval": 20.0,
+					"reset_interval": 60.0,
+					"jamming_multiplier": 1.0,
+					"enable_rpo": false
+				},
+				"power": {
+					"bus": [
+						{
+							"source_component": "Battery",
+							"source_terminal": "out",
+							"target_component": "Feed Pump",
+							"target_terminal": "in"
+						}
+					]
+				},
+				"fuel": {
+					"bus": [
+						{
+							"source_component": "Main Tank",
+							"source_terminal": "out",
+							"target_component": "Main Valve",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "Main Valve",
+							"source_terminal": "out",
+							"target_component": "Feed Pump",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "Feed Pump",
+							"source_terminal": "out",
+							"target_component": "Thruster +X",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "RCS Tank",
+							"source_terminal": "out",
+							"target_component": "RCS Valve",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "RCS Valve",
+							"source_terminal": "out",
+							"target_component": "Thruster +Z",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "RCS Tank",
+							"source_terminal": "out",
+							"target_component": "Aux Valve",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "Aux Valve",
+							"source_terminal": "out",
+							"target_component": "Thruster -X",
+							"target_terminal": "in"
+						}
+					]
+				},
+				"components": [
+					{
+						"class": "Fuel Source",
+						"name": "Main Tank",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.15
+						],
+						"data": {
+							"Capacity": 50.0,
+							"Initial Fuel Mass": 45.0,
+							"Dry Mass": 8.0,
+							"Maximum Outgoing Flow Rate": 2.0,
+							"Mass": 8.0
+						}
+					},
+					{
+						"class": "Fuel Source",
+						"name": "RCS Tank",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							-0.1
+						],
+						"data": {
+							"Capacity": 10.0,
+							"Initial Fuel Mass": 8.0,
+							"Dry Mass": 2.0,
+							"Maximum Outgoing Flow Rate": 0.5,
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Fuel Valve",
+						"name": "Main Valve",
+						"enabled": true,
+						"data": {
+							"Commanded Percent Open": 1.0,
+							"Max Flow Rate": 2.0,
+							"Mass": 0.5
+						}
+					},
+					{
+						"class": "Fuel Valve",
+						"name": "RCS Valve",
+						"enabled": true,
+						"data": {
+							"Commanded Percent Open": 1.0,
+							"Max Flow Rate": 0.5,
+							"Mass": 0.3
+						}
+					},
+					{
+						"class": "Fuel Valve",
+						"name": "Aux Valve",
+						"enabled": true,
+						"data": {
+							"Commanded Percent Open": 0.0,
+							"Max Flow Rate": 0.5,
+							"Mass": 0.3
+						}
+					},
+					{
+						"class": "Fuel Pump",
+						"name": "Feed Pump",
+						"enabled": true,
+						"data": {
+							"Max Flow Rate": 1.0,
+							"Efficiency": 0.9,
+							"Is Pump Enabled": false,
+							"Mass": 1.5
+						}
+					},
+					{
+						"class": "Cold Gas Thruster",
+						"name": "Thruster +X",
+						"enabled": true,
+						"position": [
+							0.5,
+							0.0,
+							0.0
+						],
+						"rotation": [
+							0.0,
+							90.0,
+							0.0
+						],
+						"data": {
+							"Max Thrust": 2.0,
+							"Specific Impulse": 50.0,
+							"Mass": 1.0
+						}
+					},
+					{
+						"class": "Cold Gas Thruster",
+						"name": "Thruster +Z",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.5
+						],
+						"rotation": [
+							0.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Max Thrust": 0.5,
+							"Specific Impulse": 50.0,
+							"Mass": 0.5
+						}
+					},
+					{
+						"class": "Cold Gas Thruster",
+						"name": "Thruster -X",
+						"enabled": true,
+						"position": [
+							-0.5,
+							0.0,
+							0.0
+						],
+						"rotation": [
+							0.0,
+							-90.0,
+							0.0
+						],
+						"data": {
+							"Max Thrust": 0.5,
+							"Specific Impulse": 50.0,
+							"Mass": 0.5
+						}
+					},
+					{
+						"class": "Battery",
+						"name": "Battery",
+						"enabled": true,
+						"data": {
+							"Nominal Capacity": 40.0,
+							"Charge Fraction": 1.0,
+							"Mass": 4.0
+						}
+					},
+					{
+						"class": "Computer",
+						"name": "Computer",
+						"enabled": true,
+						"data": {
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Reaction Wheels",
+						"name": "Reaction Wheels",
+						"enabled": true,
+						"data": {
+							"Mass": 6.0
+						}
+					},
+					{
+						"class": "Receiver",
+						"name": "Receiver",
+						"enabled": true,
+						"data": {
+							"Antenna Gain": 3.0,
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Transmitter",
+						"name": "Transmitter",
+						"enabled": true,
+						"data": {
+							"Mass": 1.0
+						}
+					}
+				]
+			}
+		],
+		"collections": [
+			{
+				"id": "Main",
+				"space_assets": [
+					"SC_FUEL_TEST"
+				]
+			}
+		]
+	}
+}

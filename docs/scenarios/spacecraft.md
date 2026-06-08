@@ -20,6 +20,7 @@ Studio reads both arrays when the scenario loads. Each `assets.space[]` entry de
   "visualization": { ... },
   "controller":    { ... },
   "power":         { ... },
+  "fuel":          { ... },
   "components":    [ ... ]
 }
 ```
@@ -33,6 +34,7 @@ Studio reads both arrays when the scenario loads. Each `assets.space[]` entry de
 | `visualization` | no | Unreal mesh path and rendering scale/offset. Default is a generic chassis. |
 | `controller` | no | Per-spacecraft tuning — battery thresholds, ping interval, RPO flag, etc. |
 | `power` | no | Optional on-board bus wiring (`bus`) and cross-spacecraft links (`interconnects`). See [`power`](#power--electrical-bus) below. |
+| `fuel` | no | Optional on-board fuel network (`bus`) and cross-spacecraft links (`interconnects`). See [`fuel`](#fuel--propellant-bus) below. |
 | `components` | yes (in practice) | The on-board hardware. A spacecraft with no components has nothing for teams to operate. |
 
 ---
@@ -233,6 +235,65 @@ Explicit `bus` entries **replace** auto-wiring entirely — they do not merge wi
 **No storage or generation** — omit `power` or use `"bus": []` and rely on auto-wiring (no-op when there are no batteries/sources).
 
 Jamming still draws from the battery when wired; `controller.jamming_multiplier` scales RF interference power consumption in the spacecraft controller.
+
+## `fuel` — propellant bus
+
+Every spacecraft has an on-board **fuel bus** when fuel components are present. The optional `fuel` block defines how **fuel sources** (tanks), **valves**, **pumps**, **thrusters**, and **fuel interconnects** are connected when the scenario starts. Component classes and `data` keys: [components.md — Fuel network components](components.md#fuel-network-components).
+
+### JSON shape
+
+Uses the same connection field names as `power` (`source_component`, `source_terminal`, `target_component`, `target_terminal`). Terminals are `"in"` or `"out"` (case-insensitive). Studio maps those to the correct fuel port on each component type (for example valve `in` → inlet, thruster `in` → intake, tank `out` → tank port).
+
+```json
+"fuel": {
+  "bus": [
+    {
+      "source_component": "Main Tank",
+      "source_terminal": "out",
+      "target_component": "Main Valve",
+      "target_terminal": "in"
+    },
+    {
+      "source_component": "Main Valve",
+      "source_terminal": "out",
+      "target_component": "Thruster +X",
+      "target_terminal": "in"
+    }
+  ]
+}
+```
+
+| Key | JSON type | Description |
+| --- | --- | --- |
+| `bus` | `object[]` | Ordered list of on-board fuel connections. Each object is one directed link on that spacecraft's fuel bus. |
+| `interconnects` | `object[]` | Optional cross-spacecraft fuel links (same shape as `power.interconnects`). |
+
+Per-connection fields (names must match component `name` values on **that** spacecraft):
+
+| Key | JSON type | Default | Description |
+| --- | --- | --- | --- |
+| `source_component` | `string` | — | Source component **name**. |
+| `source_terminal` | `string` | `"out"` | Terminal on the source: `"out"` or `"in"`. |
+| `target_component` | `string` | — | Target component **name**. |
+| `target_terminal` | `string` | `"in"` | Terminal on the target: `"out"` or `"in"`. |
+
+If either component name cannot be found, Studio logs a warning and **skips** that connection.
+
+**Fuel pumps** also draw electrical power when enabled — wire the pump on `power.bus[]` separately (same `in` / `out` terminals as other loads).
+
+### Default behaviour when `bus` is empty or omitted
+
+If `fuel` is missing, `{}`, or `"bus": []`, Studio **auto-wires** every **fuel source** to every **thruster** with a direct `out` → `in` link. Spacecraft with no fuel sources or no thrusters get a fuel bus but no connections.
+
+Explicit `bus` entries **replace** auto-wiring entirely — they do not merge with defaults.
+
+### Worked example
+
+See `Testing/test_fuel_scenario.json` — two tanks, three valves, one pump, three thrusters on an explicit manifold.
+
+### Fuel interconnects (`fuel.interconnects`)
+
+Same rules as [power interconnects](#power-interconnects-powerinterconnects): add a `Fuel Interconnect` component on each hull, bond it on `fuel.bus[]` (typically `tank` `out` → interconnect `in`), then declare one `interconnects[]` row pointing at the partner spacecraft. Cross links are applied after all spacecraft exist. Docking-adapter requirements are scenario-dependent and are not enforced in JSON yet.
 
 ### Power interconnects (`power.interconnects`)
 
