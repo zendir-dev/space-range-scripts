@@ -168,15 +168,15 @@ Same JSON-string-of-array trick. Same `json.loads` after parse.
 
 ### The Configuration Report payload
 
-Configuration Report (APID 102) is the response to [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration) (or an automatic follow-up after [`power`](../api-reference/spacecraft-commands.md#power) / [`guidance`](../api-reference/spacecraft-commands.md#guidance)), sent only when the requested scope has configuration to report:
+Configuration Report (APID 102) is the response to [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration) (or an automatic follow-up after [`power`](../api-reference/spacecraft-commands.md#power), [`guidance`](../api-reference/spacecraft-commands.md#guidance), [`camera`](../api-reference/spacecraft-commands.md#camera), or [`capture`](../api-reference/spacecraft-commands.md#capture)), sent only when the requested scope has configuration to report:
 
 | Field | Type | Meaning |
 | --- | --- | --- |
-| `Data` | string (JSON) | Configuration snapshot. May include `power` and/or `computer` depending on `scope`. |
+| `Data` | string (JSON) | Configuration snapshot. May include `power`, `computer`, and/or `camera` depending on `scope`. |
 
 ```python
 report["Data"] = json.loads(report["Data"])
-# e.g. {"power": [...], "computer": {"pointing": "nadir", "configs": {"nadir": {...}}}}
+# e.g. {"power": [...], "computer": {...}, "camera": [{"name": "Camera", "configuration": {...}}]}
 ```
 
 If no matching configuration exists, no packet is sent.

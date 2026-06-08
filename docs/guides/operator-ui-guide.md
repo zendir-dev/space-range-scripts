@@ -102,7 +102,7 @@ The **Power** panel (under **Control**) edits session-mutable bus configuration 
 
 ### How state is loaded
 
-1. When the scenario first loads component data for an asset ([`list_entity`](../api-reference/ground-requests.md#list_entity)), the UI automatically uplinks [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration) with no `scope` (power + computer, once per asset per session).
+1. When the scenario first loads component data for an asset ([`list_entity`](../api-reference/ground-requests.md#list_entity)), the UI automatically uplinks [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration) with no `scope` (power + computer + camera, once per asset per session).
 2. The spacecraft replies with a **Configuration Report** (APID 102) on Downlink when RF allows.
 3. The UI stores the parsed snapshot per asset and fills the Power controls from that buffer.
 
@@ -147,6 +147,26 @@ Scheduled guidance that has not yet run does **not** update `computer` configura
 ### In-progress edits
 
 Same rule as Power: if your draft differs from the last applied snapshot, incoming reports update `configs` for other modes but leave your active draft fields alone until you match the applied state again.
+
+---
+
+## Camera
+
+The **Camera Capture** panel configures imager optics and triggers [`capture`](../api-reference/spacecraft-commands.md#capture). It syncs from the Configuration Report `camera` section.
+
+### How state is loaded
+
+The initial [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration) request hydrates per-imager entries in `camera[]`. Switching **Camera Unit** loads the saved `configuration` for that component when one exists.
+
+Stored settings come from executed [`camera`](../api-reference/spacecraft-commands.md#camera) / [`capture`](../api-reference/spacecraft-commands.md#capture) Args (not live sensor telemetry). Cleared on scenario reset.
+
+### Multi-operator sync
+
+After any operator's **Capture Image** (or standalone `camera` command), the spacecraft downlinks a Configuration Report (`scope: "camera"`). All UIs merge the new `camera` snapshot.
+
+### In-progress edits
+
+Same draft≠applied rule as Power and Guidance: local field edits are preserved until they match the last applied snapshot.
 
 ---
 

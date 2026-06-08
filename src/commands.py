@@ -460,9 +460,9 @@ def get_configuration(
 ) -> dict:
     """Request session-mutable operator configuration (Configuration Report telemetry).
 
-    Omit ``scope`` for both ``power`` and ``computer`` sections, or pass
-    ``"power"`` / ``"computer"`` for one section. ``components`` filters power
-    entries only.
+    Omit ``scope`` for ``power``, ``computer``, and ``camera`` sections, or pass
+    ``"power"`` / ``"computer"`` / ``"camera"`` for one section. ``components``
+    filters power and camera entries.
     """
     args: dict = {}
     if scope is not None:

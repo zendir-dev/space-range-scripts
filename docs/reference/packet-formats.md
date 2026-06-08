@@ -181,7 +181,7 @@ Source: `USpaceRangeSubsystem::InitializeSpacePacketDefinitions` (`studio/Plugin
 | **System (100-199)** | | | | |
 | 100 | Ping | `PingMessage` | `System` | Periodic; every `controller.ping_interval`. |
 | 101 | Schedule Report | `ScheduleReportMessage` | `System` | Reply to [`get_schedule`](../api-reference/spacecraft-commands.md#get_schedule). |
-| 102 | Configuration Report | `ConfigurationReportMessage` | `System` | Reply to [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration), or automatically after [`power`](../api-reference/spacecraft-commands.md#power) / [`guidance`](../api-reference/spacecraft-commands.md#guidance). Omitted when there is nothing to report. |
+| 102 | Configuration Report | `ConfigurationReportMessage` | `System` | Reply to [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration), or automatically after [`power`](../api-reference/spacecraft-commands.md#power) / [`guidance`](../api-reference/spacecraft-commands.md#guidance) / [`camera`](../api-reference/spacecraft-commands.md#camera) / [`capture`](../api-reference/spacecraft-commands.md#capture). Omitted when there is nothing to report. |
 | **Power (200-299)** | | | | |
 | 200 | Battery | `BatteryMessage` | `PowerSystem` | Has a `Battery` component. |
 | 201 | Power Source | `PowerMessage` | `PowerSystem` | Per-source power (`Solar Panel`, etc.). |
@@ -340,7 +340,7 @@ The same JSON-string-of-array trick as Ping — `json.loads(report["Commands"])`
 
 ## Configuration Report packet
 
-Sent in response to [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration), or automatically after a successful [`power`](../api-reference/spacecraft-commands.md#power) or [`guidance`](../api-reference/spacecraft-commands.md#guidance) command, and **only when** the requested scope has configuration to report.
+Sent in response to [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration), or automatically after a successful [`power`](../api-reference/spacecraft-commands.md#power), [`guidance`](../api-reference/spacecraft-commands.md#guidance), [`camera`](../api-reference/spacecraft-commands.md#camera), or [`capture`](../api-reference/spacecraft-commands.md#capture) command, and **only when** the requested scope has configuration to report.
 
 ### XTCE field order
 
@@ -350,7 +350,7 @@ Sent in response to [`get_configuration`](../api-reference/spacecraft-commands.m
 
 ### `Data` JSON shape
 
-After XTCE decode, parse with `json.loads(report["Data"])`. Scope controls which top-level keys appear (`power`, `computer`, or both):
+After XTCE decode, parse with `json.loads(report["Data"])`. Scope controls which top-level keys appear (`power`, `computer`, `camera`, or any combination):
 
 ```json
 {
@@ -387,7 +387,18 @@ After XTCE decode, parse with `json.loads(report["Data"])`. Scope controls which
         "planet": "earth"
       }
     }
-  }
+  },
+  "camera": [
+    {
+      "name": "Camera",
+      "class": "Camera",
+      "configuration": {
+        "monochromatic": false,
+        "resolution": 1024,
+        "fov": 60.0
+      }
+    }
+  ]
 }
 ```
 
@@ -400,6 +411,10 @@ After XTCE decode, parse with `json.loads(report["Data"])`. Scope controls which
 | `computer` | object | Guidance operator state: `pointing` (active mode) and `configs` (last-applied Args per mode, without repeating `pointing`). Stored from executed [`guidance`](../api-reference/spacecraft-commands.md#guidance) commands; cleared on scenario reset. |
 | `computer.pointing` | string | Active pointing mode (`idle`, `inertial`, `velocity`, `sun`, `nadir`, `ground`, `location`, `relative`). |
 | `computer.configs` | object | Per-mode settings. Keys match [`guidance`](../api-reference/spacecraft-commands.md#guidance) Args for that mode (e.g. `target`, `alignment`, `pitch`/`roll`/`yaw`, `station`, `spacecraft`). |
+| `camera` | array | Per-imager operator configuration. Omitted when scope excludes camera or no imager has been configured. |
+| `camera[].name` | string | Imager component name. |
+| `camera[].class` | string | `Camera` or `Charge Coupled Device`. |
+| `camera[].configuration` | object | Last-applied [`camera`](../api-reference/spacecraft-commands.md#camera) Args (`monochromatic`, `resolution`, `fov`, …). CCD entries include `fov` only. |
 
 ---
 

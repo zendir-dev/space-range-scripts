@@ -212,6 +212,7 @@ Configures a camera on the spacecraft. This does **not** capture an image (unles
 
 - The configuration sticks until the next `camera` command — multiple `capture` calls can share the same setup.
 - An imager with `monochromatic = true` followed by a colour `capture` returns greyscale; the capture command does not override imaging mode.
+- After a successful `camera` command, the spacecraft automatically queues a Configuration Report with `scope: "camera"`. [`capture`](#capture) does the same (it configures the imager before storing the image).
 
 ---
 
@@ -230,13 +231,14 @@ Captures a still image with a previously configured camera and stores it in the 
 
 | Argument | Default | Description |
 | --- | --- | --- |
-| `target` | _(none)_ | Camera component to capture from (case-insensitive). Must be the same kind of imager as configured by [`camera`](#camera). |
+| `target` | _(none)_ | Camera component to capture from (case-insensitive). Must be the same kind of imager as configured by [`camera`](#camera). Capture also applies any imaging Args in the same payload before storing the image. |
 | `name` | `image` | Image label. Stored in the **first 50 bytes** of the image data as ASCII; longer names are truncated, shorter names are padded. The remaining bytes are the JPEG payload. |
 
 ### Notes
 
 - The image is not downlinked automatically. Send a [`downlink`](#downlink) (or pre-arm with `ping = true`) to get it to the ground.
 - If the spacecraft is not pointed correctly, the resulting image will be of empty space. Use a [`guidance`](#guidance) ahead of the capture and allow time for the slew.
+- Capture accepts the same imaging Args as [`camera`](#camera) (resolution, `fov`, etc.) and configures the imager before storing the frame. After success, a Configuration Report (`scope: "camera"`) is queued automatically.
 
 ---
 
@@ -579,8 +581,8 @@ Asks the spacecraft to report **session-mutable operator configuration** — val
 
 | Argument | Description |
 | --- | --- |
-| `scope` | Optional filter. Omit or `"all"` → **both** `power` and `computer`. `"power"` or `"computer"` → that section only. Unknown scopes are ignored and **no report is sent**. |
-| `components` | Optional string array (**power scope only**). One component = one element. Omit or `[]` for all power components. Names are matched case-insensitively (same as `target` elsewhere). |
+| `scope` | Optional filter. Omit or `"all"` → **power**, **computer**, and **camera**. `"power"`, `"computer"`, or `"camera"` → that section only. Unknown scopes are ignored and **no report is sent**. |
+| `components` | Optional string array (**power** and **camera** scopes). One component = one element. Omit or `[]` for all matching components. Names are matched case-insensitively (same as `target` elsewhere). |
 
 ### Report shape (`Data` JSON)
 
@@ -609,7 +611,23 @@ Asks the spacecraft to report **session-mutable operator configuration** — val
         "station": "singapore"
       }
     }
-  }
+  },
+  "camera": [
+    {
+      "name": "Camera",
+      "class": "Camera",
+      "configuration": {
+        "monochromatic": false,
+        "resolution": 1024,
+        "coc": 0.03,
+        "pixel_pitch": 0.012,
+        "focusing_distance": 1000000.0,
+        "aperture": 4.0,
+        "focal_length": 100.0,
+        "fov": 60.0
+      }
+    }
+  ]
 }
 ```
 
@@ -618,8 +636,12 @@ Asks the spacecraft to report **session-mutable operator configuration** — val
   - **`pointing`** — active mode (`idle`, `inertial`, `velocity`, `sun`, `nadir`, `ground`, `location`, `relative`).
   - **`configs`** — last-applied settings **per mode** (only modes that have been configured at least once). Keys match [`guidance`](#guidance) Args for that mode (without repeating `pointing`). Includes `target` component names and normalised `alignment` strings (`+z`, `-x`, …). Switching modes in the UI can restore these saved values.
   - Cleared to `{ "pointing": "idle", "configs": {} }` when the scenario instance resets.
+- **`camera`** — array of per-imager entries (same shape as `power[]`). Stored from successful [`camera`](#camera) / [`capture`](#capture) command Args:
+  - **`name`** / **`class`** — imager component (from [`list_entity`](ground-requests.md#list_entity); `is_imager` components).
+  - **`configuration`** — last-applied settings using [`camera`](#camera) Arg names (`monochromatic`, `resolution`, `fov`, …). **`Charge Coupled Device`** entries include `fov` only. Capture `name` (filename) and `sample` are not stored.
+  - Cleared when the scenario instance resets. Only imagers configured at least once appear.
 
-Configuration Reports are also queued automatically after successful [`power`](#power) (`scope: "power"`) and [`guidance`](#guidance) (`scope: "computer"`) commands.
+Configuration Reports are also queued automatically after successful [`power`](#power) (`scope: "power"`), [`guidance`](#guidance) (`scope: "computer"`), and [`camera`](#camera) / [`capture`](#capture) (`scope: "camera"`) commands.
 
 ### Power fields
 
@@ -643,11 +665,12 @@ These align with the spacecraft `power` command `configure` actions (`switch`, `
 
 ### Operator UI
 
-The bundled Operator UI uses this command to keep **Power** and **Guidance** in sync across operators:
+The bundled Operator UI uses this command to keep **Power**, **Guidance**, and **Camera** in sync across operators:
 
-- Requests `get_configuration` (no `scope` → power + computer) once when each asset's components are first loaded (`list_entity`).
+- Requests `get_configuration` (no `scope` → power + computer + camera) once when each asset's components are first loaded (`list_entity`).
 - **Power** — picks up updates from automatic reports after each `power` command; **Refresh** on the Power panel requests `scope: "power"` on demand.
 - **Guidance** — picks up updates from automatic reports after each executed `guidance` command; per-mode values in `configs` repopulate the form when switching pointing mode.
+- **Camera** — picks up updates after each `camera` / `capture`; switching imager in the dropdown restores that component's saved `configuration`.
 - Parses APID 102 on Downlink into a per-asset buffer; see [Guides → Operator UI](../guides/operator-ui-guide.md).
 
 Python: `commands.get_configuration(scope=None)` in [`src/commands.py`](../src/commands.py) — omit `scope` for both sections.
