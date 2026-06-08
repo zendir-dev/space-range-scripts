@@ -113,7 +113,8 @@ Until the first report arrives, controls show type defaults (e.g. switches close
 Every operator on the team subscribes to the same **Downlink** topic. When any operator's Configuration Report is downlinked, **all** connected UIs update their local buffer and refresh unchanged controls.
 
 - **Refresh** (sync icon in the Power panel header) — sends `get_configuration` with `scope: "power"` for the selected asset.
-- **Update Circuit** — sends batched [`power`](../api-reference/spacecraft-commands.md#power) commands for changed values, then requests `get_configuration` again so other operators can pick up the new state on the next downlink.
+- **Update Circuit** — sends batched [`power`](../api-reference/spacecraft-commands.md#power) `configure` commands for changed values, then requests `get_configuration` again so other operators can pick up the new state on the next downlink.
+- **Reset** (fuse rows only) — enabled when `Is Fuse Blown` is true; sends `power` with `action: "reset"`, then requests `get_configuration`. Shows a **BLOWN** label while the fuse is open.
 
 If you don't see updates immediately, the report may still be queued on board — trigger a [`downlink`](../api-reference/spacecraft-commands.md#downlink) or wait for auto-downlink on ping.
 

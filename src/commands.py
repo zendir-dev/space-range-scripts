@@ -393,6 +393,57 @@ def encryption_rotate(password: str, frequency: float, key: int) -> dict:
 
 
 # ---------------------------------------------------------------------------
+# Power bus
+# ---------------------------------------------------------------------------
+
+_CONFIGURE_PARAM_KEYS = {
+    "switch": "states",
+    "fuse": "current_thresholds",
+    "current_limiter": "current_limits",
+    "voltage_regulator": "regulation_voltages",
+    "load": "nominal_powers",
+}
+
+
+def power_configure(
+    component_type: Literal[
+        "switch",
+        "fuse",
+        "current_limiter",
+        "voltage_regulator",
+        "load",
+    ],
+    targets: list[str],
+    values: list,
+) -> dict:
+    """Configure session-mutable power-bus settings for one or more components."""
+    param_key = _CONFIGURE_PARAM_KEYS[component_type]
+    return _cmd(
+        "power",
+        {
+            "type": component_type,
+            "action": "configure",
+            "targets": targets,
+            "parameters": {param_key: values},
+        },
+        f"power configure {component_type} → {list(zip(targets, values))}",
+    )
+
+
+def power_fuse_reset(targets: list[str]) -> dict:
+    """Manually reset one or more blown fuses."""
+    return _cmd(
+        "power",
+        {
+            "type": "fuse",
+            "action": "reset",
+            "targets": targets,
+        },
+        f"power fuse reset → {targets}",
+    )
+
+
+# ---------------------------------------------------------------------------
 # Schedule management
 # ---------------------------------------------------------------------------
 

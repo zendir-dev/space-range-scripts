@@ -463,7 +463,24 @@ No arguments are read.
 
 ## `power`
 
-Sets session-mutable values on power-bus components. Targets are matched by **component name** (case-insensitive), same as [`list_entity`](ground-requests.md#list_entity). Batched by `type` — send one command per type with parallel `targets` and `values` arrays.
+Sets session-mutable values and imperative actions on power-bus components. Targets are matched by **component name** (case-insensitive), same as [`list_entity`](ground-requests.md#list_entity).
+
+Every `power` command uses:
+
+| Field | Description |
+| --- | --- |
+| `type` | Component family (`switch`, `fuse`, `current_limiter`, `voltage_regulator`, `load`). |
+| `action` | Verb for that family (`configure`, `reset`, …). |
+| `targets` | String array of component names. |
+| `parameters` | Object of action-specific arrays (parallel to `targets`). Omitted when the action needs no data. |
+
+Send one uplink per `type` + `action` pair. Unknown combinations are a silent no-op.
+
+### `configure` actions
+
+Set operator-mutable values. Each `parameters` array must match `targets` length (extras are ignored).
+
+**Switch**
 
 ```json
 {
@@ -472,23 +489,142 @@ Sets session-mutable values on power-bus components. Targets are matched by **co
   "Time": 0,
   "Args": {
     "type": "switch",
+    "action": "configure",
     "targets": ["EPS Switch", "TX Switch"],
-    "values": [true, false]
+    "parameters": {
+      "states": [true, false]
+    }
   }
 }
 ```
 
-| `type` | `values` | Affected classes |
+| `parameters` key | Type | Meaning |
 | --- | --- | --- |
-| `switch` | `bool` — `true` = open, `false` = closed | `Power Switch`, `Power Interconnect` |
-| `fuse` | `number` (A) — current threshold | `Power Fuse` |
-| `current_limiter` | `number` (A) | `Power Current Limiter` |
-| `voltage_regulator` | `number` (V) | `Power Voltage Regulator` |
-| `load` | `number` (W) — nominal power | `Power Sink` |
+| `states` | `bool[]` | `true` = open, `false` = closed |
 
-`targets` and `values` must have the same length (extras are ignored). Unknown `type` is a silent no-op.
+Classes: `Power Switch`, `Power Interconnect`.
 
-After changing power settings, use [`get_configuration`](#get_configuration) to pull the current snapshot for other operators or clients. The Operator UI does this automatically after **Update Circuit**.
+**Fuse**
+
+```json
+{
+  "Asset": "A3F2C014",
+  "Command": "power",
+  "Time": 0,
+  "Args": {
+    "type": "fuse",
+    "action": "configure",
+    "targets": ["EPS Fuse"],
+    "parameters": {
+      "current_thresholds": [2.0]
+    }
+  }
+}
+```
+
+| `parameters` key | Type | Meaning |
+| --- | --- | --- |
+| `current_thresholds` | `number[]` (A) | Over-current threshold |
+
+**Current limiter**
+
+```json
+{
+  "Asset": "A3F2C014",
+  "Command": "power",
+  "Time": 0,
+  "Args": {
+    "type": "current_limiter",
+    "action": "configure",
+    "targets": ["EPS L1", "TX L1"],
+    "parameters": {
+      "current_limits": [1.0, 2.0]
+    }
+  }
+}
+```
+
+| `parameters` key | Type | Meaning |
+| --- | --- | --- |
+| `current_limits` | `number[]` (A) | Branch current limit |
+
+**Voltage regulator**
+
+```json
+{
+  "Asset": "A3F2C014",
+  "Command": "power",
+  "Time": 0,
+  "Args": {
+    "type": "voltage_regulator",
+    "action": "configure",
+    "targets": ["Bus Regulator"],
+    "parameters": {
+      "regulation_voltages": [28.0]
+    }
+  }
+}
+```
+
+| `parameters` key | Type | Meaning |
+| --- | --- | --- |
+| `regulation_voltages` | `number[]` (V) | Regulation set-point |
+
+**Load**
+
+```json
+{
+  "Asset": "A3F2C014",
+  "Command": "power",
+  "Time": 0,
+  "Args": {
+    "type": "load",
+    "action": "configure",
+    "targets": ["Camera Load"],
+    "parameters": {
+      "nominal_powers": [8.0]
+    }
+  }
+}
+```
+
+| `parameters` key | Type | Meaning |
+| --- | --- | --- |
+| `nominal_powers` | `number[]` (W) | Nominal load power |
+
+### `reset` actions
+
+**Fuse reset** — manually clear a blown fuse (no-op if the fuse is not blown):
+
+```json
+{
+  "Asset": "A3F2C014",
+  "Command": "power",
+  "Time": 0,
+  "Args": {
+    "type": "fuse",
+    "action": "reset",
+    "targets": ["EPS Fuse"]
+  }
+}
+```
+
+This is separate from **auto-reset** (`Reset Duration` in scenario `data`), which the simulation handles when current drops.
+
+### Action registry (phase 1)
+
+| `type` | `action` | `parameters` | Classes |
+| --- | --- | --- | --- |
+| `switch` | `configure` | `states` | `Power Switch`, `Power Interconnect` |
+| `fuse` | `configure` | `current_thresholds` | `Power Fuse` |
+| `fuse` | `reset` | *(none)* | `Power Fuse` |
+| `current_limiter` | `configure` | `current_limits` | `Power Current Limiter` |
+| `voltage_regulator` | `configure` | `regulation_voltages` | `Power Voltage Regulator` |
+| `load` | `configure` | `nominal_powers` | `Power Sink` |
+
+After changing power settings or resetting a fuse, use [`get_configuration`](#get_configuration) to pull the current snapshot for other operators or clients. The Operator UI does this automatically after **Update Circuit** and **Reset**.
+
+Python helpers: `commands.power_configure(...)`, `commands.power_fuse_reset(...)` in [`src/commands.py`](../src/commands.py).
 
 ---
 
@@ -525,7 +661,7 @@ Only components with session-mutable configuration are included. Components with
 | `Power Voltage Regulator` | `Regulation Voltage` |
 | `Power Sink` | `Nominal Power` |
 
-These align with the spacecraft `power` command types (`switch`, `fuse`, `current_limiter`, `voltage_regulator`, `load`).
+These align with the spacecraft `power` command `configure` actions (`switch`, `fuse`, `current_limiter`, `voltage_regulator`, `load`). `Is Fuse Blown` is updated by simulation and cleared by `power` + `action: "reset"`.
 
 ### Notes
 
@@ -538,7 +674,8 @@ These align with the spacecraft `power` command types (`switch`, `fuse`, `curren
 The bundled Operator UI uses this command to keep the **Power** panel in sync across operators:
 
 - Requests `get_configuration` with `scope: "power"` once when each asset's components are first loaded (`list_entity`).
-- Re-requests after **Update Circuit** and when the operator clicks **Refresh** on the Power panel.
+- Re-requests after **Update Circuit**, **Reset** (blown fuse), and when the operator clicks **Refresh** on the Power panel.
+- Shows **BLOWN** and enables **Reset** when `Is Fuse Blown` is true in the configuration snapshot.
 - Parses APID 102 on Downlink into a per-asset buffer; see [Guides → Operator UI → Power](../guides/operator-ui-guide.md#power).
 
 Python: `commands.get_configuration(scope="power")` in [`src/commands.py`](../src/commands.py).

@@ -170,7 +170,7 @@ Opens the circuit when branch current exceeds a threshold for long enough. Optio
 | `Resistance` | `number` (Ω) | `1.0` | Resistance while closed. |
 | `Mass` | `number` (kg) | — | Component mass. |
 
-`Is Fuse Blown` is runtime state (read-only), not normally set in scenario JSON.
+`Is Fuse Blown` is runtime state (read-only), not normally set in scenario JSON. Operators read it via [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration) and clear a blown fuse with [`power`](../api-reference/spacecraft-commands.md#power) `action: "reset"` (or wait for auto-reset when `Reset Duration` &gt; 0 and branch current is below threshold).
 
 ### Power Current Limiter
 
