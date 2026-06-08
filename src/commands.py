@@ -458,7 +458,12 @@ def get_configuration(
     scope: str | None = None,
     components: list[str] | None = None,
 ) -> dict:
-    """Request session-mutable operator configuration (Configuration Report telemetry)."""
+    """Request session-mutable operator configuration (Configuration Report telemetry).
+
+    Omit ``scope`` for both ``power`` and ``computer`` sections, or pass
+    ``"power"`` / ``"computer"`` for one section. ``components`` filters power
+    entries only.
+    """
     args: dict = {}
     if scope is not None:
         args["scope"] = scope

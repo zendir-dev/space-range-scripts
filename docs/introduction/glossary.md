@@ -161,7 +161,7 @@ The configured world for a session — teams, assets, ground stations, scenario 
 The downlinked telemetry message that lists currently scheduled (pending) commands on a spacecraft. Produced in response to [`get_schedule`](../api-reference/spacecraft-commands.md#get_schedule). Sensitive arguments (like raw bytes or new encryption keys) are redacted before transmission.
 
 **Configuration Report**
-The downlinked telemetry message that snapshots session-mutable operator configuration (e.g. power switch states, fuse thresholds). Produced in response to [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration) when at least one matching component has configuration to report.
+The downlinked telemetry message that snapshots session-mutable operator configuration (power bus settings and guidance pointing state). Produced in response to [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration), or automatically after successful [`power`](../api-reference/spacecraft-commands.md#power) / [`guidance`](../api-reference/spacecraft-commands.md#guidance) commands, when the requested scope has data to report.
 
 **Session topic**
 The unencrypted MQTT topic that publishes the simulation clock (`time`), simulation UTC (`utc`), real-time UNIX (`timestamp`), lifecycle `state` (`running`, `standby`, `paused`, `ended`), and `instance` ID. Published every ~0.3 s. See [API Reference → Session stream](../api-reference/session-stream.md).

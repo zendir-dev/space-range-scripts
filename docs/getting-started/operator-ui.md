@@ -75,9 +75,9 @@ Once connected, the left-hand sidebar exposes the major work surfaces. You don't
 | --- | --- |
 | **Map** | World map showing each spacecraft's ground track and your ground stations. The "where am I, where are they?" view. |
 | **Telemetry** | Link-budget readouts, current frequency / Caesar key, raw-bytes transmit panel, and inbound RF data feed. |
-| **Control** | Forms for every spacecraft command (guidance, thrust, camera, jammer, power bus, RPO, docking, …). The fastest way to issue a single command. Power controls sync across operators via Configuration Report (APID 102). |
+| **Control** | Forms for every spacecraft command (guidance, thrust, camera, jammer, power bus, RPO, docking, …). The fastest way to issue a single command. **Power** and **Guidance** panels sync across operators via Configuration Report (APID 102). |
 | **Schedule** | Pending commands queue. Add, edit (`update_command`), and remove (`remove_command`) future commands. |
-| **Plot** | Time-series plots of selected telemetry fields. Useful for trend monitoring during long scenarios. |
+| **Plot** | Time-series plots of selected telemetry fields. Useful for trend monitoring during long scenarios. Schedule Report (APID 101) and Configuration Report (APID 102) are excluded from plotting. |
 | **Image** | Captured imagery downlinked from cameras. Includes both full captures and 32×32 sample previews. |
 | **Data** | Inbound Space Packet feed — every CCSDS packet you've received, decoded against the active XTCE schema. |
 | **Log** | Session log: connect/disconnect events, executed commands, errors. |

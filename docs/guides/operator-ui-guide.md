@@ -102,7 +102,7 @@ The **Power** panel (under **Control**) edits session-mutable bus configuration 
 
 ### How state is loaded
 
-1. When the scenario first loads component data for an asset ([`list_entity`](../api-reference/ground-requests.md#list_entity)), the UI automatically uplinks [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration) with `scope: "power"` (once per asset per session).
+1. When the scenario first loads component data for an asset ([`list_entity`](../api-reference/ground-requests.md#list_entity)), the UI automatically uplinks [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration) with no `scope` (power + computer, once per asset per session).
 2. The spacecraft replies with a **Configuration Report** (APID 102) on Downlink when RF allows.
 3. The UI stores the parsed snapshot per asset and fills the Power controls from that buffer.
 
@@ -125,6 +125,28 @@ If you are actively editing a control (draft differs from the last applied value
 ### Wire format
 
 See [Concepts → Telemetry → Configuration Report](../concepts/telemetry.md#configuration-report) and [Reference → Packet formats → Configuration Report](../reference/packet-formats.md#configuration-report-packet).
+
+---
+
+## Guidance
+
+The **Guidance Controller** panel edits the on-board ADCS pointing mode. Like Power, it syncs from the **Configuration Report** `computer` section — not from live attitude telemetry.
+
+### How state is loaded
+
+The same initial [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration) request (no `scope`) hydrates `computer.pointing` (active mode) and `computer.configs` (last-applied settings per mode). Switching pointing mode in the dropdown loads the saved `configs` entry for that mode when one exists.
+
+The spacecraft stores `computer` from **executed** [`guidance`](../api-reference/spacecraft-commands.md#guidance) command Args (component `target` names, alignment strings, per-mode fields). That snapshot is cleared when the scenario instance resets.
+
+### Multi-operator sync
+
+After any operator's **executed** [`guidance`](../api-reference/spacecraft-commands.md#guidance) command succeeds, the spacecraft automatically downlinks a Configuration Report (`scope: "computer"`). All UIs merge the new `computer` snapshot.
+
+Scheduled guidance that has not yet run does **not** update `computer` configuration until it executes.
+
+### In-progress edits
+
+Same rule as Power: if your draft differs from the last applied snapshot, incoming reports update `configs` for other modes but leave your active draft fields alone until you match the applied state again.
 
 ---
 
@@ -151,7 +173,7 @@ The view shows pending commands only. Commands that have already executed appear
 
 ## Plot
 
-Time-series plots of selected telemetry fields. Most useful in long scenarios.
+Time-series plots of selected telemetry fields. Most useful in long scenarios. **Schedule Report** (APID 101) and **Configuration Report** (APID 102) are excluded — they are one-shot operator snapshots, not periodic telemetry trends.
 
 - **Left rail** — pick fields to plot. Fields are categorised by component (Battery, Reaction Wheels, Receiver, …) and supports multi-select. Up to 8 series at once is comfortable.
 - **Centre** — chart with shared time axis. Auto-scrolls during live play; freeze with the pause button to inspect history.

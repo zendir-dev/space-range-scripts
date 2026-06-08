@@ -181,7 +181,7 @@ Source: `USpaceRangeSubsystem::InitializeSpacePacketDefinitions` (`studio/Plugin
 | **System (100-199)** | | | | |
 | 100 | Ping | `PingMessage` | `System` | Periodic; every `controller.ping_interval`. |
 | 101 | Schedule Report | `ScheduleReportMessage` | `System` | Reply to [`get_schedule`](../api-reference/spacecraft-commands.md#get_schedule). |
-| 102 | Configuration Report | `ConfigurationReportMessage` | `System` | Reply to [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration), or automatically after [`power`](../api-reference/spacecraft-commands.md#power) (`scope: "power"`). Omitted when there is nothing to report. |
+| 102 | Configuration Report | `ConfigurationReportMessage` | `System` | Reply to [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration), or automatically after [`power`](../api-reference/spacecraft-commands.md#power) / [`guidance`](../api-reference/spacecraft-commands.md#guidance). Omitted when there is nothing to report. |
 | **Power (200-299)** | | | | |
 | 200 | Battery | `BatteryMessage` | `PowerSystem` | Has a `Battery` component. |
 | 201 | Power Source | `PowerMessage` | `PowerSystem` | Per-source power (`Solar Panel`, etc.). |
@@ -340,7 +340,7 @@ The same JSON-string-of-array trick as Ping — `json.loads(report["Commands"])`
 
 ## Configuration Report packet
 
-Sent only in response to [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration), and **only when** at least one matching component has session-mutable configuration to report.
+Sent in response to [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration), or automatically after a successful [`power`](../api-reference/spacecraft-commands.md#power) or [`guidance`](../api-reference/spacecraft-commands.md#guidance) command, and **only when** the requested scope has configuration to report.
 
 ### XTCE field order
 
@@ -350,7 +350,7 @@ Sent only in response to [`get_configuration`](../api-reference/spacecraft-comma
 
 ### `Data` JSON shape
 
-After XTCE decode, parse with `json.loads(report["Data"])`. Phase 1 includes a `power` key when `scope` is omitted, `"all"`, or `"power"`:
+After XTCE decode, parse with `json.loads(report["Data"])`. Scope controls which top-level keys appear (`power`, `computer`, or both):
 
 ```json
 {
@@ -370,16 +370,36 @@ After XTCE decode, parse with `json.loads(report["Data"])`. Phase 1 includes a `
         "Is Fuse Blown": false
       }
     }
-  ]
+  ],
+  "computer": {
+    "pointing": "nadir",
+    "configs": {
+      "inertial": {
+        "target": "Battery",
+        "alignment": "+z",
+        "pitch": 0.0,
+        "roll": 0.0,
+        "yaw": 45.0
+      },
+      "nadir": {
+        "target": "Camera",
+        "alignment": "+z",
+        "planet": "earth"
+      }
+    }
+  }
 }
 ```
 
 | Field | Type | Description |
 | --- | --- | --- |
-| `power` | array | Power-bus components with session-mutable configuration. Omitted from the request side when scope is unsupported; omitted from the report when every candidate component has nothing to report (no packet sent). |
+| `power` | array | Power-bus components with session-mutable configuration. Omitted when scope excludes power or every candidate component has nothing to report. |
 | `power[].name` | string | Component name (matches [`list_entity`](../api-reference/ground-requests.md#list_entity)). |
 | `power[].class` | string | Component class (e.g. `Power Switch`, `Power Fuse`). |
 | `power[].configuration` | object | Current operator-mutable values only — not static scenario parameters or simulation telemetry. Keys use spaced names (`Is Open`, `Current Threshold`, …). |
+| `computer` | object | Guidance operator state: `pointing` (active mode) and `configs` (last-applied Args per mode, without repeating `pointing`). Stored from executed [`guidance`](../api-reference/spacecraft-commands.md#guidance) commands; cleared on scenario reset. |
+| `computer.pointing` | string | Active pointing mode (`idle`, `inertial`, `velocity`, `sun`, `nadir`, `ground`, `location`, `relative`). |
+| `computer.configs` | object | Per-mode settings. Keys match [`guidance`](../api-reference/spacecraft-commands.md#guidance) Args for that mode (e.g. `target`, `alignment`, `pitch`/`roll`/`yaw`, `station`, `spacecraft`). |
 
 ---
 

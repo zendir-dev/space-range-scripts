@@ -168,14 +168,15 @@ Same JSON-string-of-array trick. Same `json.loads` after parse.
 
 ### The Configuration Report payload
 
-Configuration Report (APID 102) is the response to [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration), sent only when at least one matching component has session-mutable configuration:
+Configuration Report (APID 102) is the response to [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration) (or an automatic follow-up after [`power`](../api-reference/spacecraft-commands.md#power) / [`guidance`](../api-reference/spacecraft-commands.md#guidance)), sent only when the requested scope has configuration to report:
 
 | Field | Type | Meaning |
 | --- | --- | --- |
-| `Data` | string (JSON) | Configuration snapshot; phase 1 includes a `power` array when scope is omitted, `"all"`, or `"power"`. |
+| `Data` | string (JSON) | Configuration snapshot. May include `power` and/or `computer` depending on `scope`. |
 
 ```python
-report["Data"] = json.loads(report["Data"])  # e.g. {"power": [{"name": "...", "class": "...", "configuration": {...}}]}
+report["Data"] = json.loads(report["Data"])
+# e.g. {"power": [...], "computer": {"pointing": "nadir", "configs": {"nadir": {...}}}}
 ```
 
 If no matching configuration exists, no packet is sent.

@@ -456,7 +456,7 @@ Every helper in `src/commands.py` returns a `dict` that unpacks directly into `s
 | Reset | `component_reset(target)` | Reboot a single component (or the whole bus, if you reset `Computer`). |
 | Schedule | `get_schedule()`, `remove_command_by_id(id)`, `remove_command_by_time_command(time, command)`, `update_command(...)` | Inspect and manage the on-board command queue (reply: Schedule Report, APID 101). |
 | Power bus | `power_configure_values(entries)`, `power_configure(type, target, value)`, `power_fuse_reset(target)` | Configure switches, fuses, limiters, regulators, loads in one batched `power` command; manually reset blown fuses. |
-| Configuration | `get_configuration(scope=None, components=None)` | Request session-mutable operator settings (reply: Configuration Report, APID 102). Phase 1: `scope="power"`. |
+| Configuration | `get_configuration(scope=None, components=None)` | Request session-mutable operator settings (reply: Configuration Report, APID 102). Omit `scope` for power + computer; or `scope="power"` / `"computer"` for one section. |
 
 > All helpers accept the same `target` argument as the underlying commands — the **component name** (as configured in your scenario JSON), not a class alias. `alignment` defaults to `+z` for guidance helpers.
 

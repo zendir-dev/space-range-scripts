@@ -63,7 +63,7 @@ Maintenance
 
 Power bus
 : [`power`](#power) — set switch state, fuse threshold, limiter, regulator, or load power.
-: [`get_configuration`](#get_configuration) — read back session-mutable power settings (Configuration Report).
+: [`get_configuration`](#get_configuration) — read back session-mutable operator settings (power bus + guidance; Configuration Report).
 
 Propulsion
 : [`thrust`](#thrust) — fire a thruster for a duration.
@@ -147,6 +147,8 @@ Sets the spacecraft's pointing mode through the on-board ADCS. Each `pointing` v
 
 - After `idle`, the spacecraft will drift; nothing will resist disturbance torques. Re-issue a non-idle `guidance` command to take control again.
 - Switching modes is instantaneous in the controller, but the spacecraft physically slews under the dynamics of its reaction wheels and inertia. Allow time before issuing a [`capture`](#capture).
+- After a successful `guidance` command, the spacecraft automatically queues a Configuration Report with `scope: "computer"` so other operators can sync guidance settings. See [`get_configuration`](#get_configuration).
+- The spacecraft stores the `computer` section from **executed** guidance Args (component `target` names, alignment strings, per-mode fields). It is not reverse-engineered from on-board guidance message objects. Stored guidance configuration is cleared when the scenario instance resets.
 
 ---
 
@@ -577,10 +579,49 @@ Asks the spacecraft to report **session-mutable operator configuration** — val
 
 | Argument | Description |
 | --- | --- |
-| `scope` | Optional filter. Phase 1 supports `power` only. Omit, set to `"all"`, or use `"power"` to include the `power` section in the report. Any other scope is ignored and **no report is sent**. |
-| `components` | Optional string array. One component = one element. Omit or `[]` for all components within the active scope. Names are matched case-insensitively (same as `target` elsewhere). |
+| `scope` | Optional filter. Omit or `"all"` → **both** `power` and `computer`. `"power"` or `"computer"` → that section only. Unknown scopes are ignored and **no report is sent**. |
+| `components` | Optional string array (**power scope only**). One component = one element. Omit or `[]` for all power components. Names are matched case-insensitively (same as `target` elsewhere). |
 
-### Phase 1 power fields
+### Report shape (`Data` JSON)
+
+```json
+{
+  "power": [
+    {
+      "name": "EPS Switch",
+      "class": "Power Switch",
+      "configuration": { "Is Open": false }
+    }
+  ],
+  "computer": {
+    "pointing": "nadir",
+    "configs": {
+      "inertial": {
+        "target": "Battery",
+        "alignment": "+z",
+        "pitch": 0.0,
+        "roll": 0.0,
+        "yaw": 45.0
+      },
+      "ground": {
+        "target": "Camera",
+        "alignment": "+z",
+        "station": "singapore"
+      }
+    }
+  }
+}
+```
+
+- **`power`** — array of per-component entries (see table below).
+- **`computer`** — guidance computer operator state (stored from successful [`guidance`](#guidance) command Args, not from simulation internals):
+  - **`pointing`** — active mode (`idle`, `inertial`, `velocity`, `sun`, `nadir`, `ground`, `location`, `relative`).
+  - **`configs`** — last-applied settings **per mode** (only modes that have been configured at least once). Keys match [`guidance`](#guidance) Args for that mode (without repeating `pointing`). Includes `target` component names and normalised `alignment` strings (`+z`, `-x`, …). Switching modes in the UI can restore these saved values.
+  - Cleared to `{ "pointing": "idle", "configs": {} }` when the scenario instance resets.
+
+Configuration Reports are also queued automatically after successful [`power`](#power) (`scope: "power"`) and [`guidance`](#guidance) (`scope: "computer"`) commands.
+
+### Power fields
 
 Only components with session-mutable configuration are included. Components with nothing to report are omitted.
 
@@ -602,14 +643,14 @@ These align with the spacecraft `power` command `configure` actions (`switch`, `
 
 ### Operator UI
 
-The bundled Operator UI uses this command to keep the **Power** panel in sync across operators:
+The bundled Operator UI uses this command to keep **Power** and **Guidance** in sync across operators:
 
-- Requests `get_configuration` with `scope: "power"` once when each asset's components are first loaded (`list_entity`).
-- Picks up updates from the Configuration Report the spacecraft sends automatically after each `power` command; **Refresh** requests an explicit snapshot on demand.
-- Shows **BLOWN** and enables **Reset** when `Is Fuse Blown` is true in the configuration snapshot.
-- Parses APID 102 on Downlink into a per-asset buffer; see [Guides → Operator UI → Power](../guides/operator-ui-guide.md#power).
+- Requests `get_configuration` (no `scope` → power + computer) once when each asset's components are first loaded (`list_entity`).
+- **Power** — picks up updates from automatic reports after each `power` command; **Refresh** on the Power panel requests `scope: "power"` on demand.
+- **Guidance** — picks up updates from automatic reports after each executed `guidance` command; per-mode values in `configs` repopulate the form when switching pointing mode.
+- Parses APID 102 on Downlink into a per-asset buffer; see [Guides → Operator UI](../guides/operator-ui-guide.md).
 
-Python: `commands.get_configuration(scope="power")` in [`src/commands.py`](../src/commands.py).
+Python: `commands.get_configuration(scope=None)` in [`src/commands.py`](../src/commands.py) — omit `scope` for both sections.
 
 ---
 
