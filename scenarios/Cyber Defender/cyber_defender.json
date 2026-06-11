@@ -6,7 +6,7 @@
 	"simulation": {
 		"epoch": "2026/02/02 08:00:00",
 		"speed": 1.0,
-		"step_size": 0.025,
+		"step_size": 0.05,
 		"integrator": "Euler"
 	},
 	"universe": {
@@ -1051,6 +1051,30 @@
 			}
 		},
 		{
+			"section": "Rogue Identification",
+			"title": "What is the rogue spacecraft's call-sign?",
+			"description": "The rogue spacecraft is identified by its call-sign, visible on the spacecraft's solar panels. What is the call-sign of the rogue spacecraft?",
+			"type": "text",
+			"answer": {
+				"value": "PHANTOM",
+				"reason": "The rogue asset is configured with call-sign PHANTOM on its chassis labels and mission data.",
+				"score": 10
+			}
+		},
+		{
+			"section": "Rogue Identification",
+			"title": "What frequency (MHz) does the rogue spacecraft transmit its data on?",
+			"description": "The rogue spacecraft transmits on a frequency to its ground stations. What frequency does the rogue spacecraft transmit its data on? This is not the same frequency as the jammer it has on-board, which is attempting to jam your team's frequency.",
+			"type": "number",
+			"answer": {
+				"unit": "MHz",
+				"value": 905.0,
+				"tolerance": 20.0,
+				"reason": "The rogue spacecraft transmits on frequency 905 MHz. This can be found in the EM data by analysing the spectrum of the rogue spacecraft's transmitter.",
+				"score": 5
+			}
+		},
+		{
 			"section": "Solar Panel Fault",
 			"title": "What fault occurred on the solar panels?",
 			"description": "Some of the solar panels were damaged at a point in time. Identify the type of fault that occurred.",
@@ -1170,6 +1194,32 @@
 			}
 		},
 		{
+			"section": "Vessel Identification",
+			"title": "How many green vessels are clustered in the Strait of Hormuz?",
+			"description": "Taking Earth observation imagery of the Hormuz region, count the number of green vessesls found.",
+			"type": "number",
+			"answer": {
+				"unit": "",
+				"value": 5.0,
+				"tolerance": 0,
+				"reason": "Five vessels are located in the Strait of Hormuz.",
+				"score": 5
+			}
+		},
+		{
+			"section": "Vessel Identification",
+			"title": "How many yellow vessels appear near near the Malacca Strait?",
+			"description": "Taking Earth observation imagery of the Malacca Strait region, count the number of yellow vessesls found.",
+			"type": "number",
+			"answer": {
+				"unit": "",
+				"value": 2.0,
+				"tolerance": 0,
+				"reason": "Two yellow vessels are located near the Malacca Strait.",
+				"score": 5
+			}
+		},
+		{
 			"section": "Downlink Jamming",
 			"title": "How many distinct sustained broadcast downlink jam episodes occurred?",
 			"description": "The rogue spacecraft was performing downlink jamming on your ground station. How many unique episodes of jamming occurred? All cyber events occurred in the first 45 minutes of the session.",
@@ -1237,7 +1287,7 @@
 		},
 		{
 			"section": "Downlink Jamming",
-			"title": "What action mitigates a sustained downlink jam during a ground-station pass?",
+			"title": "What action(s) can mitigate a sustained downlink jam during a ground-station pass?",
 			"description": "Which of the following options would be the best immediate mitigation when a downlink jam is occurring?",
 			"type": "select",
 			"answer": {
@@ -1257,30 +1307,6 @@
 					"Frequency hopping would help with the downlink jamming attack by moving to an unjammed frequency."
 				],
 				"score": 3
-			}
-		},
-		{
-			"section": "Rogue Identification",
-			"title": "What is the rogue spacecraft's call-sign?",
-			"description": "The rogue spacecraft is identified by its call-sign, visible on the spacecraft's solar panels. What is the call-sign of the rogue spacecraft?",
-			"type": "text",
-			"answer": {
-				"value": "PHANTOM",
-				"reason": "The rogue asset is configured with call-sign PHANTOM on its chassis labels and mission data.",
-				"score": 10
-			}
-		},
-		{
-			"section": "Rogue Identification",
-			"title": "What frequency (MHz) does the rogue spacecraft transmit its data on?",
-			"description": "The rogue spacecraft transmits on a frequency to its ground stations. What frequency does the rogue spacecraft transmit its data on? This is not the same frequency as the jammer it has on-board, which is attempting to jam your team's frequency.",
-			"type": "number",
-			"answer": {
-				"unit": "MHz",
-				"value": 905.0,
-				"tolerance": 20.0,
-				"reason": "The rogue spacecraft transmits on frequency 905 MHz. This can be found in the EM data by analysing the spectrum of the rogue spacecraft's transmitter.",
-				"score": 5
 			}
 		},
 		{
@@ -1313,7 +1339,7 @@
 		},
 		{
 			"section": "Replay Attacks",
-			"title": "What action mitigates a successful uplink replay attack against your team?",
+			"title": "What action(s) can mitigate a successful uplink replay attack against your team?",
 			"description": "Which of the following options would be appropriate immediate mitigation when a uplink replay attack is occurring?",
 			"type": "checkbox",
 			"answer": {
@@ -1409,32 +1435,6 @@
 			}
 		},
 		{
-			"section": "Vessel Identification",
-			"title": "How many green vessels are clustered in the Strait of Hormuz?",
-			"description": "Taking Earth observation imagery of the Hormuz region, count the number of green vessesls found.",
-			"type": "number",
-			"answer": {
-				"unit": "",
-				"value": 5.0,
-				"tolerance": 0,
-				"reason": "Five vessels are located in the Strait of Hormuz.",
-				"score": 5
-			}
-		},
-		{
-			"section": "Vessel Identification",
-			"title": "How many yellow vessels appear near near the Malacca Strait?",
-			"description": "Taking Earth observation imagery of the Malacca Strait region, count the number of yellow vessesls found.",
-			"type": "number",
-			"answer": {
-				"unit": "",
-				"value": 2.0,
-				"tolerance": 0,
-				"reason": "Two yellow vessels are located near the Malacca Strait.",
-				"score": 5
-			}
-		},
-		{
 			"section": "GPS Jamming",
 			"title": "At what time (in minutes from session start) did the GPS jamming event occur?",
 			"description": "The GPS jamming event occurred at a point in time. Give elapsed simulation minutes at which this event occurred.",
@@ -1527,7 +1527,7 @@
 		},
 		{
 			"section": "Uplink Jamming",
-			"title": "What action mitigates a sustained uplink jam during a ground-station pass?",
+			"title": "What action(s) can mitigate a sustained uplink jam during a ground-station pass?",
 			"description": "Which of the following options would be the best immediate mitigation when a uplink jam is occurring?",
 			"type": "select",
 			"answer": {

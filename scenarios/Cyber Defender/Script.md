@@ -50,7 +50,7 @@
 
 #### Slide 3
 - You will do this by viewing telemetry, capturing imagery data, sending guidance commands and diagnosing anomalies.
-- Each team will be provided with a set of questions, embedded within the operator terminal, along with a mission brief for each of the three point of interests.
+- Each team will be provided with a set of questions, embedded within the operator terminal.
 - The simulation is running at real-time speed. All anomalies and events will occur in the first 45 minutes of the session. If you are unsure if an anomaly has occurred, be sure to wait until it has occurred.
 
 
