@@ -1,0 +1,403 @@
+{
+	"metadata": {
+		"name": "Tutorial",
+		"description": "This is a tutorial scenario designed to introduce participants to the basics of the Space Range simulation environment. It includes a simple spacecraft in orbit around Earth, with a few basic components and a single ground station. The scenario also includes a few example questions to help participants get familiar with the types of questions they may encounter in the competition."
+	},
+	"simulation": {
+		"epoch": "2025/04/15 07:30:00",
+		"speed": 3.0,
+		"step_size": 0.1,
+		"integrator": "Euler",
+		"end_time": 0.0
+	},
+	"universe": {
+		"atmosphere": false,
+		"magnetosphere": true,
+		"gps": true,
+		"cloud_opacity": 0.9,
+		"cloud_contrast": 2.5,
+		"ambient_light": 0.25
+	},
+	"ground_stations": {
+		"locations": [
+			"Paris",
+			"Dubai",
+			"Singapore",
+			"Sydney",
+			"Auckland"
+		],
+		"min_elevation": 0,
+		"max_range": 0,
+		"scale": 100
+	},
+	"teams": [
+		{
+			"enabled": true,
+			"id": 111111,
+			"password": "AAAAAA",
+			"name": "Team Blue",
+			"key": 42,
+			"frequency": 612,
+			"collection": "Main",
+			"color": "#0050FF"
+		},
+		{
+			"enabled": true,
+			"id": 222222,
+			"password": "BBBBBB",
+			"name": "Team Red",
+			"key": 87,
+			"frequency": 745,
+			"collection": "Main",
+			"color": "#FF0000"
+		}
+	],
+	"assets": {
+		"space": [
+			{
+				"id": "SC_001",
+				"name": "Microsat",
+				"orbit": {
+					"planet": "Earth",
+					"values": [
+						7500.0,
+						0.00,
+						45.0,
+						220.0,
+						0,
+						80.0
+					],
+					"offset": [
+						0.0,
+						0.0,
+						0.0,
+						2.0,
+						0.0,
+						2.0
+					]
+				},
+				"physics": {
+					"override_mass": true,
+					"mass": 100.0,
+					"center_of_mass": [
+						0.0,
+						0.0,
+						0.0
+					],
+					"inertia_tensor": [
+						[
+							10.0,
+							0.0,
+							0.0
+						],
+						[
+							0.0,
+							10.0,
+							0.0
+						],
+						[
+							0.0,
+							0.0,
+							10.0
+						]
+					]
+				},
+				"visualization": {
+					"mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/ZenSat/BP_Z_SC_ZenSat_Chassis",
+					"scale": 1.0,
+					"offset": [
+						0.0,
+						0.0,
+						0.12
+					]
+				},
+				"controller": {
+					"safe_fraction": 0.1,
+					"capture_tax": 0.001,
+					"downlink_tax": 0.01,
+					"ping_interval": 20.0,
+					"reset_interval": 60.0,
+					"jamming_multiplier": 100.0,
+					"enable_rpo": false
+				},
+				"power": {
+					"bus": [
+						{
+							"source_component": "Solar Panel +X",
+							"source_terminal": "out",
+							"target_component": "Battery",
+							"target_terminal": "out"
+						},
+						{
+							"source_component": "Solar Panel -X",
+							"source_terminal": "out",
+							"target_component": "Battery",
+							"target_terminal": "out"
+						}
+					]
+				},
+				"components": [
+					{
+						"class": "Solar Panel",
+						"name": "Solar Panel +X",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.8,
+							0.276313,
+							-0.2
+						],
+						"rotation": [
+							35.0,
+							0.0,
+							0.0
+						],
+						"scale": 1.0,
+						"data": {
+							"Area": 0.3,
+							"Efficiency": 0.4,
+							"Mass": 10.0
+						}
+					},
+					{
+						"class": "Solar Panel",
+						"name": "Solar Panel -X",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							-0.8,
+							0.276313,
+							-0.2
+						],
+						"rotation": [
+							35.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Area": 0.3,
+							"Efficiency": 0.4,
+							"Mass": 10.0
+						}
+					},
+					{
+						"class": "Reaction Wheels",
+						"name": "Reaction Wheels",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Mass": 9.0
+						}
+					},
+					{
+						"class": "Computer",
+						"name": "Computer",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Battery",
+						"name": "Battery",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Nominal Capacity": 80.0,
+							"Charge Fraction": 1.0,
+							"Mass": 5.0
+						}
+					},
+					{
+						"class": "Camera",
+						"name": "Camera",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							-0.36,
+							-0.16
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Mass": 5.0
+						}
+					},
+					{
+						"class": "GPS Sensor",
+						"name": "GPS Sensor",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Receiver",
+						"name": "Receiver",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							-0.36,
+							-0.16
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Antenna Gain": 3.0,
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Transmitter",
+						"name": "Transmitter",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							-0.36,
+							-0.16
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Mass": 1.0
+						}
+					},
+					{
+						"class": "Storage",
+						"name": "Storage",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							-0.2
+						],
+						"data": {
+							"Mass": 4.0
+						}
+					},
+					{
+						"class": "EM Sensor",
+						"name": "EM Sensor",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							-0.36,
+							-0.16
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Mass": 2.0
+						}
+					}
+				]
+			}
+		],
+		"collections": [
+			{
+				"id": "Main",
+				"space_assets": [
+					"SC_001"
+				]
+			}
+		]
+	},
+	"objects": {
+		"ground": [
+			{
+				"id": "Word",
+				"type": "text",
+				"name": "Word",
+				"planet": "Earth",
+				"latitude": 19.8,
+				"longitude": 63.6,
+				"altitude": 3,
+				"scale": 100000,
+				"color": "#FFFFFF",
+				"data": {
+					"text": "TRAINING"
+				}
+			}
+		]
+	},
+	"events": [
+
+	],
+	"questions": [
+		{
+			"section": "Examples",
+			"title": "What does the word on the ground spell?",
+			"description": "There exists a word on the West coast of India, in the Arabian Sea. Use your camera and guidance to capture an image and spell out the word.",
+			"type": "text",
+			"answer": {
+				"value": "TRAINING",
+				"score": 10
+			}
+		},
+		{
+			"section": "Examples",
+			"title": "What is the semi-major axis (km) of your spacecraft's orbit?",
+			"description": "Using the telemetry data calculate the semi major axis of your spacecraft's orbit, to the nearest 100 km.",
+			"type": "number",
+			"answer": {
+				"unit": "km",
+				"value": 7500.0,
+				"tolerance": 100.0,
+				"reason": "7500.0 km. This can be calculated by the GPS data.",
+				"score": 10
+			}
+		},
+		{
+			"section": "Examples",
+			"title": "What is the battery capacity of your spacecraft in Ah?",
+			"description": "Using the telemetry data calculate the battery capacity of your spacecraft in Ah.",
+			"type": "number",
+			"answer": {
+				"unit": "Ah",
+				"value": 80.0,
+				"tolerance": 1.0,
+				"reason": "80.0 Ah. This can be calculated by the battery specifications.",
+				"score": 10
+			}
+		}
+	]
+}

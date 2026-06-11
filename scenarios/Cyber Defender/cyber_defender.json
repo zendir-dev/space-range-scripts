@@ -785,7 +785,7 @@
 				"Radius": 50000000.0,
 				"Spoof Latitude": 31.4,
 				"Spoof Longitude": 25.3,
-				"Spoof Altitude": 200000.0
+				"Spoof Altitude": 3000000.0
 			}
 		},
 		{
@@ -804,7 +804,7 @@
 				"Radius": 50000000.0,
 				"Spoof Latitude": 38.4,
 				"Spoof Longitude": 38.2,
-				"Spoof Altitude": 200000.0
+				"Spoof Altitude": 2600000.0
 			}
 		},
 		{
@@ -823,7 +823,7 @@
 				"Radius": 50000000.0,
 				"Spoof Latitude": 27.3,
 				"Spoof Longitude": 38.6,
-				"Spoof Altitude": 200000.0
+				"Spoof Altitude": 2800000.0
 			}
 		},
 		{
@@ -863,7 +863,7 @@
 				"Radius": 50000000.0,
 				"Spoof Latitude": 37.8,
 				"Spoof Longitude": 59.7,
-				"Spoof Altitude": 2000000.0
+				"Spoof Altitude": 3300000.0
 			}
 		},
 		{
@@ -882,7 +882,7 @@
 				"Radius": 50000000.0,
 				"Spoof Latitude": 9.7,
 				"Spoof Longitude": 50.4,
-				"Spoof Altitude": 2500000.0
+				"Spoof Altitude": 3200000.0
 			}
 		},
 		{
@@ -998,8 +998,8 @@
 	"questions": [
 		{
 			"section": "GPS Spoofing",
-			"title": "At what time (in minutes from session start) did the GPS spoofing start?",
-			"description": "The GPS spoofing event occurred at a point in time. Give elapsed simulation minutes at which this event started.",
+			"title": "At what time (in minutes from session start) did the GPS spoofing sequence begin?",
+			"description": "The GPS spoofing event occurred at a point in time, in multiple locations. Give elapsed simulation minutes at which this sequence started.",
 			"type": "number",
 			"answer": {
 				"unit": "min",
@@ -1011,8 +1011,8 @@
 		},
 		{
 			"section": "GPS Spoofing",
-			"title": "At what time (in minutes from session start) did the GPS spoofing end?",
-			"description": "The GPS spoofing event occurred at a point in time. Give elapsed simulation minutes at which this event ended.",
+			"title": "At what time (in minutes from session start) did the GPS sequence end?",
+			"description": "The GPS spoofing event occurred at a point in time, in multiple locations. Give elapsed simulation minutes at which this sequence ended and nominal GPS data resumed.",
 			"type": "number",
 			"answer": {
 				"unit": "min",
@@ -1031,18 +1031,16 @@
 				"options": [
 					"Australia",
 					"Central Asia",
-					"Eastern Europe",
 					"India",
 					"Middle-East",
 					"North-East Asia",
 					"South-East Asia",
 					"Western Europe"
 				],
-				"value": 4,
+				"value": 3,
 				"reason": [
 					"The spoofing did not occur over Australia.",
 					"The spoofing did not occur over Central Asia.",
-					"The spoofing did not occur over Eastern Europe.",
 					"The spoofing did not occur over India.",
 					"Correct. The spoofing occurred over the Middle-East region.",
 					"The spoofing did not occur over North-East Asia.",
@@ -1091,8 +1089,8 @@
 					1
 				],
 				"reason": [
-					"Correct. This solar panel was affected by the fault.",
-					"Correct. This solar panel was affected by the fault."
+					"Correct. Both solar panels were affected by the fault.",
+					"Correct. Both solar panels were affected by the fault."
 				],
 				"score": 2
 			}
@@ -1100,7 +1098,7 @@
 		{
 			"section": "Solar Panel Fault",
 			"title": "At what time (minutes from session start) did this fault occur?",
-			"description": "At least one of the solar panels was affected by the fault. Give elapsed simulation minutes at which this fault first occurred.",
+			"description": "At least one of the solar panels was affected by a fault. Give elapsed simulation minutes at which this fault first occurred.",
 			"type": "number",
 			"answer": {
 				"unit": "min",
@@ -1152,7 +1150,7 @@
 		{
 			"section": "Cyber Injects",
 			"title": "What hidden text appeared in the cyber injection around 14 minutes into the scenario?",
-			"description": "One of the messages had injected text, disrupting the data found within the packets. What was the text that appeared?",
+			"description": "One of the messages had injected text, disrupting the data found within the packets. What was the English-text that appeared in the data?",
 			"type": "text",
 			"answer": {
 				"value": "STAR INTRUSION",
@@ -1163,7 +1161,7 @@
 		{
 			"section": "Cyber Injects",
 			"title": "What hidden text appeared in the cyber injection around 32 minutes into the scenario?",
-			"description": "One of the messages had injected text, disrupting the data found within the packets. What was the text that appeared?",
+			"description": "One of the messages had injected text, disrupting the data found within the packets. What was the English-text that appeared in the data?",
 			"type": "text",
 			"answer": {
 				"value": "ECHO VIRUS",
@@ -1174,7 +1172,7 @@
 		{
 			"section": "Downlink Jamming",
 			"title": "How many distinct sustained broadcast downlink jam episodes occurred?",
-			"description": "The rogue spacecraft held a saturating barrage jam on your team's frequency. How many episodes of jamming occurred?",
+			"description": "The rogue spacecraft was performing downlink jamming on your ground station. How many unique episodes of jamming occurred? All cyber events occurred in the first 45 minutes of the session.",
 			"type": "select",
 			"answer": {
 				"options": [
@@ -1195,8 +1193,8 @@
 		},
 		{
 			"section": "Downlink Jamming",
-			"title": "Which two ground stations were affected by the downlink jamming attack?",
-			"description": "The rogue spacecraft held a saturating barrage jam on your team's frequency. Which two ground stations were affected by the jamming attack?",
+			"title": "Which ground stations were affected by the downlink jamming attack?",
+			"description": "The rogue spacecraft held a saturating barrage jam on your team's frequency. Which ground stations were affected by the jamming attack? All cyber events occurred in the first 45 minutes of the session.",
 			"type": "checkbox",
 			"answer": {
 				"options": [
@@ -1227,7 +1225,7 @@
 		{
 			"section": "Downlink Jamming",
 			"title": "What was the lowest signal-to-noise ratio (dB) observed at the ground station during downlink jamming?",
-			"description": "During the downlink jamming attack, what was the lowest signal-to-noise ratio (dB) observed at the ground station?",
+			"description": "During the downlink jamming attack, what was the lowest signal-to-noise ratio (dB) observed at the ground station's receiver? All cyber events occurred in the first 45 minutes of the session.",
 			"type": "number",
 			"answer": {
 				"unit": "dB",
@@ -1248,8 +1246,7 @@
 					"Computer Reboot",
 					"Cycling the Encryption Key",
 					"Downlinking Data",
-					"Frequency Hopping",
-					"Waiting for the Attack to End"
+					"Frequency Hopping"
 				],
 				"value": 4,
 				"reason": [
@@ -1257,8 +1254,7 @@
 					"Rebooting the computer would not help with the downlink jamming attack.",
 					"Cycling the encryption key would not help with the downlink jamming attack.",
 					"Downlinking data would not help with the downlink jamming attack.",
-					"Frequency hopping would help with the downlink jamming attack by moving to an unjammed frequency.",
-					"Waiting for the attack to end would not help with the downlink jamming attack."
+					"Frequency hopping would help with the downlink jamming attack by moving to an unjammed frequency."
 				],
 				"score": 3
 			}
@@ -1266,7 +1262,7 @@
 		{
 			"section": "Rogue Identification",
 			"title": "What is the rogue spacecraft's call-sign?",
-			"description": "The rogue spacecraft is identified by its call-sign, visible on the spacecraft's chassis. What is the call-sign of the rogue spacecraft?",
+			"description": "The rogue spacecraft is identified by its call-sign, visible on the spacecraft's solar panels. What is the call-sign of the rogue spacecraft?",
 			"type": "text",
 			"answer": {
 				"value": "PHANTOM",
@@ -1277,7 +1273,7 @@
 		{
 			"section": "Rogue Identification",
 			"title": "What frequency (MHz) does the rogue spacecraft transmit its data on?",
-			"description": "The rogue spacecraft transmits on a frequency to its ground stations. What frequency does the rogue spacecraft transmit its data on?",
+			"description": "The rogue spacecraft transmits on a frequency to its ground stations. What frequency does the rogue spacecraft transmit its data on? This is not the same frequency as the jammer it has on-board, which is attempting to jam your team's frequency.",
 			"type": "number",
 			"answer": {
 				"unit": "MHz",
@@ -1312,20 +1308,7 @@
 					"The spacecraft was not connected to Singapore during the replay attack.",
 					"The spacecraft was not connected to Sydney during the replay attack."
 				],
-				"score": 5
-			}
-		},
-		{
-			"section": "Replay Attacks",
-			"title": "How long (in minutes) did the replay attacks last?",
-			"description": "The replay attacks lasted for a period of time. How long did they last for in minutes?",
-			"type": "number",
-			"answer": {
-				"unit": "min",
-				"value": 8.0,
-				"tolerance": 2.0,
-				"reason": "The replay attacks lasted for approximately 8 minutes.",
-				"score": 5
+				"score": 8
 			}
 		},
 		{
@@ -1339,8 +1322,7 @@
 					"Computer Reboot",
 					"Cycling the Encryption Key",
 					"Downlinking Data",
-					"Frequency Hopping",
-					"Waiting for the Attack to End"
+					"Frequency Hopping"
 				],
 				"value": [
 					2,
@@ -1351,10 +1333,9 @@
 					"Rebooting the computer would not help with the uplink replay attack.",
 					"Cycling the encryption key would help with the uplink replay attack by changing the on-board cipher.",
 					"Downlinking data would not help with the uplink replay attack.",
-					"Frequency hopping would help with the uplink replay attack by moving to an unjammed frequency.",
-					"Waiting for the attack to end would not help with the uplink replay attack."
+					"Frequency hopping would help with the uplink replay attack by moving to an unjammed frequency."
 				],
-				"score": 5
+				"score": 7
 			}
 		},
 		{
@@ -1397,7 +1378,7 @@
 		{
 			"section": "Reaction Wheels Fault",
 			"title": "Which reaction wheels, X, Y or Z, became stuck?",
-			"description": "One of the three primary reaction wheels became stuck. Which wheel became stuck?",
+			"description": "One of the three primary reaction wheels became stuck. Which wheel became stuck? All anomalies occurred in the first 45 minutes of the session.",
 			"type": "select",
 			"answer": {
 				"options": [
@@ -1407,7 +1388,7 @@
 				],
 				"value": 0,
 				"reason": [
-					"Correct. This wheel became stuck, where the speed could not be controlled.",
+					"Correct. This wheel became stuck, where the speed could not be changed.",
 					"Reaction Wheel Y is not stuck. The stuck condition is where the wheel speed could not be controlled.",
 					"Reaction Wheel Z is not stuck. The stuck condition is where the wheel speed could not be controlled."
 				],
@@ -1417,7 +1398,7 @@
 		{
 			"section": "Reaction Wheels Fault",
 			"title": "At what time (minutes from session start) did this fault occur?",
-			"description": "At least one of the reaction wheels became stuck. Give elapsed simulation minutes at which this fault first occurred.",
+			"description": "At least one of the reaction wheels became stuck. Give elapsed simulation minutes at which this fault occurred. All anomalies occurred in the first 45 minutes of the session.",
 			"type": "number",
 			"answer": {
 				"unit": "min",
@@ -1455,8 +1436,8 @@
 		},
 		{
 			"section": "GPS Jamming",
-			"title": "At what time (in minutes from session start) did the GPS jamming first occur?",
-			"description": "The GPS jamming first occurred at a point in time. Give elapsed simulation minutes at which this jamming first occurred.",
+			"title": "At what time (in minutes from session start) did the GPS jamming event occur?",
+			"description": "The GPS jamming event occurred at a point in time. Give elapsed simulation minutes at which this event occurred.",
 			"type": "number",
 			"answer": {
 				"unit": "min",
@@ -1468,8 +1449,8 @@
 		},
 		{
 			"section": "GPS Jamming",
-			"title": "At what time (in minutes from session start) did the GPS jamming last occur?",
-			"description": "The GPS jamming last occurred at a point in time. Give elapsed simulation minutes at which this jamming last occurred.",
+			"title": "At what time (in minutes from session start) did the GPS jamming event stop?",
+			"description": "The GPS jamming event stopped at a point in time. Give elapsed simulation minutes at which this event stopped.",
 			"type": "number",
 			"answer": {
 				"unit": "min",
@@ -1482,7 +1463,7 @@
 		{
 			"section": "Uplink Jamming",
 			"title": "How many distinct sustained broadcast uplink jam episodes occurred?",
-			"description": "The rogue spacecraft held a saturating barrage jam on your team's frequency. How many episodes of jamming occurred?",
+			"description": "The rogue spacecraft held a saturating barrage jam on your team's frequency. How many unique episodes of jamming occurred? All cyber events occurred in the first 45 minutes of the session.",
 			"type": "select",
 			"answer": {
 				"options": [
@@ -1504,7 +1485,7 @@
 		{
 			"section": "Uplink Jamming",
 			"title": "To which ground station were you connected to during the uplink jamming attack?",
-			"description": "The rogue spacecraft held a saturating barrage jam on your team's frequency. Which ground station were you connected to during the uplink jamming attack?",
+			"description": "The rogue spacecraft held a saturating barrage jam on your team's frequency. Which ground station(s) were you connected to during the uplink jamming attack? All cyber events occurred in the first 45 minutes of the session.",
 			"type": "checkbox",
 			"answer": {
 				"options": [
@@ -1555,8 +1536,7 @@
 					"Computer Reboot",
 					"Cycling the Encryption Key",
 					"Downlinking Data",
-					"Frequency Hopping",
-					"Waiting for the Attack to End"
+					"Frequency Hopping"
 				],
 				"value": 4,
 				"reason": [
@@ -1564,8 +1544,7 @@
 					"Rebooting the computer would not help with the uplink jamming attack.",
 					"Cycling the encryption key would not help with the downlink jamming attack.",
 					"Downlinking data would not help with the uplink jamming attack.",
-					"Frequency hopping would help with the uplink jamming attack by moving to an unjammed frequency.",
-					"Waiting for the attack to end would not help with the uplink jamming attack."
+					"Frequency hopping would help with the uplink jamming attack by moving to an unjammed frequency."
 				],
 				"score": 3
 			}
@@ -1578,7 +1557,7 @@
 			"answer": {
 				"unit": "km",
 				"value": 10000.0,
-				"tolerance": 100.0,
+				"tolerance": 200.0,
 				"reason": "Using the GPS data, the spacecraft flies with an average altitude of 3622 km, giving a semi-major axis of 10000 km.",
 				"score": 5
 			}
