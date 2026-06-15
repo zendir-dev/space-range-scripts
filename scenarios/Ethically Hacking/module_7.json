@@ -1,0 +1,740 @@
+{
+	"metadata": {
+		"name": "Module 7",
+		"description": "Earth observation exercise over the Strait of Malacca and Hawaii. LEO pass with global ground-station coverage and natural contact gaps between passes."
+	},
+	"simulation": {
+		"epoch": "2025/10/15 00:00:00",
+		"speed": 4.0,
+		"step_size": 0.12,
+		"integrator": "Euler",
+		"end_time": 9600.0
+	},
+	"universe": {
+		"atmosphere": false,
+		"magnetosphere": false,
+		"gps": true,
+		"cloud_opacity": 0.85,
+		"cloud_contrast": 2.5,
+		"ambient_light": 0.07
+	},
+	"ground_stations": {
+		"locations": [
+			"Cape Town",
+			"Singapore",
+			"Honolulu",
+			"Santiago"
+		],
+		"min_elevation": 10,
+		"max_range": 0,
+		"scale": 100
+	},
+	"teams": [
+		{
+			"enabled": true,
+			"id": 473829,
+			"password": "R4K7MZ",
+			"name": "Team Blue",
+			"key": 42,
+			"frequency": 612,
+			"collection": "Main",
+			"color": "#0050FF"
+		},
+		{
+			"enabled": true,
+			"id": 916354,
+			"password": "8XTPWN",
+			"name": "Team Green",
+			"key": 87,
+			"frequency": 745,
+			"collection": "Main",
+			"color": "#00FF00"
+		},
+		{
+			"enabled": true,
+			"id": 263718,
+			"password": "5LZQVB",
+			"name": "Team Yellow",
+			"key": 154,
+			"frequency": 889,
+			"collection": "Main",
+			"color": "#FFFF00"
+		},
+		{
+			"enabled": true,
+			"id": 584927,
+			"password": "2WCF9H",
+			"name": "Team Orange",
+			"key": 203,
+			"frequency": 534,
+			"collection": "Main",
+			"color": "#FF7000"
+		},
+		{
+			"enabled": true,
+			"id": 731456,
+			"password": "N6RGYD",
+			"name": "Team Pink",
+			"key": 117,
+			"frequency": 678,
+			"collection": "Main",
+			"color": "#FF8CEC"
+		},
+		{
+			"enabled": true,
+			"id": 629540,
+			"password": "B8WNHQ",
+			"name": "Team White",
+			"key": 72,
+			"frequency": 712,
+			"collection": "Main",
+			"color": "#FFFFFF"
+		},
+		{
+			"enabled": true,
+			"id": 395082,
+			"password": "7SMXKE",
+			"name": "Team Purple",
+			"key": 29,
+			"frequency": 823,
+			"collection": "Main",
+			"color": "#8600FF"
+		},
+		{
+			"enabled": true,
+			"id": 847163,
+			"password": "4PVTZ3",
+			"name": "Team Cyan",
+			"key": 195,
+			"frequency": 561,
+			"collection": "Main",
+			"color": "#00FFFF"
+		},
+		{
+			"enabled": true,
+			"id": 152837,
+			"password": "6JCMFR",
+			"name": "Team Red",
+			"key": 238,
+			"frequency": 847,
+			"collection": "Main",
+			"color": "#FF0000"
+		}
+	],
+	"assets": {
+		"space": [
+			{
+				"id": "SC_001",
+				"name": "Microsat",
+				"orbit": {
+					"planet": "Earth",
+					"values": [
+						9000.0,
+						0.0,
+						26.0,
+						120.0,
+						0.0,
+						260.0
+					],
+					"offset": [
+						0.0,
+						0.0,
+						0.0,
+						0.0,
+						0.0,
+						0.01
+					]
+				},
+				"physics": {
+					"override_mass": true,
+					"mass": 100.0,
+					"center_of_mass": [
+						0.0,
+						0.0,
+						0.0
+					],
+					"inertia_tensor": [
+						[
+							10.0,
+							0.0,
+							0.0
+						],
+						[
+							0.0,
+							10.0,
+							0.0
+						],
+						[
+							0.0,
+							0.0,
+							10.0
+						]
+					]
+				},
+				"visualization": {
+					"mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/ZenSat/BP_Z_SC_ZenSat_Chassis",
+					"scale": 1.0,
+					"offset": [
+						0.0,
+						0.0,
+						0.12
+					]
+				},
+				"controller": {
+					"safe_fraction": 0.1,
+					"capture_tax": 0.001,
+					"downlink_tax": 0.01,
+					"ping_interval": 3.0,
+					"reset_interval": 30.0,
+					"jamming_multiplier": 100.0,
+					"enable_rpo": false
+				},
+				"power": {
+					"bus": [
+						{
+							"source_component": "Solar Panel +X",
+							"source_terminal": "out",
+							"target_component": "Battery",
+							"target_terminal": "out"
+						},
+						{
+							"source_component": "Solar Panel -X",
+							"source_terminal": "out",
+							"target_component": "Battery",
+							"target_terminal": "out"
+						}
+					]
+				},
+				"components": [
+					{
+						"class": "Solar Panel",
+						"name": "Solar Panel +X",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.8,
+							0.276313,
+							-0.2
+						],
+						"rotation": [
+							35.0,
+							0.0,
+							0.0
+						],
+						"scale": 1.0,
+						"data": {
+							"Area": 0.3,
+							"Efficiency": 0.4,
+							"Mass": 10.0
+						}
+					},
+					{
+						"class": "Solar Panel",
+						"name": "Solar Panel -X",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							-0.8,
+							0.276313,
+							-0.2
+						],
+						"rotation": [
+							35.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Area": 0.3,
+							"Efficiency": 0.4,
+							"Mass": 10.0
+						}
+					},
+					{
+						"class": "Reaction Wheels",
+						"name": "Reaction Wheels",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Mass": 9.0
+						}
+					},
+					{
+						"class": "Computer",
+						"name": "Computer",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Battery",
+						"name": "Battery",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Nominal Capacity": 80.0,
+							"Charge Fraction": 1.0,
+							"Mass": 5.0
+						}
+					},
+					{
+						"class": "Camera",
+						"name": "Camera",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							-0.36,
+							-0.16
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Mass": 5.0
+						}
+					},
+					{
+						"class": "GPS Sensor",
+						"name": "GPS Sensor",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Receiver",
+						"name": "Receiver",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							-0.36,
+							-0.16
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Antenna Gain": 3.0,
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Transmitter",
+						"name": "Transmitter",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							-0.36,
+							-0.16
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Mass": 1.0
+						}
+					},
+					{
+						"class": "Storage",
+						"name": "Storage",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							-0.2
+						],
+						"data": {
+							"Mass": 4.0
+						}
+					}
+				]
+			}
+		],
+		"collections": [
+			{
+				"id": "Main",
+				"space_assets": [
+					"SC_001"
+				]
+			}
+		]
+	},
+	"objects": {
+		"ground": [
+			{
+				"id": "GO_M01",
+				"type": "vessel",
+				"name": "Malacca Yellow A",
+				"planet": "Earth",
+				"latitude": 2.2,
+				"longitude": 101.75,
+				"altitude": 1,
+				"scale": 35,
+				"color": "#FFFF00",
+				"data": {
+					"heading": 125.0,
+					"speed": 0.0
+				}
+			},
+			{
+				"id": "GO_M02",
+				"type": "vessel",
+				"name": "Malacca Yellow B",
+				"planet": "Earth",
+				"latitude": 2.0,
+				"longitude": 102.0,
+				"altitude": 1,
+				"scale": 35,
+				"color": "#FFFF00",
+				"data": {
+					"heading": 130.0,
+					"speed": 0.0
+				}
+			},
+			{
+				"id": "GO_M03",
+				"type": "vessel",
+				"name": "Malacca Yellow C",
+				"planet": "Earth",
+				"latitude": 1.8,
+				"longitude": 102.25,
+				"altitude": 1,
+				"scale": 35,
+				"color": "#FFFF00",
+				"data": {
+					"heading": 120.0,
+					"speed": 0.0
+				}
+			},
+			{
+				"id": "GO_M04",
+				"type": "vessel",
+				"name": "Malacca Yellow D",
+				"planet": "Earth",
+				"latitude": 2.1,
+				"longitude": 102.4,
+				"altitude": 1,
+				"scale": 35,
+				"color": "#FFFF00",
+				"data": {
+					"heading": 135.0,
+					"speed": 0.0
+				}
+			},
+			{
+				"id": "GO_H01",
+				"type": "vessel",
+				"name": "Hawaii Green A",
+				"planet": "Earth",
+				"latitude": 21.6,
+				"longitude": -157.9,
+				"altitude": 1,
+				"scale": 35,
+				"color": "#00FF00",
+				"data": {
+					"heading": 85.0,
+					"speed": 0.0
+				}
+			},
+			{
+				"id": "GO_H02",
+				"type": "vessel",
+				"name": "Hawaii Green B",
+				"planet": "Earth",
+				"latitude": 21.2,
+				"longitude": -157.7,
+				"altitude": 1,
+				"scale": 35,
+				"color": "#00FF00",
+				"data": {
+					"heading": 110.0,
+					"speed": 0.0
+				}
+			},
+			{
+				"id": "GO_H03",
+				"type": "vessel",
+				"name": "Hawaii Green C",
+				"planet": "Earth",
+				"latitude": 21.0,
+				"longitude": -158.1,
+				"altitude": 1,
+				"scale": 35,
+				"color": "#00FF00",
+				"data": {
+					"heading": 95.0,
+					"speed": 0.0
+				}
+			},
+			{
+				"id": "GO_H04",
+				"type": "vessel",
+				"name": "Hawaii Green D",
+				"planet": "Earth",
+				"latitude": 20.8,
+				"longitude": -157.5,
+				"altitude": 1,
+				"scale": 35,
+				"color": "#00FF00",
+				"data": {
+					"heading": 75.0,
+					"speed": 0.0
+				}
+			},
+			{
+				"id": "GO_H05",
+				"type": "vessel",
+				"name": "Hawaii Green E",
+				"planet": "Earth",
+				"latitude": 21.3,
+				"longitude": -156.8,
+				"altitude": 1,
+				"scale": 35,
+				"color": "#00FF00",
+				"data": {
+					"heading": 100.0,
+					"speed": 0.0
+				}
+			}
+		]
+	},
+	"events": [],
+	"questions": [
+		{
+			"section": "Mission Lead",
+			"title": "What should the Mission Lead confirm at the start of each ground-station pass?",
+			"description": "At pass acquisition, the Mission Lead sets the team up for a successful contact window. Select the best answer.",
+			"type": "select",
+			"answer": {
+				"options": [
+					"Begin payload capture immediately",
+					"Confirm contact, pass timeline and ground station",
+					"Rotate encryption keys before any telemetry review",
+					"Safe-mode the spacecraft until imagery is requested"
+				],
+				"value": 1,
+				"reason": [
+					"Payload capture should wait until link quality and pass plan are confirmed.",
+					"Correct. The Mission Lead briefs contact status, the pass window, which ground station is in use, and what the team must accomplish before commanding begins.",
+					"Key rotation is not the standard first action at pass start.",
+					"Safe-mode is an anomaly response, not a nominal pass-start procedure."
+				],
+				"score": 10
+			}
+		},
+		{
+			"section": "Mission Lead",
+			"title": "Which action should the Mission Lead approve personally rather than delegate?",
+			"description": "Some steps are delegated to Satellite or Payload Operations; others need Mission Lead authority. Select the best answer.",
+			"type": "select",
+			"answer": {
+				"options": [
+					"Configuring camera field-of-view before capture",
+					"Entering safe-mode or authorising a spacecraft reset",
+					"Routine nadir pointing for a standard capture",
+					"Scheduled telemetry downlink during a good pass"
+				],
+				"value": 1,
+				"reason": [
+					"Camera configuration is a standard Payload Operations task once tasking is accepted.",
+					"Correct. Safe-mode and reset decisions affect the whole pass plan and should be approved by the Mission Lead.",
+					"Routine pointing is normally executed by Satellite or Payload Operations once tasking is approved.",
+					"Nominal downlink during a healthy pass is typically delegated."
+				],
+				"score": 10
+			}
+		},
+		{
+			"section": "Mission Lead",
+			"title": "What should the Mission Lead review immediately after a pass ends?",
+			"description": "When the contact window closes, the Mission Lead closes out the pass with the team. Select the best answer.",
+			"type": "select",
+			"answer": {
+				"options": [
+					"Immediate safe-mode regardless of pass outcome",
+					"Only the spacecraft battery voltage trend",
+					"Whether primary tasking was completed and if any anomalies occurred",
+					"Whether the camera aperture should be changed before the next orbit"
+				],
+				"value": 2,
+				"reason": [
+					"Safe-mode is not the default end-of-pass action when operations were nominal.",
+					"Battery telemetry alone is insufficient for an end-of-pass review.",
+					"Correct. After each pass the Mission Lead confirms tasking status, captures anomalies, and sets expectations for the next contact opportunity.",
+					"Camera settings are a Payload Operations detail, not the primary end-of-pass brief."
+				],
+				"score": 10
+			}
+		},
+		{
+			"section": "Satellite Operations",
+			"title": "What is the correct first action at pass acquisition?",
+			"description": "Satellite Operations owns the link during each contact window. Select the nominal first step.",
+			"type": "select",
+			"answer": {
+				"options": [
+					"Capture imagery of the tasked region",
+					"Downlink all stored data immediately",
+					"Reconfigure the on-board command schedule",
+					"Verify link with station and monitor SNR"
+				],
+				"value": 3,
+				"reason": [
+					"Capture is a Payload Operations step after the link is healthy.",
+					"Downlink may follow once the pass plan is confirmed, not as the first action.",
+					"Schedule changes are not the standard acquisition step.",
+					"Correct. Acquire the link, confirm SNR is acceptable, and monitor telemetry before handing off or supporting payload tasking."
+				],
+				"score": 10
+			}
+		},
+		{
+			"section": "Satellite Operations",
+			"title": "Which conditions should cause Satellite Operators to notify the Mission Lead?",
+			"description": "Select all telemetry-based triggers that should stop routine commanding until the Mission Lead is informed.",
+			"type": "checkbox",
+			"answer": {
+				"options": [
+					"Battery charge fraction is nominal",
+					"Routine ping received on schedule",
+					"SNR falls below the mission threshold",
+					"Spacecraft enters SAFE mode unexpectedly",
+					"Uplink command is not acknowledged"
+				],
+				"value": [
+					2,
+					3,
+					4
+				],
+				"reason": [
+					"Link degradation, unexpected safe-mode, and missing command acks all require a pause and Mission Lead brief. Routine pings and nominal battery telemetry do not."
+				],
+				"score": 10
+			}
+		},
+		{
+			"section": "Satellite Operations",
+			"title": "What should Satellite Operations do when the contact window is about to end?",
+			"description": "LEO passes are short and the link will drop. Select the best nominal end-of-pass action.",
+			"type": "select",
+			"answer": {
+				"options": [
+					"Begin a new imagery capture sequence in the final seconds of the pass",
+					"Brief the Mission Lead on pass status and stop non-essential commands",
+					"Continue issuing new commands until the link drops",
+					"Reset the spacecraft computer automatically at pass end"
+				],
+				"value": 1,
+				"reason": [
+					"Starting capture too late in the window risks incomplete products and wasted power.",
+					"Correct. Satellite Operations monitors the pass timeline, hands status to the Mission Lead, and avoids starting work that cannot finish before link loss.",
+					"Silent command flooding at pass end creates risk and leaves the team without situational awareness.",
+					"Computer reset is an approved anomaly response, not a routine pass-end procedure."
+				],
+				"score": 10
+			}
+		},
+		{
+			"section": "Payload Operations",
+			"title": "How many yellow vessels are in the Strait of Malacca?",
+			"description": "Use Earth observation imagery of the Strait of Malacca region and count the number of yellow vessels.",
+			"type": "number",
+			"answer": {
+				"value": 4.0,
+				"tolerance": 0,
+				"reason": "Four yellow vessels are located in the Strait of Malacca.",
+				"score": 10
+			}
+		},
+		{
+			"section": "Payload Operations",
+			"title": "How many green vessels are around Hawaii?",
+			"description": "Use Earth observation imagery of the Hawaii region and count the number of green vessels.",
+			"type": "number",
+			"answer": {
+				"value": 5.0,
+				"tolerance": 0,
+				"reason": "Five green vessels are located around Hawaii.",
+				"score": 10
+			}
+		},
+		{
+			"section": "Payload Operations",
+			"title": "What must Payload Operations verify before releasing a captured product?",
+			"description": "After capture and downlink, Payload Operations checks the product before delivery. Select the best answer.",
+			"type": "select",
+			"answer": {
+				"options": [
+					"Image quality, correct target region, and tasking metadata",
+					"Only that the downlink completed without error",
+					"That the next ground-station pass is scheduled",
+					"The current encryption key value"
+				],
+				"value": 0,
+				"reason": [
+					"Correct. Payload Operations verifies the imagery quality, that the correct geography was captured, and that tasking metadata matches the request.",
+					"A completed downlink alone does not confirm the product is usable.",
+					"Future pass scheduling is not part of the product release check.",
+					"Encryption key is a communications concern, not a product-quality gate."
+				],
+				"score": 10
+			}
+		},
+		{
+			"section": "Payload Operations",
+			"title": "Which findings should cause Payload Operations to hold a downlinked product as suspect?",
+			"description": "Select all integrity triggers that should stop a product from being delivered until it is reviewed.",
+			"type": "checkbox",
+			"answer": {
+				"options": [
+					"Capture geometry does not match the tasked region",
+					"Ground-station SNR was acceptable at pass start",
+					"Image appears corrupted or incomplete",
+					"Routine ping telemetry is nominal",
+					"Vessel count or colour in imagery contradicts the tasking brief"
+				],
+				"value": [
+					0,
+					2,
+					4
+				],
+				"reason": [
+					"Corrupted imagery, wrong geography, and count/colour mismatches are all reasons to hold a product. Nominal pings and acceptable pass-start SNR do not clear a suspect product on their own."
+				],
+				"score": 10
+			}
+		}
+	]
+}

@@ -1,0 +1,584 @@
+{
+	"metadata": {
+		"name": "Module 6",
+		"description": "Basic ethically hacking training scenario \u2014 nine identical Microsat spacecraft in MEO with continuous ground contact to London, Athens, and Dubai."
+	},
+	"simulation": {
+		"epoch": "2026/04/15 10:00:00",
+		"speed": 1.0,
+		"step_size": 0.05,
+		"integrator": "Euler",
+		"end_time": 2400.0
+	},
+	"universe": {
+		"atmosphere": false,
+		"magnetosphere": false,
+		"gps": true,
+		"cloud_opacity": 0.7,
+		"cloud_contrast": 2.5,
+		"ambient_light": 0.25
+	},
+	"ground_stations": {
+		"locations": [
+			"London",
+			"Dubai",
+			"Singapore"
+		],
+		"min_elevation": 0,
+		"max_range": 0,
+		"scale": 100
+	},
+	"teams": [
+		{
+			"enabled": true,
+			"id": 473829,
+			"password": "R4K7MZ",
+			"name": "Team Blue",
+			"key": 42,
+			"frequency": 612,
+			"collection": "Main",
+			"color": "#0050FF"
+		},
+		{
+			"enabled": true,
+			"id": 916354,
+			"password": "8XTPWN",
+			"name": "Team Green",
+			"key": 87,
+			"frequency": 745,
+			"collection": "Main",
+			"color": "#00FF00"
+		},
+		{
+			"enabled": true,
+			"id": 263718,
+			"password": "5LZQVB",
+			"name": "Team Yellow",
+			"key": 154,
+			"frequency": 889,
+			"collection": "Main",
+			"color": "#FFFF00"
+		},
+		{
+			"enabled": true,
+			"id": 584927,
+			"password": "2WCF9H",
+			"name": "Team Orange",
+			"key": 203,
+			"frequency": 534,
+			"collection": "Main",
+			"color": "#FF7000"
+		},
+		{
+			"enabled": true,
+			"id": 731456,
+			"password": "N6RGYD",
+			"name": "Team Pink",
+			"key": 117,
+			"frequency": 678,
+			"collection": "Main",
+			"color": "#FF8CEC"
+		},
+		{
+			"enabled": true,
+			"id": 629540,
+			"password": "B8WNHQ",
+			"name": "Team White",
+			"key": 72,
+			"frequency": 712,
+			"collection": "Main",
+			"color": "#FFFFFF"
+		},
+		{
+			"enabled": true,
+			"id": 395082,
+			"password": "7SMXKE",
+			"name": "Team Purple",
+			"key": 29,
+			"frequency": 823,
+			"collection": "Main",
+			"color": "#8600FF"
+		},
+		{
+			"enabled": true,
+			"id": 847163,
+			"password": "4PVTZ3",
+			"name": "Team Cyan",
+			"key": 195,
+			"frequency": 561,
+			"collection": "Main",
+			"color": "#00FFFF"
+		},
+		{
+			"enabled": true,
+			"id": 152837,
+			"password": "6JCMFR",
+			"name": "Team Red",
+			"key": 238,
+			"frequency": 847,
+			"collection": "Main",
+			"color": "#FF0000"
+		}
+	],
+	"assets": {
+		"space": [
+			{
+				"id": "SC_001",
+				"name": "Microsat",
+				"orbit": {
+					"planet": "Earth",
+					"values": [
+						7100.0,
+						0.0,
+						40,
+						271.0,
+						0.0,
+						70
+					],
+					"offset": [
+						0.0,
+						0.0,
+						0.0,
+						0.0,
+						0.0,
+						0.01
+					]
+				},
+				"physics": {
+					"override_mass": true,
+					"mass": 100.0,
+					"center_of_mass": [
+						0.0,
+						0.0,
+						0.0
+					],
+					"inertia_tensor": [
+						[
+							10.0,
+							0.0,
+							0.0
+						],
+						[
+							0.0,
+							10.0,
+							0.0
+						],
+						[
+							0.0,
+							0.0,
+							10.0
+						]
+					]
+				},
+				"visualization": {
+					"mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/ZenSat/BP_Z_SC_ZenSat_Chassis",
+					"scale": 1.0,
+					"offset": [
+						0.0,
+						0.0,
+						0.12
+					]
+				},
+				"controller": {
+					"safe_fraction": 0.1,
+					"capture_tax": 0.001,
+					"downlink_tax": 0.01,
+					"ping_interval": 3.0,
+					"reset_interval": 30.0,
+					"jamming_multiplier": 100.0,
+					"enable_rpo": false
+				},
+				"power": {
+					"bus": [
+						{
+							"source_component": "Solar Panel +X",
+							"source_terminal": "out",
+							"target_component": "Battery",
+							"target_terminal": "out"
+						},
+						{
+							"source_component": "Solar Panel -X",
+							"source_terminal": "out",
+							"target_component": "Battery",
+							"target_terminal": "out"
+						}
+					]
+				},
+				"components": [
+					{
+						"class": "Solar Panel",
+						"name": "Solar Panel +X",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.8,
+							0.276313,
+							-0.2
+						],
+						"rotation": [
+							35.0,
+							0.0,
+							0.0
+						],
+						"scale": 1.0,
+						"data": {
+							"Area": 0.3,
+							"Efficiency": 0.4,
+							"Mass": 10.0
+						}
+					},
+					{
+						"class": "Solar Panel",
+						"name": "Solar Panel -X",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							-0.8,
+							0.276313,
+							-0.2
+						],
+						"rotation": [
+							35.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Area": 0.3,
+							"Efficiency": 0.4,
+							"Mass": 10.0
+						}
+					},
+					{
+						"class": "Reaction Wheels",
+						"name": "Reaction Wheels",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Mass": 9.0
+						}
+					},
+					{
+						"class": "Computer",
+						"name": "Computer",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Battery",
+						"name": "Battery",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Nominal Capacity": 80.0,
+							"Charge Fraction": 1.0,
+							"Mass": 5.0
+						}
+					},
+					{
+						"class": "Camera",
+						"name": "Camera",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							-0.36,
+							-0.16
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Mass": 5.0
+						}
+					},
+					{
+						"class": "GPS Sensor",
+						"name": "GPS Sensor",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Receiver",
+						"name": "Receiver",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							-0.36,
+							-0.16
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Antenna Gain": 3.0,
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Transmitter",
+						"name": "Transmitter",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							-0.36,
+							-0.16
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Mass": 1.0
+						}
+					},
+					{
+						"class": "Storage",
+						"name": "Storage",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							-0.2
+						],
+						"data": {
+							"Mass": 4.0
+						}
+					}
+				]
+			}
+		],
+		"collections": [
+			{
+				"id": "Main",
+				"space_assets": [
+					"SC_001"
+				]
+			}
+		]
+	},
+	"events": [],
+	"questions": [
+		{
+			"section": "Satellite Operations",
+			"title": "Where can you find and plot the spacecraft's GPS position data?",
+			"description": "Select all areas of the operator terminal where GPS position data can be viewed or plotted. There may be more than one correct answer.",
+			"type": "checkbox",
+			"answer": {
+				"options": [
+					"Controls",
+					"Images",
+					"Schedule",
+					"Telemetry",
+					"Messages",
+					"Plots",
+					"Map",
+					"Timeline"
+				],
+				"value": [
+					5,
+					6
+				],
+				"reason": [
+					"GPS position can be plotted in the Plots tab and displayed on the Map. Selecting any incorrect tab scores zero."
+				],
+				"score": 10
+			}
+		},
+		{
+			"section": "Satellite Operations",
+			"title": "Which ground station had the best signal-to-noise ratio for communication?",
+			"description": "Compare link telemetry across the available ground stations and identify which provided the best SNR.",
+			"type": "select",
+			"answer": {
+				"options": [
+					"London",
+					"Dubai",
+					"Singapore"
+				],
+				"value": 1,
+				"reason": [
+					"Dubai provided the best signal-to-noise ratio for this pass configuration.",
+					"Dubai provided the best signal-to-noise ratio for this pass configuration.",
+					"Dubai provided the best signal-to-noise ratio for this pass configuration."
+				],
+				"score": 10
+			}
+		},
+		{
+			"section": "Satellite Operations",
+			"title": "What is the cadence (in seconds) at which the spacecraft pings the ground station?",
+			"description": "Using telemetry or the Messages tab, determine how often automatic ping messages are sent. Answer in seconds.",
+			"type": "number",
+			"answer": {
+				"unit": "s",
+				"value": 3.0,
+				"tolerance": 0.5,
+				"reason": "The spacecraft controller is configured with a 3.0 s ping interval.",
+				"score": 10
+			}
+		},
+		{
+			"section": "Satellite Operations",
+			"title": "What is the semi-major axis (km) of your spacecraft's orbit?",
+			"description": "Use GPS telemetry or plotted position data to determine the semi-major axis of the orbit, in km.",
+			"type": "number",
+			"answer": {
+				"unit": "km",
+				"value": 7100.0,
+				"tolerance": 50.0,
+				"reason": "The configured semi-major axis is 7100 km.",
+				"score": 10
+			}
+		},
+		{
+			"section": "Payload Operations",
+			"title": "What is the highest wattage of power that each solar panel can contribute?",
+			"description": "Answer in watts for a single panel at peak power.",
+			"type": "number",
+			"answer": {
+				"unit": "W",
+				"value": 163.6,
+				"tolerance": 1.0,
+				"reason": "With panels sun-pointed, each 0.3 m² panel at 40% efficiency reaches approximately 163.6 W.",
+				"score": 10
+			}
+		},
+		{
+			"section": "Payload Operations",
+			"title": "Which guidance pointing mode maximizes solar panel power generation?",
+			"description": "Select the guidance mode used to orient the solar panels toward the Sun for maximum power input.",
+			"type": "select",
+			"answer": {
+				"options": [
+					"Sun",
+					"Nadir",
+					"Inertial",
+					"Ground",
+					"Idle"
+				],
+				"value": 0,
+				"reason": [
+					"Sun pointing aligns the solar panels with the Sun to maximize power generation.",
+					"Sun pointing aligns the solar panels with the Sun to maximize power generation.",
+					"Sun pointing aligns the solar panels with the Sun to maximize power generation.",
+					"Sun pointing aligns the solar panels with the Sun to maximize power generation.",
+					"Sun pointing aligns the solar panels with the Sun to maximize power generation."
+				],
+				"score": 10
+			}
+		},
+		{
+			"section": "Payload Operations",
+			"title": "What is the nominal battery capacity of the spacecraft?",
+			"description": "Find the battery nominal capacity from telemetry or component configuration data.",
+			"type": "number",
+			"answer": {
+				"unit": "Ah",
+				"value": 80.0,
+				"tolerance": 0.0,
+				"reason": "The battery is configured with a nominal capacity of 80 Ah.",
+				"score": 10
+			}
+		},
+		{
+			"section": "Mission Lead",
+			"title": "Who has authority to declare 'go' for payload operations after comms checkout?",
+			"description": "Refer to your team roles and standard mission rules of engagement.",
+			"type": "select",
+			"answer": {
+				"options": [
+					"Mission Lead",
+					"Satellite Operator",
+					"Payload Operator",
+					"Ground Network Coordinator"
+				],
+				"value": 0,
+				"reason": [
+					"The Mission Lead holds go/no-go authority for transitioning from comms checkout to payload operations.",
+					"The Mission Lead holds go/no-go authority for transitioning from comms checkout to payload operations.",
+					"The Mission Lead holds go/no-go authority for transitioning from comms checkout to payload operations.",
+					"The Mission Lead holds go/no-go authority for transitioning from comms checkout to payload operations."
+				],
+				"score": 10
+			}
+		},
+		{
+			"section": "Mission Lead",
+			"title": "Who is responsible for commanding and verifying the sun-pointing maneuver?",
+			"description": "Refer to your team roles and standard mission rules of engagement.",
+			"type": "select",
+			"answer": {
+				"options": [
+					"Mission Lead",
+					"Satellite Operator",
+					"Payload Operator",
+					"Ground Network Coordinator"
+				],
+				"value": 1,
+				"reason": [
+					"The Payload Operator executes and verifies payload-related pointing, including sun-pointing for power operations.",
+					"The Payload Operator executes and verifies payload-related pointing, including sun-pointing for power operations.",
+					"The Payload Operator executes and verifies payload-related pointing, including sun-pointing for power operations.",
+					"The Payload Operator executes and verifies payload-related pointing, including sun-pointing for power operations."
+				],
+				"score": 10
+			}
+		},
+		{
+			"section": "Mission Lead",
+			"title": "If downlink quality is insufficient for payload tasking, who should Satellite Operations notify first?",
+			"description": "Refer to your team roles and escalation procedures during the exercise.",
+			"type": "select",
+			"answer": {
+				"options": [
+					"Mission Lead",
+					"Satellite Operator",
+					"Payload Operator",
+					"Ground Network Coordinator"
+				],
+				"value": 0,
+				"reason": [
+					"Satellite Operations escalates link-quality issues to the Mission Lead first so the team can hold or replan payload tasking.",
+					"Satellite Operations escalates link-quality issues to the Mission Lead first so the team can hold or replan payload tasking.",
+					"Satellite Operations escalates link-quality issues to the Mission Lead first so the team can hold or replan payload tasking.",
+					"Satellite Operations escalates link-quality issues to the Mission Lead first so the team can hold or replan payload tasking."
+				],
+				"score": 10
+			}
+		}
+	]
+}
