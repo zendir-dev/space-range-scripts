@@ -1,0 +1,755 @@
+{
+	"metadata": {
+		"name": "Module 9",
+		"description": "Detect and Confirm - alert is not incident. LEO operations with ground stations at Tokyo, Anchorage, Houston, Lima, and Santiago. Triage alerts within sixty seconds and separate cyber-physical from natural causes. GPS spoofing near Houston from session start. Cyber text Hacked Inject on Power Source telemetry (APID 201) from 1800 s for 600 s. Natural reaction wheel stuck from 2700 s until 3600 s during vessel tasking in the Caribbean and off Peru. Escalate confirmed cyber incidents in detection-report format; log the wheel fault as non-cyber."
+	},
+	"simulation": {
+		"epoch": "2025/11/01 17:00:00",
+		"speed": 2.0,
+		"step_size": 0.12,
+		"integrator": "Euler",
+		"end_time": 4800.0
+	},
+	"universe": {
+		"atmosphere": false,
+		"magnetosphere": false,
+		"gps": true,
+		"cloud_opacity": 0.85,
+		"cloud_contrast": 2.5,
+		"ambient_light": 0.07
+	},
+	"ground_stations": {
+		"locations": [
+			"Tokyo",
+			"Anchorage",
+			"Houston",
+			"Lima",
+			"Santiago"
+		],
+		"min_elevation": 10,
+		"max_range": 0,
+		"scale": 100
+	},
+	"teams": [
+		{
+			"enabled": true,
+			"id": 473829,
+			"password": "R4K7MZ",
+			"name": "Team Blue",
+			"key": 42,
+			"frequency": 612,
+			"collection": "Main",
+			"color": "#0050FF"
+		},
+		{
+			"enabled": true,
+			"id": 916354,
+			"password": "8XTPWN",
+			"name": "Team Green",
+			"key": 87,
+			"frequency": 745,
+			"collection": "Main",
+			"color": "#00FF00"
+		},
+		{
+			"enabled": true,
+			"id": 263718,
+			"password": "5LZQVB",
+			"name": "Team Yellow",
+			"key": 154,
+			"frequency": 889,
+			"collection": "Main",
+			"color": "#FFFF00"
+		},
+		{
+			"enabled": true,
+			"id": 584927,
+			"password": "2WCF9H",
+			"name": "Team Orange",
+			"key": 203,
+			"frequency": 534,
+			"collection": "Main",
+			"color": "#FF7000"
+		},
+		{
+			"enabled": true,
+			"id": 731456,
+			"password": "N6RGYD",
+			"name": "Team Pink",
+			"key": 117,
+			"frequency": 678,
+			"collection": "Main",
+			"color": "#FF8CEC"
+		},
+		{
+			"enabled": true,
+			"id": 629540,
+			"password": "B8WNHQ",
+			"name": "Team White",
+			"key": 72,
+			"frequency": 712,
+			"collection": "Main",
+			"color": "#FFFFFF"
+		},
+		{
+			"enabled": true,
+			"id": 395082,
+			"password": "7SMXKE",
+			"name": "Team Purple",
+			"key": 29,
+			"frequency": 823,
+			"collection": "Main",
+			"color": "#8600FF"
+		},
+		{
+			"enabled": true,
+			"id": 847163,
+			"password": "4PVTZ3",
+			"name": "Team Cyan",
+			"key": 195,
+			"frequency": 561,
+			"collection": "Main",
+			"color": "#00FFFF"
+		},
+		{
+			"enabled": true,
+			"id": 152837,
+			"password": "6JCMFR",
+			"name": "Team Red",
+			"key": 238,
+			"frequency": 847,
+			"collection": "Main",
+			"color": "#FF0000"
+		}
+	],
+	"assets": {
+		"space": [
+			{
+				"id": "SC_001",
+				"name": "Microsat",
+				"orbit": {
+					"planet": "Earth",
+					"values": [
+						8600.0,
+						0.0005,
+						70.0,
+						25.0,
+						0.0,
+						40.0
+					],
+					"offset": [
+						0.0,
+						0.0,
+						0.0,
+						0.0,
+						0.0,
+						0.01
+					]
+				},
+				"physics": {
+					"override_mass": true,
+					"mass": 100.0,
+					"center_of_mass": [
+						0.0,
+						0.0,
+						0.0
+					],
+					"inertia_tensor": [
+						[
+							10.0,
+							0.0,
+							0.0
+						],
+						[
+							0.0,
+							10.0,
+							0.0
+						],
+						[
+							0.0,
+							0.0,
+							10.0
+						]
+					]
+				},
+				"visualization": {
+					"mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/ZenSat/BP_Z_SC_ZenSat_Chassis",
+					"scale": 1.0,
+					"offset": [
+						0.0,
+						0.0,
+						0.12
+					]
+				},
+				"controller": {
+					"safe_fraction": 0.1,
+					"capture_tax": 0.001,
+					"downlink_tax": 0.01,
+					"ping_interval": 6.0,
+					"reset_interval": 60.0,
+					"jamming_multiplier": 100.0,
+					"enable_rpo": false
+				},
+				"power": {
+					"bus": [
+						{
+							"source_component": "Solar Panel +X",
+							"source_terminal": "out",
+							"target_component": "Battery",
+							"target_terminal": "out"
+						},
+						{
+							"source_component": "Solar Panel -X",
+							"source_terminal": "out",
+							"target_component": "Battery",
+							"target_terminal": "out"
+						}
+					]
+				},
+				"components": [
+					{
+						"class": "Solar Panel",
+						"name": "Solar Panel +X",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.8,
+							0.276313,
+							-0.2
+						],
+						"rotation": [
+							35.0,
+							0.0,
+							0.0
+						],
+						"scale": 1.0,
+						"data": {
+							"Area": 0.3,
+							"Efficiency": 0.4,
+							"Mass": 10.0
+						}
+					},
+					{
+						"class": "Solar Panel",
+						"name": "Solar Panel -X",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							-0.8,
+							0.276313,
+							-0.2
+						],
+						"rotation": [
+							35.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Area": 0.3,
+							"Efficiency": 0.4,
+							"Mass": 10.0
+						}
+					},
+					{
+						"class": "Reaction Wheels",
+						"name": "Reaction Wheels",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Mass": 9.0
+						}
+					},
+					{
+						"class": "Computer",
+						"name": "Computer",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Battery",
+						"name": "Battery",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Nominal Capacity": 80.0,
+							"Charge Fraction": 0.5,
+							"Mass": 5.0
+						}
+					},
+					{
+						"class": "Camera",
+						"name": "Camera",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							-0.36,
+							-0.16
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Mass": 5.0
+						}
+					},
+					{
+						"class": "GPS Sensor",
+						"name": "GPS Sensor",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Receiver",
+						"name": "Receiver",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							-0.36,
+							-0.16
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Antenna Gain": 3.0,
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Transmitter",
+						"name": "Transmitter",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							-0.36,
+							-0.16
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Mass": 1.0
+						}
+					},
+					{
+						"class": "Storage",
+						"name": "Storage",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							-0.2
+						],
+						"data": {
+							"Mass": 4.0
+						}
+					}
+				]
+			}
+		],
+		"collections": [
+			{
+				"id": "Main",
+				"space_assets": [
+					"SC_001"
+				]
+			}
+		]
+	},
+	"objects": {
+		"ground": [
+			{
+				"id": "GO_C01",
+				"type": "vessel",
+				"name": "Caribbean Blue A",
+				"planet": "Earth",
+				"latitude": 25.8,
+				"longitude": -79.2,
+				"altitude": 1,
+				"scale": 35,
+				"color": "#000000",
+				"data": {
+					"heading": 110.0,
+					"speed": 0.0
+				}
+			},
+			{
+				"id": "GO_C02",
+				"type": "vessel",
+				"name": "Caribbean Blue B",
+				"planet": "Earth",
+				"latitude": 25.5,
+				"longitude": -78.8,
+				"altitude": 1,
+				"scale": 35,
+				"color": "#000000",
+				"data": {
+					"heading": 125.0,
+					"speed": 0.0
+				}
+			},
+			{
+				"id": "GO_C03",
+				"type": "vessel",
+				"name": "Caribbean Blue C",
+				"planet": "Earth",
+				"latitude": 25.2,
+				"longitude": -79.5,
+				"altitude": 1,
+				"scale": 35,
+				"color": "#000000",
+				"data": {
+					"heading": 95.0,
+					"speed": 0.0
+				}
+			},
+			{
+				"id": "GO_C04",
+				"type": "vessel",
+				"name": "Caribbean Blue D",
+				"planet": "Earth",
+				"latitude": 25.6,
+				"longitude": -80.0,
+				"altitude": 1,
+				"scale": 35,
+				"color": "#000000",
+				"data": {
+					"heading": 140.0,
+					"speed": 0.0
+				}
+			},
+			{
+				"id": "GO_P01",
+				"type": "vessel",
+				"name": "Peru Orange A",
+				"planet": "Earth",
+				"latitude": -12.1,
+				"longitude": -77.2,
+				"altitude": 1,
+				"scale": 35,
+				"color": "#FF7000",
+				"data": {
+					"heading": 200.0,
+					"speed": 0.0
+				}
+			},
+			{
+				"id": "GO_P02",
+				"type": "vessel",
+				"name": "Peru Orange B",
+				"planet": "Earth",
+				"latitude": -12.4,
+				"longitude": -77.5,
+				"altitude": 1,
+				"scale": 35,
+				"color": "#FF7000",
+				"data": {
+					"heading": 215.0,
+					"speed": 0.0
+				}
+			},
+			{
+				"id": "GO_P03",
+				"type": "vessel",
+				"name": "Peru Orange C",
+				"planet": "Earth",
+				"latitude": -11.8,
+				"longitude": -77.9,
+				"altitude": 1,
+				"scale": 35,
+				"color": "#FF7000",
+				"data": {
+					"heading": 190.0,
+					"speed": 0.0
+				}
+			}
+		]
+	},
+	"events": [
+		{
+			"Enabled": true,
+			"Name": "GPS Spoof On",
+			"Time": 0.0,
+			"Repeat": false,
+			"Interval": 1.0,
+			"Type": "GPS",
+			"Data": {
+				"Type": "Spoofing",
+				"Enabled": true,
+				"Origin Latitude": 29.75,
+				"Origin Longitude": -95.36,
+				"Origin Altitude": 2000000.0,
+				"Radius": 2500000.0,
+				"Spoof Latitude": 48.0,
+				"Spoof Longitude": 2.3,
+				"Spoof Altitude": 3200000.0
+			}
+		},
+		{
+			"Enabled": true,
+			"Name": "Cyber Power Source Text",
+			"Time": 1800.0,
+			"Repeat": false,
+			"Interval": 1.0,
+			"Type": "Cyber",
+			"Target": "Spacecraft",
+			"Assets": [
+				"SC_001"
+			],
+			"Data": {
+				"APID": 201,
+				"SubType": -1,
+				"Offset Bytes": 0,
+				"Payload": "Hacked Inject",
+				"Encoding": "ascii",
+				"Expiry Seconds": 600.0,
+				"Clear On Reset": true
+			}
+		},
+		{
+			"Enabled": true,
+			"Name": "Reaction Wheel Stuck",
+			"Time": 2700.0,
+			"Repeat": false,
+			"Interval": 1.0,
+			"Type": "Spacecraft",
+			"Target": "Reaction Wheels",
+			"Assets": [
+				"SC_001"
+			],
+			"Data": {
+				"Stuck Index": 0
+			}
+		},
+		{
+			"Enabled": true,
+			"Name": "Reaction Wheel Nominal",
+			"Time": 3600.0,
+			"Repeat": false,
+			"Interval": 1.0,
+			"Type": "Spacecraft",
+			"Target": "Reaction Wheels",
+			"Assets": [
+				"SC_001"
+			],
+			"Data": {
+				"Nominal Index": 0
+			}
+		}
+	],
+	"questions": [
+		{
+			"section": "Satellite Operations",
+			"title": "Around which ground station did the GPS spoofing occur?",
+			"description": "GPS position telemetry reports a spoofed fix centred on a region near one of the mission ground stations. Select the ground station the spoofing occurred around.",
+			"type": "select",
+			"answer": {
+				"options": [
+					"Anchorage",
+					"Houston",
+					"Lima",
+					"Santiago",
+					"Tokyo"
+				],
+				"value": 1,
+				"reason": [
+					"The GPS spoof region is not centred on Anchorage.",
+					"Correct. The spoofing region is centred near Houston.",
+					"The GPS spoof region is not centred on Lima.",
+					"The GPS spoof region is not centred on Santiago.",
+					"The GPS spoof region is not centred on Tokyo."
+				],
+				"score": 10
+			}
+		},
+		{
+			"section": "Satellite Operations",
+			"title": "Which signature best indicates GPS spoofing rather than a sensor fault?",
+			"description": "During the GPS spoofing alert, select the strongest indicator that GPS data is being spoofed rather than suffering a generic sensor failure.",
+			"type": "select",
+			"answer": {
+				"options": [
+					"Battery charge fraction drops sharply with no load change",
+					"GPS jumps to a consistent wrong region while other subsystems remain nominal",
+					"Ping messages stop arriving entirely",
+					"Receiver SNR falls to zero during the pass"
+				],
+				"value": 1,
+				"reason": [
+					"Battery drop alone does not indicate GPS spoofing.",
+					"Correct. A stable but geographically wrong GPS fix is the hallmark of spoofing; other subsystems staying nominal rules out a broad bus failure.",
+					"Missing pings indicate a comms issue, not specifically GPS spoofing.",
+					"SNR loss indicates link degradation, not a spoofed GPS fix."
+				],
+				"score": 10
+			}
+		},
+		{
+			"section": "Satellite Operations",
+			"title": "At what elapsed simulation time (minutes) did the cyber text inject begin?",
+			"description": "Embedded text appears in downlinked Power Source telemetry. Report when the inject starts, in simulation minutes from session start.",
+			"type": "number",
+			"answer": {
+				"unit": "min",
+				"value": 30.0,
+				"tolerance": 1.0,
+				"reason": "The cyber text inject on APID 201 begins at 1800 s (30 simulation minutes).",
+				"score": 10
+			}
+		},
+		{
+			"section": "Satellite Operations",
+			"title": "What hidden text appeared in the Power Source telemetry message?",
+			"description": "During the cyber inject, ASCII text is embedded in the Power Source (APID 201) packet. Enter the exact hidden text string.",
+			"type": "text",
+			"answer": {
+				"value": "Hacked Inject",
+				"reason": "The cyber text inject overlays ASCII payload Hacked Inject on APID 201 (Power Source) for 600 simulation seconds.",
+				"score": 10
+			}
+		},
+		{
+			"section": "Payload Operations",
+			"title": "How many black vessels are visible in the Caribbean tasking region?",
+			"description": "Capture the Caribbean region near the east-coast of Florida and count black vessels.",
+			"type": "number",
+			"answer": {
+				"value": 4.0,
+				"tolerance": 0,
+				"reason": "Four black vessels are placed in the Caribbean tasking region.",
+				"score": 10
+			}
+		},
+		{
+			"section": "Payload Operations",
+			"title": "How many orange vessels are visible on the West-coast of Peru?",
+			"description": "Capture the West-coast of Peru and count orange vessels.",
+			"type": "number",
+			"answer": {
+				"value": 3.0,
+				"tolerance": 0,
+				"reason": "Three orange vessels are placed on the West-coast of Peru.",
+				"score": 10
+			}
+		},
+		{
+			"section": "Payload Operations",
+			"title": "Whilst attempting the Peruvian vessels, which reaction wheel became stuck?",
+			"description": "Use spacecraft telemetry to identify which reaction wheel became stuck during Peruvian vessel tasking.",
+			"type": "select",
+			"answer": {
+				"options": [
+					"Wheel X",
+					"Wheel Y",
+					"Wheel Z"
+				],
+				"value": 0,
+				"tolerance": 0,
+				"reason": "Wheel X became stuck at 2700 s (Stuck Index 0).",
+				"score": 10
+			}
+		},
+		{
+			"section": "Mission Lead",
+			"title": "Alert versus incident: which alert is a natural hardware fault (not cyber)?",
+			"description": "Three alerts occur this session: GPS spoofing near Houston (from session start), Hacked Inject text in Power Source telemetry (from 30 simulation minutes), and a reaction wheel stuck during Peruvian vessel tasking (from 45 simulation minutes). After sixty-second triage on each alert, select the one that should be logged and handled as a natural fault, not escalated as a cyber incident.",
+			"type": "select",
+			"answer": {
+				"options": [
+					"All three alerts are confirmed cyber-physical incidents",
+					"GPS spoofing near Houston",
+					"Hacked Inject text in Power Source telemetry",
+					"Reaction wheel stuck during vessel capture"
+				],
+				"value": 3,
+				"reason": [
+					"The reaction wheel fault is deliberately natural; only the GPS spoof and Power Source tamper are cyber alerts.",
+					"GPS spoofing near Houston is a cyber-physical alert requiring escalation.",
+					"Hacked Inject text on APID 201 is cyber telemetry tampering requiring escalation.",
+					"Correct. The reaction wheel stuck at 2700 s is a natural hardware fault - log it and handle as non-cyber."
+				],
+				"score": 10
+			}
+		},
+		{
+			"section": "Mission Lead",
+			"title": "Which alerts belong in the cyber detection report to command leadership?",
+			"description": "After sixty-second triage, the Mission Lead escalates confirmed cyber incidents in detection-report format. Select every alert that belongs in that report.",
+			"type": "checkbox",
+			"answer": {
+				"options": [
+					"GPS spoofing near Houston",
+					"Hacked Inject text in Power Source telemetry",
+					"Reaction wheel stuck during vessel capture",
+					"Routine scheduled telemetry downlink"
+				],
+				"value": [
+					0,
+					1
+				],
+				"reason": [
+					"Only the GPS spoof and Power Source tamper are confirmed cyber incidents. The reaction wheel fault is natural and logged separately; routine downlink is not an alert."
+				],
+				"score": 10
+			}
+		},
+		{
+			"section": "Mission Lead",
+			"title": "After the Payload Operations brief on the reaction wheel fault, what should the Mission Lead do?",
+			"description": "Payload Operations has briefed a reaction wheel stuck at 45 simulation minutes (cleared at 60 minutes). The Mission Lead is also preparing the cyber detection report for GPS spoofing and telemetry tamper. Select the best action.",
+			"type": "select",
+			"answer": {
+				"options": [
+					"Add the wheel fault to the cyber detection report alongside GPS spoofing and telemetry tamper",
+					"Discard the Payload brief because the wheel cleared before pass end",
+					"Escalate the wheel fault as a third confirmed cyber-physical incident",
+					"Log the wheel fault as a natural hardware issue separate from the cyber detection report"
+				],
+				"value": 3,
+				"reason": [
+					"The wheel fault is natural, not cyber - it does not belong in the cyber detection report.",
+					"The fault still affected vessel tasking and must be logged even though the wheel later cleared.",
+					"Only GPS spoofing and Power Source tamper are cyber incidents requiring escalation.",
+					"Correct. Log the reaction wheel issue as natural maintenance, keep it out of the cyber report, and escalate only the two confirmed cyber alerts."
+				],
+				"score": 10
+			}
+		}
+	]
+}
