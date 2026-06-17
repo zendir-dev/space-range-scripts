@@ -1,0 +1,771 @@
+{
+	"metadata": {
+		"name": "Module 10",
+		"description": "Respond and Recover - act on confirmed adversary activity. Same LEO operations as Module 9 with ground stations at Tokyo, Anchorage, Houston, Lima, and Santiago. GPS spoofing near Houston from session start and a cyber text Hacked Inject on Power Source telemetry (APID 201) from 1800 s for 600 s are identical to Module 9. This time the injects are confirmed adversary activity and teams must act: declare the incident, execute the safe-mode/rollback playbook, hold and re-baseline payload products, and report recovery SITREPs. A reaction wheel (Wheel X, Stuck Index 0) is jammed from session start and stays stuck until the team recovers it - there is no automatic clear."
+	},
+	"simulation": {
+		"epoch": "2025/11/01 17:00:00",
+		"speed": 2.0,
+		"step_size": 0.12,
+		"integrator": "Euler",
+		"end_time": 4800.0
+	},
+	"universe": {
+		"atmosphere": false,
+		"magnetosphere": false,
+		"gps": true,
+		"cloud_opacity": 0.85,
+		"cloud_contrast": 2.5,
+		"ambient_light": 0.07
+	},
+	"ground_stations": {
+		"locations": [
+			"Tokyo",
+			"Anchorage",
+			"Houston",
+			"Lima",
+			"Santiago"
+		],
+		"min_elevation": 10,
+		"max_range": 0,
+		"scale": 100
+	},
+	"teams": [
+		{
+			"enabled": true,
+			"id": 473829,
+			"password": "R4K7MZ",
+			"name": "Team Blue",
+			"key": 42,
+			"frequency": 612,
+			"collection": "Main",
+			"color": "#0050FF"
+		},
+		{
+			"enabled": true,
+			"id": 916354,
+			"password": "8XTPWN",
+			"name": "Team Green",
+			"key": 87,
+			"frequency": 745,
+			"collection": "Main",
+			"color": "#00FF00"
+		},
+		{
+			"enabled": true,
+			"id": 263718,
+			"password": "5LZQVB",
+			"name": "Team Yellow",
+			"key": 154,
+			"frequency": 889,
+			"collection": "Main",
+			"color": "#FFFF00"
+		},
+		{
+			"enabled": true,
+			"id": 584927,
+			"password": "2WCF9H",
+			"name": "Team Orange",
+			"key": 203,
+			"frequency": 534,
+			"collection": "Main",
+			"color": "#FF7000"
+		},
+		{
+			"enabled": true,
+			"id": 731456,
+			"password": "N6RGYD",
+			"name": "Team Pink",
+			"key": 117,
+			"frequency": 678,
+			"collection": "Main",
+			"color": "#FF8CEC"
+		},
+		{
+			"enabled": true,
+			"id": 629540,
+			"password": "B8WNHQ",
+			"name": "Team White",
+			"key": 72,
+			"frequency": 712,
+			"collection": "Main",
+			"color": "#FFFFFF"
+		},
+		{
+			"enabled": true,
+			"id": 395082,
+			"password": "7SMXKE",
+			"name": "Team Purple",
+			"key": 29,
+			"frequency": 823,
+			"collection": "Main",
+			"color": "#8600FF"
+		},
+		{
+			"enabled": true,
+			"id": 847163,
+			"password": "4PVTZ3",
+			"name": "Team Cyan",
+			"key": 195,
+			"frequency": 561,
+			"collection": "Main",
+			"color": "#00FFFF"
+		},
+		{
+			"enabled": true,
+			"id": 152837,
+			"password": "6JCMFR",
+			"name": "Team Red",
+			"key": 238,
+			"frequency": 847,
+			"collection": "Main",
+			"color": "#FF0000"
+		}
+	],
+	"assets": {
+		"space": [
+			{
+				"id": "SC_001",
+				"name": "Microsat",
+				"orbit": {
+					"planet": "Earth",
+					"values": [
+						8600.0,
+						0.0005,
+						70.0,
+						25.0,
+						0.0,
+						40.0
+					],
+					"offset": [
+						0.0,
+						0.0,
+						0.0,
+						0.0,
+						0.0,
+						0.01
+					]
+				},
+				"physics": {
+					"override_mass": true,
+					"mass": 100.0,
+					"center_of_mass": [
+						0.0,
+						0.0,
+						0.0
+					],
+					"inertia_tensor": [
+						[
+							10.0,
+							0.0,
+							0.0
+						],
+						[
+							0.0,
+							10.0,
+							0.0
+						],
+						[
+							0.0,
+							0.0,
+							10.0
+						]
+					]
+				},
+				"visualization": {
+					"mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/ZenSat/BP_Z_SC_ZenSat_Chassis",
+					"scale": 1.0,
+					"offset": [
+						0.0,
+						0.0,
+						0.12
+					]
+				},
+				"controller": {
+					"safe_fraction": 0.1,
+					"capture_tax": 0.001,
+					"downlink_tax": 0.01,
+					"ping_interval": 6.0,
+					"reset_interval": 60.0,
+					"jamming_multiplier": 100.0,
+					"enable_rpo": false
+				},
+				"power": {
+					"bus": [
+						{
+							"source_component": "Solar Panel +X",
+							"source_terminal": "out",
+							"target_component": "Battery",
+							"target_terminal": "out"
+						},
+						{
+							"source_component": "Solar Panel -X",
+							"source_terminal": "out",
+							"target_component": "Battery",
+							"target_terminal": "out"
+						}
+					]
+				},
+				"components": [
+					{
+						"class": "Solar Panel",
+						"name": "Solar Panel +X",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.8,
+							0.276313,
+							-0.2
+						],
+						"rotation": [
+							35.0,
+							0.0,
+							0.0
+						],
+						"scale": 1.0,
+						"data": {
+							"Area": 0.3,
+							"Efficiency": 0.4,
+							"Mass": 10.0
+						}
+					},
+					{
+						"class": "Solar Panel",
+						"name": "Solar Panel -X",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							-0.8,
+							0.276313,
+							-0.2
+						],
+						"rotation": [
+							35.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Area": 0.3,
+							"Efficiency": 0.4,
+							"Mass": 10.0
+						}
+					},
+					{
+						"class": "Reaction Wheels",
+						"name": "Reaction Wheels",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Mass": 9.0
+						}
+					},
+					{
+						"class": "Computer",
+						"name": "Computer",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Battery",
+						"name": "Battery",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Nominal Capacity": 80.0,
+							"Charge Fraction": 0.5,
+							"Mass": 5.0
+						}
+					},
+					{
+						"class": "Camera",
+						"name": "Camera",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							-0.36,
+							-0.16
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Mass": 5.0
+						}
+					},
+					{
+						"class": "GPS Sensor",
+						"name": "GPS Sensor",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Receiver",
+						"name": "Receiver",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							-0.36,
+							-0.16
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Antenna Gain": 3.0,
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Transmitter",
+						"name": "Transmitter",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							-0.36,
+							-0.16
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Mass": 1.0
+						}
+					},
+					{
+						"class": "Storage",
+						"name": "Storage",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							-0.2
+						],
+						"data": {
+							"Mass": 4.0
+						}
+					}
+				]
+			}
+		],
+		"collections": [
+			{
+				"id": "Main",
+				"space_assets": [
+					"SC_001"
+				]
+			}
+		]
+	},
+	"objects": {
+		"ground": [
+			{
+				"id": "GO_C01",
+				"type": "vessel",
+				"name": "Caribbean Blue A",
+				"planet": "Earth",
+				"latitude": 25.8,
+				"longitude": -79.2,
+				"altitude": 1,
+				"scale": 35,
+				"color": "#000000",
+				"data": {
+					"heading": 110.0,
+					"speed": 0.0
+				}
+			},
+			{
+				"id": "GO_C02",
+				"type": "vessel",
+				"name": "Caribbean Blue B",
+				"planet": "Earth",
+				"latitude": 25.5,
+				"longitude": -78.8,
+				"altitude": 1,
+				"scale": 35,
+				"color": "#000000",
+				"data": {
+					"heading": 125.0,
+					"speed": 0.0
+				}
+			},
+			{
+				"id": "GO_C03",
+				"type": "vessel",
+				"name": "Caribbean Blue C",
+				"planet": "Earth",
+				"latitude": 25.2,
+				"longitude": -79.5,
+				"altitude": 1,
+				"scale": 35,
+				"color": "#000000",
+				"data": {
+					"heading": 95.0,
+					"speed": 0.0
+				}
+			},
+			{
+				"id": "GO_C04",
+				"type": "vessel",
+				"name": "Caribbean Blue D",
+				"planet": "Earth",
+				"latitude": 25.6,
+				"longitude": -80.0,
+				"altitude": 1,
+				"scale": 35,
+				"color": "#000000",
+				"data": {
+					"heading": 140.0,
+					"speed": 0.0
+				}
+			},
+			{
+				"id": "GO_P01",
+				"type": "vessel",
+				"name": "Peru Orange A",
+				"planet": "Earth",
+				"latitude": -12.1,
+				"longitude": -77.2,
+				"altitude": 1,
+				"scale": 35,
+				"color": "#FF7000",
+				"data": {
+					"heading": 200.0,
+					"speed": 0.0
+				}
+			},
+			{
+				"id": "GO_P02",
+				"type": "vessel",
+				"name": "Peru Orange B",
+				"planet": "Earth",
+				"latitude": -12.4,
+				"longitude": -77.5,
+				"altitude": 1,
+				"scale": 35,
+				"color": "#FF7000",
+				"data": {
+					"heading": 215.0,
+					"speed": 0.0
+				}
+			},
+			{
+				"id": "GO_P03",
+				"type": "vessel",
+				"name": "Peru Orange C",
+				"planet": "Earth",
+				"latitude": -11.8,
+				"longitude": -77.9,
+				"altitude": 1,
+				"scale": 35,
+				"color": "#FF7000",
+				"data": {
+					"heading": 190.0,
+					"speed": 0.0
+				}
+			}
+		]
+	},
+	"events": [
+		{
+			"Enabled": true,
+			"Name": "GPS Spoof On",
+			"Time": 0.0,
+			"Repeat": false,
+			"Interval": 1.0,
+			"Type": "GPS",
+			"Data": {
+				"Type": "Spoofing",
+				"Enabled": true,
+				"Origin Latitude": 29.75,
+				"Origin Longitude": -95.36,
+				"Origin Altitude": 2000000.0,
+				"Radius": 2500000.0,
+				"Spoof Latitude": 48.0,
+				"Spoof Longitude": 2.3,
+				"Spoof Altitude": 3200000.0
+			}
+		},
+		{
+			"Enabled": true,
+			"Name": "Cyber Power Source Text",
+			"Time": 1800.0,
+			"Repeat": false,
+			"Interval": 1.0,
+			"Type": "Cyber",
+			"Target": "Spacecraft",
+			"Assets": [
+				"SC_001"
+			],
+			"Data": {
+				"APID": 201,
+				"SubType": -1,
+				"Offset Bytes": 0,
+				"Payload": "Hacked Inject",
+				"Encoding": "ascii",
+				"Expiry Seconds": 600.0,
+				"Clear On Reset": true
+			}
+		},
+		{
+			"Enabled": true,
+			"Name": "Reaction Wheel Stuck",
+			"Time": 0.0,
+			"Repeat": false,
+			"Interval": 1.0,
+			"Type": "Spacecraft",
+			"Target": "Reaction Wheels",
+			"Assets": [
+				"SC_001"
+			],
+			"Data": {
+				"Stuck Index": 0
+			}
+		}
+	],
+	"questions": [
+		{
+			"section": "Mission Lead",
+			"title": "Declare the incident: which data and interfaces are in scope of the confirmed cyber incident?",
+			"description": "The injects are now confirmed adversary activity. Select every item that belongs inside the scope of the confirmed cyber incident declaration.",
+			"type": "checkbox",
+			"answer": {
+				"options": [
+					"GPS position fix (navigation data)",
+					"Power Source telemetry, APID 201",
+					"Reaction wheel assembly (attitude hardware)",
+					"Camera imagery payload",
+					"Ground-station network credentials"
+				],
+				"value": [
+					0,
+					1
+				],
+				"reason": [
+					"Confirmed adversary activity affected the GPS navigation fix and the Power Source telemetry on APID 201. The stuck reaction wheel is a natural hardware fault handled separately, and there is no evidence of camera or credential compromise."
+				],
+				"score": 10
+			}
+		},
+		{
+			"section": "Mission Lead",
+			"title": "Recovery SITREP: which three numbers go at the top of every report?",
+			"description": "You will issue a Recovery SITREP every fifteen minutes. Select the three numbers that lead every report.",
+			"type": "checkbox",
+			"answer": {
+				"options": [
+					"Battery charge fraction (%)",
+					"Minutes to the next ground-station contact",
+					"Number of open confirmed incidents",
+					"Current encryption key value",
+					"Camera focal length"
+				],
+				"value": [
+					0,
+					1,
+					2
+				],
+				"reason": [
+					"A recovery SITREP leads with power state, time to the next contact window, and how many incidents are still open. The encryption key and focal length are not status headlines."
+				],
+				"score": 10
+			}
+		},
+		{
+			"section": "Satellite Operations",
+			"title": "Playbook action: how do you clear the cyber telemetry overlay on the Power Source (APID 201) packets?",
+			"description": "Execute the rollback step from your playbook. Select the action that removes the injected overlay from the downlinked telemetry.",
+			"type": "select",
+			"answer": {
+				"options": [
+					"Reset the Computer - the overlay is flagged clear-on-reset",
+					"Power-cycle the camera payload",
+					"Switch to a different ground station",
+					"Rotate the team encryption key"
+				],
+				"value": 0,
+				"reason": [
+					"Correct. The APID 201 overlay is authored with Clear On Reset = true, so resetting the Computer clears the resettable cyber overlay on the asset.",
+					"The camera is not the tampered interface; power-cycling it does not clear the overlay.",
+					"Changing ground station does not remove a payload-byte overlay already applied on the spacecraft.",
+					"Key rotation protects the link but does not clear an applied telemetry overlay."
+				],
+				"score": 10
+			}
+		},
+		{
+			"section": "Satellite Operations",
+			"title": "Recovery pass: which ground station should be dropped from the commanding rotation, and why?",
+			"description": "Pick the station to remove from the recovery commanding rotation given the spoofing geometry.",
+			"type": "select",
+			"answer": {
+				"options": [
+					"Houston - it sits inside the GPS spoofing region",
+					"Tokyo - it is too far north",
+					"Santiago - it has no line of sight this orbit",
+					"Lima - it overlaps the Peru tasking"
+				],
+				"value": 0,
+				"reason": [
+					"Correct. The spoofing origin is centred near Houston; commanding the recovery pass from a station outside the spoof region avoids navigation ambiguity, so Houston is taken out of the rotation.",
+					"Tokyo's latitude is not the reason to drop a station.",
+					"Santiago is a usable recovery station, not the one to drop.",
+					"Lima overlapping a tasking region is not a reason to drop it from the commanding rotation."
+				],
+				"score": 10
+			}
+		},
+		{
+			"section": "Satellite Operations",
+			"title": "Which reaction wheel is jammed for the duration of the exercise?",
+			"description": "A reaction wheel is stuck from session start and stays stuck until you recover it. Use spacecraft telemetry to identify which wheel.",
+			"type": "select",
+			"answer": {
+				"options": [
+					"Wheel X",
+					"Wheel Y",
+					"Wheel Z"
+				],
+				"value": 0,
+				"reason": "The reaction wheel fault is injected on Stuck Index 0 (Wheel X) from session start and persists until the team recovers it.",
+				"score": 10
+			}
+		},
+		{
+			"section": "Satellite Operations",
+			"title": "What hidden text appears in the Power Source telemetry message?",
+			"description": "During the cyber inject, ASCII text is embedded in the Power Source (APID 201) packet. Enter the exact hidden text string.",
+			"type": "text",
+			"answer": {
+				"value": "Hacked Inject",
+				"reason": "The cyber text inject overlays ASCII payload Hacked Inject on APID 201 (Power Source) for 600 simulation seconds.",
+				"score": 10
+			}
+		},
+		{
+			"section": "Payload Operations",
+			"title": "Hold downstream delivery: which captured products must be quarantined as suspect?",
+			"description": "The GPS fix was spoofed near Houston from session start. Select which mission products to hold before release.",
+			"type": "select",
+			"answer": {
+				"options": [
+					"Products captured while the GPS fix was spoofed (Caribbean / Florida window)",
+					"All products from the entire session regardless of region",
+					"Only products that returned a downlink error code",
+					"No products need holding once the inject expires"
+				],
+				"value": 0,
+				"reason": [
+					"Correct. Products geotagged with a spoofed fix have unreliable location metadata and must be held; the Caribbean tasking falls inside the spoof region. Verified products outside the region can proceed.",
+					"A blanket hold on everything is heavier than the evidence supports and stalls valid delivery.",
+					"A clean downlink code does not certify the location metadata behind a product.",
+					"Expiry of the inject does not retroactively validate products captured with a spoofed fix."
+				],
+				"score": 10
+			}
+		},
+		{
+			"section": "Payload Operations",
+			"title": "Re-baseline the payload: what is the authoritative known-good source?",
+			"description": "You must re-baseline the payload from a known-good configuration. Select the correct baseline source.",
+			"type": "select",
+			"answer": {
+				"options": [
+					"The last verified pre-incident configuration report",
+					"The most recent telemetry, even if captured during the inject",
+					"The adversary's injected values",
+					"Operator memory of the settings"
+				],
+				"value": 0,
+				"reason": [
+					"Correct. Re-baselining uses the last verified pre-incident configuration as the known-good source, then re-verifies current state against it.",
+					"Telemetry captured during the inject window cannot be trusted as a baseline.",
+					"Injected values are the tamper, not a baseline.",
+					"Operator memory is not an auditable, verifiable baseline source."
+				],
+				"score": 10
+			}
+		},
+		{
+			"section": "Payload Operations",
+			"title": "Which criteria must be met before releasing the hold on suspect products?",
+			"description": "Select every criterion that must be satisfied before quarantined products are released for delivery.",
+			"type": "checkbox",
+			"answer": {
+				"options": [
+					"GPS fix verified against an independent reference and back to nominal",
+					"Capture geolocation cross-checked against the tasked region",
+					"Telemetry overlay cleared and Computer reset confirmed",
+					"The next ground-station pass is scheduled",
+					"The battery is fully charged"
+				],
+				"value": [
+					0,
+					1,
+					2
+				],
+				"reason": [
+					"Release requires a trustworthy position fix, a geolocation cross-check of the product against the tasked region, and confirmation the tamper overlay is cleared. Pass scheduling and battery state are not product-integrity gates."
+				],
+				"score": 10
+			}
+		},
+		{
+			"section": "Whole Team",
+			"title": "After-action: the one-line lesson to hand to a peer who has not done the course.",
+			"description": "Pick the single sentence that best captures the lesson of this exercise.",
+			"type": "select",
+			"answer": {
+				"options": [
+					"Alert is not incident: triage first, then act on confirmed incidents per the playbook and recover deliberately",
+					"Reset the spacecraft whenever any anomaly appears",
+					"Escalate every alert as a cyber incident to be safe",
+					"Ignore hardware faults while a cyber incident is open"
+				],
+				"value": 0,
+				"reason": [
+					"Correct. Triage separates natural faults from confirmed cyber, and recovery follows the playbook deliberately rather than by reflex.",
+					"Blind resets can destroy evidence and mask the real fault.",
+					"Over-escalating every alert wastes command attention and erodes trust in the detection report.",
+					"Natural faults still affect the mission and must be worked in parallel, not ignored."
+				],
+				"score": 10
+			}
+		}
+	]
+}
