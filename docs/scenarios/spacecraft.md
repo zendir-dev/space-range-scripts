@@ -400,7 +400,7 @@ This is the largest part of a scenario. Each entry instantiates one piece of har
 
 | Key | JSON type | Required? | Description |
 | --- | --- | --- | --- |
-| `class` | `string` | yes | Component class. See [components.md#class-table](components.md#class-table) for the full set. Common values: `Solar Panel`, `Battery`, `Reaction Wheels`, `Computer`, `Camera`, `Receiver`, `Transmitter`, `Storage`, `GPS Sensor`, `EM Sensor`, `Jammer`, `Magnetometer`, `Gyroscope`, `External Force Torque`, `Thruster`, `Docking Adapter`, `Text`. |
+| `class` | `string` | yes | Component class. See [components.md#class-table](components.md#class-table) for the full set. Common values: `Solar Panel`, `Battery`, `Reaction Wheels`, `Computer`, `Camera`, `Receiver`, `Transmitter`, `Storage`, `GPS Sensor`, `EM Sensor`, `Jammer`, `Magnetometer`, `Gyroscope`, `Laser Range Finder`, `External Force Torque`, `Thruster`, `Docking Adapter`, `Text`. |
 | `name` | `string` | recommended | Friendly name. **Must be unique** within a spacecraft. Teams reference it via `target` in commands. Case-insensitive at runtime. If omitted, defaults to `class`. |
 | `mesh` | `string` | no | Unreal mesh path, or `"None"` to use the class default. |
 | `enabled` | `bool` | no (default `true`) | If `false`, the component is loaded but inactive (good for failure events that flip it on later). |

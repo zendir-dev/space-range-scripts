@@ -255,6 +255,7 @@ Each entry instantiates one piece of on-board hardware. The `class` decides whic
 | `Storage` | `Mass` (capacity scales with mass in default builds) |
 | `Jammer` | `Power` (W), `Antenna Gain` (dB), `Lookup` (RF pattern CSV file) |
 | `Computer`, `GPS Sensor`, `EM Sensor`, `Magnetometer`, `Gyroscope`, `External Force Torque` | `Mass` |
+| `Laser Range Finder` | `Operating Range`, `Range Accuracy Constant` |
 | `Docking Adapter` | `Mass`, `Half Cone Angle` (deg) |
 | `Text` | `Text` (string), `Color` (hex), `Scale`. Pure visual/labelling component. |
 

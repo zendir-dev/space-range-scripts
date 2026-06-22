@@ -192,6 +192,7 @@ Source: `USpaceRangeSubsystem::InitializeSpacePacketDefinitions` (`studio/Plugin
 | 302 | EM Sensor | `ElectromagneticSensorMessage` | `Sensors` | Has an `EM Sensor` component (and it's enabled — see [components.md § EM Sensor](../scenarios/components.md)). |
 | 303 | CCD | `CCDDataMessage` | `Sensors` | Has a `Charge Coupled Device` (or `Camera`) component. |
 | 304 | Gyroscope | `GyroscopeDataMessage` | `Sensors` | Has a `Gyroscope` component. |
+| 305 | Laser Range Finder | `LaserRangeFinderDataMessage` | `Sensors` | Has a `Laser Range Finder` component |
 | **ADCS (400-499)** | | | | |
 | 400 | Computer | `ComputerMessage` | `ADCS` | Has a `Computer` component. |
 | 401 | Reaction Wheels | `ReactionWheelsMessage` | `ADCS` | Has a `Reaction Wheels` component. |

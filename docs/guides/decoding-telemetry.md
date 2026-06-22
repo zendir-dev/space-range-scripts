@@ -121,7 +121,7 @@ The team's XTCE schemas assign each packet type a specific APID. The Studio defa
 | --- | --- | --- |
 | 100–199 | System | Ping, Schedule Report, Configuration Report |
 | 200–299 | Power System | Battery, Power Source, Power Node |
-| 300–399 | Sensors | Magnetometer, GPS, EM Sensor, CCD, Gyroscope |
+| 300–399 | Sensors | Magnetometer, GPS, EM Sensor, CCD, Gyroscope, Laser Range Finder |
 | 400–499 | ADCS | Computer, Reaction Wheels, Dynamics, Thruster, Formation Flying |
 | 500–599 | Telemetry / Comms | Receiver, Transmitter, Jammer, Storage |
 

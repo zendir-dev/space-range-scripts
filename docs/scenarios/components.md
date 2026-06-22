@@ -38,6 +38,7 @@ The `class` field is matched case-insensitive after spaces are stripped. The shi
 | `Magnetometer` | — | Magnetic-field measurement. |
 | `Gyroscope` | `IMU` | Body-rate measurement. |
 | `Charge Coupled Device` | `CCD` | Low-level imaging sensor (more often used as a `Camera` model). |
+| `Laser Range Finder` | `LRF` | Range-finder for determining distance to objects nearby. |
 | `Docking Adapter` | `Docking` | RPO end-effector. Both vehicles need one to exchange a docking handshake. |
 | `Power Interconnect` | — | Cross-bus connector; pairs two spacecraft power networks at load. See [Power Interconnect](#power-interconnect). |
 | `Fuel Source` | — | Propellant tank. |
@@ -547,6 +548,30 @@ These four sensor classes all share the same minimal `data` schema:
 Each accepts a `Fault State` event to inject sensor faults at runtime (see [events.md#canonical-spacecraft-event-recipes](events.md#canonical-spacecraft-event-recipes)).
 
 The `Electromagnetic Sensor` is started disabled with a `Nominal` fault state — teams must explicitly enable it through their guidance computer to use it.
+
+---
+
+## Laser Range Finder
+
+The laser range finder uses the following schema:
+
+```json
+{
+  "class": "Laser Range Finder",
+  "name": "LRF",
+  "data": { 
+    "Operating Range": 1000.0,
+    "Range Accuracy Constant": 0.01
+  }
+}
+```
+
+| `data` key | Type | Description |
+| --- | --- | --- |
+| `Operating Range` | `number` (m) | Maximum operating range for the sensor. |
+| `Range Accuracy Constant` | The accuracy (towards 0) in which the value is correct. |
+
+This also accepts a `Fault State` event to inject sensor faults at runtime (see [events.md#canonical-spacecraft-event-recipes](events.md#canonical-spacecraft-event-recipes)).
 
 ---
 
