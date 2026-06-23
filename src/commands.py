@@ -139,18 +139,29 @@ def guidance_spacecraft(
     target: str,
     spacecraft_id: str,
     alignment: str = "+z",
+    component: str | None = None,
 ) -> dict:
     """
     Point *target* component toward another spacecraft (relative / boresight).
 
     *spacecraft_id* must be the live runtime asset ID (from admin ``list_team``),
     not a scenario collection id or display name.
+
+    *component* — optional name of a component on the *target* spacecraft to aim at
+    instead of its origin (same naming as ``list_entity``). Omit or ``None`` for origin.
     """
-    return _cmd(
-        "guidance",
-        {"pointing": "relative", "target": target, "alignment": alignment, "spacecraft": spacecraft_id},
-        f"Point '{target}' {alignment} toward spacecraft '{spacecraft_id}'",
-    )
+    args: dict = {
+        "pointing": "relative",
+        "target": target,
+        "alignment": alignment,
+        "spacecraft": spacecraft_id,
+    }
+    if component:
+        args["component"] = component
+    label = f"Point '{target}' {alignment} toward spacecraft '{spacecraft_id}'"
+    if component:
+        label += f" ({component})"
+    return _cmd("guidance", args, label)
 
 
 def guidance_idle() -> dict:

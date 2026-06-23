@@ -238,7 +238,7 @@ The legacy boolean `running` on the same payload is **deprecated** — use `stat
 | `sun` | Track the Sun. |
 | `nadir` | Track the planet centre below. |
 | `ground` | Track the named ground station. |
-| `relative` | Track another spacecraft's position. Requires `spacecraft` argument. |
+| `relative` | Track another spacecraft's position. Requires `spacecraft` argument. Optional `component` names a component on the target hull to aim at instead of its origin. |
 
 ### Command outcome (`Ping.Commands[].Success`)
 

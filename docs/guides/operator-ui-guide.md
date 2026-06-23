@@ -160,6 +160,15 @@ Scheduled guidance that has not yet run does **not** update `computer` configura
 
 Same rule as Power: if your draft differs from the last applied snapshot, incoming reports update `configs` for other modes but leave your active draft fields alone until you match the applied state again.
 
+### Relative mode
+
+When **Pointing Mode** is **Relative**, the panel adds:
+
+- **Spacecraft** — asset ID of another team spacecraft to point toward (same value as the `spacecraft` guidance argument).
+- **Aim Component** — optional dropdown of components on the selected target spacecraft (from [`list_entity`](../api-reference/ground-requests.md#list_entity)). **None** omits `component` and aims at the target spacecraft origin. Choosing a component sends its name as `component`; the on-board controller offsets the aim point by that component's body-frame position on the target hull.
+
+The target component list is populated from cached `list_entity` data for the selected spacecraft. If the dropdown is empty, ensure entity lists have been received for that asset (they load when you join or when components are refreshed).
+
 ---
 
 ## Camera

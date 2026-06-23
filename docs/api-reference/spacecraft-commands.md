@@ -142,6 +142,7 @@ Sets the spacecraft's pointing mode through the on-board ADCS. Each `pointing` v
 | Argument | Default | Description |
 | --- | --- | --- |
 | `spacecraft` | _(none)_ | Asset ID of another spacecraft in the simulation. If the ID does not resolve, the controller engages but holds its current target. |
+| `component` | _(none)_ | Optional **name** of a hardware component on the **target** spacecraft (`spacecraft`). Same naming as [`list_entity`](ground-requests.md#list_entity) / local `target`. Omit, leave empty, or set to `none` to aim at the target spacecraft origin. When set to a valid component on the target hull, the controller applies that component's body-frame position (`GetPosition_LB_B()`, metres) as a target offset before slewing. If the name does not resolve, the offset is treated as `(0, 0, 0)`. |
 
 ### Notes
 

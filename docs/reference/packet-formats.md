@@ -425,7 +425,7 @@ After XTCE decode, parse with `json.loads(report["Data"])`. Scope controls which
 | `fuel_bus[].configuration` | object | `Commanded Percent Open`, `Percent Open` (valve); `Is Pump Enabled` (pump). |
 | `computer` | object | Guidance operator state: `pointing` (active mode) and `configs` (last-applied Args per mode, without repeating `pointing`). Stored from executed [`guidance`](../api-reference/spacecraft-commands.md#guidance) commands; cleared on scenario reset. |
 | `computer.pointing` | string | Active pointing mode (`idle`, `inertial`, `velocity`, `sun`, `nadir`, `ground`, `location`, `relative`). |
-| `computer.configs` | object | Per-mode settings. Keys match [`guidance`](../api-reference/spacecraft-commands.md#guidance) Args for that mode (e.g. `target`, `alignment`, `pitch`/`roll`/`yaw`, `station`, `spacecraft`). |
+| `computer.configs` | object | Per-mode settings. Keys match [`guidance`](../api-reference/spacecraft-commands.md#guidance) Args for that mode (e.g. `target`, `alignment`, `pitch`/`roll`/`yaw`, `station`, `spacecraft`, `component`). |
 | `camera` | array | Per-imager operator configuration. Omitted when scope excludes camera or no imager has been configured. |
 | `camera[].name` | string | Imager component name. |
 | `camera[].class` | string | `Camera` or `Charge Coupled Device`. |
