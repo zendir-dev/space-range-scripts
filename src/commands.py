@@ -344,18 +344,29 @@ def rendezvous_start(
     offset_x: float = 0.0,
     offset_y: float = 0.0,
     offset_z: float = 0.0,
+    component: str | None = None,
 ) -> dict:
     """
     Begin a perch-mode rendezvous with *target_id*.
 
     Offset axes are in the target's LVLH frame:
     X = radial, Y = velocity, Z = radial × velocity.
+
+    *component* — optional name of a component on the *target* spacecraft to anchor
+    the hold on instead of its origin (same naming as ``list_entity``). Omit or ``None``
+    for the target origin.
     """
-    return _cmd(
-        "rendezvous",
-        {"target": target_id, "active": True, "offset": [offset_x, offset_y, offset_z]},
-        f"Rendezvous with '{target_id}' at LVLH offset [{offset_x}, {offset_y}, {offset_z}] m",
-    )
+    args: dict = {
+        "target": target_id,
+        "active": True,
+        "offset": [offset_x, offset_y, offset_z],
+    }
+    if component:
+        args["component"] = component
+    label = f"Rendezvous with '{target_id}' at LVLH offset [{offset_x}, {offset_y}, {offset_z}] m"
+    if component:
+        label += f" ({component})"
+    return _cmd("rendezvous", args, label)
 
 
 def rendezvous_stop(target_id: str) -> dict:

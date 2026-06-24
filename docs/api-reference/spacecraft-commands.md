@@ -406,6 +406,7 @@ Engages a perch-mode hold relative to another spacecraft. The chaser holds a fix
 | `target` | _(none)_ | asset ID | — | The spacecraft to perch relative to. The LVLH frame is anchored on this target. |
 | `active` | `false` | `true`, `false` | — | `true` engages the controller; `false` releases it. |
 | `offset` | `[0, 0, 0]` | `[-10000, 10000]` per axis | m | Desired `[X, Y, Z]` offset in the target's LVLH frame. |
+| `component` | _(none)_ | component name | — | Optional **name** of a hardware component on the **target** spacecraft (`target`). Same naming as [`list_entity`](ground-requests.md#list_entity). Omit, leave empty, or set to `none` to hold relative to the target spacecraft origin. When set to a valid component on the target hull, the controller applies that component's body-frame position (`GetPosition_LB_B()`, metres) as the LVLH anchor offset before applying `offset`. If the name does not resolve, the anchor offset is treated as `(0, 0, 0)`. Each chaser spacecraft owns its own target ephemeris translator, so multiple chasers can hold on the same target with different component anchors. |
 
 ### Notes
 

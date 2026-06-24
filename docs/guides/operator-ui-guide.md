@@ -169,6 +169,10 @@ When **Pointing Mode** is **Relative**, the panel adds:
 
 The target component list is populated from cached `list_entity` data for the selected spacecraft. If the dropdown is empty, ensure entity lists have been received for that asset (they load when you join or when components are refreshed).
 
+### Rendezvous
+
+The **Rendezvous Maneuver** panel uses the same optional **Aim Component** pattern as relative guidance: it names a component on the **target** spacecraft so the LVLH hold is anchored on that hardware instead of the target origin. The LVLH `offset` values are applied on top of that anchor. **None** omits `component`.
+
 ---
 
 ## Camera
