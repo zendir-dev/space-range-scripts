@@ -76,12 +76,12 @@
         {
             "enabled": true,
             "id": 555555,
-            "password": "CCCCCC",
-            "name": "Pink Team",
+            "password": "EEEEEE",
+            "name": "Orange Team",
             "key": 10,
             "frequency": 477,
             "collection": "Main",
-            "color": "#FF8CEC"
+            "color": "#FF7700"
         }
     ],
     "assets": {
@@ -280,7 +280,9 @@
                         "data": {
                             "Mass": 5.0,
                             "Capture Distance": 0.05,
-                            "Capture Angle": 20.0
+                            "Capture Angle": 20.0,
+                            "Separation Force": 3.0,
+                            "Separation Duration": 1.0
                         }
                     },
                     {

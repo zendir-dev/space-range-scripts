@@ -403,7 +403,11 @@ def docking_dock(target_id: str, component: str) -> dict:
 
 
 def docking_undock(target_id: str, component: str) -> dict:
-    """Undock from *component* on *target_id*."""
+    """Undock from *component* on *target_id*.
+
+    Undocking applies a separation impulse (``Separation Force`` over ``Separation Duration``,
+    configured on the chaser's Docking Adapter) so the two craft gently push apart.
+    """
     return _cmd(
         "docking",
         {"target": target_id, "component": component, "dock": False},
@@ -525,9 +529,10 @@ def get_configuration(
 ) -> dict:
     """Request session-mutable operator configuration (Configuration Report telemetry).
 
-    Omit ``scope`` for ``power_bus``, ``fuel_bus``, ``computer``, and ``camera``
-    sections, or pass one scope for a single section. ``components`` filters
-    power_bus, fuel_bus, and camera entries.
+    Omit ``scope`` for ``power_bus``, ``fuel_bus``, ``computer``, ``camera``, and
+    ``docking`` sections, or pass one scope for a single section. ``components``
+    filters power_bus, fuel_bus, and camera entries. The ``docking`` section reports
+    the live docked state (``docked``, and the ``target`` / ``target_component`` when docked).
     """
     args: dict = {}
     if scope is not None:

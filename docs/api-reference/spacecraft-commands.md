@@ -417,7 +417,7 @@ Engages a perch-mode hold relative to another spacecraft. The chaser holds a fix
 
 ## `docking`
 
-Initiates or releases a docking with another team's spacecraft. The current spacecraft must have at least one Docking Adapter component and RPO must be enabled. Docking only completes once the two spacecraft are physically close enough — the command sets the target; the simulation does the connection.
+Initiates or releases a docking with another spacecraft (a team craft or a neutral hub). The current spacecraft must have at least one Docking Adapter component and RPO must be enabled. Docking only completes once the two spacecraft are physically close enough — the command sets the target; the simulation does the connection. Undocking (`dock: false`) releases with a **separation impulse** so the two craft gently push apart.
 
 ```json
 {
@@ -442,6 +442,9 @@ Initiates or releases a docking with another team's spacecraft. The current spac
 
 - Plan your approach with [`rendezvous`](#rendezvous) first. The docking command sets intent; physics handles capture.
 - Once docked, both spacecraft become rigidly attached until an explicit `dock = false` is issued.
+- Undocking applies a separation impulse along the docking axis. The push is governed by the `Separation Force` (N) and `Separation Duration` (s) values on the **chaser's Docking Adapter** component (set in the scenario `data`; default 100 N over 0.5 s — the RPO scenario uses 1.0 s). See [components](../scenarios/components.md).
+- The live docked/undocked state, and which target/port a craft is docked to, is reported via [`get_configuration`](#get_configuration) (`docking` section) and pushed automatically whenever it changes. The Operator UI uses this to pre-fill and lock the docking controls.
+- Spacecraft can also **start the scenario already docked** — see the scenario [`docking`](../scenarios/spacecraft.md#docking-start-the-scenario-already-docked) block.
 
 ---
 
@@ -631,7 +634,7 @@ Asks the spacecraft to report **session-mutable operator configuration** — val
 
 | Argument | Description |
 | --- | --- |
-| `scope` | Optional filter. Omit or `"all"` → **power_bus**, **fuel_bus**, **computer**, and **camera**. `"power_bus"`, `"fuel_bus"`, `"computer"`, or `"camera"` → that section only. Unknown scopes are ignored and **no report is sent**. |
+| `scope` | Optional filter. Omit or `"all"` → **power_bus**, **fuel_bus**, **computer**, **camera**, and **docking**. `"power_bus"`, `"fuel_bus"`, `"computer"`, `"camera"`, or `"docking"` → that section only. Unknown scopes are ignored and **no report is sent**. |
 | `components` | Optional string array (**power_bus**, **fuel_bus**, and **camera** scopes). One component = one element. Omit or `[]` for all matching components. Names are matched case-insensitively (same as `target` elsewhere). |
 
 ### Report shape (`Data` JSON)
@@ -684,7 +687,13 @@ Asks the spacecraft to report **session-mutable operator configuration** — val
         "fov": 60.0
       }
     }
-  ]
+  ],
+  "docking": {
+    "adapter": "Docking Adapter",
+    "docked": true,
+    "target": "B1C2D3E4",
+    "target_component": "Docking A"
+  }
 }
 ```
 
@@ -698,8 +707,13 @@ Asks the spacecraft to report **session-mutable operator configuration** — val
   - **`name`** / **`class`** — imager component (from [`list_entity`](ground-requests.md#list_entity); `is_imager` components).
   - **`configuration`** — last-applied settings using [`camera`](#camera) Arg names (`monochromatic`, `resolution`, `fov`, …). **`Charge Coupled Device`** entries include `fov` only. Capture `name` (filename) and `sample` are not stored.
   - Cleared when the scenario instance resets. Only imagers configured at least once appear.
+- **`docking`** — live docking state of this craft's docking adapter (present only when the craft has a Docking Adapter). Reflects the real simulation state, not stored command Args:
+  - **`adapter`** — name of this craft's docking adapter.
+  - **`docked`** — whether it is currently docked.
+  - **`target`** — when docked, the `asset_id` of the spacecraft it is docked to (a team craft or a neutral hub).
+  - **`target_component`** — when docked, the name of the port (Docking Adapter) on the target it is attached to.
 
-Configuration Reports are also queued automatically after successful [`power_bus`](#power_bus) (`scope: "power_bus"`), [`fuel_bus`](#fuel_bus) (`scope: "fuel_bus"`), [`guidance`](#guidance) (`scope: "computer"`), and [`camera`](#camera) / [`capture`](#capture) (`scope: "camera"`) commands.
+Configuration Reports are also queued automatically after successful [`power_bus`](#power_bus) (`scope: "power_bus"`), [`fuel_bus`](#fuel_bus) (`scope: "fuel_bus"`), [`guidance`](#guidance) (`scope: "computer"`), and [`camera`](#camera) / [`capture`](#capture) (`scope: "camera"`) commands. A `scope: "docking"` report is queued automatically **whenever the docking state changes** — both from a commanded [`docking`](#docking) dock/undock and from proximity capture during a close approach — so every team member sees the live docked/undocked state.
 
 ### Power bus fields
 
@@ -732,13 +746,14 @@ These align with the spacecraft `fuel_bus` command `configure` actions (`valve`,
 
 ### Operator UI
 
-The bundled Operator UI uses this command to keep **Power Bus Configuration**, **Fuel Bus Configuration**, **Guidance**, and **Camera** in sync across operators:
+The bundled Operator UI uses this command to keep **Power Bus Configuration**, **Fuel Bus Configuration**, **Guidance**, **Camera**, and **Docking** in sync across operators:
 
-- Requests `get_configuration` (no `scope` → power_bus + fuel_bus + computer + camera) once when each asset's components are first loaded (`list_entity`).
+- Requests `get_configuration` (no `scope` → power_bus + fuel_bus + computer + camera + docking) once when each asset's components are first loaded (`list_entity`).
 - **Power Bus Configuration** — shown when the asset has a switch, limiter, regulator, fuse, or diode; picks up updates after each `power_bus` command; **Refresh** requests `scope: "power_bus"`.
 - **Fuel Bus Configuration** — shown when the asset has a valve or pump; picks up updates after each `fuel_bus` command; **Refresh** requests `scope: "fuel_bus"`.
 - **Guidance** — picks up updates from automatic reports after each executed `guidance` command; per-mode values in `configs` repopulate the form when switching pointing mode.
 - **Camera** — picks up updates after each `camera` / `capture`; switching imager in the dropdown restores that component's saved `configuration`.
+- **Docking** — reflects the live docked state: when docked, the target and port are shown and locked, the **Dock** button is disabled and **Undock** is enabled; when undocked, the reverse. Updates arrive automatically on any docking state change.
 - Parses APID 102 on Downlink into a per-asset buffer; see [Guides → Operator UI](../guides/operator-ui-guide.md).
 
 Python: `commands.get_configuration(scope=None)` in [`src/commands.py`](../src/commands.py) — omit `scope` for both sections.

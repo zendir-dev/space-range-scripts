@@ -584,9 +584,11 @@ This also accepts a `Fault State` event to inject sensor faults at runtime (see 
   "position": [0.0, 0.36, -0.015],
   "rotation": [-90.0, 0.0, 0.0],
   "data": {
-    "Capture Distance": 0.05,
-    "Capture Angle":    20.0,
-    "Mass":             5.0
+    "Capture Distance":    0.05,
+    "Capture Angle":       20.0,
+    "Separation Force":    100.0,
+    "Separation Duration": 1.0,
+    "Mass":                5.0
   }
 }
 ```
@@ -595,9 +597,11 @@ This also accepts a `Fault State` event to inject sensor faults at runtime (see 
 | --- | --- | --- |
 | `Capture Distance` | `number` (m) | Maximum face-to-face distance at which capture succeeds. |
 | `Capture Angle` | `number` (deg) | Maximum half-cone alignment angle for a successful capture. |
+| `Separation Force` | `number` (N) | Impulse force applied along the docking axis when undocking, to push the craft apart. Default `100`. |
+| `Separation Duration` | `number` (s) | Duration over which the separation force is applied when undocking. Default `0.5`. |
 | `Mass` | `number` (kg) | Component mass. |
 
-Both the chaser and the target need a `Docking Adapter` component, and both spacecraft need `enable_rpo: true` in their `controller`. See [recipes.md](recipes.md) — Recipe 4.
+Both the chaser and the target need a `Docking Adapter` component, and both spacecraft need `enable_rpo: true` in their `controller`. Undocking via the [`docking`](../api-reference/spacecraft-commands.md#docking) command applies the separation impulse defined here. See [recipes.md](recipes.md) — Recipe 4.
 
 ---
 
