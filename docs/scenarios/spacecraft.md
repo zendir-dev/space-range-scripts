@@ -467,6 +467,38 @@ Admin tooling retains full visibility of neutral craft (telemetry, components) f
 
 ---
 
+## `docking` (start the scenario already docked)
+
+`docking[]` is an optional **top-level** array (a sibling of `teams` and `assets`, not nested inside `assets`) that pre-docks team spacecraft to ports on other spacecraft at the moment the scenario is built. The classic use is a central neutral hub with one port per team, where every team begins latched on.
+
+```json
+"docking": [
+  { "team": 111111, "adapter": "Docking Adapter", "target": "SC_HUB", "target_component": "Docking A" },
+  { "team": 222222, "adapter": "Docking Adapter", "target": "SC_HUB", "target_component": "Docking B" }
+]
+```
+
+For each entry Studio finds the team's chaser spacecraft, **physically places it** so its docking adapter mates with the target port (coincident position, adapter facing the port), matches the target's velocity, and then docks the two. Because docking freezes the relative pose at the instant of capture, the placement is what makes the craft start cleanly attached rather than welded together at the wrong offset.
+
+Notes:
+
+- The **target** may be any other spacecraft — a neutral hub (referenced by its scenario `id`, e.g. `"SC_HUB"`, or its runtime `asset_id`) or another team's craft. The target's `target_component` must be a `Docking Adapter` component on that craft.
+- The chaser must have a `Docking Adapter` and (for docking to operate during the run) `controller.enable_rpo: true`.
+- The placement runs **once**, during scenario construction. Reloading a saved simulation restores the existing docked hierarchy instead of re-placing, so entries are skipped for craft that are already docked.
+- The two craft become a single rigid body, with the heavier craft acting as the hub. Teams can later separate using the normal undock command.
+
+| Key | JSON type | Required | Description |
+| --- | --- | --- | --- |
+| `team` | `int` | yes | ID of the team whose spacecraft starts docked. |
+| `target` | `string` | yes | The spacecraft to dock to — a scenario `id` (e.g. `"SC_HUB"`) or runtime `asset_id`. |
+| `target_component` | `string` | yes | Name of the `Docking Adapter` (port) component on the target. |
+| `adapter` | `string` | no | Name of the docking adapter on the chaser. Defaults to the chaser's first docking adapter. |
+| `asset` | `string` | no | Scenario `id` of the chaser within the team, when a team has more than one craft. Defaults to the team's craft that has a docking adapter. |
+| `capture_distance` | `number` | no | [m] Capture distance used when establishing the dock. Default `0.5`. |
+| `capture_angle` | `number` | no | [deg] Capture angle used when establishing the dock. Default `5.0`. |
+
+---
+
 ## Worked example
 
 A small but complete spacecraft definition — enough to copy/paste as a starting point:

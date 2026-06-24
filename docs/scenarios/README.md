@@ -26,8 +26,10 @@ Every scenario JSON has this shape. **Every section is optional** except `teams`
   "teams":           [ ... ],
   "assets": {
     "space":         [ ... ],
-    "collections":   [ ... ]
+    "collections":   [ ... ],
+    "neutral":       [ ... ]
   },
+  "docking":         [ ... ],
   "objects": {
     "ground":        [ ... ]
   },
@@ -44,6 +46,8 @@ Every scenario JSON has this shape. **Every section is optional** except `teams`
 | `teams` | Team identity (ID, password, key, frequency, color, collection) | [teams.md](teams.md) |
 | `assets.space` | Spacecraft definitions (orbit, physics, components, controller, power bus) | [spacecraft.md](spacecraft.md) |
 | `assets.collections` | Map of `collection` IDs → spacecraft IDs | [spacecraft.md#collections](spacecraft.md#collections) |
+| `assets.neutral` | Team-less shared craft (single instance, targetable by all) | [spacecraft.md#neutral-team-less-shared-craft](spacecraft.md#neutral-team-less-shared-craft) |
+| `docking` | Pre-dock team craft to ports (e.g. each team to a hub port) at scenario start | [spacecraft.md#docking-start-the-scenario-already-docked](spacecraft.md#docking-start-the-scenario-already-docked) |
 | `objects.ground` | Vessels, text labels, and other passive ground actors | [ground-objects.md](ground-objects.md) |
 | `events` | Scripted failures and GPS effects on the simulation timeline | [events.md](events.md) |
 | `questions` | Q&A scoring (text, number, select, checkbox) | [questions.md](questions.md) |
@@ -89,10 +93,11 @@ When the scenario JSON is loaded (Studio UI scenario picker or admin/scenario AP
 3. `ground_stations` instantiates ground stations at the listed cities.
 4. `teams[]` creates one ground controller per enabled team and stores its credentials.
 5. `assets.space[]` instantiates each spacecraft: orbit → physics → visualization → controller → components.
-6. `assets.collections[]` is recorded so that team `collection` strings resolve to spacecraft IDs.
-7. `objects.ground[]` instantiates vessels / text actors.
-8. `events[]` are registered on the simulation event queue (they fire later, on `Time`).
-9. `questions[]` are stored on the subsystem and exposed to teams via [`list_questions`](../api-reference/ground-requests.md#list_questions).
+6. `assets.collections[]` is recorded so that team `collection` strings resolve to spacecraft IDs, and `assets.neutral[]` spawns shared team-less craft.
+7. `docking[]` places and docks the configured chaser craft onto their target ports (after all craft are built).
+8. `objects.ground[]` instantiates vessels / text actors.
+9. `events[]` are registered on the simulation event queue (they fire later, on `Time`).
+10. `questions[]` are stored on the subsystem and exposed to teams via [`list_questions`](../api-reference/ground-requests.md#list_questions).
 
 If a section fails to parse, Studio logs the error and continues with the next section. **Always check the Studio log after loading** — silent partial loads are a common authoring trap.
 

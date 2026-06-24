@@ -500,6 +500,13 @@
         ],
         "neutral": ["SC_002"]
     },
+    "docking": [
+        { "team": 111111, "adapter": "Docking Adapter", "target": "SC_002", "target_component": "Docking A" },
+        { "team": 222222, "adapter": "Docking Adapter", "target": "SC_002", "target_component": "Docking B" },
+        { "team": 333333, "adapter": "Docking Adapter", "target": "SC_002", "target_component": "Docking C" },
+        { "team": 444444, "adapter": "Docking Adapter", "target": "SC_002", "target_component": "Docking D" },
+        { "team": 555555, "adapter": "Docking Adapter", "target": "SC_002", "target_component": "Docking E" }
+    ],
     "objects": {
         "ground": [
             {
