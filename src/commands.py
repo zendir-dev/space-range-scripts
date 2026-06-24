@@ -144,8 +144,10 @@ def guidance_spacecraft(
     """
     Point *target* component toward another spacecraft (relative / boresight).
 
-    *spacecraft_id* must be the live runtime asset ID (from admin ``list_team``),
-    not a scenario collection id or display name.
+    *spacecraft_id* must be the live runtime asset ID (from admin ``list_team`` or
+    ``list_assets``), not a scenario collection id or display name. The one exception is a
+    **neutral** craft (declared in ``assets.neutral``), which may also be referenced by its
+    scenario asset id string (e.g. ``"SC_HUB"``) since it is a single shared instance.
 
     *component* — optional name of a component on the *target* spacecraft to aim at
     instead of its origin (same naming as ``list_entity``). Omit or ``None`` for origin.
@@ -352,6 +354,10 @@ def rendezvous_start(
     Offset axes are in the target's LVLH frame:
     X = radial, Y = velocity, Z = radial × velocity.
 
+    *target_id* is the runtime asset ID of the spacecraft to rendezvous with. A **neutral**
+    craft (declared in ``assets.neutral``) may also be referenced by its scenario asset id
+    string (e.g. ``"SC_HUB"``) — useful for holding station on a shared central craft.
+
     *component* — optional name of a component on the *target* spacecraft to anchor
     the hold on instead of its origin (same naming as ``list_entity``). Omit or ``None``
     for the target origin.
@@ -383,7 +389,12 @@ def rendezvous_stop(target_id: str) -> dict:
 # ---------------------------------------------------------------------------
 
 def docking_dock(target_id: str, component: str) -> dict:
-    """Command the spacecraft to dock with *component* on *target_id*."""
+    """Command the spacecraft to dock with *component* on *target_id*.
+
+    *target_id* may be another team-owned craft's runtime asset id, or a **neutral** craft
+    (declared in ``assets.neutral``) referenced by its asset id or scenario id string — e.g.
+    a shared station with one docking port per team.
+    """
     return _cmd(
         "docking",
         {"target": target_id, "component": component, "dock": True},

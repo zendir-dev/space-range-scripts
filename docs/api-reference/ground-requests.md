@@ -105,7 +105,8 @@ No arguments.
   "req_id": 0,
   "args": {
     "space": [
-      { "asset_id": "A3F2C014", "name": "Microsat", "rpo_enabled": true, "intercept_enabled": true }
+      { "asset_id": "A3F2C014", "name": "Microsat", "rpo_enabled": true, "intercept_enabled": true, "neutral": false, "controllable": true },
+      { "asset_id": "1B9E0F77", "name": "Station",  "rpo_enabled": false, "intercept_enabled": false, "neutral": true, "controllable": false }
     ]
   },
   "success": true
@@ -114,11 +115,13 @@ No arguments.
 
 | Field | Description |
 | --- | --- |
-| `space[]` | Array of space assets controlled by this team. |
-| `space[].asset_id` | 8-character hex ID. Use this in the `Asset` field of any uplink command. |
+| `space[]` | Array of space assets visible to this team: the team's own controllable assets, plus any [neutral](../scenarios/spacecraft.md#neutral-team-less-shared-craft) (team-less) craft that every team can reference as a target. |
+| `space[].asset_id` | 8-character hex ID. Use this in the `Asset` field of any uplink command, or as the `spacecraft`/`target` argument of pointing/rendezvous/docking. |
 | `space[].name` | Friendly name, with the team prefix stripped. |
 | `space[].rpo_enabled` | `true` if rendezvous/proximity-ops is enabled for this asset (required for [`rendezvous`](spacecraft-commands.md#rendezvous) and [`docking`](spacecraft-commands.md#docking)). |
 | `space[].intercept_enabled` | `true` if this spacecraft is configured to record raw uplink intercepts (pre-decode RF payloads into on-board storage for SIGINT / replay). Mirrors scenario `enable_intercept` on the controller. When `false`, no new intercept records are retained. |
+| `space[].neutral` | `true` if this is a neutral (team-less) shared craft. Neutral craft can be referenced as a target but cannot be controlled, and expose no telemetry. |
+| `space[].controllable` | `true` for the team's own assets; `false` for neutral craft. |
 
 ---
 
@@ -134,7 +137,7 @@ Static schematic of one spacecraft: its components and jammer status. This is **
 
 | Argument | Description |
 | --- | --- |
-| `asset_id` | Asset ID from [`list_assets`](#list_assets). Must belong to this team or the request fails. |
+| `asset_id` | Asset ID from [`list_assets`](#list_assets). Must belong to this team **or** be a [neutral](../scenarios/spacecraft.md#neutral-team-less-shared-craft) craft, otherwise the request fails. |
 
 **Response**
 
@@ -144,6 +147,7 @@ Static schematic of one spacecraft: its components and jammer status. This is **
   "req_id": 0,
   "args": {
     "asset_id": "A3F2C014",
+    "neutral": false,
     "components": [
       { "name": "Solar Panel +X", "class": "Solar Panel", "component_id": 5, "is_imager": false },
       { "name": "Camera",         "class": "Camera",       "component_id": 12, "is_imager": true }
@@ -157,6 +161,7 @@ Static schematic of one spacecraft: its components and jammer status. This is **
 | Field | Description |
 | --- | --- |
 | `asset_id` | Echoes the request. |
+| `neutral` | `true` if this is a neutral (team-less) shared craft. Neutral craft return only their public component surface (names/classes) and never expose `jammer` state. |
 | `components[]` | One entry per on-board component. |
 | `components[].name` | Friendly name. **Use this for `target` and `component` arguments in spacecraft commands.** Case-insensitive matching. |
 | `components[].class` | Component class (e.g. `Camera`, `Solar Panel`, `Battery`). |
@@ -167,7 +172,7 @@ Static schematic of one spacecraft: its components and jammer status. This is **
 | `jammer.frequency` | Active jam frequency in MHz. |
 | `jammer.power` | Active jam power in watts. |
 
-Errors: if the `asset_id` doesn't exist or doesn't belong to this team, `success` is `false` and `error` describes which.
+Errors: if the `asset_id` doesn't exist, or belongs to another team (and is not neutral), `success` is `false` and `error` describes which.
 
 ---
 
@@ -219,7 +224,7 @@ Current RF link parameters and link-budget snapshot for one spacecraft.
 
 | Argument | Description |
 | --- | --- |
-| `asset_id` | Asset ID. |
+| `asset_id` | Asset ID. Must be one of this team's own assets — [neutral](../scenarios/spacecraft.md#neutral-team-less-shared-craft) craft are read-only and return an error (`"... is neutral and does not expose telemetry."`). |
 
 **Response**
 

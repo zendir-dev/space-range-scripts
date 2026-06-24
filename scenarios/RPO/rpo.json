@@ -1,0 +1,639 @@
+{
+    "metadata": {
+		"name": "RPO Scenario",
+		"description": "In this scenario, each team's spacecraft's are able to perform RPO operations with a central hub spacecraft."
+	},
+    "simulation": {
+        "epoch": "2025/10/02 08:00:00",
+        "speed": 5.0,
+        "step_size": 0.1,
+        "integrator": "Euler",
+        "end_time": 0.0
+    },
+    "universe": {
+        "atmosphere": false,
+        "magnetosphere": false,
+        "gps": true,
+        "cloud_opacity": 0.7,
+        "cloud_contrast": 2.5,
+        "ambient_light": 0.25
+    },
+    "ground_stations": {
+        "locations": [
+            "Paris",
+            "Dubai",
+            "Colombo",
+            "Singapore",
+            "Sydney",
+            "Auckland",
+            "Lima",
+            "New York"
+        ],
+        "min_elevation": 0,
+        "max_range": 0
+    },
+    "teams": [
+        {
+            "enabled": true,
+            "id": 111111,
+            "password": "AAAAAA",
+            "name": "Red Team",
+            "key": 6,
+            "frequency": 473,
+            "collection": "Main",
+            "color": "#FF0000"
+        },
+        {
+            "enabled": true,
+            "id": 222222,
+            "password": "BBBBBB",
+            "name": "Green Team",
+            "key": 7,
+            "frequency": 474,
+            "collection": "Main",
+            "color": "#00FF00"
+        },
+        {
+            "enabled": true,
+            "id": 333333,
+            "password": "CCCCCC",
+            "name": "Blue Team",
+            "key": 8,
+            "frequency": 475,
+            "collection": "Main",
+            "color": "#00AAFF"
+        },
+        {
+            "enabled": true,
+            "id": 444444,
+            "password": "DDDDDD",
+            "name": "Yellow Team",
+            "key": 9,
+            "frequency": 476,
+            "collection": "Main",
+            "color": "#FFFF00"
+        },
+        {
+            "enabled": true,
+            "id": 555555,
+            "password": "CCCCCC",
+            "name": "Pink Team",
+            "key": 10,
+            "frequency": 477,
+            "collection": "Main",
+            "color": "#FF8CEC"
+        }
+    ],
+    "assets": {
+        "space": [
+            {
+                "id": "SC_001",
+                "name": "Microsat",
+                "orbit": {
+                    "planet": "Earth",
+                    "values": [7100.0, 0.03, 39.0, 38.0, 156, 280.0],
+                    "offset": [0.0, 0.0, 0.0, 0.0, 0.0, 0.01]
+                },
+                "physics": {
+                    "override_mass": true,
+                    "mass": 100.0,
+                    "center_of_mass": [ 0.0, 0.0, 0.0 ],
+                    "inertia_tensor": [ [ 10.0, 0.0, 0.0 ], [ 0.0, 10.0, 0.0 ], [ 0.0, 0.0, 10.0 ] ]
+                },
+                "visualization": {
+                    "mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/ZenSat/BP_Z_SC_ZenSat_Chassis",
+                    "scale": 1.0,
+                    "offset": [ 0.0, 0.0, 0.12 ]
+                },
+                "controller": {
+                    "safe_fraction": 0.1,
+                    "capture_tax": 0.001,
+                    "downlink_tax": 0.005,
+                    "ping_interval": 20.0,
+                    "reset_interval": 60.0,
+                    "jamming_multiplier": 100.0,
+                    "enable_rpo": true,
+					"enable_intercept": true
+                },
+                "power": {
+                    "bus": [
+                        {
+                            "source_component": "Solar Panel +X",
+                            "source_terminal": "out",
+                            "target_component": "Battery",
+                            "target_terminal": "out"
+                        },
+                        {
+                            "source_component": "Solar Panel -X",
+                            "source_terminal": "out",
+                            "target_component": "Battery",
+                            "target_terminal": "out"
+                        },
+                        {
+                            "source_component": "Battery",
+                            "source_terminal": "out",
+                            "target_component": "Interconnect",
+                            "target_terminal": "in"
+                        }
+                    ],
+                    "interconnects": [
+                        {
+                            "source_component": "Interconnect",
+                            "target_spacecraft": "Cubesat",
+                            "target_component": "Interconnect"
+                        }
+                    ]
+                },
+                "components": [
+                    {
+                        "class": "Solar Panel",
+                        "name": "Solar Panel +X",
+                        "mesh": "None",
+                        "enabled": true,
+                        "position": [ 0.8, 0.276313, -0.2 ],
+                        "rotation": [ 35.0, 0.0, 0.0 ],
+                        "scale": 1.0,
+                        "data": {
+                            "Area": 0.3,
+                            "Efficiency": 0.4,
+                            "Mass": 10.0
+                        }
+                    },
+                    {
+                        "class": "Solar Panel",
+                        "name": "Solar Panel -X",
+                        "mesh": "None",
+                        "enabled": true,
+                        "position": [ -0.8, 0.276313, -0.2 ],
+                        "rotation": [ 35.0, 0.0, 0.0 ],
+                        "data": {
+                            "Area": 0.3,
+                            "Efficiency": 0.4,
+                            "Mass": 10.0
+                        }
+                    },
+                    {
+                        "class": "External Force Torque",
+                        "name": "External Force Torque",
+                        "mesh": "None",
+                        "enabled": true,
+                        "position": [ 0.0, 0.0, 0.0 ],
+                        "data": {
+                            "Max Force": 5000,
+                            "Max Torque": 2000
+                        }
+                    },
+                    {
+                        "class": "Reaction Wheels",
+                        "name": "Reaction Wheels",
+                        "mesh": "None",
+                        "enabled": false,
+                        "position": [ 0.0, 0.0, 0.2 ],
+                        "data": {
+                            "Mass": 9.0
+                        }
+                    },
+                    {
+                        "class": "Computer",
+                        "name": "Computer",
+                        "mesh": "None",
+                        "enabled": true,
+                        "position": [ 0.0, 0.0, 0.2 ],
+                        "data": {
+                            "Mass": 2.0
+                        }
+                    },
+                    {
+                        "class": "Battery",
+                        "name": "Battery",
+                        "mesh": "None",
+                        "enabled": true,
+                        "position": [ 0.0, 0.0, 0.2 ],
+                        "data": {
+                            "Nominal Capacity": 125.0,
+                            "Charge Fraction": 0.5,
+                            "Mass": 5.0
+                        }
+                    },
+                    {
+                        "class": "Optical Camera",
+                        "name": "Camera",
+                        "mesh": "None",
+                        "enabled": true,
+                        "position": [ -0.147, 0.357, -0.132 ],
+                        "rotation": [ -90.0, 0.0, 0.0 ],
+                        "data": {
+                            "Mass": 5.0,
+                            "Sample Rate": 10.0
+                        }
+                    },
+                    {
+                        "class": "GPS Sensor",
+                        "name": "GPS Sensor",
+                        "mesh": "None",
+                        "enabled": true,
+                        "position": [ 0.0, 0.0, 0.2 ],
+                        "data": {
+                            "Mass": 2.0
+                        }
+                    },
+                    {
+                        "class": "Receiver",
+                        "name": "Receiver",
+                        "mesh": "None",
+                        "enabled": true,
+                        "position": [ 0.0, -0.36, -0.16 ],
+                        "rotation": [ 90.0, 0.0, 0.0 ],
+                        "data": {
+                            "Antenna Gain": 3.0,
+                            "Mass": 2.0
+                        }
+                    },
+                    {
+                        "class": "Transmitter",
+                        "name": "Transmitter",
+                        "mesh": "None",
+                        "enabled": true,
+                        "position": [ 0.0, -0.36, -0.16 ],
+                        "rotation": [ 90.0, 0.0, 0.0 ],
+                        "data": {
+                            "Mass": 1.0
+                        }
+                    },
+                    {
+                        "class": "Storage",
+                        "name": "Storage",
+                        "mesh": "None",
+                        "enabled": true,
+                        "position": [ 0.0, 0.0, -0.2 ],
+                        "data": {
+                            "Mass": 4.0
+                        }
+                    },
+                    {
+                        "class": "Docking Adapter",
+                        "name": "Docking Adapter",
+                        "mesh": "None",
+                        "enabled": true,
+                        "position": [ 0.0, 0.36, -0.015 ],
+                        "rotation": [ -90.0, 0.0, 0.0 ],
+                        "data": {
+                            "Mass": 5.0,
+                            "Capture Distance": 0.05,
+                            "Capture Angle": 20.0
+                        }
+                    },
+                    {
+                        "class": "Laser Range Finder",
+                        "name": "Laser Range Finder",
+                        "mesh": "None",
+                        "enabled": true,
+                        "position": [ 0.0, 0.0, 0.0 ],
+                        "data": {
+                            "Mass": 1.0,
+                            "Operating Range": 10000.0
+                        }
+                    },
+                    {
+                        "class": "Power Interconnect",
+                        "name": "Interconnect"
+                    }
+                ]
+            },
+            {
+                "id": "SC_002",
+                "name": "Hub",
+                "orbit": {
+                    "planet": "Earth",
+                    "values": [7100.0, 0.03, 39.01, 38.0, 156, 280.0],
+                    "offset": [0.0, 0.0, 3.0, 0.0, 0.0, 0.01]
+                },
+                "physics": {
+                    "override_mass": true,
+                    "mass": 63000.0,
+                    "center_of_mass": [ 0.0, 0.0, 0.0 ],
+                    "inertia_tensor": [ [ 1000.0, 0.0, 0.0 ], [ 0.0, 1000.0, 0.0 ], [ 0.0, 0.0, 1000.0 ] ]
+                },
+                "visualization": {
+                    "mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/GatewayCore/BP_Z_SC_GatewayCore_Chassis",
+                    "scale": 0.2,
+                    "offset": [ 0.0, 0.0, 0.0 ]
+                },
+                "controller": {
+                    "safe_fraction": 0.1,
+                    "capture_tax": 0.001,
+                    "downlink_tax": 0.005,
+                    "ping_interval": 20.0,
+                    "reset_interval": 60.0,
+                    "jamming_multiplier": 100.0,
+                    "enable_rpo": true,
+					"enable_intercept": true
+                },
+                "power": {
+                    "bus": [
+                        {
+                            "source_component": "Solar Panel",
+                            "source_terminal": "out",
+                            "target_component": "Battery",
+                            "target_terminal": "out"
+                        },
+                        {
+                            "source_component": "Battery",
+                            "source_terminal": "out",
+                            "target_component": "Interconnect",
+                            "target_terminal": "in"
+                        }
+                    ]
+                },
+                "components": [
+                    {
+                        "class": "Solar Panel",
+                        "mesh": "None",
+                        "position": [ 0.05, 0.0, 0.0 ],
+                        "rotation": [ 0.0, 90.0, 0.0 ],
+                        "scale": 1.0,
+                        "data": {
+                            "Area": 0.3,
+                            "Efficiency": 0.4,
+                            "Mass": 10.0
+                        }
+                    },
+                    {
+                        "class": "Reaction Wheels",
+                        "mesh": "None",
+                        "position": [ 0.0, 0.0, -0.10 ],
+                        "data": {
+                            "Mass": 9.0
+                        }
+                    },
+                    {
+                        "class": "Computer",
+                        "mesh": "None",
+                        "position": [ 0.0, 0.0, 0.0 ],
+                        "data": {
+                            "Mass": 2.0
+                        }
+                    },
+                    {
+                        "class": "Battery",
+                        "mesh": "None",
+                        "position": [ 0.0, 0.0, 0.05 ],
+                        "data": {
+                            "Nominal Capacity": 125.0,
+                            "Charge Fraction": 0.5,
+                            "Mass": 5.0
+                        }
+                    },
+                    {
+                        "class": "Optical Camera",
+                        "name": "Camera",
+                        "mesh": "None",
+                        "position": [ 0.152, 0.362, 0.021 ],
+                        "rotation": [ -90.0, 0.0, 0.0 ],
+                        "data": {
+                            "Mass": 5.0,
+                            "Sample Rate": 10.0
+                        }
+                    },
+                    {
+                        "class": "Receiver",
+                        "mesh": "None",
+                        "position": [ 0.0, -0.05, 0.0 ],
+                        "rotation": [ 90.0, 0.0, 0.0 ],
+                        "data": {
+                            "Antenna Gain": 3.0,
+                            "Mass": 2.0
+                        }
+                    },
+                    {
+                        "class": "GPS Sensor",
+                        "mesh": "None",
+                        "position": [ 0.0, 0.0, 0.05 ],
+                        "data": {
+                            "Mass": 2.0
+                        }
+                    },
+                    {
+                        "class": "Transmitter",
+                        "mesh": "None",
+                        "position": [ 0.0, -0.05, 0.0 ],
+                        "rotation": [ 90.0, 0.0, 0.0 ],
+                        "data": {
+                            "Mass": 1.0
+                        }
+                    },
+                    {
+                        "class": "Storage",
+                        "mesh": "None",
+                        "position": [ 0.0, 0.0, -0.012 ],
+                        "data": {
+                            "Mass": 4.0
+                        }
+                    },
+                    {
+                        "class": "Docking Adapter",
+                        "name": "Docking A",
+                        "position": [ -0.005, 0.318, 0.002 ],
+                        "rotation": [ -90.0, 0.0, 0.0 ],
+                        "data": {
+                            "Mass": 5.0,
+                            "Capture Distance": 0.05,
+                            "Capture Angle": 20.0
+                        }
+                    },
+                    {
+                        "class": "Docking Adapter",
+                        "name": "Docking B",
+                        "position": [ -1.503, 0.354, 0.002 ],
+                        "rotation": [ -90.0, 0.0, 0.0 ],
+                        "data": {
+                            "Mass": 5.0,
+                            "Capture Distance": 0.05,
+                            "Capture Angle": 20.0
+                        }
+                    },
+                    {
+                        "class": "Docking Adapter",
+                        "name": "Docking C",
+                        "position": [ -2.109, -0.003, 0.006 ],
+                        "rotation": [ 0.0, -90.0, 0.0 ],
+                        "data": {
+                            "Mass": 5.0,
+                            "Capture Distance": 0.05,
+                            "Capture Angle": 20.0
+                        }
+                    },
+                    {
+                        "class": "Docking Adapter",
+                        "name": "Docking D",
+                        "position": [ -1.506, -1.767, 0.0 ],
+                        "rotation": [ 90.0, 0.0, 0.0 ],
+                        "data": {
+                            "Mass": 5.0,
+                            "Capture Distance": 0.05,
+                            "Capture Angle": 20.0
+                        }
+                    },
+                    {
+                        "class": "Docking Adapter",
+                        "name": "Docking E",
+                        "position": [ 0.004, -1.689, 0.004 ],
+                        "rotation": [ 90.0, 0.0, 0.0 ],
+                        "data": {
+                            "Mass": 5.0,
+                            "Capture Distance": 0.05,
+                            "Capture Angle": 20.0
+                        }
+                    },
+                    {
+                        "class": "Power Interconnect",
+                        "name": "Interconnect"
+                    }
+                ]
+            }
+        ],
+        "collections": [
+            {
+                "id": "Main",
+                "space_assets": ["SC_001"]
+            }
+        ],
+        "neutral": ["SC_002"]
+    },
+    "objects": {
+        "ground": [
+            {
+                "id": "GO_001",
+                "type": "text",
+                "name": "Word 01",
+                "planet": "Earth",
+                "latitude": 20.3276,
+                "longitude": 38.4139,
+                "altitude": 0,
+                "scale": 250000.0,
+                "data": {
+                    "text": "TARGET #1",
+                    "em_gain": 1000.0,
+                    "em_frequency": 0.0
+                }
+            },
+            {
+                "id": "GO_002",
+                "type": "text",
+                "name": "Word 02",
+                "planet": "Earth",
+                "latitude": 130.3276,
+                "longitude": -4.587338,
+                "altitude": -58.789197,
+                "scale": 250000.0,
+                "data": {
+                    "text": "TARGET #2",
+                    "em_gain": 10000.0,
+                    "em_frequency": 0.0
+                }
+            },
+            {
+                "id": "GO_003",
+                "type": "text",
+                "name": "Word 03",
+                "planet": "Earth",
+                "latitude": 0.468603,
+                "longitude": 73.282957,
+                "altitude": 0,
+                "scale": 80000.0,
+                "data": {
+                    "text": "TARGET #3",
+                    "em_gain": 10000.0,
+                    "em_frequency": 1900.0
+                }
+            },
+            {
+                "id": "GO_004",
+                "type": "text",
+                "name": "Word 04",
+                "planet": "Earth",
+                "latitude": -1.065574,
+                "longitude": 32.957629,
+                "altitude": 0,
+                "scale": 100000.0,
+                "data": {
+                    "text": "TARGET #4",
+                    "em_gain": 10000.0,
+                    "em_frequency": 0.0
+                }
+            },
+            {
+                "id": "GO_005",
+                "type": "text",
+                "name": "Word 05",
+                "planet": "Earth",
+                "latitude": -21.804771,
+                "longitude": 114.222107,
+                "altitude": 0,
+                "scale": 250000.0,
+                "data": {
+                    "text": "TARGET #5",
+                    "em_gain": 10000.0,
+                    "em_frequency": 0.0
+                }
+            },
+            {
+                "id": "GO_006",
+                "type": "text",
+                "name": "Word 06",
+                "planet": "Earth",
+                "latitude": 0,
+                "longitude": 0,
+                "altitude": 0,
+                "scale": 150000.0,
+                "data": {
+                    "text": "TARGET #6",
+                    "em_gain": 10000.0,
+                    "em_frequency": 0.0
+                }
+            },
+            {
+                "id": "GO_007",
+                "type": "text",
+                "name": "Hidden Word",
+                "planet": "Sun",
+                "latitude": 10.4,
+                "longitude": 70.3,
+                "altitude": 0,
+                "scale": 127439768.0,
+                "data": {
+                    "text": "83 80 65 67 69 83 79 70 84 87 65 82 69 83 85 77 77 73 84 "
+                }
+            },
+            {
+                "id": "GO_008",
+                "type": "text",
+                "name": "Bonus Word",
+                "planet": "Moon",
+                "latitude": -0.6,
+                "longitude": 1.9,
+                "altitude": 32.3,
+                "scale": 1265845.125,
+                "data": {
+                    "text": "ALDRIN WAS HERE"
+                }
+            },
+            {
+                "id": "GO_009",
+                "type": "vessel",
+                "name": "Ship",
+                "planet": "Earth",
+                "latitude": -0.6,
+                "longitude": 1.9,
+                "altitude": 32.3,
+                "scale": 100,
+                "data": {
+                    "heading" : 90.0,
+                    "speed" : 15.0
+                }
+            }
+        ]
+    },
+    "events": [
+    ]
+}

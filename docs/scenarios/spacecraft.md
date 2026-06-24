@@ -435,6 +435,38 @@ The order of entries in `space_assets` determines the order spacecraft appear in
 
 ---
 
+## `neutral` (team-less shared craft)
+
+`assets.neutral[]` is an optional top-level list of spacecraft `id` values (from `assets.space[]`) that are spawned as **neutral** craft: a single shared instance each, owned by no team.
+
+```json
+"assets": {
+  "space": [
+    { "id": "SC_001", "name": "Microsat", ... },
+    { "id": "SC_HUB", "name": "Station",  ... }
+  ],
+  "collections": [
+    { "id": "Main", "space_assets": ["SC_001"] }
+  ],
+  "neutral": ["SC_HUB"]
+}
+```
+
+A neutral craft:
+
+- **Is spawned exactly once**, regardless of how many teams are in play (unlike a `collection` asset, which spawns a separate copy per team).
+- **Cannot be controlled by any team.** It has no ground controller, so no team can uplink commands to it, change its telemetry, or read its telemetry/configuration. Attempts to fetch its telemetry return an explicit error.
+- **Can be referenced as a target by every team.** It appears in each team's [`list_assets`](../api-reference/ground-requests.md#list_assets) flagged `"neutral": true` / `"controllable": false`, and its public component list (names + classes) is available via [`list_entity`](../api-reference/ground-requests.md#list_entity) to any team. This makes it a valid target for [relative pointing](../api-reference/spacecraft-commands.md), [rendezvous](../api-reference/spacecraft-commands.md), and [docking](../api-reference/spacecraft-commands.md) — for example a central station with one docking port per team to latch onto.
+- **Has a deterministic `asset_id`** derived from its scenario `id`, so it is stable across runs. It can be referenced either by that `asset_id` or directly by its scenario `id` string (e.g. `"SC_HUB"`) in the `spacecraft`/`target` argument of pointing, rendezvous and docking commands.
+
+Admin tooling retains full visibility of neutral craft (telemetry, components) for monitoring and debugging.
+
+| Key | JSON type | Description |
+| --- | --- | --- |
+| `neutral` | `string[]` | List of spacecraft `id` values (from `assets.space[]`) to spawn as single, shared, uncontrollable craft. Optional; omit or leave empty for none. |
+
+---
+
 ## Worked example
 
 A small but complete spacecraft definition — enough to copy/paste as a starting point:

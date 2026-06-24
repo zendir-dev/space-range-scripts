@@ -32,7 +32,7 @@ Each entry in `teams[]` is one team in the scenario. The order doesn't matter; t
 
 ## Notes
 
-- Teams can share a `collection` to share spacecraft, though that is rare in practice and complicates Q&A scoring.
+- Teams can share a `collection` to share spacecraft, though that is rare in practice and complicates Q&A scoring. Sharing a collection still spawns a **separate copy** per team. If you instead want a single, genuinely shared craft that no team controls (e.g. a central docking station), use [`assets.neutral`](spacecraft.md#neutral-team-less-shared-craft) — it spawns once and every team can reference it as a target.
 - Multiple teams can use the same `key` (Caesar key); it's per-team-scoped at the RF layer, so collisions don't cause cross-decryption.
 - `password` is the **strong** layer (XOR per byte against the password); don't reuse passwords between teams. The Caesar `key` is the weak layer used for over-the-air RF and is intended to be visible to anyone with an [`EM Sensor`](components.md#electromagnetic-sensor).
 - The number of teams is not bounded by the simulation, but practical exercises rarely exceed 12. Each team adds a ground controller, an MQTT credential set, and per-team telemetry bandwidth.
