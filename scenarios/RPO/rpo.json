@@ -90,7 +90,7 @@
                 "id": "SC_001",
                 "name": "Microsat",
                 "orbit": {
-                    "planet": "Earth",
+                    "planet": "Moon",
                     "values": [7100.0, 0.03, 39.0, 38.0, 156, 280.0],
                     "offset": [0.0, 0.0, 0.0, 0.0, 0.0, 0.01]
                 },
