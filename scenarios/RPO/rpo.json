@@ -364,7 +364,7 @@
                     "override_mass": true,
                     "mass": 63000.0,
                     "center_of_mass": [ 0.0, 0.0, 0.0 ],
-                    "inertia_tensor": [ [ 1000.0, 0.0, 0.0 ], [ 0.0, 1000.0, 0.0 ], [ 0.0, 0.0, 1000.0 ] ]
+                    "inertia_tensor": [ [ 1000000.0, 0.0, 0.0 ], [ 0.0, 1000000.0, 0.0 ], [ 0.0, 0.0, 1000000.0 ] ]
                 },
                 "visualization": {
                     "mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/GatewayCore/BP_Z_SC_GatewayCore_Chassis",
@@ -500,7 +500,7 @@
                         "class": "Docking Adapter",
                         "name": "Docking A",
                         "position": [ -0.005, 0.318, 0.002 ],
-                        "rotation": [ -90.0, 0.0, 0.0 ],
+                        "rotation": [ -90.0, 0.0, -90.0 ],
                         "data": {
                             "Mass": 5.0,
                             "Capture Distance": 0.05,
@@ -511,7 +511,7 @@
                         "class": "Docking Adapter",
                         "name": "Docking B",
                         "position": [ -1.503, 0.354, 0.002 ],
-                        "rotation": [ -90.0, 0.0, 0.0 ],
+                        "rotation": [ -90.0, 0.0, -90.0 ],
                         "data": {
                             "Mass": 5.0,
                             "Capture Distance": 0.05,
@@ -533,7 +533,7 @@
                         "class": "Docking Adapter",
                         "name": "Docking D",
                         "position": [ -1.506, -1.767, 0.0 ],
-                        "rotation": [ 90.0, 0.0, 0.0 ],
+                        "rotation": [ 90.0, 0.0, -90.0 ],
                         "data": {
                             "Mass": 5.0,
                             "Capture Distance": 0.05,
@@ -544,7 +544,7 @@
                         "class": "Docking Adapter",
                         "name": "Docking E",
                         "position": [ 0.004, -1.689, 0.004 ],
-                        "rotation": [ 90.0, 0.0, 0.0 ],
+                        "rotation": [ 90.0, 0.0, -90.0 ],
                         "data": {
                             "Mass": 5.0,
                             "Capture Distance": 0.05,
