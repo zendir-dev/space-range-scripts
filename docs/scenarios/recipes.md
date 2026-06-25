@@ -166,7 +166,7 @@ The matching `Target` strings for other components follow the table in [`events.
 
 Use when the brief is *"two spacecraft must rendezvous and dock"*. Both spacecraft need a `Docking Adapter`, the controller flag `enable_rpo: true`, and orbits chosen so the two paths intersect.
 
-**Starting docked / shared power:** If the exercise should begin with **both power buses already merged** (before or in addition to the `docking` command), add a `Power Interconnect` on each hull, wire each into that spacecraft's `power.bus` (typically `Battery` `out` → `Interconnect` `in`), and add **one** `power.interconnects` entry on either spacecraft pointing at the partner's asset **`name`** and interconnect `name`. Both spacecraft must be on the **same team** so Studio can resolve the target hull. See [spacecraft.md — Power interconnects](spacecraft.md#power-interconnects-powerinterconnects).
+**Starting docked / shared power:** If the exercise should begin with **both power buses already merged** (before or in addition to the `docking` command), add a `Power Interconnect` on each hull, wire each into that spacecraft's `power.bus` (typically `Battery` `out` → `Interconnect` `in`), and add **one** power-interconnect entry to the top-level [`docking`](spacecraft.md#docking-start-the-scenario-already-docked) block linking the two. See [spacecraft.md — Power interconnects](spacecraft.md#power-interconnects).
 
 ```json
 "assets": {
@@ -191,9 +191,6 @@ Use when the brief is *"two spacecraft must rendezvous and dock"*. Both spacecra
         "bus": [
           { "source_component": "Solar Panel", "source_terminal": "out", "target_component": "Battery", "target_terminal": "out" },
           { "source_component": "Battery", "source_terminal": "out", "target_component": "Interconnect", "target_terminal": "in" }
-        ],
-        "interconnects": [
-          { "source_component": "Interconnect", "target_spacecraft": "Bravo", "target_component": "Interconnect" }
         ]
       }
     },
@@ -224,12 +221,15 @@ Use when the brief is *"two spacecraft must rendezvous and dock"*. Both spacecra
     { "id": "Chaser", "space_assets": ["ALPHA"] },
     { "id": "Target", "space_assets": ["BRAVO"] }
   ]
-}
+},
+"docking": [
+  { "from_team": 111111, "from_asset": "ALPHA", "from_target": "Interconnect", "to_team": 111111, "to_asset": "BRAVO", "to_target": "Interconnect" }
+]
 ```
 
 The two spacecraft share `semi_major_axis` and `inclination` so they're on the same orbital plane; the chaser has a `true_anomaly` offset to give it the rendezvous gap.
 
-The sample `power.interconnects` block assumes **both hulls are operated by the same team** (so `target_spacecraft: "Bravo"` resolves). For two-team RPO with separate credentials, omit `interconnects` and rely on `docking` when the vehicles meet; use interconnects only when the brief needs a **shared bus at t=0** on one team.
+The `docking` power-interconnect entry above addresses both hulls by team + asset (here both on team `111111`). If the two craft are on **different teams**, drop `from_asset`/`to_asset` and use `from_team`/`to_team` directly. Either way the two power buses merge at t=0; use this only when the brief needs a **shared bus at start**.
 
 ---
 

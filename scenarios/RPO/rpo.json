@@ -132,15 +132,14 @@
                         {
                             "source_component": "Battery",
                             "source_terminal": "out",
-                            "target_component": "Interconnect",
+                            "target_component": "Charge Switch",
                             "target_terminal": "in"
-                        }
-                    ],
-                    "interconnects": [
+                        },
                         {
-                            "source_component": "Interconnect",
-                            "target_spacecraft": "Cubesat",
-                            "target_component": "Interconnect"
+                            "source_component": "Charge Switch",
+                            "source_terminal": "out",
+                            "target_component": "Power Interconnect",
+                            "target_terminal": "in"
                         }
                     ]
                 },
@@ -227,7 +226,7 @@
                         "position": [ 0.0, 0.0, 0.2 ],
                         "data": {
                             "Nominal Capacity": 125.0,
-                            "Charge Fraction": 0.5,
+                            "Charge Fraction": 0.2,
                             "Mass": 5.0
                         }
                     },
@@ -350,8 +349,19 @@
                         }
                     },
                     {
+                        "class": "Power Switch",
+                        "name": "Charge Switch",
+                        "mesh": "None",
+                        "enabled": true,
+                        "data": {
+                            "Is Open": true,
+                            "Resistance": 0.01,
+                            "Mass": 0.2
+                        }
+                    },
+                    {
                         "class": "Power Interconnect",
-                        "name": "Interconnect"
+                        "name": "Power Interconnect"
                     }
                 ]
             },
@@ -392,12 +402,11 @@
                             "target_component": "Battery",
                             "target_terminal": "out"
                         },
-                        {
-                            "source_component": "Battery",
-                            "source_terminal": "out",
-                            "target_component": "Interconnect",
-                            "target_terminal": "in"
-                        }
+                        { "source_component": "Battery", "source_terminal": "out", "target_component": "Power Interconnect A", "target_terminal": "in" },
+                        { "source_component": "Battery", "source_terminal": "out", "target_component": "Power Interconnect B", "target_terminal": "in" },
+                        { "source_component": "Battery", "source_terminal": "out", "target_component": "Power Interconnect C", "target_terminal": "in" },
+                        { "source_component": "Battery", "source_terminal": "out", "target_component": "Power Interconnect D", "target_terminal": "in" },
+                        { "source_component": "Battery", "source_terminal": "out", "target_component": "Power Interconnect E", "target_terminal": "in" }
                     ]
                 },
                 "fuel": {
@@ -448,9 +457,9 @@
                         "mesh": "None",
                         "position": [ 0.0, 0.0, 0.05 ],
                         "data": {
-                            "Nominal Capacity": 125.0,
-                            "Charge Fraction": 0.5,
-                            "Mass": 5.0
+                            "Nominal Capacity": 5000.0,
+                            "Charge Fraction": 1.0,
+                            "Mass": 50.0
                         }
                     },
                     {
@@ -606,10 +615,11 @@
                         "position": [ 0.004, -1.689, 0.004 ],
                         "data": { "Mass": 0.5, "Is Bidirectional": true, "Vent To Space When Unconnected": false }
                     },
-                    {
-                        "class": "Power Interconnect",
-                        "name": "Interconnect"
-                    }
+                    { "class": "Power Interconnect", "name": "Power Interconnect A", "mesh": "None" },
+                    { "class": "Power Interconnect", "name": "Power Interconnect B", "mesh": "None" },
+                    { "class": "Power Interconnect", "name": "Power Interconnect C", "mesh": "None" },
+                    { "class": "Power Interconnect", "name": "Power Interconnect D", "mesh": "None" },
+                    { "class": "Power Interconnect", "name": "Power Interconnect E", "mesh": "None" }
                 ]
             }
         ],
@@ -632,7 +642,13 @@
         { "from_team": 222222, "from_target": "Fuel Interconnect", "to_asset": "SC_002", "to_target": "Fuel Interconnect B" },
         { "from_team": 333333, "from_target": "Fuel Interconnect", "to_asset": "SC_002", "to_target": "Fuel Interconnect C" },
         { "from_team": 444444, "from_target": "Fuel Interconnect", "to_asset": "SC_002", "to_target": "Fuel Interconnect D" },
-        { "from_team": 555555, "from_target": "Fuel Interconnect", "to_asset": "SC_002", "to_target": "Fuel Interconnect E" }
+        { "from_team": 555555, "from_target": "Fuel Interconnect", "to_asset": "SC_002", "to_target": "Fuel Interconnect E" },
+
+        { "from_team": 111111, "from_target": "Power Interconnect", "to_asset": "SC_002", "to_target": "Power Interconnect A" },
+        { "from_team": 222222, "from_target": "Power Interconnect", "to_asset": "SC_002", "to_target": "Power Interconnect B" },
+        { "from_team": 333333, "from_target": "Power Interconnect", "to_asset": "SC_002", "to_target": "Power Interconnect C" },
+        { "from_team": 444444, "from_target": "Power Interconnect", "to_asset": "SC_002", "to_target": "Power Interconnect D" },
+        { "from_team": 555555, "from_target": "Power Interconnect", "to_asset": "SC_002", "to_target": "Power Interconnect E" }
     ],
     "objects": {
         "ground": [

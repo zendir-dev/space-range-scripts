@@ -181,7 +181,6 @@ Every spacecraft has an on-board **power bus**. The optional `power` block defin
 | Key | JSON type | Description |
 | --- | --- | --- |
 | `bus` | `object[]` | Ordered list of on-board connections. Each object is one directed link on that spacecraft's bus. |
-| `interconnects` | `object[]` | Optional cross-spacecraft power links (see [Power interconnects](#power-interconnects-powerinterconnects)). |
 
 Per-connection fields (names must match component `name` values on **that** spacecraft):
 
@@ -194,7 +193,7 @@ Per-connection fields (names must match component `name` values on **that** spac
 
 If either component name cannot be found, Studio logs a warning and **skips** that connection; other connections still apply.
 
-Author `power` as a nested object on each spacecraft entry. Studio reads `power.bus` as an ordered list of connections and `power.interconnects` (when present) as cross-spacecraft links.
+Author `power` as a nested object on each spacecraft entry. Studio reads `power.bus` as an ordered list of on-board connections. Cross-spacecraft power links are declared separately in the top-level [`docking`](#docking-start-the-scenario-already-docked) block (see [Power interconnects](#power-interconnects)).
 
 ### Default behaviour when `bus` is empty or omitted
 
@@ -292,7 +291,7 @@ See `Testing/test_fuel_scenario.json` — two tanks, three valves, one pump, thr
 
 ### Fuel interconnects
 
-A **Fuel Interconnect** bridges two spacecraft **fuel buses** so propellant can be transferred across a **docked** interface (for example a tanker or station topping up a client). Unlike [`power.interconnects`](#power-interconnects-powerinterconnects), fuel links are **not** declared per-spacecraft: each interconnect is bonded to a local fuel object on its own `fuel.bus`, and the cross-spacecraft pairing is declared **once** in the top-level [`docking`](#docking-start-the-scenario-already-docked) block as a fuel-interconnect connection.
+A **Fuel Interconnect** bridges two spacecraft **fuel buses** so propellant can be transferred across a **docked** interface (for example a tanker or station topping up a client). Like [power interconnects](#power-interconnects), fuel links are declared in the top-level [`docking`](#docking-start-the-scenario-already-docked) block, not per-spacecraft: each interconnect is bonded to a local fuel object on its own `fuel.bus`, and the cross-spacecraft pairing is declared **once** in `docking` as a fuel-interconnect connection.
 
 #### Component on each spacecraft
 
@@ -369,89 +368,75 @@ To feed several clients from a **single station tank** (the RPO scenario: five t
 
 `Vent To Space When Unconnected: false` on the station interconnects means an idle port simply stops flow instead of venting (and lets you drop the per-client valves). See `scenarios/RPO/rpo.json` for the full five-port build.
 
-### Power interconnects (`power.interconnects`)
+### Power interconnects
 
-A **Power Interconnect** bridges two spacecraft **power buses** when the scenario loads so they start as one electrical network (for example a **pre-docked** pair before RPO/docking choreography is modelled separately). Cross links are applied **after** every spacecraft in the scenario exists.
+A **Power Interconnect** bridges two spacecraft **power buses** so they share one electrical network across a docked interface (for example a hub charging a docked client). It is the power analogue of the [Fuel interconnect](#fuel-interconnects): each interconnect is wired onto its local `power.bus`, and the cross-spacecraft pairing is declared **once** in the top-level [`docking`](#docking-start-the-scenario-already-docked) block as a power-interconnect connection.
 
-#### Component on both spacecraft
+A `Power Interconnect` is itself a switch (it extends `Power Switch`), so it can be opened to break the bridge.
 
-Add a `Power Interconnect` component to **`components[]` on each spacecraft** that should share power:
+#### Component on each spacecraft
+
+Add a `Power Interconnect` to **`components[]`** on every hull that should share power:
 
 ```json
 { "class": "Power Interconnect", "name": "Interconnect" }
 ```
 
-Names must match what you use in `power.bus` and `power.interconnects` (here `"Interconnect"`).
+On a hub, add **one interconnect per client** (e.g. `Interconnect A`…`E`).
 
-#### Wire each interconnect onto its local bus first
+#### Wire each interconnect onto its local bus
 
-Before any cross-spacecraft link, **each** interconnect must be part of that spacecraft's bus — typically fed from a battery or other power source:
-
-```json
-{
-  "source_component": "Battery",
-  "source_terminal": "out",
-  "target_component": "Interconnect",
-  "target_terminal": "in"
-}
-```
-
-Upstream neighbours connect to the interconnect **`in`** terminal on the same bus. The interconnect's **`out`** terminal is used for downstream loads on the same bus; the cross-spacecraft bridge to the partner hull is created by `power.interconnects[]`, not by an extra `bus[]` row to the other spacecraft.
-
-If the interconnect is not wired on the local bus first, the cross-spacecraft link is **skipped** and Studio logs a warning.
-
-#### Declare the cross-spacecraft link on **one** spacecraft only
-
-Add an `interconnects` array beside `bus` inside the same `power` object. **One entry is enough** — Studio links the pair once; you do not repeat the block on the other spacecraft.
+Each interconnect must be part of that spacecraft's `power.bus`, typically fed from a battery. Put a `Power Switch` in front of it if you want the link gated locally (the RPO client does this so each team chooses when to charge):
 
 ```json
 "power": {
   "bus": [
     { "source_component": "Solar Panel +X", "source_terminal": "out", "target_component": "Battery", "target_terminal": "out" },
     { "source_component": "Solar Panel -X", "source_terminal": "out", "target_component": "Battery", "target_terminal": "out" },
-    { "source_component": "Battery", "source_terminal": "out", "target_component": "Interconnect", "target_terminal": "in" }
-  ],
-  "interconnects": [
-    {
-      "source_component": "Interconnect",
-      "target_spacecraft": "Bravo",
-      "target_component": "Interconnect"
-    }
+    { "source_component": "Battery", "source_terminal": "out", "target_component": "Charge Switch", "target_terminal": "in" },
+    { "source_component": "Charge Switch", "source_terminal": "out", "target_component": "Interconnect", "target_terminal": "in" }
   ]
 }
 ```
 
-| Key | JSON type | Description |
-| --- | --- | --- |
-| `interconnects` | `object[]` | Cross-bus links to apply after local `bus` wiring. Optional; default is no links. |
+If the interconnect is not wired on its local bus first, the cross-spacecraft link is skipped with a warning.
 
-Per-interconnect fields:
+#### Link the interconnects in the `docking` block
 
-| Key | JSON type | Description |
-| --- | --- | --- |
-| `source_component` | `string` | **Local** interconnect `name` on the spacecraft that owns this `power` block. |
-| `target_spacecraft` | `string` | **`name` from the target's `assets.space[]` entry** (e.g. `"Bravo"`), **not** the collection id (`ALPHA`) and not the runtime hex asset id. |
-| `target_component` | `string` | Interconnect `name` on the target spacecraft. |
+Declare the cross-spacecraft link in the top-level [`docking`](#docking-start-the-scenario-already-docked) array as a **power-interconnect connection** — both endpoints name a `Power Interconnect`, so Studio **links** them (rather than docking them) when the scenario is built:
 
-Studio resolves the target hull as **`{team display name} + " " + {target_spacecraft}`** (e.g. team `Team Blue` + asset `Bravo` → `"Team Blue Bravo"`). If that actor is not found, the link is skipped with a warning.
+```json
+"docking": [
+  { "from_team": 111111, "from_target": "Interconnect", "to_asset": "SC_HUB", "to_target": "Interconnect A" }
+]
+```
+
+Address each craft **by team** (`from_team`/`to_team`) or **by asset** (`from_asset`/`to_asset`, e.g. a neutral hub) — same rules as the [`docking`](#docking-start-the-scenario-already-docked) section.
 
 #### Requirements and restrictions
 
 | Rule | Detail |
 | --- | --- |
-| **Same team** | Both spacecraft must belong to the **same team** (same `teams[]` entry / collection the operator uses). Interconnects do not link across opposing teams or separate team identities. |
-| **Both hulls need an interconnect** | Each spacecraft must have a `Power Interconnect` component; `source_component` and `target_component` must name those components. |
-| **Local bus wiring on both sides** | Each interconnect must already appear on its own `power.bus` before the cross link is applied. |
-| **One `interconnects[]` row** | Define the link on **one** spacecraft only; Studio pairs the two interconnects once. |
-| **Different spacecraft** | Cannot link two interconnects on the **same** spacecraft. |
-| **One partner each** | Each interconnect may pair with at most one partner at load time. |
-| **Target must exist** | The target spacecraft must be defined in `assets.space[]` and assigned to the same team; Studio resolves it by team display name plus asset `name`. |
+| **Interconnect on each side** | Both endpoints named in the connection must be `Power Interconnect` components. |
+| **Local bus wiring** | Each interconnect must already appear on its own `power.bus` before the link is applied. |
+| **Linked, not derived** | The pairing is **explicit** in the `docking` block; it is not inferred from docking adapters. |
+| **Cross-team / neutral OK** | A neutral hub (addressed by `to_asset`) and clients on different teams link fine (the RPO hub charges all five teams this way). |
 
-Failed lookups (missing target name, wrong team, missing component, non-interconnect class) log a warning and **skip** that row; other scenario content still loads.
+#### Recipe: hub charges many clients
 
-#### Docking / RPO scenarios
+The RPO scenario starts each team's client battery low (`Charge Fraction: 0.2`) and lets it top up from the neutral hub's large battery:
 
-For exercises that start **physically docked** or share a depot bus (e.g. `Docking_Procedure`), add matching interconnect components on chaser and target, wire each into its local `power.bus`, and declare **one** `interconnects` entry so both buses merge at t=0. See [Recipe 4 — Docking / RPO](recipes.md#recipe-4--docking--rpo-exercise) and [Power Interconnect](components.md#power-interconnect).
+1. **Hub (`SC_002`, neutral):** one large `Battery`, then **one `Power Interconnect` per client** (`Interconnect A`…`E`), each fed from the battery on `power.bus`.
+2. **Each client (`SC_001`):** `Battery` → `Charge Switch` (a `Power Switch` that **starts open**, `Is Open: true`) → `Interconnect`. With the switch open no current flows; the team **closes** it (`Is Open: false`) to charge from the hub.
+3. **`docking` block:** one power-interconnect entry per team, each addressing the neutral hub by `to_asset`:
+
+```json
+"docking": [
+  { "from_team": 111111, "from_target": "Interconnect", "to_asset": "SC_002", "to_target": "Interconnect A" }
+]
+```
+
+See `scenarios/RPO/rpo.json` for the full five-client build.
 
 ---
 
@@ -547,13 +532,15 @@ Admin tooling retains full visibility of neutral craft (telemetry, components) f
 
 - **Two docking adapters** → the `from` craft is physically placed so its adapter mates with the `to` port, then the two are **docked**.
 - **Two fuel interconnects** → the two interconnects are **linked** so fuel can transfer across the interface (see [Fuel interconnects](#fuel-interconnects)).
+- **Two power interconnects** → the two interconnects are **linked** so the power buses bridge across the interface (see [Power interconnects](#power-interconnects)).
 
-The classic use is a central neutral hub with one port per team, where every team begins latched on (and optionally plumbed for fuel).
+The classic use is a central neutral hub with one port per team, where every team begins latched on (and optionally plumbed for fuel and power).
 
 ```json
 "docking": [
   { "from_team": 111111, "from_target": "Docking Adapter",  "to_asset": "SC_HUB", "to_target": "Docking A" },
-  { "from_team": 111111, "from_target": "Fuel Interconnect", "to_asset": "SC_HUB", "to_target": "Fuel Interconnect A" }
+  { "from_team": 111111, "from_target": "Fuel Interconnect", "to_asset": "SC_HUB", "to_target": "Fuel Interconnect A" },
+  { "from_team": 111111, "from_target": "Interconnect",      "to_asset": "SC_HUB", "to_target": "Interconnect A" }
 ]
 ```
 
@@ -570,7 +557,7 @@ For a docking-adapter pair Studio finds the `from` craft, **physically places it
 
 Notes:
 
-- For docking, **both** endpoints must be `Docking Adapter` components and the `from` craft needs `controller.enable_rpo: true` for docking to operate during the run. For fuel links, **both** endpoints must be `Fuel Interconnect` components. A mismatched pair (e.g. an adapter and an interconnect) logs a warning and is skipped.
+- For docking, **both** endpoints must be `Docking Adapter` components and the `from` craft needs `controller.enable_rpo: true` for docking to operate during the run. For fuel links, **both** endpoints must be `Fuel Interconnect` components; for power links, **both** must be `Power Interconnect` components. A mismatched pair (e.g. an adapter and an interconnect) logs a warning and is skipped.
 - The placement runs **once**, during scenario construction. Reloading a saved simulation restores the existing docked hierarchy instead of re-placing, so docking entries are skipped for craft that are already docked.
 - A docked pair becomes a single rigid body, with the heavier craft acting as the hub. Teams can later separate using the normal undock command.
 
@@ -578,10 +565,10 @@ Notes:
 | --- | --- | --- | --- |
 | `from_team` | `int` | one of team/asset | Team id of the `from` endpoint. Preferred when present. |
 | `from_asset` | `string` | one of team/asset | Scenario `id` / runtime `asset_id` of the `from` craft. Used when `from_team` is absent, or as a disambiguator within a team. |
-| `from_target` | `string` | yes | Name of the component (`Docking Adapter` or `Fuel Interconnect`) on the `from` craft. |
+| `from_target` | `string` | yes | Name of the component (`Docking Adapter`, `Fuel Interconnect`, or `Power Interconnect`) on the `from` craft. |
 | `to_team` | `int` | one of team/asset | Team id of the `to` endpoint. Preferred when present. |
 | `to_asset` | `string` | one of team/asset | Scenario `id` / runtime `asset_id` of the `to` craft (e.g. a neutral hub). Used when `to_team` is absent, or as a disambiguator within a team. |
-| `to_target` | `string` | yes | Name of the component (`Docking Adapter` or `Fuel Interconnect`) on the `to` craft. |
+| `to_target` | `string` | yes | Name of the component (`Docking Adapter`, `Fuel Interconnect`, or `Power Interconnect`) on the `to` craft. |
 | `capture_distance` | `number` | no | [m] Capture distance used when establishing a dock (docking-adapter entries only). Default `0.5`. |
 | `capture_angle` | `number` | no | [deg] Capture angle used when establishing a dock (docking-adapter entries only). Default `5.0`. |
 

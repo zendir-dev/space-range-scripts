@@ -724,7 +724,7 @@ A **Fuel Interconnect** is a passive fuel node that bonds to **one local fuel ob
 
 ## Power Interconnect
 
-A **Power Interconnect** is a power-bus connector that can **link to another interconnect on a different spacecraft**, merging the two buses into one electrical network when the scenario starts.
+A **Power Interconnect** is a power-bus connector that can **link to another interconnect on a different spacecraft**, merging the two buses into one electrical network. It extends `Power Switch`, so it is itself a switch (`Is Open`) that can break the bridge. It is the power analogue of the [Fuel Interconnect](#fuel-interconnect).
 
 ```json
 {
@@ -733,22 +733,20 @@ A **Power Interconnect** is a power-bus connector that can **link to another int
 }
 ```
 
-No class-specific `data` keys are required for typical scenarios.
+No class-specific `data` keys are required for typical scenarios (it inherits `Is Open`, `Resistance`, etc. from [Power Switch](#power-switch)).
 
 ### Terminal usage (same spacecraft)
 
 | Terminal | Wiring |
 | --- | --- |
 | **`in`** | Upstream components on **this** bus connect **to** the interconnect here (e.g. `Battery` `out` → `Interconnect` `in`). Required before a cross-spacecraft link. |
-| **`out`** | Used for downstream loads on the same bus (series continuation). The cross-spacecraft bridge to the partner bus is created by `power.interconnects[]`, not by an extra `bus[]` row to the other hull. |
-
-Wire upstream feeds into **`in`**; use **`out`** for downstream loads on the same bus and for the partner link declared in `interconnects`.
+| **`out`** | Used for downstream loads on the same bus (series continuation). The cross-spacecraft bridge to the partner bus is created by the `docking` link, not by an extra `bus[]` row to the other hull. |
 
 ### Cross-spacecraft link (scenario JSON)
 
-Configure in the owning spacecraft's `power.interconnects[]` (not in `components[]`). Full rules, team matching, and a worked example: [spacecraft.md — Power interconnects](spacecraft.md#power-interconnects-powerinterconnects).
+Link two interconnects in the top-level [`docking`](spacecraft.md#docking-start-the-scenario-already-docked) block as a power-interconnect connection — `{ "from_team": 111111, "from_target": "Interconnect", "to_asset": "SC_HUB", "to_target": "Interconnect A" }`. Both endpoints name a `Power Interconnect`, so Studio links (rather than docks) them; address each craft by team (`from_team`/`to_team`) or asset (`from_asset`/`to_asset`, e.g. a neutral hub). Full rules and a hub recipe: [spacecraft.md — Power interconnects](spacecraft.md#power-interconnects).
 
-**Suggested use:** docking / depot scenarios where two hulls should **start** with a shared power network (e.g. `Docking_Procedure`) before or alongside RPO commands.
+**Suggested use:** docking / depot scenarios where two hulls should **start** with a shared power network — e.g. the RPO hub charging docked clients.
 
 ---
 
