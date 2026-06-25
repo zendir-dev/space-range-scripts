@@ -132,12 +132,6 @@
                         {
                             "source_component": "Battery",
                             "source_terminal": "out",
-                            "target_component": "Charge Switch",
-                            "target_terminal": "in"
-                        },
-                        {
-                            "source_component": "Charge Switch",
-                            "source_terminal": "out",
                             "target_component": "Power Interconnect",
                             "target_terminal": "in"
                         }
@@ -349,19 +343,12 @@
                         }
                     },
                     {
-                        "class": "Power Switch",
-                        "name": "Charge Switch",
-                        "mesh": "None",
-                        "enabled": true,
+                        "class": "Power Interconnect",
+                        "name": "Power Interconnect",
                         "data": {
                             "Is Open": true,
-                            "Resistance": 0.01,
                             "Mass": 0.2
                         }
-                    },
-                    {
-                        "class": "Power Interconnect",
-                        "name": "Power Interconnect"
                     }
                 ]
             },
@@ -459,6 +446,7 @@
                         "data": {
                             "Nominal Capacity": 5000.0,
                             "Charge Fraction": 1.0,
+                            "Nominal Voltage": 240.0,
                             "Mass": 50.0
                         }
                     },
