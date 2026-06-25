@@ -4,7 +4,7 @@
 		"description": "In this scenario, each team's spacecraft's are able to perform RPO operations with a central hub spacecraft."
 	},
     "simulation": {
-        "epoch": "2026/02/02 08:00:00",
+        "epoch": "2026/02/14 08:00:00",
         "speed": 5.0,
         "step_size": 0.1,
         "integrator": "Euler",
@@ -357,7 +357,7 @@
                 "name": "Hub",
                 "orbit": {
                     "planet": "Moon",
-                    "values": [10945.834, 0.826, 46.8, 134.0037, 172.7998, 213.12009],
+                    "values": [14753.33, 0.864, 46.8, 325.41999, 142.5597, 173.23],
                     "offset": [0.0, 0.0, 3.0, 0.0, 0.0, 0.01]
                 },
                 "physics": {
