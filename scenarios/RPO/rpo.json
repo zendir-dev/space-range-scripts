@@ -113,7 +113,7 @@
                     "reset_interval": 60.0,
                     "jamming_multiplier": 100.0,
                     "enable_rpo": true,
-					"enable_intercept": true
+					"enable_intercept": false
                 },
                 "power": {
                     "bus": [
@@ -141,6 +141,22 @@
                             "source_component": "Interconnect",
                             "target_spacecraft": "Cubesat",
                             "target_component": "Interconnect"
+                        }
+                    ]
+                },
+                "fuel": {
+                    "bus": [
+                        {
+                            "source_component": "Fuel Interconnect",
+                            "source_terminal": "out",
+                            "target_component": "Fill Valve",
+                            "target_terminal": "in"
+                        },
+                        {
+                            "source_component": "Fill Valve",
+                            "source_terminal": "out",
+                            "target_component": "Fuel Tank",
+                            "target_terminal": "in"
                         }
                     ]
                 },
@@ -297,6 +313,43 @@
                         }
                     },
                     {
+                        "class": "Fuel Source",
+                        "name": "Fuel Tank",
+                        "mesh": "None",
+                        "enabled": true,
+                        "position": [ 0.0, 0.0, 0.15 ],
+                        "data": {
+                            "Capacity": 80.0,
+                            "Amount": 0.0,
+                            "Dry Mass": 5.0,
+                            "Maximum Outgoing Flow Rate": 2.0,
+                            "Desired Ingoing Flow Rate": 0.2
+                        }
+                    },
+                    {
+                        "class": "Fuel Valve",
+                        "name": "Fill Valve",
+                        "mesh": "None",
+                        "enabled": true,
+                        "data": {
+                            "Commanded Percent Open": 0.0,
+                            "Max Flow Rate": 2.0,
+                            "Mass": 0.4
+                        }
+                    },
+                    {
+                        "class": "Fuel Interconnect",
+                        "name": "Fuel Interconnect",
+                        "mesh": "None",
+                        "enabled": true,
+                        "position": [ 0.0, 0.36, -0.015 ],
+                        "data": {
+                            "Mass": 0.5,
+                            "Is Bidirectional": true,
+                            "Vent To Space When Unconnected": false
+                        }
+                    },
+                    {
                         "class": "Power Interconnect",
                         "name": "Interconnect"
                     }
@@ -329,7 +382,7 @@
                     "reset_interval": 60.0,
                     "jamming_multiplier": 100.0,
                     "enable_rpo": true,
-					"enable_intercept": true
+					"enable_intercept": false
                 },
                 "power": {
                     "bus": [
@@ -345,6 +398,20 @@
                             "target_component": "Interconnect",
                             "target_terminal": "in"
                         }
+                    ]
+                },
+                "fuel": {
+                    "bus": [
+                        { "source_component": "Main Fuel Tank", "source_terminal": "out", "target_component": "Valve A", "target_terminal": "in" },
+                        { "source_component": "Valve A", "source_terminal": "out", "target_component": "Fuel Interconnect A", "target_terminal": "in" },
+                        { "source_component": "Main Fuel Tank", "source_terminal": "out", "target_component": "Valve B", "target_terminal": "in" },
+                        { "source_component": "Valve B", "source_terminal": "out", "target_component": "Fuel Interconnect B", "target_terminal": "in" },
+                        { "source_component": "Main Fuel Tank", "source_terminal": "out", "target_component": "Valve C", "target_terminal": "in" },
+                        { "source_component": "Valve C", "source_terminal": "out", "target_component": "Fuel Interconnect C", "target_terminal": "in" },
+                        { "source_component": "Main Fuel Tank", "source_terminal": "out", "target_component": "Valve D", "target_terminal": "in" },
+                        { "source_component": "Valve D", "source_terminal": "out", "target_component": "Fuel Interconnect D", "target_terminal": "in" },
+                        { "source_component": "Main Fuel Tank", "source_terminal": "out", "target_component": "Valve E", "target_terminal": "in" },
+                        { "source_component": "Valve E", "source_terminal": "out", "target_component": "Fuel Interconnect E", "target_terminal": "in" }
                     ]
                 },
                 "components": [
@@ -488,6 +555,58 @@
                         }
                     },
                     {
+                        "class": "Fuel Source",
+                        "name": "Main Fuel Tank",
+                        "mesh": "None",
+                        "position": [ 0.0, 0.0, 0.0 ],
+                        "data": {
+                            "Capacity": 500.0,
+                            "Amount": 500.0,
+                            "Dry Mass": 40.0,
+                            "Maximum Outgoing Flow Rate": 10.0
+                        }
+                    },
+                    { "class": "Fuel Valve", "name": "Valve A", "mesh": "None", "data": { "Commanded Percent Open": 1.0, "Max Flow Rate": 2.0, "Mass": 0.4 } },
+                    { "class": "Fuel Valve", "name": "Valve B", "mesh": "None", "data": { "Commanded Percent Open": 1.0, "Max Flow Rate": 2.0, "Mass": 0.4 } },
+                    { "class": "Fuel Valve", "name": "Valve C", "mesh": "None", "data": { "Commanded Percent Open": 1.0, "Max Flow Rate": 2.0, "Mass": 0.4 } },
+                    { "class": "Fuel Valve", "name": "Valve D", "mesh": "None", "data": { "Commanded Percent Open": 1.0, "Max Flow Rate": 2.0, "Mass": 0.4 } },
+                    { "class": "Fuel Valve", "name": "Valve E", "mesh": "None", "data": { "Commanded Percent Open": 1.0, "Max Flow Rate": 2.0, "Mass": 0.4 } },
+                    {
+                        "class": "Fuel Interconnect",
+                        "name": "Fuel Interconnect A",
+                        "mesh": "None",
+                        "position": [ -0.005, 0.318, 0.002 ],
+                        "data": { "Mass": 0.5, "Is Bidirectional": true, "Vent To Space When Unconnected": false }
+                    },
+                    {
+                        "class": "Fuel Interconnect",
+                        "name": "Fuel Interconnect B",
+                        "mesh": "None",
+                        "position": [ -1.503, 0.354, 0.002 ],
+                        "data": { "Mass": 0.5, "Is Bidirectional": true, "Vent To Space When Unconnected": false }
+                    },
+                    {
+                        "class": "Fuel Interconnect",
+                        "name": "Fuel Interconnect C",
+                        "mesh": "None",
+                        "position": [ -2.109, -0.003, 0.006 ],
+                        "data": { "Mass": 0.5, "Is Bidirectional": true, "Vent To Space When Unconnected": false }
+                    },
+                    {
+                        "class": "Fuel Interconnect",
+                        "name": "Fuel Interconnect D",
+                        "mesh": "None",
+                        "position": [ -1.506, -1.767, 0.0 ],
+                        "data": { "Mass": 0.5, "Is Bidirectional": true, "Vent To Space When Unconnected": false }
+                    },
+                    {
+                        "class": "Fuel Interconnect",
+                        "name": "Fuel Interconnect E",
+                        "mesh": "None",
+                        "position": [ 0.004, -1.689, 0.004 ],
+                        "data": { "Mass": 0.5, "Is Bidirectional": true, "Vent To Space When Unconnected": false }
+                    },
+                    {
                         "class": "Power Interconnect",
                         "name": "Interconnect"
                     }
@@ -503,11 +622,17 @@
         "neutral": ["SC_002"]
     },
     "docking": [
-        { "team": 111111, "adapter": "Docking Adapter", "target": "SC_002", "target_component": "Docking A" },
-        { "team": 222222, "adapter": "Docking Adapter", "target": "SC_002", "target_component": "Docking B" },
-        { "team": 333333, "adapter": "Docking Adapter", "target": "SC_002", "target_component": "Docking C" },
-        { "team": 444444, "adapter": "Docking Adapter", "target": "SC_002", "target_component": "Docking D" },
-        { "team": 555555, "adapter": "Docking Adapter", "target": "SC_002", "target_component": "Docking E" }
+        { "from_team": 111111, "from_target": "Docking Adapter", "to_asset": "SC_002", "to_target": "Docking A" },
+        { "from_team": 222222, "from_target": "Docking Adapter", "to_asset": "SC_002", "to_target": "Docking B" },
+        { "from_team": 333333, "from_target": "Docking Adapter", "to_asset": "SC_002", "to_target": "Docking C" },
+        { "from_team": 444444, "from_target": "Docking Adapter", "to_asset": "SC_002", "to_target": "Docking D" },
+        { "from_team": 555555, "from_target": "Docking Adapter", "to_asset": "SC_002", "to_target": "Docking E" },
+
+        { "from_team": 111111, "from_target": "Fuel Interconnect", "to_asset": "SC_002", "to_target": "Fuel Interconnect A" },
+        { "from_team": 222222, "from_target": "Fuel Interconnect", "to_asset": "SC_002", "to_target": "Fuel Interconnect B" },
+        { "from_team": 333333, "from_target": "Fuel Interconnect", "to_asset": "SC_002", "to_target": "Fuel Interconnect C" },
+        { "from_team": 444444, "from_target": "Fuel Interconnect", "to_asset": "SC_002", "to_target": "Fuel Interconnect D" },
+        { "from_team": 555555, "from_target": "Fuel Interconnect", "to_asset": "SC_002", "to_target": "Fuel Interconnect E" }
     ],
     "objects": {
         "ground": [

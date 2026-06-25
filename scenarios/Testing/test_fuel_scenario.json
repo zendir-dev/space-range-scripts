@@ -1,7 +1,7 @@
 {
 	"metadata": {
 		"name": "Test Fuel Scenario",
-		"description": "Fuel-bus harness: two tanks (main + RCS), valves, a feed pump, and three cold-gas thrusters on explicit fuel.bus wiring. Minimal battery powers the pump motor. GEO over Earth, one ground station."
+		"description": "Cross-spacecraft fuel transfer: a Tanker servicer (depot tank -> transfer valve -> fuel interconnect) starts docked to a Microsat receiver (fuel interconnect -> fill valve -> main tank). Fuel crosses the docked link while the valve on each side is open. The Microsat also keeps a local fuel-bus harness (RCS tank, valves, feed pump, cold-gas thrusters). GEO over Earth, one ground station."
 	},
 	"simulation": {
 		"epoch": "2026/04/27 12:00:00",
@@ -119,6 +119,18 @@
 				"fuel": {
 					"bus": [
 						{
+							"source_component": "Fuel Interconnect",
+							"source_terminal": "out",
+							"target_component": "Fill Valve",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "Fill Valve",
+							"source_terminal": "out",
+							"target_component": "Main Tank",
+							"target_terminal": "in"
+						},
+						{
 							"source_component": "Main Tank",
 							"source_terminal": "out",
 							"target_component": "Main Valve",
@@ -174,9 +186,10 @@
 						],
 						"data": {
 							"Capacity": 50.0,
-							"Initial Fuel Mass": 45.0,
+							"Initial Fuel Mass": 20.0,
 							"Dry Mass": 8.0,
 							"Maximum Outgoing Flow Rate": 2.0,
+							"Desired Ingoing Flow Rate": 0.2,
 							"Mass": 8.0
 						}
 					},
@@ -195,6 +208,16 @@
 							"Dry Mass": 2.0,
 							"Maximum Outgoing Flow Rate": 0.5,
 							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Fuel Valve",
+						"name": "Fill Valve",
+						"enabled": true,
+						"data": {
+							"Commanded Percent Open": 1.0,
+							"Max Flow Rate": 2.0,
+							"Mass": 0.4
 						}
 					},
 					{
@@ -236,6 +259,43 @@
 							"Efficiency": 0.9,
 							"Is Pump Enabled": false,
 							"Mass": 1.5
+						}
+					},
+					{
+						"class": "Fuel Interconnect",
+						"name": "Fuel Interconnect",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.36,
+							-0.015
+						],
+						"data": {
+							"Mass": 0.5,
+							"Is Bidirectional": true,
+							"Vent To Space When Unconnected": false
+						}
+					},
+					{
+						"class": "Docking Adapter",
+						"name": "Docking Adapter",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.36,
+							-0.015
+						],
+						"rotation": [
+							-90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Mass": 5.0,
+							"Capture Distance": 0.05,
+							"Capture Angle": 20.0,
+							"Separation Force": 100.0,
+							"Separation Duration": 1.0
 						}
 					},
 					{
@@ -342,15 +402,226 @@
 						}
 					}
 				]
+			},
+			{
+				"id": "SC_FUEL_TANKER",
+				"name": "Tanker",
+				"orbit": {
+					"planet": "Earth",
+					"values": [
+						42164.0,
+						0.0,
+						0.0,
+						0.0,
+						0.0,
+						0.0
+					],
+					"offset": [
+						0.0,
+						0.0,
+						0.0,
+						0.0,
+						0.0,
+						0.0
+					]
+				},
+				"physics": {
+					"override_mass": true,
+					"mass": 220.0,
+					"center_of_mass": [
+						0.0,
+						0.0,
+						0.0
+					],
+					"inertia_tensor": [
+						[
+							24.0,
+							0.0,
+							0.0
+						],
+						[
+							0.0,
+							24.0,
+							0.0
+						],
+						[
+							0.0,
+							0.0,
+							24.0
+						]
+					]
+				},
+				"visualization": {
+					"mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/ZenSat/BP_Z_SC_ZenSat_Chassis",
+					"scale": 1.0,
+					"offset": [
+						0.0,
+						0.0,
+						0.12
+					]
+				},
+				"controller": {
+					"safe_fraction": 0.1,
+					"capture_tax": 0.001,
+					"downlink_tax": 0.01,
+					"ping_interval": 20.0,
+					"reset_interval": 60.0,
+					"jamming_multiplier": 1.0,
+					"enable_rpo": false
+				},
+				"fuel": {
+					"bus": [
+						{
+							"source_component": "Depot Tank",
+							"source_terminal": "out",
+							"target_component": "Transfer Valve",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "Transfer Valve",
+							"source_terminal": "out",
+							"target_component": "Fuel Interconnect",
+							"target_terminal": "in"
+						}
+					]
+				},
+				"components": [
+					{
+						"class": "Fuel Source",
+						"name": "Depot Tank",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.15
+						],
+						"data": {
+							"Capacity": 200.0,
+							"Initial Fuel Mass": 180.0,
+							"Dry Mass": 20.0,
+							"Maximum Outgoing Flow Rate": 5.0,
+							"Mass": 20.0
+						}
+					},
+					{
+						"class": "Fuel Valve",
+						"name": "Transfer Valve",
+						"enabled": true,
+						"data": {
+							"Commanded Percent Open": 1.0,
+							"Max Flow Rate": 5.0,
+							"Mass": 0.6
+						}
+					},
+					{
+						"class": "Fuel Interconnect",
+						"name": "Fuel Interconnect",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.36,
+							-0.015
+						],
+						"data": {
+							"Mass": 0.5,
+							"Is Bidirectional": true,
+							"Vent To Space When Unconnected": false
+						}
+					},
+					{
+						"class": "Docking Adapter",
+						"name": "Docking Adapter",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.36,
+							-0.015
+						],
+						"rotation": [
+							-90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Mass": 5.0,
+							"Capture Distance": 0.05,
+							"Capture Angle": 20.0,
+							"Separation Force": 100.0,
+							"Separation Duration": 1.0
+						}
+					},
+					{
+						"class": "Battery",
+						"name": "Battery",
+						"enabled": true,
+						"data": {
+							"Nominal Capacity": 40.0,
+							"Charge Fraction": 1.0,
+							"Mass": 4.0
+						}
+					},
+					{
+						"class": "Computer",
+						"name": "Computer",
+						"enabled": true,
+						"data": {
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Reaction Wheels",
+						"name": "Reaction Wheels",
+						"enabled": true,
+						"data": {
+							"Mass": 6.0
+						}
+					},
+					{
+						"class": "Receiver",
+						"name": "Receiver",
+						"enabled": true,
+						"data": {
+							"Antenna Gain": 3.0,
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Transmitter",
+						"name": "Transmitter",
+						"enabled": true,
+						"data": {
+							"Mass": 1.0
+						}
+					}
+				]
 			}
 		],
 		"collections": [
 			{
 				"id": "Main",
 				"space_assets": [
-					"SC_FUEL_TEST"
+					"SC_FUEL_TEST",
+					"SC_FUEL_TANKER"
 				]
 			}
 		]
-	}
+	},
+	"docking": [
+		{
+			"from_team": 111111,
+			"from_asset": "SC_FUEL_TANKER",
+			"from_target": "Docking Adapter",
+			"to_team": 111111,
+			"to_asset": "SC_FUEL_TEST",
+			"to_target": "Docking Adapter"
+		},
+		{
+			"from_team": 111111,
+			"from_asset": "SC_FUEL_TANKER",
+			"from_target": "Fuel Interconnect",
+			"to_team": 111111,
+			"to_asset": "SC_FUEL_TEST",
+			"to_target": "Fuel Interconnect"
+		}
+	]
 }

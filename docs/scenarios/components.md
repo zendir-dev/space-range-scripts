@@ -617,9 +617,10 @@ Static topology is authored in each spacecraft's `fuel.bus[]` (see [spacecraft.m
   "name": "Main Tank",
   "data": {
     "Capacity": 50.0,
-    "Initial Fuel Mass": 45.0,
+    "Amount": 45.0,
     "Dry Mass": 8.0,
     "Maximum Outgoing Flow Rate": 2.0,
+    "Desired Ingoing Flow Rate": 0.0,
     "Mass": 8.0
   }
 }
@@ -627,12 +628,15 @@ Static topology is authored in each spacecraft's `fuel.bus[]` (see [spacecraft.m
 
 | `data` key | Type | Default | Description |
 | --- | --- | --- | --- |
-| `Capacity` | `number` (kg) | `1.0` | Maximum propellant the tank can hold. |
-| `Initial Fuel Mass` | `number` (kg) | `0.0` | Propellant loaded at scenario start. |
-| `Amount` | `number` (kg) | — | Alias for initial mass (either key works). |
+| `Capacity` | `number` (kg) | `1.0` | Maximum propellant the tank can hold. **Always set this** — the `1.0` default is tiny and will cap fill/transfer immediately. |
+| `Amount` | `number` (kg) | `0.0` | Propellant loaded at scenario start. **Defaults to empty (`0.0`)**, so a supply/source tank must set it; a receiving tank typically starts at `0.0` (or partial). |
+| `Initial Fuel Mass` | `number` (kg) | `0.0` | Alias for `Amount` (either key works). |
 | `Dry Mass` | `number` (kg) | `0.0` | Tank hardware mass without propellant. |
-| `Maximum Outgoing Flow Rate` | `number` (kg/s) | `2.0` | Outflow limit from the tank. |
+| `Maximum Outgoing Flow Rate` | `number` (kg/s) | `2.0` | Outflow limit **from** the tank (how fast it can supply downstream). |
+| `Desired Ingoing Flow Rate` | `number` (kg/s) | `0.0` | Rate at which the tank actively **draws fuel in**. **Defaults to `0.0`, meaning the tank pulls nothing** — a receiving tank (e.g. the client end of a fuel interconnect) must set this **positive** or no fuel transfers in, even with valves open. |
 | `Mass` | `number` (kg) | — | Component mass (summed into spacecraft total). |
+
+> **Fuel transfer needs both ends configured.** For propellant to move across a [`Fuel Interconnect`](#fuel-interconnect), the **supply** tank needs `Amount > 0` and an adequate `Maximum Outgoing Flow Rate`, and the **receiving** tank needs spare `Capacity` and a positive `Desired Ingoing Flow Rate` (it is `0.0` by default, so an unset receiver silently accepts nothing). The transfer rate is limited by the smallest of those plus any valve `Max Flow Rate` in between.
 
 ### Fuel Valve
 
@@ -684,14 +688,37 @@ Also connect the pump on `power.bus[]` (`battery` `out` → pump `in`) so the mo
 
 ### Fuel Interconnect
 
+A **Fuel Interconnect** is a passive fuel node that bonds to **one local fuel object** (a `Fuel Source`, `Fuel Valve`, or `Fuel Pump`) and **links to a matching interconnect on another spacecraft** to form a fuel-transfer bridge. Fuel only crosses the link while the two spacecraft are **docked** (and the bonded valve on each side is open), so it is the fuel analogue of [`Power Interconnect`](#power-interconnect).
+
 ```json
 {
   "class": "Fuel Interconnect",
-  "name": "Fuel Interconnect"
+  "name": "Fuel Interconnect",
+  "data": {
+    "Mass": 0.5,
+    "Is Bidirectional": true,
+    "Vent To Space When Unconnected": false
+  }
 }
 ```
 
-Bond onto the local `fuel.bus[]` first (`tank` `out` → interconnect `in`), then declare the cross-spacecraft partner in `fuel.interconnects[]` (same field shape as `power.interconnects`).
+| `data` key | Type | Default | Description |
+| --- | --- | --- | --- |
+| `Is Bidirectional` | `bool` | `false` | When `true`, fuel may flow either direction through the link. |
+| `Vent To Space When Unconnected` | `bool` | `true` | When `true`, fuel vents to space (producing a small thrust) if the interconnect is unlinked, or cross-docked but **not** currently docked. Set `false` to simply stop flow. |
+| `Specific Impulse` | `number` (s) | `50.0` | Isp used to convert vent mass-flow to thrust when venting. `0` removes mass without thrust. |
+| `Require Positive Pressure Differential` | `bool` | `false` | When `true`, transfer requires the supply ullage pressure to exceed the receiver's (both sides need a `Fuel Source Thermal Model`). |
+| `Mass` | `number` (kg) | — | Component mass. |
+
+**Bond it locally first.** On `fuel.bus[]`, wire a valve/pump/tank into the interconnect so it has a local fuel object to draw from or feed into (the interconnect maps to a single `Local` port):
+
+```json
+{ "source_component": "Transfer Valve", "source_terminal": "out", "target_component": "Fuel Interconnect", "target_terminal": "in" }
+```
+
+**Then link it to its partner** in the top-level [`docking`](spacecraft.md#docking-start-the-scenario-already-docked) block as a fuel-interconnect connection — `{ "from_team": 111111, "from_target": "Fuel Interconnect", "to_asset": "SC_HUB", "to_target": "Fuel Interconnect A" }`. Both endpoints name a `Fuel Interconnect`, so Studio links (rather than docks) them; address each craft by team (`from_team`/`to_team`) or by asset (`from_asset`/`to_asset`, e.g. a neutral hub). Full rules and a multi-port hub recipe: [spacecraft.md — Fuel interconnects](spacecraft.md#fuel-interconnects).
+
+**Suggested use:** servicer/depot scenarios where a tanker tops up a client across a docked interface (see `Testing/test_fuel_scenario`).
 
 ---
 
