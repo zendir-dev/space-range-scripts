@@ -1,14 +1,14 @@
 {
     "metadata": {
-		"name": "RPO Scenario",
-		"description": "In this scenario, each team's spacecraft's are able to perform RPO operations with a central hub spacecraft."
+		"name": "Lunar Logistics",
+		"description": "This scenario tests teams' ability to perform RPO operations with a central hub spacecraft. Teams are required to dock with the hub and transfer fuel and power to and from the hub."
 	},
     "simulation": {
-        "epoch": "2026/02/14 08:00:00",
-        "speed": 5.0,
+        "epoch": "2026/02/14 00:00:00",
+        "speed": 1.0,
         "step_size": 0.1,
         "integrator": "Euler",
-        "end_time": 0.0
+        "end_time": 3600.0
     },
     "universe": {
         "atmosphere": false,
@@ -16,18 +16,11 @@
         "gps": true,
         "cloud_opacity": 0.7,
         "cloud_contrast": 2.5,
-        "ambient_light": 0.25
+        "ambient_light": 0.1
     },
     "ground_stations": {
         "locations": [
-            "Paris",
-            "Dubai",
-            "Colombo",
-            "Singapore",
-            "Sydney",
-            "Auckland",
-            "Lima",
-            "New York"
+            "Canberra"
         ],
         "min_elevation": 0,
         "max_range": 0
@@ -46,42 +39,12 @@
         {
             "enabled": true,
             "id": 222222,
-            "password": "BBBBBB",
-            "name": "Green Team",
-            "key": 7,
-            "frequency": 474,
-            "collection": "Main",
-            "color": "#00FF00"
-        },
-        {
-            "enabled": true,
-            "id": 333333,
             "password": "CCCCCC",
             "name": "Blue Team",
             "key": 8,
             "frequency": 475,
             "collection": "Main",
             "color": "#00AAFF"
-        },
-        {
-            "enabled": true,
-            "id": 444444,
-            "password": "DDDDDD",
-            "name": "Yellow Team",
-            "key": 9,
-            "frequency": 476,
-            "collection": "Main",
-            "color": "#FFFF00"
-        },
-        {
-            "enabled": true,
-            "id": 555555,
-            "password": "EEEEEE",
-            "name": "Orange Team",
-            "key": 10,
-            "frequency": 477,
-            "collection": "Main",
-            "color": "#FF7700"
         }
     ],
     "assets": {
@@ -109,7 +72,7 @@
                     "safe_fraction": 0.1,
                     "capture_tax": 0.001,
                     "downlink_tax": 0.005,
-                    "ping_interval": 20.0,
+                    "ping_interval": 3.0,
                     "reset_interval": 60.0,
                     "jamming_multiplier": 100.0,
                     "enable_rpo": true,
@@ -140,7 +103,7 @@
                 "fuel": {
                     "bus": [
                         {
-                            "source_component": "Fuel Interconnect",
+                            "source_component": "Fuel Tank",
                             "source_terminal": "out",
                             "target_component": "Fill Valve",
                             "target_terminal": "in"
@@ -148,8 +111,8 @@
                         {
                             "source_component": "Fill Valve",
                             "source_terminal": "out",
-                            "target_component": "Fuel Tank",
-                            "target_terminal": "in"
+                            "target_component": "Fuel Interconnect",
+                            "target_terminal": "out"
                         }
                     ]
                 },
@@ -313,10 +276,9 @@
                         "position": [ 0.0, 0.0, 0.15 ],
                         "data": {
                             "Capacity": 80.0,
-                            "Amount": 0.0,
+                            "Amount": 80.0,
                             "Dry Mass": 5.0,
-                            "Maximum Outgoing Flow Rate": 2.0,
-                            "Desired Ingoing Flow Rate": 0.2
+                            "Maximum Outgoing Flow Rate": 2.0
                         }
                     },
                     {
@@ -357,8 +319,8 @@
                 "name": "Hub",
                 "orbit": {
                     "planet": "Moon",
-                    "values": [14753.33, 0.864, 46.8, 325.41999, 142.5597, 173.23],
-                    "offset": [0.0, 0.0, 3.0, 0.0, 0.0, 0.01]
+                    "values": [14753.33, 0.864, 52.0, 315.10799, 145.8, 175.5],
+                    "offset": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
                 },
                 "physics": {
                     "override_mass": true,
@@ -375,7 +337,7 @@
                     "safe_fraction": 0.1,
                     "capture_tax": 0.001,
                     "downlink_tax": 0.005,
-                    "ping_interval": 20.0,
+                    "ping_interval": 3.0,
                     "reset_interval": 60.0,
                     "jamming_multiplier": 100.0,
                     "enable_rpo": true,
@@ -389,25 +351,16 @@
                             "target_component": "Battery",
                             "target_terminal": "out"
                         },
-                        { "source_component": "Battery", "source_terminal": "out", "target_component": "Power Interconnect A", "target_terminal": "in" },
-                        { "source_component": "Battery", "source_terminal": "out", "target_component": "Power Interconnect B", "target_terminal": "in" },
-                        { "source_component": "Battery", "source_terminal": "out", "target_component": "Power Interconnect C", "target_terminal": "in" },
                         { "source_component": "Battery", "source_terminal": "out", "target_component": "Power Interconnect D", "target_terminal": "in" },
                         { "source_component": "Battery", "source_terminal": "out", "target_component": "Power Interconnect E", "target_terminal": "in" }
                     ]
                 },
                 "fuel": {
                     "bus": [
-                        { "source_component": "Main Fuel Tank", "source_terminal": "out", "target_component": "Valve A", "target_terminal": "in" },
-                        { "source_component": "Valve A", "source_terminal": "out", "target_component": "Fuel Interconnect A", "target_terminal": "in" },
-                        { "source_component": "Main Fuel Tank", "source_terminal": "out", "target_component": "Valve B", "target_terminal": "in" },
-                        { "source_component": "Valve B", "source_terminal": "out", "target_component": "Fuel Interconnect B", "target_terminal": "in" },
-                        { "source_component": "Main Fuel Tank", "source_terminal": "out", "target_component": "Valve C", "target_terminal": "in" },
-                        { "source_component": "Valve C", "source_terminal": "out", "target_component": "Fuel Interconnect C", "target_terminal": "in" },
-                        { "source_component": "Main Fuel Tank", "source_terminal": "out", "target_component": "Valve D", "target_terminal": "in" },
-                        { "source_component": "Valve D", "source_terminal": "out", "target_component": "Fuel Interconnect D", "target_terminal": "in" },
-                        { "source_component": "Main Fuel Tank", "source_terminal": "out", "target_component": "Valve E", "target_terminal": "in" },
-                        { "source_component": "Valve E", "source_terminal": "out", "target_component": "Fuel Interconnect E", "target_terminal": "in" }
+                        { "source_component": "Fuel Interconnect D", "source_terminal": "out", "target_component": "Valve D", "target_terminal": "in" },
+                        { "source_component": "Valve D", "source_terminal": "out", "target_component": "Tank D", "target_terminal": "in" },
+                        { "source_component": "Fuel Interconnect E", "source_terminal": "out", "target_component": "Valve E", "target_terminal": "in" },
+                        { "source_component": "Valve E", "source_terminal": "out", "target_component": "Tank E", "target_terminal": "in" }
                     ]
                 },
                 "components": [
@@ -553,42 +506,32 @@
                     },
                     {
                         "class": "Fuel Source",
-                        "name": "Main Fuel Tank",
+                        "name": "Tank D",
                         "mesh": "None",
                         "position": [ 0.0, 0.0, 0.0 ],
                         "data": {
-                            "Capacity": 500.0,
-                            "Amount": 500.0,
+                            "Capacity": 100.0,
+                            "Amount": 55.0,
                             "Dry Mass": 40.0,
-                            "Maximum Outgoing Flow Rate": 10.0
+                            "Maximum Outgoing Flow Rate": 10.0,
+                            "Desired Ingoing Flow Rate": 0.2
                         }
                     },
-                    { "class": "Fuel Valve", "name": "Valve A", "mesh": "None", "data": { "Commanded Percent Open": 1.0, "Max Flow Rate": 2.0, "Mass": 0.4 } },
-                    { "class": "Fuel Valve", "name": "Valve B", "mesh": "None", "data": { "Commanded Percent Open": 1.0, "Max Flow Rate": 2.0, "Mass": 0.4 } },
-                    { "class": "Fuel Valve", "name": "Valve C", "mesh": "None", "data": { "Commanded Percent Open": 1.0, "Max Flow Rate": 2.0, "Mass": 0.4 } },
+                    {
+                        "class": "Fuel Source",
+                        "name": "Tank E",
+                        "mesh": "None",
+                        "position": [ 0.0, 0.0, 0.0 ],
+                        "data": {
+                            "Capacity": 100.0,
+                            "Amount": 55.0,
+                            "Dry Mass": 40.0,
+                            "Maximum Outgoing Flow Rate": 10.0,
+                            "Desired Ingoing Flow Rate": 0.2
+                        }
+                    },
                     { "class": "Fuel Valve", "name": "Valve D", "mesh": "None", "data": { "Commanded Percent Open": 1.0, "Max Flow Rate": 2.0, "Mass": 0.4 } },
                     { "class": "Fuel Valve", "name": "Valve E", "mesh": "None", "data": { "Commanded Percent Open": 1.0, "Max Flow Rate": 2.0, "Mass": 0.4 } },
-                    {
-                        "class": "Fuel Interconnect",
-                        "name": "Fuel Interconnect A",
-                        "mesh": "None",
-                        "position": [ -0.005, 0.318, 0.002 ],
-                        "data": { "Mass": 0.5, "Is Bidirectional": true, "Vent To Space When Unconnected": false }
-                    },
-                    {
-                        "class": "Fuel Interconnect",
-                        "name": "Fuel Interconnect B",
-                        "mesh": "None",
-                        "position": [ -1.503, 0.354, 0.002 ],
-                        "data": { "Mass": 0.5, "Is Bidirectional": true, "Vent To Space When Unconnected": false }
-                    },
-                    {
-                        "class": "Fuel Interconnect",
-                        "name": "Fuel Interconnect C",
-                        "mesh": "None",
-                        "position": [ -2.109, -0.003, 0.006 ],
-                        "data": { "Mass": 0.5, "Is Bidirectional": true, "Vent To Space When Unconnected": false }
-                    },
                     {
                         "class": "Fuel Interconnect",
                         "name": "Fuel Interconnect D",
@@ -603,9 +546,6 @@
                         "position": [ 0.004, -1.689, 0.004 ],
                         "data": { "Mass": 0.5, "Is Bidirectional": true, "Vent To Space When Unconnected": false }
                     },
-                    { "class": "Power Interconnect", "name": "Power Interconnect A", "mesh": "None" },
-                    { "class": "Power Interconnect", "name": "Power Interconnect B", "mesh": "None" },
-                    { "class": "Power Interconnect", "name": "Power Interconnect C", "mesh": "None" },
                     { "class": "Power Interconnect", "name": "Power Interconnect D", "mesh": "None" },
                     { "class": "Power Interconnect", "name": "Power Interconnect E", "mesh": "None" }
                 ]
@@ -620,23 +560,14 @@
         "neutral": ["SC_002"]
     },
     "docking": [
-        { "from_team": 111111, "from_target": "Docking Adapter", "to_asset": "SC_002", "to_target": "Docking A" },
-        { "from_team": 222222, "from_target": "Docking Adapter", "to_asset": "SC_002", "to_target": "Docking B" },
-        { "from_team": 333333, "from_target": "Docking Adapter", "to_asset": "SC_002", "to_target": "Docking C" },
-        { "from_team": 444444, "from_target": "Docking Adapter", "to_asset": "SC_002", "to_target": "Docking D" },
-        { "from_team": 555555, "from_target": "Docking Adapter", "to_asset": "SC_002", "to_target": "Docking E" },
+        { "from_team": 111111, "from_target": "Docking Adapter", "to_asset": "SC_002", "to_target": "Docking D" },
+        { "from_team": 222222, "from_target": "Docking Adapter", "to_asset": "SC_002", "to_target": "Docking E" },
 
-        { "from_team": 111111, "from_target": "Fuel Interconnect", "to_asset": "SC_002", "to_target": "Fuel Interconnect A" },
-        { "from_team": 222222, "from_target": "Fuel Interconnect", "to_asset": "SC_002", "to_target": "Fuel Interconnect B" },
-        { "from_team": 333333, "from_target": "Fuel Interconnect", "to_asset": "SC_002", "to_target": "Fuel Interconnect C" },
-        { "from_team": 444444, "from_target": "Fuel Interconnect", "to_asset": "SC_002", "to_target": "Fuel Interconnect D" },
-        { "from_team": 555555, "from_target": "Fuel Interconnect", "to_asset": "SC_002", "to_target": "Fuel Interconnect E" },
+        { "from_team": 111111, "from_target": "Fuel Interconnect", "to_asset": "SC_002", "to_target": "Fuel Interconnect D" },
+        { "from_team": 222222, "from_target": "Fuel Interconnect", "to_asset": "SC_002", "to_target": "Fuel Interconnect E" },
 
-        { "from_team": 111111, "from_target": "Power Interconnect", "to_asset": "SC_002", "to_target": "Power Interconnect A" },
-        { "from_team": 222222, "from_target": "Power Interconnect", "to_asset": "SC_002", "to_target": "Power Interconnect B" },
-        { "from_team": 333333, "from_target": "Power Interconnect", "to_asset": "SC_002", "to_target": "Power Interconnect C" },
-        { "from_team": 444444, "from_target": "Power Interconnect", "to_asset": "SC_002", "to_target": "Power Interconnect D" },
-        { "from_team": 555555, "from_target": "Power Interconnect", "to_asset": "SC_002", "to_target": "Power Interconnect E" }
+        { "from_team": 111111, "from_target": "Power Interconnect", "to_asset": "SC_002", "to_target": "Power Interconnect D" },
+        { "from_team": 222222, "from_target": "Power Interconnect", "to_asset": "SC_002", "to_target": "Power Interconnect E" }
     ],
     "objects": {
         "ground": [
