@@ -601,7 +601,7 @@ This also accepts a `Fault State` event to inject sensor faults at runtime (see 
 | `Separation Duration` | `number` (s) | Duration over which the separation force is applied when undocking. Default `0.5`. |
 | `Mass` | `number` (kg) | Component mass. |
 
-Both the chaser and the target need a `Docking Adapter` component, and both spacecraft need `enable_rpo: true` in their `controller`. Undocking via the [`docking`](../api-reference/spacecraft-commands.md#docking) command applies the separation impulse defined here. See [recipes.md](recipes.md) — Recipe 4.
+Both the chaser and the target need a `Docking Adapter` component. The chaser does **not** need `enable_rpo_software` — only a rendezvous manoeuvre requires that flag. Undocking via the [`docking`](../api-reference/spacecraft-commands.md#docking) command applies the separation impulse defined here. See [recipes.md](recipes.md) — Recipe 4.
 
 ---
 

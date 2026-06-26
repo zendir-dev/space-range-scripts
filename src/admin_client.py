@@ -127,7 +127,7 @@ class AdminRequestClient:
                         {
                             "asset_id": "fb345a0c",
                             "name": "Microsat",
-                            "rpo_enabled": True,
+                            "rpo_software_enabled": True,
                             "intercept_enabled": True,
                             "components": [...]
                         }

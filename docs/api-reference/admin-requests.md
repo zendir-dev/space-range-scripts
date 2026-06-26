@@ -136,7 +136,7 @@ Detailed configuration of a single team: identity, password, and every asset's c
         {
           "asset_id": "A3F2C014",
           "name": "Microsat",
-          "rpo_enabled": true,
+          "rpo_software_enabled": true,
           "intercept_enabled": true,
           "components": [
             { "name": "Solar Panel +X", "class": "Solar Panel", "component_id": 5, "is_imager": false },
@@ -156,7 +156,7 @@ Detailed configuration of a single team: identity, password, and every asset's c
 | `assets.space[]` | Array of space assets owned by the team. |
 | `assets.space[].asset_id` | 8-character hex asset ID. |
 | `assets.space[].name` | Friendly asset name. |
-| `assets.space[].rpo_enabled` | Whether RPO functionality is available on this asset. |
+| `assets.space[].rpo_software_enabled` | Whether RPO flight software is available on this asset. |
 | `assets.space[].intercept_enabled` | Whether this asset records uplink intercepts (`enable_intercept` in scenario JSON). Same semantics as [`list_assets`](ground-requests.md#list_assets) `intercept_enabled`. |
 | `assets.space[].components[]` | Component list, identical in shape to the team-side [`list_entity`](ground-requests.md#list_entity) response. |
 

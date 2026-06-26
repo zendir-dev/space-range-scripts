@@ -195,7 +195,7 @@ Each spacecraft is the most complex object in the scenario. The shape:
   "ping_interval":      20.0,
   "reset_interval":     60.0,
   "jamming_multiplier": 100.0,
-  "enable_rpo":         false
+  "enable_rpo_software":         false
 }
 ```
 
@@ -207,7 +207,7 @@ Each spacecraft is the most complex object in the scenario. The shape:
 | `ping_interval` | Sim seconds between auto-Pings. Affects how quickly teams see command acks. |
 | `reset_interval` | Sim seconds the spacecraft is offline after a `reset` (or after [`encryption`](../api-reference/spacecraft-commands.md#encryption) which causes a reboot). |
 | `jamming_multiplier` | Scales the per-watt RF interference produced by the spacecraft's jammer payload. |
-| `enable_rpo` | `true` enables [`rendezvous`](../api-reference/spacecraft-commands.md#rendezvous) and [`docking`](../api-reference/spacecraft-commands.md#docking). |
+| `enable_rpo_software` | `true` installs RPO flight software so [`rendezvous`](../api-reference/spacecraft-commands.md#rendezvous) can run. [`docking`](../api-reference/spacecraft-commands.md#docking) depends on `Docking Adapter` components, not this flag. |
 
 #### `power`
 

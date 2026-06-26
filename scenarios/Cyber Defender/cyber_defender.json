@@ -189,7 +189,7 @@
 					"ping_interval": 3.0,
 					"reset_interval": 20.0,
 					"jamming_multiplier": 100.0,
-					"enable_rpo": false,
+					"enable_rpo_software": false,
 					"enable_intercept": false
 				},
 				"power": {
@@ -481,7 +481,7 @@
 					"ping_interval": 3.0,
 					"reset_interval": 20.0,
 					"jamming_multiplier": 100.0,
-					"enable_rpo": false,
+					"enable_rpo_software": false,
 					"enable_intercept": true
 				},
 				"power": {

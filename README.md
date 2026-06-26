@@ -451,7 +451,7 @@ Every helper in `src/commands.py` returns a `dict` that unpacks directly into `s
 | Camera | `camera_configure(...)`, `camera_capture(target, name)` | Configure FOV / resolution / focal length / aperture / focusing distance, then capture a full-resolution image into on-board storage. |
 | Telemetry | `telemetry_configure(frequency, key)` | Update RF link frequency (MHz) and Caesar key (0–255) on the spacecraft and the ground network together. |
 | Thruster | `thruster_fire(target, duration)`, `thruster_stop(target)` | Fire / stop a named thruster for a delta-V manoeuvre. |
-| Rendezvous | `rendezvous_start(target_id, dx, dy, dz)`, `rendezvous_stop(target_id)` | Hold an LVLH offset (m) from another spacecraft. Requires `enable_rpo: true`. |
+| Rendezvous | `rendezvous_start(target_id, dx, dy, dz)`, `rendezvous_stop(target_id)` | Hold an LVLH offset (m) from another spacecraft. Requires `enable_rpo_software: true`. |
 | Docking | `docking_dock(target_id, component)`, `docking_undock(target_id, component)` | Physically dock / undock with a named component on another spacecraft. |
 | Reset | `component_reset(target)` | Reboot a single component (or the whole bus, if you reset `Computer`). |
 | Schedule | `get_schedule()`, `remove_command_by_id(id)`, `remove_command_by_time_command(time, command)`, `update_command(...)` | Inspect and manage the on-board command queue (reply: Schedule Report, APID 101). |

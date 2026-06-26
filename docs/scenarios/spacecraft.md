@@ -131,7 +131,7 @@ The `physics` block is **optional** — omit it and Studio falls back to a sensi
   "ping_interval":           20.0,
   "reset_interval":          60.0,
   "jamming_multiplier":      100.0,
-  "enable_rpo":              false,
+  "enable_rpo_software":              false,
   "enable_intercept": true
 }
 ```
@@ -144,12 +144,12 @@ The `physics` block is **optional** — omit it and Studio falls back to a sensi
 | `ping_interval` | `number` (sim s) | `20.0` | Sim seconds between auto-Pings. Affects how quickly teams see command acks. |
 | `reset_interval` | `number` (sim s) | `300.0` | Sim seconds the spacecraft is offline after a `reset` (or after [`encryption`](../api-reference/spacecraft-commands.md#encryption), which causes a reboot). Lower this for shorter exercises. |
 | `jamming_multiplier` | `number` | `1.0` | Scales the per-watt RF interference produced by the spacecraft's `Jammer` payload. Shipped scenarios commonly use `100.0`. |
-| `enable_rpo` | `bool` | `false` | `true` enables [`rendezvous`](../api-reference/spacecraft-commands.md#rendezvous) and [`docking`](../api-reference/spacecraft-commands.md#docking) for this spacecraft. Both commands return errors otherwise. |
+| `enable_rpo_software` | `bool` | `false` | `true` installs RPO flight software so the [`rendezvous`](../api-reference/spacecraft-commands.md#rendezvous) command can run. Docking adapters, fuel/power interconnects, and the [`docking`](../api-reference/spacecraft-commands.md#docking) command are independent of this flag — they depend on the relevant components being present on the spacecraft. |
 | `enable_intercept` | `bool` | `true` | If `true`, the spacecraft records uplink packets it overhears for SIGINT-style replay (downlinked as [Uplink Intercept](../reference/packet-formats.md#uplink-intercept) records). Set `false` to save memory in scenarios that do not exercise this feature. |
 
 Studio reads **`enable_intercept`** first; when it is omitted, loading falls back to the legacy key **`record_uplink_intercept`** so older scenario JSON keeps working.
 
-The `controller` block is **optional**; defaults work for most exercises. The keys that change most between scenarios are `safe_fraction` (lower for fault-injection scenarios where teams should be forced to manage power), `reset_interval` (lower for fast-paced exercises), and `enable_rpo` (only set `true` on spacecraft that need to manoeuvre).
+The `controller` block is **optional**; defaults work for most exercises. The keys that change most between scenarios are `safe_fraction` (lower for fault-injection scenarios where teams should be forced to manage power), `reset_interval` (lower for fast-paced exercises), and `enable_rpo_software` (only set `true` on spacecraft that need to manoeuvre).
 
 ---
 
@@ -557,7 +557,7 @@ For a docking-adapter pair Studio finds the `from` craft, **physically places it
 
 Notes:
 
-- For docking, **both** endpoints must be `Docking Adapter` components and the `from` craft needs `controller.enable_rpo: true` for docking to operate during the run. For fuel links, **both** endpoints must be `Fuel Interconnect` components; for power links, **both** must be `Power Interconnect` components. A mismatched pair (e.g. an adapter and an interconnect) logs a warning and is skipped.
+- For docking, **both** endpoints must be `Docking Adapter` components on spacecraft that each carry a docking adapter. The chaser only needs a `Docking Adapter` component — `enable_rpo_software` is **not** required for docking. For fuel links, **both** endpoints must be `Fuel Interconnect` components; for power links, **both** must be `Power Interconnect` components. A mismatched pair (e.g. an adapter and an interconnect) logs a warning and is skipped.
 - The placement runs **once**, during scenario construction. Reloading a saved simulation restores the existing docked hierarchy instead of re-placing, so docking entries are skipped for craft that are already docked.
 - A docked pair becomes a single rigid body, with the heavier craft acting as the hub. Teams can later separate using the normal undock command.
 
@@ -604,7 +604,7 @@ A small but complete spacecraft definition — enough to copy/paste as a startin
     "downlink_tax":   0.005,
     "ping_interval":  20.0,
     "reset_interval": 60.0,
-    "enable_rpo":     false
+    "enable_rpo_software":     false
   },
   "power": {
     "bus": [

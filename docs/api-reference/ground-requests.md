@@ -105,8 +105,8 @@ No arguments.
   "req_id": 0,
   "args": {
     "space": [
-      { "asset_id": "A3F2C014", "name": "Microsat", "rpo_enabled": true, "intercept_enabled": true, "neutral": false, "controllable": true },
-      { "asset_id": "1B9E0F77", "name": "Station",  "rpo_enabled": false, "intercept_enabled": false, "neutral": true, "controllable": false }
+      { "asset_id": "A3F2C014", "name": "Microsat", "rpo_software_enabled": true, "intercept_enabled": true, "neutral": false, "controllable": true },
+      { "asset_id": "1B9E0F77", "name": "Station",  "rpo_software_enabled": false, "intercept_enabled": false, "neutral": true, "controllable": false }
     ]
   },
   "success": true
@@ -118,7 +118,7 @@ No arguments.
 | `space[]` | Array of space assets visible to this team: the team's own controllable assets, plus any [neutral](../scenarios/spacecraft.md#neutral-team-less-shared-craft) (team-less) craft that every team can reference as a target. |
 | `space[].asset_id` | 8-character hex ID. Use this in the `Asset` field of any uplink command, or as the `spacecraft`/`target` argument of pointing/rendezvous/docking. |
 | `space[].name` | Friendly name, with the team prefix stripped. |
-| `space[].rpo_enabled` | `true` if rendezvous/proximity-ops is enabled for this asset (required for [`rendezvous`](spacecraft-commands.md#rendezvous) and [`docking`](spacecraft-commands.md#docking)). |
+| `space[].rpo_software_enabled` | `true` if RPO flight software is installed on this asset (required for [`rendezvous`](spacecraft-commands.md#rendezvous)). [`docking`](spacecraft-commands.md#docking) depends on `Docking Adapter` components instead. |
 | `space[].intercept_enabled` | `true` if this spacecraft is configured to record raw uplink intercepts (pre-decode RF payloads into on-board storage for SIGINT / replay). Mirrors scenario `enable_intercept` on the controller. When `false`, no new intercept records are retained. |
 | `space[].neutral` | `true` if this is a neutral (team-less) shared craft. Neutral craft can be referenced as a target but cannot be controlled, and expose no telemetry. |
 | `space[].controllable` | `true` for the team's own assets; `false` for neutral craft. |

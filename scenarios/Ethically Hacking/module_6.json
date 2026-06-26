@@ -186,7 +186,7 @@
 					"ping_interval": 3.0,
 					"reset_interval": 30.0,
 					"jamming_multiplier": 100.0,
-					"enable_rpo": false
+					"enable_rpo_software": false
 				},
 				"power": {
 					"bus": [

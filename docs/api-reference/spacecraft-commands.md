@@ -410,14 +410,14 @@ Engages a perch-mode hold relative to another spacecraft. The chaser holds a fix
 
 ### Notes
 
-- The spacecraft must have RPO enabled in the scenario. If `rpo_enabled` is `false` in [`list_assets`](ground-requests.md#list_assets), the command is silently ignored.
+- The spacecraft must have RPO flight software enabled in the scenario. If `rpo_software_enabled` is `false` in [`list_assets`](ground-requests.md#list_assets), the command is silently ignored.
 - The maneuver uses the spacecraft's existing thrusters/control authority — bring fuel.
 
 ---
 
 ## `docking`
 
-Initiates or releases a docking with another spacecraft (a team craft or a neutral hub). The current spacecraft must have at least one Docking Adapter component and RPO must be enabled. Docking only completes once the two spacecraft are physically close enough — the command sets the target; the simulation does the connection. Undocking (`dock: false`) releases with a **separation impulse** so the two craft gently push apart.
+Initiates or releases a docking with another spacecraft (a team craft or a neutral hub). The current spacecraft must have at least one Docking Adapter component. Docking only completes once the two spacecraft are physically close enough — the command sets the target; the simulation does the connection. Undocking (`dock: false`) releases with a **separation impulse** so the two craft gently push apart.
 
 ```json
 {

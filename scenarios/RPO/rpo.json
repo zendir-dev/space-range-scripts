@@ -75,7 +75,7 @@
                     "ping_interval": 3.0,
                     "reset_interval": 60.0,
                     "jamming_multiplier": 100.0,
-                    "enable_rpo": true,
+                    "enable_rpo_software": false,
 					"enable_intercept": false
                 },
                 "power": {
@@ -182,8 +182,8 @@
                         "enabled": true,
                         "position": [ 0.0, 0.0, 0.2 ],
                         "data": {
-                            "Nominal Capacity": 125.0,
-                            "Charge Fraction": 0.2,
+                            "Nominal Capacity": 40.0,
+                            "Charge Fraction": 0.15,
                             "Mass": 5.0
                         }
                     },
@@ -340,7 +340,7 @@
                     "ping_interval": 3.0,
                     "reset_interval": 60.0,
                     "jamming_multiplier": 100.0,
-                    "enable_rpo": true,
+                    "enable_rpo_software": false,
 					"enable_intercept": false
                 },
                 "power": {
