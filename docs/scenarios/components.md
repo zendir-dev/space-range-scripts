@@ -63,6 +63,43 @@ Many components also expose tuning keys such as `Sample Rate`, `Bit Rate`, `Ante
 
 ---
 
+## Component `models`
+
+Each entry in `components[]` may include an optional `models` array. Models are **Universe Models** — extra simulation behaviour attached to the component (error models, power-node models, radiation models, etc.). They have no `name`, `mesh`, or transform; only a class, enable flag, and parameter data.
+
+```json
+{
+  "class": "Solar Panel",
+  "name": "Solar Panel +X",
+  "position": [0.8, 0.276313, -0.2],
+  "rotation": [35.0, 0.0, 0.0],
+  "data": {
+    "Area": 0.3,
+    "Efficiency": 0.4,
+    "Mass": 10.0
+  },
+  "models": [
+    {
+      "class": "Solar Panel Degradation Error Model",
+      "enabled": true,
+      "data": {
+        "Degradation Rate": 10.0
+      }
+    }
+  ]
+}
+```
+
+| Key | JSON type | Default | Description |
+| --- | --- | --- | --- |
+| `class` | `string` | — | Model class name (matched case-insensitively against the formatted Mono class name, e.g. `"Solar Panel Degradation Error Model"`). The model must be supported on the parent component type. |
+| `enabled` | `bool` | `true` | When `false`, the model is attached but does not simulate. Legacy key `enable` is also accepted. |
+| `data` | `object` | `{}` | Model-specific parameters, using the same spaced-name rules as component `data`. |
+
+If the model class is unknown or not supported on that component, Studio logs a warning and skips that entry. Multiple models may be listed when the component supports more than one.
+
+---
+
 ## Solar Panel
 
 ```json

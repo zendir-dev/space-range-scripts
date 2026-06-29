@@ -471,6 +471,7 @@ This is the largest part of a scenario. Each entry instantiates one piece of har
 | `rotation` | `number[3]` (deg) | no | Local rotation as Euler angles `[X, Y, Z]` (Tait–Bryan, applied in 1‑2‑3 order). |
 | `scale` | `number` | no (default `1.0`) | Visual scale factor. |
 | `data` | `object` | no | Class-specific tuning. `Mass` is universal (kg). See [components.md](components.md) for per-class keys. |
+| `models` | `object[]` | no | Optional Universe Models attached to this component (error models, etc.). See [components.md — Component `models`](components.md#component-models). |
 
 **`name` must be unique within a spacecraft.** Two components with the same name on the same spacecraft cannot both be addressed by uplink commands — the second will shadow the first.
 
