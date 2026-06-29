@@ -549,6 +549,34 @@
                     { "class": "Power Interconnect", "name": "Power Interconnect D", "mesh": "None" },
                     { "class": "Power Interconnect", "name": "Power Interconnect E", "mesh": "None" }
                 ]
+            },
+            {
+                "id": "SC_003",
+                "name": "Debris",
+                "orbit": {
+                    "planet": "Moon",
+                    "values": [14753.33, 0.864, 52.0, 315.10799, 145.8, 175.5001],
+                    "offset": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+                },
+                "physics": {
+                    "attitude": [0.0, 0.0, 90.0],
+                    "attitude_rate": [0.0, 5.0, 0.0],
+                    "override_mass": true,
+                    "mass": 100.0,
+                    "center_of_mass": [ 0.0, 0.0, 0.0 ],
+                    "inertia_tensor": [ [ 10000.0, 0.0, 0.0 ], [ 0.0, 10000.0, 0.0 ], [ 0.0, 0.0, 10000.0 ] ]
+                },
+                "visualization": {
+                    "mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/SecondStage/BP_Z_SC_SecondStage_Chassis",
+                    "scale": 0.2,
+                    "offset": [ 0.0, 0.0, 0.0 ]
+                },
+                "controller": {
+                    "ping_interval": 10000000.0,
+                    "enable_rpo_software": false,
+					"enable_intercept": false
+                },
+                "components": []
             }
         ],
         "collections": [
@@ -557,7 +585,7 @@
                 "space_assets": ["SC_001"]
             }
         ],
-        "neutral": ["SC_002"]
+        "neutral": ["SC_002", "SC_003"]
     },
     "docking": [
         { "from_team": 111111, "from_target": "Docking Adapter", "to_asset": "SC_002", "to_target": "Docking D" },

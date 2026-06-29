@@ -82,7 +82,9 @@ If `values` has fewer than six entries, the missing ones are zero-filled.
     [10.0,  0.0,  0.0],
     [ 0.0, 10.0,  0.0],
     [ 0.0,  0.0, 10.0]
-  ]
+  ],
+  "attitude":        [0.0, 0.0, 0.0],
+  "attitude_rate":   [0.0, 0.0, 0.0]
 }
 ```
 
@@ -92,6 +94,8 @@ If `values` has fewer than six entries, the missing ones are zero-filled.
 | `mass` | `number` (kg) | computed | Total mass. Only used when `override_mass: true`. |
 | `center_of_mass` | `number[3]` (m) | `[0,0,0]` | Body-frame offset of the centre of mass from the spacecraft origin. |
 | `inertia_tensor` | `number[3][3]` (kg·m²) | identity-ish | 3×3 principal-axis inertia tensor. Diagonal is the most common case (a symmetric spacecraft). Off-diagonal terms model coupling between axes. |
+| `attitude` | `number[3]` (deg) | `[0,0,0]` | Initial body attitude as **1-2-3 Euler angles** (same convention as admin telemetry `rotation.euler_*`). Applied at spawn via `SetAttitude` (converted to MRP internally). |
+| `attitude_rate` | `number[3]` (deg/s) | `[0,0,0]` | Initial body angular rate in the **body frame**. Applied at spawn via `SetAttitudeRate` (converted to rad/s internally). |
 
 Inertia matters whenever attitude control is exercised (reaction wheels, thrusters, external torque). For pure-orbit demos the defaults are fine.
 

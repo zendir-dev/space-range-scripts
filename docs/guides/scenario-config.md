@@ -179,7 +179,7 @@ Each spacecraft is the most complex object in the scenario. The shape:
 | `id` | Unique string referenced by `assets.collections[].space_assets`. The 8-character hex `asset_id` you see at runtime is **derived** from this. |
 | `name` | Display name. The Operator UI and ground-controller responses strip the team name prefix from this for cleanliness. |
 | `orbit` | Initial orbit (Keplerian). `values` is `[a (km), e, i (deg), Ω (deg), ω (deg), ν (deg)]`; `offset` is a small per-axis perturbation to avoid identical co-located twins. |
-| `physics` | Mass, centre-of-mass offset, and 3×3 inertia tensor. Drives attitude dynamics. |
+| `physics` | Mass, centre-of-mass, inertia tensor, and optional initial attitude / body rate. Drives attitude dynamics. |
 | `visualization` | The Unreal mesh path and scale used to render the spacecraft. `hide: true` hides it visually but keeps it simulating. |
 | `controller` | Per-spacecraft tuning (see below). |
 | `power` | Optional electrical-bus wiring between solar panels, batteries, and jammer. See [spacecraft.md — power](../scenarios/spacecraft.md#power--electrical-bus). |
