@@ -308,7 +308,11 @@
 							0.0
 						],
 						"data": {
-							"Mass": 5.0
+							"Mass": 5.0,
+							"Resolution": [
+								1024,
+								1024
+							]
 						}
 					},
 					{
@@ -467,7 +471,7 @@
 				"unit": "W",
 				"value": 163.6,
 				"tolerance": 1.0,
-				"reason": "With panels sun-pointed, each 0.3 m² panel at 40% efficiency reaches approximately 163.6 W.",
+				"reason": "With panels sun-pointed, each 0.3 m\u00b2 panel at 40% efficiency reaches approximately 163.6 W.",
 				"score": 10
 			}
 		},

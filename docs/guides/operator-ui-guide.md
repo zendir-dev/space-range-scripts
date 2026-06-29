@@ -183,7 +183,9 @@ The **Camera Capture** panel configures imager optics and triggers [`capture`](.
 
 The initial [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration) request hydrates per-imager entries in `camera[]`. Switching **Camera Unit** loads the saved `configuration` for that component when one exists.
 
-Stored settings come from executed [`camera`](../api-reference/spacecraft-commands.md#camera) / [`capture`](../api-reference/spacecraft-commands.md#capture) Args (not live sensor telemetry). Cleared on scenario reset.
+Each entry includes **`min_field_of_view`** and **`max_field_of_view`** (from scenario `Min Field Of View` / `Max Field Of View` on that camera). The **Field of View** slider is clamped to that range; capture is disabled if FOV is outside it.
+
+Stored operator settings (`fov`, `resolution`, `aperture`, …) come from executed [`camera`](../api-reference/spacecraft-commands.md#camera) / [`capture`](../api-reference/spacecraft-commands.md#capture) Args. Cleared on scenario reset.
 
 ### Multi-operator sync
 

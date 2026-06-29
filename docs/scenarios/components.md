@@ -516,13 +516,18 @@ See [events.md#canonical-spacecraft-event-recipes](events.md#canonical-spacecraf
 
 ```json
 {
-  "class": "Camera",
-  "name":  "Camera",
+  "class": "Optical Camera",
+  "name":  "Main Camera",
   "position": [0.0, -0.36, -0.16],
   "rotation": [90.0, 0.0, 0.0],
   "data": {
     "Sample Rate": 10.0,
-    "Mass":        5.0
+    "Mass": 3.0,
+    "Aperture": 20.0,
+    "Min Field Of View": 1.0,
+    "Field Of View": 10.0,
+    "Max Field Of View": 15.0,
+    "Resolution": [1024, 1024]
   }
 }
 ```
@@ -531,8 +536,29 @@ See [events.md#canonical-spacecraft-event-recipes](events.md#canonical-spacecraf
 | --- | --- | --- |
 | `Sample Rate` | `number` (Hz) | Frame rate of the camera. |
 | `Mass` | `number` (kg) | Component mass. |
+| `Min Field Of View` | `number` (deg) | **Hardware limit** — narrowest FOV operators may command. Default `0`. Must be ≤ `Field Of View` ≤ `Max Field Of View`. |
+| `Field Of View` | `number` (deg) | **Initial FOV** at scenario load (before any [`camera`](../api-reference/spacecraft-commands.md#camera) command). Clamped into `[Min Field Of View, Max Field Of View]`. Default `60` on the class if omitted. |
+| `Max Field Of View` | `number` (deg) | **Hardware limit** — widest FOV operators may command. Default `180`. |
+| `Aperture` | `number` (mm) | Lens diameter at load. Operators can change aperture at runtime via `camera` / `capture`. |
+| `Focal Length` | `number` (mm) | Lens focal length at load. |
+| `Focusing Distance` | `number` (m) | In-focus distance at load. |
+| `Pixel Pitch` | `number` (mm) | Sensor pixel pitch at load. |
+| `Circle Of Confusion` | `number` (mm) | Depth-of-field blur tolerance at load. |
+| `Resolution` | `[w, h]` (px) | Sensor resolution at load as a two-element array (e.g. `[1024, 1024]`). Default `256×256`. |
 
-Optical settings (FOV, aperture, exposure) come from the [`camera`](../api-reference/spacecraft-commands.md#camera) command at runtime, **not** from `data`. Heatmap Camera and Optical Camera share the same `data` schema.
+### Field of view limits
+
+Each `Optical Camera` / `Camera` can define a **per-unit FOV envelope** in `data`:
+
+- **`Min Field Of View`** and **`Max Field Of View`** are set by the scenario author and define what operators are allowed to request in the [`camera`](../api-reference/spacecraft-commands.md#camera) / [`capture`](../api-reference/spacecraft-commands.md#capture) `fov` argument.
+- **`Field Of View`** is the starting value inside that envelope when the simulation spawns the craft.
+- If `fov` is outside the envelope, the command is **rejected** (Studio) and the Operator UI disables capture for that value.
+
+Use tight envelopes for mission-specific optics — for example a narrow science camera (`1° … 15°`) and a wide docking camera (`30° … 60°`) on the same spacecraft. See [Lunar Logistics](../scenarios/Lunar%20Logistics/lunar_logistics.json) (`Main Camera` and `Docking Camera`).
+
+At runtime, operator-chosen settings (`fov`, `resolution`, `aperture`, …) are stored in the Configuration Report `camera[]` section and **sync across the team** after each `camera` / `capture` command (same pattern as Guidance). The report also includes `min_field_of_view` and `max_field_of_view` so every operator UI shows the correct slider range.
+
+Heatmap Camera and Optical Camera share the same `data` schema. `Charge Coupled Device` imagers support `Field Of View` in `data` but use the full `0 … 180°` envelope (no separate min/max properties on that class).
 
 ---
 

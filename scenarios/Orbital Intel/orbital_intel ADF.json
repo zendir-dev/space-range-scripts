@@ -268,7 +268,11 @@
 							0.0
 						],
 						"data": {
-							"Mass": 5.0
+							"Mass": 5.0,
+							"Resolution": [
+								1024,
+								1024
+							]
 						}
 					},
 					{
@@ -818,9 +822,7 @@
 			"Interval": 1.0,
 			"Type": "Spacecraft",
 			"Target": "Battery-IntermittentConnectionErrorModel",
-			"Assets": [
-
-			],
+			"Assets": [],
 			"Data": {
 				"Intermittent Mean": 1,
 				"Intermittent Std": 2

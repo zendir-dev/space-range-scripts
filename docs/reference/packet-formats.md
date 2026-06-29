@@ -402,12 +402,15 @@ After XTCE decode, parse with `json.loads(report["Data"])`. Scope controls which
   },
   "camera": [
     {
-      "name": "Camera",
-      "class": "Camera",
+      "name": "Main Camera",
+      "class": "Optical Camera",
       "configuration": {
         "monochromatic": false,
         "resolution": 1024,
-        "fov": 60.0
+        "fov": 10.0,
+        "min_field_of_view": 1.0,
+        "max_field_of_view": 15.0,
+        "aperture": 20.0
       }
     }
   ]
@@ -427,10 +430,13 @@ After XTCE decode, parse with `json.loads(report["Data"])`. Scope controls which
 | `computer` | object | Guidance operator state: `pointing` (active mode) and `configs` (last-applied Args per mode, without repeating `pointing`). Stored from executed [`guidance`](../api-reference/spacecraft-commands.md#guidance) commands; cleared on scenario reset. |
 | `computer.pointing` | string | Active pointing mode (`idle`, `inertial`, `velocity`, `sun`, `nadir`, `ground`, `location`, `relative`). |
 | `computer.configs` | object | Per-mode settings. Keys match [`guidance`](../api-reference/spacecraft-commands.md#guidance) Args for that mode (e.g. `target`, `alignment`, `pitch`/`roll`/`yaw`, `station`, `spacecraft`, `component`). |
-| `camera` | array | Per-imager operator configuration. Omitted when scope excludes camera or no imager has been configured. |
+| `camera` | array | Per-imager operator configuration. One entry per imager on the spacecraft (even before the first capture). Omitted when scope excludes camera or the craft has no imagers. |
 | `camera[].name` | string | Imager component name. |
-| `camera[].class` | string | `Camera` or `Charge Coupled Device`. |
-| `camera[].configuration` | object | Last-applied [`camera`](../api-reference/spacecraft-commands.md#camera) Args (`monochromatic`, `resolution`, `fov`, …). CCD entries include `fov` only. |
+| `camera[].class` | string | `Camera`, `Optical Camera`, or `Charge Coupled Device`. |
+| `camera[].configuration` | object | Operator settings plus hardware FOV envelope. Keys use snake_case in JSON (`min_field_of_view`, `max_field_of_view`, `fov`, `monochromatic`, `resolution`, `aperture`, …). |
+| `camera[].configuration.min_field_of_view` | number (deg) | Narrowest FOV operators may command. From scenario `Min Field Of View`; default `0`. |
+| `camera[].configuration.max_field_of_view` | number (deg) | Widest FOV operators may command. From scenario `Max Field Of View`; default `180`. |
+| `camera[].configuration.fov` | number (deg) | Last-applied or initial field of view. Must stay within `[min_field_of_view, max_field_of_view]`. CCD entries include `fov` only (limits `0 … 180`). |
 
 ---
 

@@ -251,7 +251,7 @@ Each entry instantiates one piece of on-board hardware. The `class` decides whic
 | `Solar Panel` | `Area` (m²), `Efficiency` (`0–1`), `Mass` |
 | `Battery` | `Nominal Capacity` (Wh), `Charge Fraction` (`0–1`), `Mass` |
 | `Reaction Wheels` | `Mass` (and class-specific torque limits in some builds) |
-| `Camera` | `Mass`. Optical settings (`fov`, `aperture`, etc.) come from the `camera` command, not config. |
+| `Camera` | `Mass`, `Sample Rate`, `Min Field Of View`, `Field Of View`, `Max Field Of View`, `Aperture`, `Focal Length`, `Focusing Distance`, `Pixel Pitch`, `Circle Of Confusion`, `Resolution`. Min/max FOV clamp operator `fov`; initial FOV and other optics can be set at load. Runtime changes sync via Configuration Report `camera[]`. |
 | `Receiver` / `Transmitter` | `Antenna Gain` (dB), `Mass` |
 | `Storage` | `Mass` (capacity scales with mass in default builds) |
 | `Jammer` | `Power` (W), `Antenna Gain` (dB), `Lookup` (RF pattern CSV file) |

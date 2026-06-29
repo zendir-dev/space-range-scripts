@@ -131,7 +131,7 @@
 					"planet": "Earth",
 					"values": [
 						7500.0,
-						0.00,
+						0.0,
 						45.0,
 						220.0,
 						0,
@@ -310,7 +310,11 @@
 							0.0
 						],
 						"data": {
-							"Mass": 5.0
+							"Mass": 5.0,
+							"Resolution": [
+								1024,
+								1024
+							]
 						}
 					},
 					{
@@ -429,9 +433,7 @@
 			}
 		]
 	},
-	"events": [
-
-	],
+	"events": [],
 	"questions": [
 		{
 			"section": "Examples",

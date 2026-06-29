@@ -310,7 +310,11 @@
 							0.0
 						],
 						"data": {
-							"Mass": 5.0
+							"Mass": 5.0,
+							"Resolution": [
+								1024,
+								1024
+							]
 						}
 					},
 					{
@@ -710,8 +714,7 @@
 					"The most recent telemetry, even if captured during the inject"
 				],
 				"value": 2,
-				"reason": 
-					"The last verified pre-incident configuration as the known-good source, then re-verifies current state against it.",
+				"reason": "The last verified pre-incident configuration as the known-good source, then re-verifies current state against it.",
 				"score": 10
 			}
 		},
@@ -737,6 +740,5 @@
 				"score": 10
 			}
 		}
-		
 	]
 }

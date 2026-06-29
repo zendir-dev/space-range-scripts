@@ -1,827 +1,1310 @@
 {
-    "metadata": {
+	"metadata": {
 		"name": "Lunar Logistics",
 		"description": "This scenario tests teams' ability to perform RPO operations with a central hub spacecraft. Teams are required to dock with the hub and transfer fuel and power to and from the hub."
 	},
-    "simulation": {
-        "epoch": "2026/02/14 00:00:00",
-        "speed": 1.0,
-        "step_size": 0.1,
-        "integrator": "Euler",
-        "end_time": 3600.0
-    },
-    "universe": {
-        "atmosphere": false,
-        "magnetosphere": false,
-        "gps": true,
-        "cloud_opacity": 0.7,
-        "cloud_contrast": 2.5,
-        "ambient_light": 0.1
-    },
-    "ground_stations": {
-        "locations": [
-            "Canberra"
-        ],
-        "min_elevation": 0,
-        "max_range": 0
-    },
-    "teams": [
-        {
-            "enabled": true,
-            "id": 111111,
-            "password": "AAAAAA",
-            "name": "Red Team",
-            "key": 6,
-            "frequency": 473,
-            "collection": "Main",
-            "color": "#FF0000"
-        },
-        {
-            "enabled": true,
-            "id": 222222,
-            "password": "CCCCCC",
-            "name": "Blue Team",
-            "key": 8,
-            "frequency": 475,
-            "collection": "Main",
-            "color": "#00AAFF"
-        }
-    ],
-    "assets": {
-        "space": [
-            {
-                "id": "SC_001",
-                "name": "Microsat",
-                "orbit": {
-                    "planet": "Moon",
-                    "values": [7100.0, 0.03, 39.0, 38.0, 156, 280.0],
-                    "offset": [0.0, 0.0, 0.0, 0.0, 0.0, 0.01]
-                },
-                "physics": {
-                    "override_mass": true,
-                    "mass": 100.0,
-                    "center_of_mass": [ 0.0, 0.0, 0.0 ],
-                    "inertia_tensor": [ [ 10.0, 0.0, 0.0 ], [ 0.0, 10.0, 0.0 ], [ 0.0, 0.0, 10.0 ] ]
-                },
-                "visualization": {
-                    "mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/ZenSat/BP_Z_SC_ZenSat_Chassis",
-                    "scale": 1.0,
-                    "offset": [ 0.0, 0.0, 0.12 ]
-                },
-                "controller": {
-                    "safe_fraction": 0.1,
-                    "capture_tax": 0.001,
-                    "downlink_tax": 0.005,
-                    "ping_interval": 3.0,
-                    "reset_interval": 60.0,
-                    "jamming_multiplier": 100.0,
-                    "enable_rpo_software": false,
+	"simulation": {
+		"epoch": "2026/02/14 00:00:00",
+		"speed": 1.0,
+		"step_size": 0.1,
+		"integrator": "Euler",
+		"end_time": 3600.0
+	},
+	"universe": {
+		"atmosphere": false,
+		"magnetosphere": false,
+		"gps": true,
+		"cloud_opacity": 0.7,
+		"cloud_contrast": 2.5,
+		"ambient_light": 0.1
+	},
+	"ground_stations": {
+		"locations": [
+			"Canberra"
+		],
+		"min_elevation": 0,
+		"max_range": 0
+	},
+	"teams": [
+		{
+			"enabled": true,
+			"id": 111111,
+			"password": "AAAAAA",
+			"name": "Red Team",
+			"key": 6,
+			"frequency": 473,
+			"collection": "Main",
+			"color": "#FF0000"
+		},
+		{
+			"enabled": true,
+			"id": 222222,
+			"password": "CCCCCC",
+			"name": "Blue Team",
+			"key": 8,
+			"frequency": 475,
+			"collection": "Main",
+			"color": "#00AAFF"
+		}
+	],
+	"assets": {
+		"space": [
+			{
+				"id": "SC_001",
+				"name": "Microsat",
+				"orbit": {
+					"planet": "Moon",
+					"values": [
+						7100.0,
+						0.03,
+						39.0,
+						38.0,
+						156,
+						280.0
+					],
+					"offset": [
+						0.0,
+						0.0,
+						0.0,
+						0.0,
+						0.0,
+						0.01
+					]
+				},
+				"physics": {
+					"override_mass": true,
+					"mass": 100.0,
+					"center_of_mass": [
+						0.0,
+						0.0,
+						0.0
+					],
+					"inertia_tensor": [
+						[
+							10.0,
+							0.0,
+							0.0
+						],
+						[
+							0.0,
+							10.0,
+							0.0
+						],
+						[
+							0.0,
+							0.0,
+							10.0
+						]
+					]
+				},
+				"visualization": {
+					"mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/ZenSat/BP_Z_SC_ZenSat_Chassis",
+					"scale": 1.0,
+					"offset": [
+						0.0,
+						0.0,
+						0.12
+					]
+				},
+				"controller": {
+					"safe_fraction": 0.1,
+					"capture_tax": 0.001,
+					"downlink_tax": 0.005,
+					"ping_interval": 3.0,
+					"reset_interval": 60.0,
+					"jamming_multiplier": 100.0,
+					"enable_rpo_software": false,
 					"enable_intercept": false
-                },
-                "power": {
-                    "bus": [
-                        {
-                            "source_component": "Solar Panel +X",
-                            "source_terminal": "out",
-                            "target_component": "Battery",
-                            "target_terminal": "out"
-                        },
-                        {
-                            "source_component": "Solar Panel -X",
-                            "source_terminal": "out",
-                            "target_component": "Battery",
-                            "target_terminal": "out"
-                        },
-                        {
-                            "source_component": "Battery",
-                            "source_terminal": "out",
-                            "target_component": "Power Interconnect",
-                            "target_terminal": "in"
-                        }
-                    ]
-                },
-                "fuel": {
-                    "bus": [
-                        {
-                            "source_component": "Fuel Tank",
-                            "source_terminal": "out",
-                            "target_component": "Fill Valve",
-                            "target_terminal": "in"
-                        },
-                        {
-                            "source_component": "Fill Valve",
-                            "source_terminal": "out",
-                            "target_component": "Fuel Interconnect",
-                            "target_terminal": "out"
-                        }
-                    ]
-                },
-                "components": [
-                    {
-                        "class": "Solar Panel",
-                        "name": "Solar Panel +X",
-                        "mesh": "None",
-                        "enabled": true,
-                        "position": [ 0.8, 0.276313, -0.2 ],
-                        "rotation": [ 35.0, 0.0, 0.0 ],
-                        "scale": 1.0,
-                        "data": {
-                            "Area": 0.3,
-                            "Efficiency": 0.4,
-                            "Mass": 10.0
-                        }
-                    },
-                    {
-                        "class": "Solar Panel",
-                        "name": "Solar Panel -X",
-                        "mesh": "None",
-                        "enabled": true,
-                        "position": [ -0.8, 0.276313, -0.2 ],
-                        "rotation": [ 35.0, 0.0, 0.0 ],
-                        "data": {
-                            "Area": 0.3,
-                            "Efficiency": 0.4,
-                            "Mass": 10.0
-                        }
-                    },
-                    {
-                        "class": "External Force Torque",
-                        "name": "External Force Torque",
-                        "mesh": "None",
-                        "enabled": true,
-                        "position": [ 0.0, 0.0, 0.0 ],
-                        "data": {
-                            "Max Force": 5000,
-                            "Max Torque": 2000
-                        }
-                    },
-                    {
-                        "class": "Reaction Wheels",
-                        "name": "Reaction Wheels",
-                        "mesh": "None",
-                        "enabled": false,
-                        "position": [ 0.0, 0.0, 0.2 ],
-                        "data": {
-                            "Mass": 9.0
-                        }
-                    },
-                    {
-                        "class": "Computer",
-                        "name": "Computer",
-                        "mesh": "None",
-                        "enabled": true,
-                        "position": [ 0.0, 0.0, 0.2 ],
-                        "data": {
-                            "Mass": 2.0
-                        }
-                    },
-                    {
-                        "class": "Battery",
-                        "name": "Battery",
-                        "mesh": "None",
-                        "enabled": true,
-                        "position": [ 0.0, 0.0, 0.2 ],
-                        "data": {
-                            "Nominal Capacity": 40.0,
-                            "Charge Fraction": 0.15,
-                            "Mass": 5.0
-                        }
-                    },
-                    {
-                        "class": "Optical Camera",
-                        "name": "Camera",
-                        "mesh": "None",
-                        "enabled": true,
-                        "position": [ -0.147, 0.357, -0.132 ],
-                        "rotation": [ -90.0, 0.0, 0.0 ],
-                        "data": {
-                            "Mass": 5.0,
-                            "Sample Rate": 10.0
-                        }
-                    },
-                    {
-                        "class": "GPS Sensor",
-                        "name": "GPS Sensor",
-                        "mesh": "None",
-                        "enabled": true,
-                        "position": [ 0.0, 0.0, 0.2 ],
-                        "data": {
-                            "Mass": 2.0
-                        }
-                    },
-                    {
-                        "class": "Receiver",
-                        "name": "Receiver",
-                        "mesh": "None",
-                        "enabled": true,
-                        "position": [ 0.0, -0.36, -0.16 ],
-                        "rotation": [ 90.0, 0.0, 0.0 ],
-                        "data": {
-                            "Antenna Gain": 3.0,
-                            "Mass": 2.0
-                        }
-                    },
-                    {
-                        "class": "Transmitter",
-                        "name": "Transmitter",
-                        "mesh": "None",
-                        "enabled": true,
-                        "position": [ 0.0, -0.36, -0.16 ],
-                        "rotation": [ 90.0, 0.0, 0.0 ],
-                        "data": {
-                            "Mass": 1.0
-                        }
-                    },
-                    {
-                        "class": "Storage",
-                        "name": "Storage",
-                        "mesh": "None",
-                        "enabled": true,
-                        "position": [ 0.0, 0.0, -0.2 ],
-                        "data": {
-                            "Mass": 4.0
-                        }
-                    },
-                    {
-                        "class": "Docking Adapter",
-                        "name": "Docking Adapter",
-                        "mesh": "None",
-                        "enabled": true,
-                        "position": [ 0.0, 0.36, -0.015 ],
-                        "rotation": [ -90.0, 0.0, 0.0 ],
-                        "data": {
-                            "Mass": 5.0,
-                            "Capture Distance": 0.05,
-                            "Capture Angle": 20.0,
-                            "Separation Force": 3.0,
-                            "Separation Duration": 1.0
-                        }
-                    },
-                    {
-                        "class": "Laser Range Finder",
-                        "name": "LRF 0",
-                        "mesh": "None",
-                        "enabled": true,
-                        "position": [ 0.04, 0.36, -0.015 ],
-                        "rotation": [ -90.0, 0.0, 0.0 ],
-                        "data": {
-                            "Mass": 1.0,
-                            "Operating Range": 10000.0
-                        },
-                        "models": [
-                            {
-                                "class": "Laser Range Finder Calibration Error Model",
-                                "enabled": true,
-                                "data": {
-                                    "Calibration Bias": 5.0,
-                                    "Calibration Scale": 1.00
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "class": "Laser Range Finder",
-                        "name": "LRF 120",
-                        "mesh": "None",
-                        "enabled": true,
-                        "position": [ -0.02, 0.36, 0.02 ],
-                        "rotation": [ -90.0, 0.0, 0.0 ],
-                        "data": {
-                            "Mass": 1.0,
-                            "Operating Range": 10000.0
-                        }
-                    },
-                    {
-                        "class": "Laser Range Finder",
-                        "name": "LRF 240",
-                        "mesh": "None",
-                        "enabled": true,
-                        "position": [ -0.02, 0.36, -0.05 ],
-                        "rotation": [ -90.0, 0.0, 0.0 ],
-                        "data": {
-                            "Mass": 1.0,
-                            "Operating Range": 10000.0
-                        }
-                    },
-                    {
-                        "class": "Fuel Source",
-                        "name": "Fuel Tank",
-                        "mesh": "None",
-                        "enabled": true,
-                        "position": [ 0.0, 0.0, 0.15 ],
-                        "data": {
-                            "Capacity": 80.0,
-                            "Amount": 80.0,
-                            "Dry Mass": 5.0,
-                            "Maximum Outgoing Flow Rate": 2.0
-                        }
-                    },
-                    {
-                        "class": "Fuel Valve",
-                        "name": "Fill Valve",
-                        "mesh": "None",
-                        "enabled": true,
-                        "data": {
-                            "Commanded Percent Open": 0.0,
-                            "Max Flow Rate": 2.0,
-                            "Mass": 0.4
-                        }
-                    },
-                    {
-                        "class": "Fuel Interconnect",
-                        "name": "Fuel Interconnect",
-                        "mesh": "None",
-                        "enabled": true,
-                        "position": [ 0.0, 0.36, -0.015 ],
-                        "data": {
-                            "Mass": 0.5,
-                            "Is Bidirectional": true,
-                            "Vent To Space When Unconnected": false
-                        }
-                    },
-                    {
-                        "class": "Power Interconnect",
-                        "name": "Power Interconnect",
-                        "data": {
-                            "Is Open": true,
-                            "Mass": 0.2
-                        }
-                    }
-                ]
-            },
-            {
-                "id": "SC_002",
-                "name": "Hub",
-                "orbit": {
-                    "planet": "Moon",
-                    "values": [14753.33, 0.864, 52.0, 315.10799, 145.8, 175.5],
-                    "offset": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-                },
-                "physics": {
-                    "attitude": [52, 68, 20],
-                    "attitude_rate": [0.0, 0.0, 0.0],
-                    "override_mass": true,
-                    "mass": 63000.0,
-                    "center_of_mass": [ 0.0, 0.0, 0.0 ],
-                    "inertia_tensor": [ [ 1000000.0, 0.0, 0.0 ], [ 0.0, 1000000.0, 0.0 ], [ 0.0, 0.0, 1000000.0 ] ]
-                },
-                "visualization": {
-                    "mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/GatewayCore/BP_Z_SC_GatewayCore_Chassis",
-                    "scale": 0.2,
-                    "offset": [ 0.0, 0.0, 0.0 ]
-                },
-                "controller": {
-                    "safe_fraction": 0.1,
-                    "capture_tax": 0.001,
-                    "downlink_tax": 0.005,
-                    "ping_interval": 3.0,
-                    "reset_interval": 60.0,
-                    "jamming_multiplier": 100.0,
-                    "enable_rpo_software": false,
+				},
+				"power": {
+					"bus": [
+						{
+							"source_component": "Solar Panel +X",
+							"source_terminal": "out",
+							"target_component": "Battery",
+							"target_terminal": "out"
+						},
+						{
+							"source_component": "Solar Panel -X",
+							"source_terminal": "out",
+							"target_component": "Battery",
+							"target_terminal": "out"
+						},
+						{
+							"source_component": "Battery",
+							"source_terminal": "out",
+							"target_component": "Power Interconnect",
+							"target_terminal": "in"
+						}
+					]
+				},
+				"fuel": {
+					"bus": [
+						{
+							"source_component": "Fuel Tank",
+							"source_terminal": "out",
+							"target_component": "Fill Valve",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "Fill Valve",
+							"source_terminal": "out",
+							"target_component": "Fuel Interconnect",
+							"target_terminal": "out"
+						}
+					]
+				},
+				"components": [
+					{
+						"class": "Solar Panel",
+						"name": "Solar Panel +X",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.8,
+							0.276313,
+							-0.2
+						],
+						"rotation": [
+							35.0,
+							0.0,
+							0.0
+						],
+						"scale": 1.0,
+						"data": {
+							"Area": 0.3,
+							"Efficiency": 0.4,
+							"Mass": 10.0
+						}
+					},
+					{
+						"class": "Solar Panel",
+						"name": "Solar Panel -X",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							-0.8,
+							0.276313,
+							-0.2
+						],
+						"rotation": [
+							35.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Area": 0.3,
+							"Efficiency": 0.4,
+							"Mass": 10.0
+						}
+					},
+					{
+						"class": "External Force Torque",
+						"name": "External Force Torque",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Max Force": 5000,
+							"Max Torque": 2000
+						}
+					},
+					{
+						"class": "Reaction Wheels",
+						"name": "Reaction Wheels",
+						"mesh": "None",
+						"enabled": false,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Mass": 9.0
+						}
+					},
+					{
+						"class": "Computer",
+						"name": "Computer",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Battery",
+						"name": "Battery",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Nominal Capacity": 40.0,
+							"Charge Fraction": 0.15,
+							"Mass": 5.0
+						}
+					},
+					{
+						"class": "Optical Camera",
+						"name": "Main Camera",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							-0.011,
+							-0.307,
+							-0.01
+						],
+						"rotation": [
+							90,
+							0,
+							0
+						],
+						"data": {
+							"Mass": 3.0,
+							"Aperture": 20.0,
+							"Resolution": [
+								1024,
+								1024
+							],
+							"Min Field Of View": 1.0,
+							"Field Of View": 10.0,
+							"Max Field Of View": 15.0
+						}
+					},
+					{
+						"class": "Optical Camera",
+						"name": "Docking Camera",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							-0.147,
+							0.357,
+							-0.132
+						],
+						"rotation": [
+							-90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Mass": 0.5,
+							"Resolution": [
+								256,
+								256
+							],
+							"Min Field Of View": 30.0,
+							"Field Of View": 45.0,
+							"Max Field Of View": 60.0
+						}
+					},
+					{
+						"class": "GPS Sensor",
+						"name": "GPS Sensor",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Receiver",
+						"name": "Receiver",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							-0.36,
+							-0.16
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Antenna Gain": 3.0,
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Transmitter",
+						"name": "Transmitter",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							-0.36,
+							-0.16
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Mass": 1.0
+						}
+					},
+					{
+						"class": "Storage",
+						"name": "Storage",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							-0.2
+						],
+						"data": {
+							"Mass": 4.0
+						}
+					},
+					{
+						"class": "Docking Adapter",
+						"name": "Docking Adapter",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.36,
+							-0.015
+						],
+						"rotation": [
+							-90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Mass": 5.0,
+							"Capture Distance": 0.05,
+							"Capture Angle": 20.0,
+							"Separation Force": 3.0,
+							"Separation Duration": 1.0
+						}
+					},
+					{
+						"class": "Laser Range Finder",
+						"name": "LRF 0",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.04,
+							0.36,
+							-0.015
+						],
+						"rotation": [
+							-90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Mass": 1.0,
+							"Operating Range": 10000.0
+						},
+						"models": [
+							{
+								"class": "Laser Range Finder Calibration Error Model",
+								"enabled": true,
+								"data": {
+									"Calibration Bias": 5.0,
+									"Calibration Scale": 1.0
+								}
+							}
+						]
+					},
+					{
+						"class": "Laser Range Finder",
+						"name": "LRF 120",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							-0.02,
+							0.36,
+							0.02
+						],
+						"rotation": [
+							-90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Mass": 1.0,
+							"Operating Range": 10000.0
+						}
+					},
+					{
+						"class": "Laser Range Finder",
+						"name": "LRF 240",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							-0.02,
+							0.36,
+							-0.05
+						],
+						"rotation": [
+							-90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Mass": 1.0,
+							"Operating Range": 10000.0
+						}
+					},
+					{
+						"class": "Fuel Source",
+						"name": "Fuel Tank",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.15
+						],
+						"data": {
+							"Capacity": 80.0,
+							"Amount": 80.0,
+							"Dry Mass": 5.0,
+							"Maximum Outgoing Flow Rate": 2.0
+						}
+					},
+					{
+						"class": "Fuel Valve",
+						"name": "Fill Valve",
+						"mesh": "None",
+						"enabled": true,
+						"data": {
+							"Commanded Percent Open": 0.0,
+							"Max Flow Rate": 2.0,
+							"Mass": 0.4
+						}
+					},
+					{
+						"class": "Fuel Interconnect",
+						"name": "Fuel Interconnect",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.36,
+							-0.015
+						],
+						"data": {
+							"Mass": 0.5,
+							"Is Bidirectional": true,
+							"Vent To Space When Unconnected": false
+						}
+					},
+					{
+						"class": "Power Interconnect",
+						"name": "Power Interconnect",
+						"data": {
+							"Is Open": true,
+							"Mass": 0.2
+						}
+					}
+				]
+			},
+			{
+				"id": "SC_002",
+				"name": "Hub",
+				"orbit": {
+					"planet": "Moon",
+					"values": [
+						14753.33,
+						0.864,
+						52.0,
+						315.10799,
+						145.8,
+						175.5
+					],
+					"offset": [
+						0.0,
+						0.0,
+						0.0,
+						0.0,
+						0.0,
+						0.0
+					]
+				},
+				"physics": {
+					"attitude": [
+						52,
+						68,
+						20
+					],
+					"attitude_rate": [
+						0.0,
+						0.0,
+						0.0
+					],
+					"override_mass": true,
+					"mass": 63000.0,
+					"center_of_mass": [
+						0.0,
+						0.0,
+						0.0
+					],
+					"inertia_tensor": [
+						[
+							1000000.0,
+							0.0,
+							0.0
+						],
+						[
+							0.0,
+							1000000.0,
+							0.0
+						],
+						[
+							0.0,
+							0.0,
+							1000000.0
+						]
+					]
+				},
+				"visualization": {
+					"mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/GatewayCore/BP_Z_SC_GatewayCore_Chassis",
+					"scale": 0.2,
+					"offset": [
+						0.0,
+						0.0,
+						0.0
+					]
+				},
+				"controller": {
+					"safe_fraction": 0.1,
+					"capture_tax": 0.001,
+					"downlink_tax": 0.005,
+					"ping_interval": 3.0,
+					"reset_interval": 60.0,
+					"jamming_multiplier": 100.0,
+					"enable_rpo_software": false,
 					"enable_intercept": false
-                },
-                "power": {
-                    "bus": [
-                        {
-                            "source_component": "Solar Panel",
-                            "source_terminal": "out",
-                            "target_component": "Battery",
-                            "target_terminal": "out"
-                        },
-                        { "source_component": "Battery", "source_terminal": "out", "target_component": "Power Interconnect D", "target_terminal": "in" },
-                        { "source_component": "Battery", "source_terminal": "out", "target_component": "Power Interconnect E", "target_terminal": "in" }
-                    ]
-                },
-                "fuel": {
-                    "bus": [
-                        { "source_component": "Fuel Interconnect D", "source_terminal": "out", "target_component": "Valve D", "target_terminal": "in" },
-                        { "source_component": "Valve D", "source_terminal": "out", "target_component": "Tank D", "target_terminal": "in" },
-                        { "source_component": "Fuel Interconnect E", "source_terminal": "out", "target_component": "Valve E", "target_terminal": "in" },
-                        { "source_component": "Valve E", "source_terminal": "out", "target_component": "Tank E", "target_terminal": "in" }
-                    ]
-                },
-                "components": [
-                    {
-                        "class": "Solar Panel",
-                        "mesh": "None",
-                        "position": [ 0.05, 0.0, 0.0 ],
-                        "rotation": [ 0.0, 90.0, 0.0 ],
-                        "scale": 1.0,
-                        "data": {
-                            "Area": 0.3,
-                            "Efficiency": 0.4,
-                            "Mass": 10.0
-                        }
-                    },
-                    {
-                        "class": "Reaction Wheels",
-                        "mesh": "None",
-                        "position": [ 0.0, 0.0, -0.10 ],
-                        "data": {
-                            "Mass": 9.0
-                        }
-                    },
-                    {
-                        "class": "Computer",
-                        "mesh": "None",
-                        "position": [ 0.0, 0.0, 0.0 ],
-                        "data": {
-                            "Mass": 2.0
-                        }
-                    },
-                    {
-                        "class": "Battery",
-                        "mesh": "None",
-                        "position": [ 0.0, 0.0, 0.05 ],
-                        "data": {
-                            "Nominal Capacity": 5000.0,
-                            "Charge Fraction": 1.0,
-                            "Nominal Voltage": 240.0,
-                            "Mass": 50.0
-                        }
-                    },
-                    {
-                        "class": "Optical Camera",
-                        "name": "Camera",
-                        "mesh": "None",
-                        "position": [ 0.152, 0.362, 0.021 ],
-                        "rotation": [ -90.0, 0.0, 0.0 ],
-                        "data": {
-                            "Mass": 5.0,
-                            "Sample Rate": 10.0
-                        }
-                    },
-                    {
-                        "class": "Receiver",
-                        "mesh": "None",
-                        "position": [ 0.0, -0.05, 0.0 ],
-                        "rotation": [ 90.0, 0.0, 0.0 ],
-                        "data": {
-                            "Antenna Gain": 3.0,
-                            "Mass": 2.0
-                        }
-                    },
-                    {
-                        "class": "GPS Sensor",
-                        "mesh": "None",
-                        "position": [ 0.0, 0.0, 0.05 ],
-                        "data": {
-                            "Mass": 2.0
-                        }
-                    },
-                    {
-                        "class": "Transmitter",
-                        "mesh": "None",
-                        "position": [ 0.0, -0.05, 0.0 ],
-                        "rotation": [ 90.0, 0.0, 0.0 ],
-                        "data": {
-                            "Mass": 1.0
-                        }
-                    },
-                    {
-                        "class": "Storage",
-                        "mesh": "None",
-                        "position": [ 0.0, 0.0, -0.012 ],
-                        "data": {
-                            "Mass": 4.0
-                        }
-                    },
-                    {
-                        "class": "Docking Adapter",
-                        "name": "Docking A",
-                        "position": [ -0.005, 0.318, 0.002 ],
-                        "rotation": [ -90.0, 0.0, -90.0 ],
-                        "data": {
-                            "Mass": 5.0,
-                            "Capture Distance": 0.05,
-                            "Capture Angle": 20.0
-                        }
-                    },
-                    {
-                        "class": "Docking Adapter",
-                        "name": "Docking B",
-                        "position": [ -1.503, 0.354, 0.002 ],
-                        "rotation": [ -90.0, 0.0, -90.0 ],
-                        "data": {
-                            "Mass": 5.0,
-                            "Capture Distance": 0.05,
-                            "Capture Angle": 20.0
-                        }
-                    },
-                    {
-                        "class": "Docking Adapter",
-                        "name": "Docking C",
-                        "position": [ -2.109, -0.003, 0.006 ],
-                        "rotation": [ 0.0, -90.0, 0.0 ],
-                        "data": {
-                            "Mass": 5.0,
-                            "Capture Distance": 0.05,
-                            "Capture Angle": 20.0
-                        }
-                    },
-                    {
-                        "class": "Docking Adapter",
-                        "name": "Docking D",
-                        "position": [ -1.506, -1.767, 0.0 ],
-                        "rotation": [ 90.0, 0.0, -90.0 ],
-                        "data": {
-                            "Mass": 5.0,
-                            "Capture Distance": 0.05,
-                            "Capture Angle": 20.0
-                        }
-                    },
-                    {
-                        "class": "Docking Adapter",
-                        "name": "Docking E",
-                        "position": [ 0.004, -1.689, 0.004 ],
-                        "rotation": [ 90.0, 0.0, -90.0 ],
-                        "data": {
-                            "Mass": 5.0,
-                            "Capture Distance": 0.05,
-                            "Capture Angle": 20.0
-                        }
-                    },
-                    {
-                        "class": "Fuel Source",
-                        "name": "Tank D",
-                        "mesh": "None",
-                        "position": [ 0.0, 0.0, 0.0 ],
-                        "data": {
-                            "Capacity": 100.0,
-                            "Amount": 55.0,
-                            "Dry Mass": 40.0,
-                            "Maximum Outgoing Flow Rate": 10.0,
-                            "Desired Ingoing Flow Rate": 0.2
-                        }
-                    },
-                    {
-                        "class": "Fuel Source",
-                        "name": "Tank E",
-                        "mesh": "None",
-                        "position": [ 0.0, 0.0, 0.0 ],
-                        "data": {
-                            "Capacity": 100.0,
-                            "Amount": 55.0,
-                            "Dry Mass": 40.0,
-                            "Maximum Outgoing Flow Rate": 10.0,
-                            "Desired Ingoing Flow Rate": 0.2
-                        }
-                    },
-                    { "class": "Fuel Valve", "name": "Valve D", "mesh": "None", "data": { "Commanded Percent Open": 1.0, "Max Flow Rate": 2.0, "Mass": 0.4 } },
-                    { "class": "Fuel Valve", "name": "Valve E", "mesh": "None", "data": { "Commanded Percent Open": 1.0, "Max Flow Rate": 2.0, "Mass": 0.4 } },
-                    {
-                        "class": "Fuel Interconnect",
-                        "name": "Fuel Interconnect D",
-                        "mesh": "None",
-                        "position": [ -1.506, -1.767, 0.0 ],
-                        "data": { "Mass": 0.5, "Is Bidirectional": true, "Vent To Space When Unconnected": false }
-                    },
-                    {
-                        "class": "Fuel Interconnect",
-                        "name": "Fuel Interconnect E",
-                        "mesh": "None",
-                        "position": [ 0.004, -1.689, 0.004 ],
-                        "data": { "Mass": 0.5, "Is Bidirectional": true, "Vent To Space When Unconnected": false }
-                    },
-                    { "class": "Power Interconnect", "name": "Power Interconnect D", "mesh": "None" },
-                    { "class": "Power Interconnect", "name": "Power Interconnect E", "mesh": "None" }
-                ]
-            },
-            {
-                "id": "SC_003",
-                "name": "Debris",
-                "orbit": {
-                    "planet": "Moon",
-                    "values": [14753.33, 0.864, 52.0, 315.10799, 145.8, 175.5001],
-                    "offset": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-                },
-                "physics": {
-                    "attitude": [0.0, 0.0, 90.0],
-                    "attitude_rate": [5.0, 0.0, 0.0],
-                    "override_mass": true,
-                    "mass": 100.0,
-                    "center_of_mass": [ 0.0, 0.0, 0.0 ],
-                    "inertia_tensor": [ [ 10000.0, 0.0, 0.0 ], [ 0.0, 10000.0, 0.0 ], [ 0.0, 0.0, 10000.0 ] ]
-                },
-                "visualization": {
-                    "mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/SecondStage/BP_Z_SC_SecondStage_Chassis",
-                    "scale": 0.2,
-                    "offset": [ 0.0, 0.0, 0.0 ],
+				},
+				"power": {
+					"bus": [
+						{
+							"source_component": "Solar Panel",
+							"source_terminal": "out",
+							"target_component": "Battery",
+							"target_terminal": "out"
+						},
+						{
+							"source_component": "Battery",
+							"source_terminal": "out",
+							"target_component": "Power Interconnect D",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "Battery",
+							"source_terminal": "out",
+							"target_component": "Power Interconnect E",
+							"target_terminal": "in"
+						}
+					]
+				},
+				"fuel": {
+					"bus": [
+						{
+							"source_component": "Fuel Interconnect D",
+							"source_terminal": "out",
+							"target_component": "Valve D",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "Valve D",
+							"source_terminal": "out",
+							"target_component": "Tank D",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "Fuel Interconnect E",
+							"source_terminal": "out",
+							"target_component": "Valve E",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "Valve E",
+							"source_terminal": "out",
+							"target_component": "Tank E",
+							"target_terminal": "in"
+						}
+					]
+				},
+				"components": [
+					{
+						"class": "Solar Panel",
+						"mesh": "None",
+						"position": [
+							0.05,
+							0.0,
+							0.0
+						],
+						"rotation": [
+							0.0,
+							90.0,
+							0.0
+						],
+						"scale": 1.0,
+						"data": {
+							"Area": 0.3,
+							"Efficiency": 0.4,
+							"Mass": 10.0
+						}
+					},
+					{
+						"class": "Reaction Wheels",
+						"mesh": "None",
+						"position": [
+							0.0,
+							0.0,
+							-0.1
+						],
+						"data": {
+							"Mass": 9.0
+						}
+					},
+					{
+						"class": "Computer",
+						"mesh": "None",
+						"position": [
+							0.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Battery",
+						"mesh": "None",
+						"position": [
+							0.0,
+							0.0,
+							0.05
+						],
+						"data": {
+							"Nominal Capacity": 5000.0,
+							"Charge Fraction": 1.0,
+							"Nominal Voltage": 240.0,
+							"Mass": 50.0
+						}
+					},
+					{
+						"class": "Optical Camera",
+						"name": "Camera",
+						"mesh": "None",
+						"position": [
+							0.152,
+							0.362,
+							0.021
+						],
+						"rotation": [
+							-90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Mass": 5.0,
+							"Sample Rate": 10.0,
+							"Resolution": [
+								1024,
+								1024
+							]
+						}
+					},
+					{
+						"class": "Receiver",
+						"mesh": "None",
+						"position": [
+							0.0,
+							-0.05,
+							0.0
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Antenna Gain": 3.0,
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "GPS Sensor",
+						"mesh": "None",
+						"position": [
+							0.0,
+							0.0,
+							0.05
+						],
+						"data": {
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Transmitter",
+						"mesh": "None",
+						"position": [
+							0.0,
+							-0.05,
+							0.0
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Mass": 1.0
+						}
+					},
+					{
+						"class": "Storage",
+						"mesh": "None",
+						"position": [
+							0.0,
+							0.0,
+							-0.012
+						],
+						"data": {
+							"Mass": 4.0
+						}
+					},
+					{
+						"class": "Docking Adapter",
+						"name": "Docking A",
+						"position": [
+							-0.005,
+							0.318,
+							0.002
+						],
+						"rotation": [
+							-90.0,
+							0.0,
+							-90.0
+						],
+						"data": {
+							"Mass": 5.0,
+							"Capture Distance": 0.05,
+							"Capture Angle": 20.0
+						}
+					},
+					{
+						"class": "Docking Adapter",
+						"name": "Docking B",
+						"position": [
+							-1.503,
+							0.354,
+							0.002
+						],
+						"rotation": [
+							-90.0,
+							0.0,
+							-90.0
+						],
+						"data": {
+							"Mass": 5.0,
+							"Capture Distance": 0.05,
+							"Capture Angle": 20.0
+						}
+					},
+					{
+						"class": "Docking Adapter",
+						"name": "Docking C",
+						"position": [
+							-2.109,
+							-0.003,
+							0.006
+						],
+						"rotation": [
+							0.0,
+							-90.0,
+							0.0
+						],
+						"data": {
+							"Mass": 5.0,
+							"Capture Distance": 0.05,
+							"Capture Angle": 20.0
+						}
+					},
+					{
+						"class": "Docking Adapter",
+						"name": "Docking D",
+						"position": [
+							-1.506,
+							-1.767,
+							0.0
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							-90.0
+						],
+						"data": {
+							"Mass": 5.0,
+							"Capture Distance": 0.05,
+							"Capture Angle": 20.0
+						}
+					},
+					{
+						"class": "Docking Adapter",
+						"name": "Docking E",
+						"position": [
+							0.004,
+							-1.689,
+							0.004
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							-90.0
+						],
+						"data": {
+							"Mass": 5.0,
+							"Capture Distance": 0.05,
+							"Capture Angle": 20.0
+						}
+					},
+					{
+						"class": "Fuel Source",
+						"name": "Tank D",
+						"mesh": "None",
+						"position": [
+							0.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Capacity": 100.0,
+							"Amount": 55.0,
+							"Dry Mass": 40.0,
+							"Maximum Outgoing Flow Rate": 10.0,
+							"Desired Ingoing Flow Rate": 0.2
+						}
+					},
+					{
+						"class": "Fuel Source",
+						"name": "Tank E",
+						"mesh": "None",
+						"position": [
+							0.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Capacity": 100.0,
+							"Amount": 55.0,
+							"Dry Mass": 40.0,
+							"Maximum Outgoing Flow Rate": 10.0,
+							"Desired Ingoing Flow Rate": 0.2
+						}
+					},
+					{
+						"class": "Fuel Valve",
+						"name": "Valve D",
+						"mesh": "None",
+						"data": {
+							"Commanded Percent Open": 1.0,
+							"Max Flow Rate": 2.0,
+							"Mass": 0.4
+						}
+					},
+					{
+						"class": "Fuel Valve",
+						"name": "Valve E",
+						"mesh": "None",
+						"data": {
+							"Commanded Percent Open": 1.0,
+							"Max Flow Rate": 2.0,
+							"Mass": 0.4
+						}
+					},
+					{
+						"class": "Fuel Interconnect",
+						"name": "Fuel Interconnect D",
+						"mesh": "None",
+						"position": [
+							-1.506,
+							-1.767,
+							0.0
+						],
+						"data": {
+							"Mass": 0.5,
+							"Is Bidirectional": true,
+							"Vent To Space When Unconnected": false
+						}
+					},
+					{
+						"class": "Fuel Interconnect",
+						"name": "Fuel Interconnect E",
+						"mesh": "None",
+						"position": [
+							0.004,
+							-1.689,
+							0.004
+						],
+						"data": {
+							"Mass": 0.5,
+							"Is Bidirectional": true,
+							"Vent To Space When Unconnected": false
+						}
+					},
+					{
+						"class": "Power Interconnect",
+						"name": "Power Interconnect D",
+						"mesh": "None"
+					},
+					{
+						"class": "Power Interconnect",
+						"name": "Power Interconnect E",
+						"mesh": "None"
+					}
+				]
+			},
+			{
+				"id": "SC_003",
+				"name": "Debris",
+				"orbit": {
+					"planet": "Moon",
+					"values": [
+						14753.33,
+						0.864,
+						52.0,
+						315.10799,
+						145.8,
+						175.5001
+					],
+					"offset": [
+						0.0,
+						0.0,
+						0.0,
+						0.0,
+						0.0,
+						0.0
+					]
+				},
+				"physics": {
+					"attitude": [
+						0.0,
+						0.0,
+						90.0
+					],
+					"attitude_rate": [
+						5.0,
+						0.0,
+						0.0
+					],
+					"override_mass": true,
+					"mass": 100.0,
+					"center_of_mass": [
+						0.0,
+						0.0,
+						0.0
+					],
+					"inertia_tensor": [
+						[
+							10000.0,
+							0.0,
+							0.0
+						],
+						[
+							0.0,
+							10000.0,
+							0.0
+						],
+						[
+							0.0,
+							0.0,
+							10000.0
+						]
+					]
+				},
+				"visualization": {
+					"mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/SecondStage/BP_Z_SC_SecondStage_Chassis",
+					"scale": 0.2,
+					"offset": [
+						0.0,
+						0.0,
+						0.0
+					],
 					"hide": true
-                },
-                "controller": {
-                    "ping_interval": 10000000.0,
-                    "enable_rpo_software": false,
+				},
+				"controller": {
+					"ping_interval": 10000000.0,
+					"enable_rpo_software": false,
 					"enable_intercept": false
-                },
-                "components": [
-                    {
-                        "class": "Text",
-                        "name": "Marking",
-                        "enabled": true,
-                        "position": [ 0.0, 0.2, 0.066 ],
-                        "rotation": [ -90.0, 0.0, 40.0 ],
-                        "data": {
-                            "Text": "NASA",
-                            "Color": "#0010FF",
-                            "Scale": 0.3
-                        }
-                    }
-                ]
-            }
-        ],
-        "collections": [
-            {
-                "id": "Main",
-                "space_assets": ["SC_001"]
-            }
-        ],
-        "neutral": ["SC_002", "SC_003"]
-    },
-    "docking": [
-        { "from_team": 111111, "from_target": "Docking Adapter", "to_asset": "SC_002", "to_target": "Docking D" },
-        { "from_team": 222222, "from_target": "Docking Adapter", "to_asset": "SC_002", "to_target": "Docking E" },
-
-        { "from_team": 111111, "from_target": "Fuel Interconnect", "to_asset": "SC_002", "to_target": "Fuel Interconnect D" },
-        { "from_team": 222222, "from_target": "Fuel Interconnect", "to_asset": "SC_002", "to_target": "Fuel Interconnect E" },
-
-        { "from_team": 111111, "from_target": "Power Interconnect", "to_asset": "SC_002", "to_target": "Power Interconnect D" },
-        { "from_team": 222222, "from_target": "Power Interconnect", "to_asset": "SC_002", "to_target": "Power Interconnect E" }
-    ],
-    "objects": {
-        "ground": [
-            {
-                "id": "GO_008",
-                "type": "text",
-                "name": "Bonus Word",
-                "planet": "Moon",
-                "latitude": -0.6,
-                "longitude": 1.9,
-                "altitude": 32.3,
-                "scale": 1265845.125,
-                "data": {
-                    "text": "ALDRIN WAS HERE"
-                }
-            }
-        ]
-    },
-    "events": [
-    ],
-    "questions": [
-        {
-            "section": "Undocking",
-            "title": "What separation velocity (m/s) does your spacecraft acquire immediately after undocking from the hub?",
-            "description": "Your three laser range finders are body-fixed and already sighted on the Lunar Gateway while docked. Command undock and plot MeasuredVelocity from LRF telemetry (APID 305) — the sensors auto-compute range rate without repointing. Read the peak magnitude immediately after the separation impulse and report the separation velocity in metres per second.",
-            "type": "number",
-            "answer": {
-                "unit": "m/s",
-                "value": 0.03,
-                "tolerance": 0.008,
-                "reason": "The Docking Adapter applies Separation Force 3 N over Separation Duration 1 s to the 100 kg Microsat, giving Δv = (3 × 1) / 100 = 0.03 m/s. With the static LRFs already on the hub, this appears as MeasuredVelocity on LRF telemetry at undock.",
-                "score": 5
-            }
-        },
-        {
-            "section": "Undocking",
-            "title": "After undocking, do any of your laser range finders show a calibration anomaly?",
-            "description": "The laser range finders (LRF 0, LRF 120, LRF 240) are static body-mounted sensors, all already pointed at the Lunar Gateway when you undock. Compare MeasuredRange from each unit on the same hub sightline — no repointing is required. Report whether any sensor consistently disagrees with the others.",
-            "type": "select",
-            "answer": {
-                "options": [
-                    "Yes — at least one LRF is miscalibrated",
-                    "No — all three LRFs agree within measurement noise"
-                ],
-                "value": 0,
-                "reason": [
-                    "Correct. LRF 0 carries a +5 m calibration bias; LRF 120 and LRF 240 are nominal. All three share the same hub sightline from their fixed mountings.",
-                    "LRF 0 reads approximately 5 m long compared to LRF 120 and LRF 240 on the hub while docked and immediately after undock."
-                ],
-                "score": 2
-            }
-        },
-        {
-            "section": "Undocking",
-            "title": "Which laser range finder is miscalibrated?",
-            "description": "With all three static LRFs already sighted on the Lunar Gateway, compare MeasuredRange from LRF 0, LRF 120, and LRF 240 at undock. One unit will show a persistent offset from the others. Identify the anomalous sensor by name.",
-            "type": "select",
-            "answer": {
-                "options": [
-                    "LRF 0",
-                    "LRF 120",
-                    "LRF 240",
-                    "None — all sensors are nominal"
-                ],
-                "value": 0,
-                "reason": [
-                    "Correct. LRF 0 has a Calibration Error of +5 m on the fixed hub sightline.",
-                    "LRF 120 has no calibration error.",
-                    "LRF 240 has no calibration error.",
-                    "LRF 0 has a Calibration Error of +5 m on the fixed hub sightline."
-                ],
-                "score": 4
-            }
-        },
-        {
-            "section": "Debris",
-            "title": "What is the distance between the Lunar Gateway hub and the debris rocket body?",
-            "description": "Use the Laser Range Finder on your spacecraft: command relative pointing to aim at the debris rocket body, read MeasuredRange from LRF telemetry, and account for sensor calibration where needed. Report the separation between the Lunar Gateway hub and the rocket body in metres.",
-            "type": "number",
-            "answer": {
-                "unit": "m",
-                "value": 52.16,
-                "tolerance": 8.0,
-                "reason": "The co-orbital debris rocket body is positioned 52.16 m from the Lunar Gateway hub at scenario start.",
-                "score": 10
-            }
-        },
-        {
-            "section": "Debris",
-            "title": "At what rate (RPM) is the debris rocket body spinning?",
-            "description": "The debris is tumbling about its body axis. Use the optical camera or timed observations of the chassis markings together with Laser Range Finder passes to characterise the motion, then report the spin rate in revolutions per minute (RPM).",
-            "type": "number",
-            "answer": {
-                "unit": "RPM",
-                "value": 0.8333,
-                "tolerance": 0.1,
-                "reason": "The debris attitude rate is 5 deg/s about the body Y axis, which equals 0.8333 RPM.",
-                "score": 10
-            }
-        },
-        {
-            "section": "Debris",
-            "title": "Who does the rocket body (R/B) belong to?",
-            "description": "Inspect the debris rocket body with your optical camera or during a close Laser Range Finder pass. Read the owner marking painted on the chassis and enter the organisation name exactly as shown.",
-            "type": "text",
-            "answer": {
-                "value": "NASA",
-                "reason": "The debris rocket body carries a black NASA marking on the chassis Text component.",
-                "score": 10
-            }
-        },
-        {
-            "section": "Link Budget",
-            "title": "At what time (in minutes) did the Lunar Gateway lose access to the Deep Space Network?",
-            "description": "Monitor the Link Budget panel and ground-station visibility for Canberra (Deep Space Network). Track when the Lunar Gateway hub loses usable contact with the DSN and report the elapsed simulation time in minutes from session start.",
-            "type": "number",
-            "answer": {
-                "unit": "min",
-                "value": 13.67,
-                "tolerance": 1.0,
-                "reason": "The Lunar Gateway loses DSN access at approximately 820 s (13.67 simulation minutes) for this lunar orbit and Canberra ground-station geometry.",
-                "score": 10
-            }
-        },
-        {
-            "section": "Link Budget",
-            "title": "How long in minutes was the telecommunications blackout?",
-            "description": "Using the Link Budget panel and connection telemetry, measure the interval from DSN loss of the Lunar Gateway until contact is restored. Report the blackout duration in minutes.",
-            "type": "number",
-            "answer": {
-                "unit": "min",
-                "value": 19.0,
-                "tolerance": 1.0,
-                "reason": "The Canberra DSN blackout lasts approximately 19 simulation minutes before the Lunar Gateway regains contact.",
-                "score": 10
-            }
-        },
-        {
-            "section": "Link Budget",
-            "title": "What is the nominal downlink signal-to-noise ratio from your spacecraft to the Deep Space Network?",
-            "description": "While the downlink is healthy (before the DSN blackout), read the nominal downlink signal-to-noise ratio from the Link Budget panel or Receiver / Transmitter telemetry for your spacecraft to Canberra. Report the value in dB.",
-            "type": "number",
-            "answer": {
-                "unit": "dB",
-                "value": 51.92,
-                "tolerance": 1.0,
-                "reason": "The nominal downlink SNR from the client spacecraft to Canberra is approximately 51.92 dB under the configured link budget.",
-                "score": 10
-            }
-        },
-        {
-            "section": "Fuel Operations",
-            "title": "How many kg of fuel is needed to fill the Lunar Gateway hub port tank to capacity?",
-            "description": "While docked, open your Fill Valve with fuel_bus and transfer propellant through the fuel interconnect until the hub port tank stops accepting fuel. Compare your spacecraft tank level before and after, or read the hub tank telemetry, to determine how many kg were required to reach a full tank.",
-            "type": "number",
-            "answer": {
-                "unit": "kg",
-                "value": 45.0,
-                "tolerance": 1.0,
-                "reason": "Each hub port tank (Tank D / Tank E) has Capacity 100 kg and starts at Amount 55 kg, so 45 kg is required to fill it.",
-                "score": 10
-            }
-        },
-        {
-            "section": "Fuel Operations",
-            "title": "What is the rate at which fuel is transferred to the hub?",
-            "description": "While docked and transferring propellant, monitor fuel telemetry or observe tank levels over time to determine the steady transfer rate into the Lunar Gateway hub port tank. Report the rate in kg/s.",
-            "type": "number",
-            "answer": {
-                "unit": "kg/s",
-                "value": 0.2,
-                "tolerance": 0.05,
-                "reason": "The hub port tank Desired Ingoing Flow Rate is configured at 0.2 kg/s.",
-                "score": 10
-            }
-        }
-    ]
+				},
+				"components": [
+					{
+						"class": "Text",
+						"name": "Marking",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.2,
+							0.066
+						],
+						"rotation": [
+							-90.0,
+							0.0,
+							40.0
+						],
+						"data": {
+							"Text": "NASA",
+							"Color": "#0010FF",
+							"Scale": 0.3
+						}
+					}
+				]
+			}
+		],
+		"collections": [
+			{
+				"id": "Main",
+				"space_assets": [
+					"SC_001"
+				]
+			}
+		],
+		"neutral": [
+			"SC_002",
+			"SC_003"
+		]
+	},
+	"docking": [
+		{
+			"from_team": 111111,
+			"from_target": "Docking Adapter",
+			"to_asset": "SC_002",
+			"to_target": "Docking D"
+		},
+		{
+			"from_team": 222222,
+			"from_target": "Docking Adapter",
+			"to_asset": "SC_002",
+			"to_target": "Docking E"
+		},
+		{
+			"from_team": 111111,
+			"from_target": "Fuel Interconnect",
+			"to_asset": "SC_002",
+			"to_target": "Fuel Interconnect D"
+		},
+		{
+			"from_team": 222222,
+			"from_target": "Fuel Interconnect",
+			"to_asset": "SC_002",
+			"to_target": "Fuel Interconnect E"
+		},
+		{
+			"from_team": 111111,
+			"from_target": "Power Interconnect",
+			"to_asset": "SC_002",
+			"to_target": "Power Interconnect D"
+		},
+		{
+			"from_team": 222222,
+			"from_target": "Power Interconnect",
+			"to_asset": "SC_002",
+			"to_target": "Power Interconnect E"
+		}
+	],
+	"objects": {
+		"ground": [
+			{
+				"id": "GO_008",
+				"type": "text",
+				"name": "Bonus Word",
+				"planet": "Moon",
+				"latitude": -0.6,
+				"longitude": 1.9,
+				"altitude": 32.3,
+				"scale": 1265845.125,
+				"data": {
+					"text": "ALDRIN WAS HERE"
+				}
+			}
+		]
+	},
+	"events": [],
+	"questions": [
+		{
+			"section": "Undocking",
+			"title": "What separation velocity (m/s) does your spacecraft acquire immediately after undocking from the hub?",
+			"description": "Your three laser range finders are body-fixed and already sighted on the Lunar Gateway while docked. Command undock and plot MeasuredVelocity from LRF telemetry (APID 305) \u2014 the sensors auto-compute range rate without repointing. Read the peak magnitude immediately after the separation impulse and report the separation velocity in metres per second.",
+			"type": "number",
+			"answer": {
+				"unit": "m/s",
+				"value": 0.03,
+				"tolerance": 0.008,
+				"reason": "The Docking Adapter applies Separation Force 3 N over Separation Duration 1 s to the 100 kg Microsat, giving \u0394v = (3 \u00d7 1) / 100 = 0.03 m/s. With the static LRFs already on the hub, this appears as MeasuredVelocity on LRF telemetry at undock.",
+				"score": 5
+			}
+		},
+		{
+			"section": "Undocking",
+			"title": "After undocking, do any of your laser range finders show a calibration anomaly?",
+			"description": "The laser range finders (LRF 0, LRF 120, LRF 240) are static body-mounted sensors, all already pointed at the Lunar Gateway when you undock. Compare MeasuredRange from each unit on the same hub sightline \u2014 no repointing is required. Report whether any sensor consistently disagrees with the others.",
+			"type": "select",
+			"answer": {
+				"options": [
+					"Yes \u2014 at least one LRF is miscalibrated",
+					"No \u2014 all three LRFs agree within measurement noise"
+				],
+				"value": 0,
+				"reason": [
+					"Correct. LRF 0 carries a +5 m calibration bias; LRF 120 and LRF 240 are nominal. All three share the same hub sightline from their fixed mountings.",
+					"LRF 0 reads approximately 5 m long compared to LRF 120 and LRF 240 on the hub while docked and immediately after undock."
+				],
+				"score": 2
+			}
+		},
+		{
+			"section": "Undocking",
+			"title": "Which laser range finder is miscalibrated?",
+			"description": "With all three static LRFs already sighted on the Lunar Gateway, compare MeasuredRange from LRF 0, LRF 120, and LRF 240 at undock. One unit will show a persistent offset from the others. Identify the anomalous sensor by name.",
+			"type": "select",
+			"answer": {
+				"options": [
+					"LRF 0",
+					"LRF 120",
+					"LRF 240",
+					"None \u2014 all sensors are nominal"
+				],
+				"value": 0,
+				"reason": [
+					"Correct. LRF 0 has a Calibration Error of +5 m on the fixed hub sightline.",
+					"LRF 120 has no calibration error.",
+					"LRF 240 has no calibration error.",
+					"LRF 0 has a Calibration Error of +5 m on the fixed hub sightline."
+				],
+				"score": 4
+			}
+		},
+		{
+			"section": "Debris",
+			"title": "What is the distance between the Lunar Gateway hub and the debris rocket body?",
+			"description": "Use the Laser Range Finder on your spacecraft: command relative pointing to aim at the debris rocket body, read MeasuredRange from LRF telemetry, and account for sensor calibration where needed. Report the separation between the Lunar Gateway hub and the rocket body in metres.",
+			"type": "number",
+			"answer": {
+				"unit": "m",
+				"value": 52.16,
+				"tolerance": 8.0,
+				"reason": "The co-orbital debris rocket body is positioned 52.16 m from the Lunar Gateway hub at scenario start.",
+				"score": 10
+			}
+		},
+		{
+			"section": "Debris",
+			"title": "At what rate (RPM) is the debris rocket body spinning?",
+			"description": "The debris is tumbling about its body axis. Use the optical camera or timed observations of the chassis markings together with Laser Range Finder passes to characterise the motion, then report the spin rate in revolutions per minute (RPM).",
+			"type": "number",
+			"answer": {
+				"unit": "RPM",
+				"value": 0.8333,
+				"tolerance": 0.1,
+				"reason": "The debris attitude rate is 5 deg/s about the body Y axis, which equals 0.8333 RPM.",
+				"score": 10
+			}
+		},
+		{
+			"section": "Debris",
+			"title": "Who does the rocket body (R/B) belong to?",
+			"description": "Inspect the debris rocket body with your optical camera or during a close Laser Range Finder pass. Read the owner marking painted on the chassis and enter the organisation name exactly as shown.",
+			"type": "text",
+			"answer": {
+				"value": "NASA",
+				"reason": "The debris rocket body carries a black NASA marking on the chassis Text component.",
+				"score": 10
+			}
+		},
+		{
+			"section": "Link Budget",
+			"title": "At what time (in minutes) did the Lunar Gateway lose access to the Deep Space Network?",
+			"description": "Monitor the Link Budget panel and ground-station visibility for Canberra (Deep Space Network). Track when the Lunar Gateway hub loses usable contact with the DSN and report the elapsed simulation time in minutes from session start.",
+			"type": "number",
+			"answer": {
+				"unit": "min",
+				"value": 13.67,
+				"tolerance": 1.0,
+				"reason": "The Lunar Gateway loses DSN access at approximately 820 s (13.67 simulation minutes) for this lunar orbit and Canberra ground-station geometry.",
+				"score": 10
+			}
+		},
+		{
+			"section": "Link Budget",
+			"title": "How long in minutes was the telecommunications blackout?",
+			"description": "Using the Link Budget panel and connection telemetry, measure the interval from DSN loss of the Lunar Gateway until contact is restored. Report the blackout duration in minutes.",
+			"type": "number",
+			"answer": {
+				"unit": "min",
+				"value": 19.0,
+				"tolerance": 1.0,
+				"reason": "The Canberra DSN blackout lasts approximately 19 simulation minutes before the Lunar Gateway regains contact.",
+				"score": 10
+			}
+		},
+		{
+			"section": "Link Budget",
+			"title": "What is the nominal downlink signal-to-noise ratio from your spacecraft to the Deep Space Network?",
+			"description": "While the downlink is healthy (before the DSN blackout), read the nominal downlink signal-to-noise ratio from the Link Budget panel or Receiver / Transmitter telemetry for your spacecraft to Canberra. Report the value in dB.",
+			"type": "number",
+			"answer": {
+				"unit": "dB",
+				"value": 51.92,
+				"tolerance": 1.0,
+				"reason": "The nominal downlink SNR from the client spacecraft to Canberra is approximately 51.92 dB under the configured link budget.",
+				"score": 10
+			}
+		},
+		{
+			"section": "Fuel Operations",
+			"title": "How many kg of fuel is needed to fill the Lunar Gateway hub port tank to capacity?",
+			"description": "While docked, open your Fill Valve with fuel_bus and transfer propellant through the fuel interconnect until the hub port tank stops accepting fuel. Compare your spacecraft tank level before and after, or read the hub tank telemetry, to determine how many kg were required to reach a full tank.",
+			"type": "number",
+			"answer": {
+				"unit": "kg",
+				"value": 45.0,
+				"tolerance": 1.0,
+				"reason": "Each hub port tank (Tank D / Tank E) has Capacity 100 kg and starts at Amount 55 kg, so 45 kg is required to fill it.",
+				"score": 10
+			}
+		},
+		{
+			"section": "Fuel Operations",
+			"title": "What is the rate at which fuel is transferred to the hub?",
+			"description": "While docked and transferring propellant, monitor fuel telemetry or observe tank levels over time to determine the steady transfer rate into the Lunar Gateway hub port tank. Report the rate in kg/s.",
+			"type": "number",
+			"answer": {
+				"unit": "kg/s",
+				"value": 0.2,
+				"tolerance": 0.05,
+				"reason": "The hub port tank Desired Ingoing Flow Rate is configured at 0.2 kg/s.",
+				"score": 10
+			}
+		}
+	]
 }

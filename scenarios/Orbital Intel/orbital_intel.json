@@ -312,7 +312,11 @@
 							0.0
 						],
 						"data": {
-							"Mass": 5.0
+							"Mass": 5.0,
+							"Resolution": [
+								1024,
+								1024
+							]
 						}
 					},
 					{
@@ -886,7 +890,7 @@
 				"type": "vessel",
 				"name": "Harbor Sentinel",
 				"planet": "Earth",
-				"latitude": 13.390,
+				"latitude": 13.39,
 				"longitude": -60.362,
 				"altitude": 1,
 				"scale": 225,
@@ -952,9 +956,7 @@
 			"Interval": 1.0,
 			"Type": "Spacecraft",
 			"Target": "Battery-IntermittentConnectionErrorModel",
-			"Assets": [
-
-			],
+			"Assets": [],
 			"Data": {
 				"Intermittent Mean": 1,
 				"Intermittent Std": 2
@@ -1053,8 +1055,7 @@
 					"Yellow"
 				],
 				"value": 0,
-				"reason": 
-					"The Cyan vessel is lying about its longitude. All other variables match the broadcasted data for 'Titan Manifest', the cyan vessel.",
+				"reason": "The Cyan vessel is lying about its longitude. All other variables match the broadcasted data for 'Titan Manifest', the cyan vessel.",
 				"score": 7
 			}
 		},

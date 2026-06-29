@@ -206,7 +206,7 @@ Configures a camera on the spacecraft. This does **not** capture an image (unles
 | `focusing_distance` | `4.0` | `0.0 … 1000000.0` | m | Distance to the in-focus plane. Use the approximate range to your imaging target. |
 | `aperture` | `1.0` | `0.0 … 1000.0` | mm | Lens diameter. Larger = brighter image and wider FOV. |
 | `focal_length` | `100.0` | `0.0 … 1000.0` | mm | Distance from nodal point to sensor. Longer = narrower FOV. |
-| `fov` | `60.0` | `0.01 … 150.0` | deg | Field of view, used together with focal length and aperture for the projected image. |
+| `fov` | `60.0` | per-camera | deg | Field of view. Must be within **`[min_field_of_view, max_field_of_view]`** for the target imager. Those limits come from scenario `data` (`Min Field Of View` / `Max Field Of View` on the component) and default to `0 … 180°` when omitted. See [components.md — Camera](../scenarios/components.md#camera-optical-camera--heatmap-camera-infrared). |
 | `sample` | `false` | `true`, `false` | — | Capture and downlink a 32×32 preview on the next Ping. Useful for confirming the optics without committing to a full image. |
 
 ### Notes
