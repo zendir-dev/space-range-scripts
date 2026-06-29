@@ -669,6 +669,59 @@
     ],
     "questions": [
         {
+            "section": "Undocking",
+            "title": "What separation velocity (m/s) does your spacecraft acquire immediately after undocking from the hub?",
+            "description": "Your three laser range finders are body-fixed and already sighted on the Lunar Gateway while docked. Command undock and plot MeasuredVelocity from LRF telemetry (APID 305) — the sensors auto-compute range rate without repointing. Read the peak magnitude immediately after the separation impulse and report the separation velocity in metres per second.",
+            "type": "number",
+            "answer": {
+                "unit": "m/s",
+                "value": 0.03,
+                "tolerance": 0.008,
+                "reason": "The Docking Adapter applies Separation Force 3 N over Separation Duration 1 s to the 100 kg Microsat, giving Δv = (3 × 1) / 100 = 0.03 m/s. With the static LRFs already on the hub, this appears as MeasuredVelocity on LRF telemetry at undock.",
+                "score": 5
+            }
+        },
+        {
+            "section": "Undocking",
+            "title": "After undocking, do any of your laser range finders show a calibration anomaly?",
+            "description": "The laser range finders (LRF 0, LRF 120, LRF 240) are static body-mounted sensors, all already pointed at the Lunar Gateway when you undock. Compare MeasuredRange from each unit on the same hub sightline — no repointing is required. Report whether any sensor consistently disagrees with the others.",
+            "type": "select",
+            "answer": {
+                "options": [
+                    "Yes — at least one LRF is miscalibrated",
+                    "No — all three LRFs agree within measurement noise"
+                ],
+                "value": 0,
+                "reason": [
+                    "Correct. LRF 0 carries a +5 m calibration bias; LRF 120 and LRF 240 are nominal. All three share the same hub sightline from their fixed mountings.",
+                    "LRF 0 reads approximately 5 m long compared to LRF 120 and LRF 240 on the hub while docked and immediately after undock."
+                ],
+                "score": 2
+            }
+        },
+        {
+            "section": "Undocking",
+            "title": "Which laser range finder is miscalibrated?",
+            "description": "With all three static LRFs already sighted on the Lunar Gateway, compare MeasuredRange from LRF 0, LRF 120, and LRF 240 at undock. One unit will show a persistent offset from the others. Identify the anomalous sensor by name.",
+            "type": "select",
+            "answer": {
+                "options": [
+                    "LRF 0",
+                    "LRF 120",
+                    "LRF 240",
+                    "None — all sensors are nominal"
+                ],
+                "value": 0,
+                "reason": [
+                    "Correct. LRF 0 has a Calibration Error of +5 m on the fixed hub sightline.",
+                    "LRF 120 has no calibration error.",
+                    "LRF 240 has no calibration error.",
+                    "LRF 0 has a Calibration Error of +5 m on the fixed hub sightline."
+                ],
+                "score": 4
+            }
+        },
+        {
             "section": "Debris",
             "title": "What is the distance between the Lunar Gateway hub and the debris rocket body?",
             "description": "Use the Laser Range Finder on your spacecraft: command relative pointing to aim at the debris rocket body, read MeasuredRange from LRF telemetry, and account for sensor calibration where needed. Report the separation between the Lunar Gateway hub and the rocket body in metres.",
