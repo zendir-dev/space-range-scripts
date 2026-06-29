@@ -576,9 +576,7 @@
 					1,
 					3
 				],
-				"reason": [
-					"Confirmed adversary activity affected the GPS navigation fix and the Power Source telemetry on APID 201. The stuck reaction wheel is a natural hardware fault handled separately, and there is no evidence of camera or credential compromise."
-				],
+				"reason": "Confirmed adversary activity affected the GPS navigation fix and the Power Source telemetry on APID 201. The stuck reaction wheel is a natural hardware fault handled separately, and there is no evidence of camera or credential compromise.",
 				"score": 10
 			}
 		},
@@ -600,9 +598,7 @@
 					3,
 					4
 				],
-				"reason": [
-					"A recovery SITREP leads with power state, time to the next contact window, and how many incidents are still open. The encryption key and focal length are not status headlines."
-				],
+				"reason": "A recovery SITREP leads with power state, time to the next contact window, and how many incidents are still open. The encryption key and focal length are not status headlines.",
 				"score": 10
 			}
 		},
@@ -619,12 +615,7 @@
 					"Reset the spacecraft whenever any anomaly appears"
 				],
 				"value": 0,
-				"reason": [
-					"Correct. Triage separates natural faults from confirmed cyber, and recovery follows the playbook deliberately rather than by reflex.",
-					"Over-escalating every alert wastes command attention and erodes trust in the detection report.",
-					"Natural faults still affect the mission and must be worked in parallel, not ignored.",
-					"Blind resets can destroy evidence and mask the real fault."
-				],
+				"reason": "Triage separates natural faults from confirmed cyber, and recovery follows the playbook deliberately rather than by reflex.",
 				"score": 10
 			}
 		},
@@ -641,12 +632,7 @@
 					"Switch to a different ground station"
 				],
 				"value": 1,
-				"reason": [
-					"The camera is not the tampered interface; power-cycling it does not clear the overlay.",
-					"Correct. The APID 201 overlay is authored with Clear On Reset = true, so resetting the Computer clears the resettable cyber overlay on the asset.",
-					"Key rotation protects the link but does not clear an applied telemetry overlay.",
-					"Changing ground station does not remove a payload-byte overlay already applied on the spacecraft."
-				],
+				"reason": "The APID 201 overlay is authored with Clear On Reset = true, so resetting the Computer clears the resettable cyber overlay on the asset.",
 				"score": 10
 			}
 		},
@@ -663,12 +649,7 @@
 					"Tokyo - it is too far north"
 				],
 				"value": 0,
-				"reason": [
-					"Correct. The spoofing origin is centred near Houston; commanding the recovery pass from a station outside the spoof region avoids navigation ambiguity, so Houston is taken out of the rotation.",
-					"Lima overlapping a tasking region is not a reason to drop it from the commanding rotation.",
-					"Santiago is a usable recovery station, not the one to drop.",
-					"Tokyo's latitude is not the reason to drop a station."
-				],
+				"reason": "The spoofing origin is centred near Houston; commanding the recovery pass from a station outside the spoof region avoids navigation ambiguity, so Houston is taken out of the rotation.",
 				"score": 10
 			}
 		},
@@ -712,12 +693,7 @@
 					"Products captured while the GPS fix was spoofed (Caribbean / Florida window)"
 				],
 				"value": 3,
-				"reason": [
-					"A blanket hold on everything is heavier than the evidence supports and stalls valid delivery.",
-					"Expiry of the inject does not retroactively validate products captured with a spoofed fix.",
-					"A clean downlink code does not certify the location metadata behind a product.",
-					"Correct. Products geotagged with a spoofed fix have unreliable location metadata and must be held; the Caribbean tasking falls inside the spoof region. Verified products outside the region can proceed."
-				],
+				"reason": "Products geotagged with a spoofed fix have unreliable location metadata and must be held; the Caribbean tasking falls inside the spoof region. Verified products outside the region can proceed.",
 				"score": 10
 			}
 		},
@@ -734,12 +710,8 @@
 					"The most recent telemetry, even if captured during the inject"
 				],
 				"value": 2,
-				"reason": [
-					"Operator memory is not an auditable, verifiable baseline source.",
-					"Injected values are the tamper, not a baseline.",
-					"Correct. Re-baselining uses the last verified pre-incident configuration as the known-good source, then re-verifies current state against it.",
-					"Telemetry captured during the inject window cannot be trusted as a baseline."
-				],
+				"reason": 
+					"The last verified pre-incident configuration as the known-good source, then re-verifies current state against it.",
 				"score": 10
 			}
 		},
@@ -761,9 +733,7 @@
 					1,
 					2
 				],
-				"reason": [
-					"Release requires a trustworthy position fix, a geolocation cross-check of the product against the tasked region, and confirmation the tamper overlay is cleared. Pass scheduling and battery state are not product-integrity gates."
-				],
+				"reason": "Release requires a trustworthy position fix, a geolocation cross-check of the product against the tasked region, and confirmation the tamper overlay is cleared. Pass scheduling and battery state are not product-integrity gates.",
 				"score": 10
 			}
 		}

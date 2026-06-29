@@ -588,13 +588,7 @@
 					"Tokyo"
 				],
 				"value": 1,
-				"reason": [
-					"The GPS spoof region is not centred on Anchorage.",
-					"Correct. The spoofing region is centred near Houston.",
-					"The GPS spoof region is not centred on Lima.",
-					"The GPS spoof region is not centred on Santiago.",
-					"The GPS spoof region is not centred on Tokyo."
-				],
+				"reason": "The spoofing region is centred near Houston.",
 				"score": 10
 			}
 		},
@@ -611,12 +605,7 @@
 					"Receiver SNR falls to zero during the pass"
 				],
 				"value": 1,
-				"reason": [
-					"Battery drop alone does not indicate GPS spoofing.",
-					"Correct. A stable but geographically wrong GPS fix is the hallmark of spoofing; other subsystems staying nominal rules out a broad bus failure.",
-					"Missing pings indicate a comms issue, not specifically GPS spoofing.",
-					"SNR loss indicates link degradation, not a spoofed GPS fix."
-				],
+				"reason": "A stable but geographically wrong GPS fix is the hallmark of spoofing; other subsystems staying nominal rules out a broad bus failure.",
 				"score": 10
 			}
 		},
@@ -698,12 +687,7 @@
 					"Reaction wheel stuck during vessel capture"
 				],
 				"value": 3,
-				"reason": [
-					"The reaction wheel fault is deliberately natural; only the GPS spoof and Power Source tamper are cyber alerts.",
-					"GPS spoofing near Houston is a cyber-physical alert requiring escalation.",
-					"Hacked Inject text on APID 201 is cyber telemetry tampering requiring escalation.",
-					"Correct. The reaction wheel stuck at 2700 s is a natural hardware fault - log it and handle as non-cyber."
-				],
+				"reason": "The reaction wheel stuck at 2700 s is a natural hardware fault - log it and handle as non-cyber.",
 				"score": 10
 			}
 		},
@@ -723,9 +707,7 @@
 					0,
 					1
 				],
-				"reason": [
-					"Only the GPS spoof and Power Source tamper are confirmed cyber incidents. The reaction wheel fault is natural and logged separately; routine downlink is not an alert."
-				],
+				"reason": "Only the GPS spoof and Power Source tamper are confirmed cyber incidents. The reaction wheel fault is natural and logged separately; routine downlink is not an alert.",
 				"score": 10
 			}
 		},
@@ -742,12 +724,7 @@
 					"Log the wheel fault as a natural hardware issue separate from the cyber detection report"
 				],
 				"value": 3,
-				"reason": [
-					"The wheel fault is natural, not cyber - it does not belong in the cyber detection report.",
-					"The fault still affected vessel tasking and must be logged even though the wheel later cleared.",
-					"Only GPS spoofing and Power Source tamper are cyber incidents requiring escalation.",
-					"Correct. Log the reaction wheel issue as natural maintenance, keep it out of the cyber report, and escalate only the two confirmed cyber alerts."
-				],
+				"reason": "Log the reaction wheel issue as natural maintenance, keep it out of the cyber report, and escalate only the two confirmed cyber alerts.",
 				"score": 10
 			}
 		}

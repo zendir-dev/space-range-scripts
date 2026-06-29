@@ -545,12 +545,7 @@
 					"The command list in the Schedule tab"
 				],
 				"value": 0,
-				"reason": [
-					"Correct. Link quality in a SITREP is grounded in receiver/transmitter SNR telemetry recorded during the pass.",
-					"Battery charge reports power state, not link quality.",
-					"Imagery shows payload results, not RF link health.",
-					"The schedule shows planned commands, not measured link quality."
-				],
+				"reason": "Link quality in a SITREP is grounded in receiver/transmitter SNR telemetry recorded during the pass.",
 				"score": 10
 			}
 		},
@@ -574,9 +569,7 @@
 					2,
 					5
 				],
-				"reason": [
-					"Degraded SNR, unexpected safe-mode, missing command acks, and reaction-wheel saturation are all cautions. A nominal ping cadence and nominal battery charge are GREEN indicators, not YELLOW."
-				],
+				"reason": "Degraded SNR, unexpected safe-mode, missing command acks, and reaction-wheel saturation are all cautions. A nominal ping cadence and nominal battery charge are GREEN indicators, not YELLOW.",
 				"score": 10
 			}
 		},
@@ -598,9 +591,7 @@
 					1,
 					2
 				],
-				"reason": [
-					"Unexpected intercepted or issued commands and unexplained interference point to possible jamming or spoofing (cyber). Normal battery temperature and sun-driven panel variation are routine maintenance telemetry."
-				],
+				"reason": "Unexpected intercepted or issued commands and unexplained interference point to possible jamming or spoofing (cyber). Normal battery temperature and sun-driven panel variation are routine maintenance telemetry.",
 				"score": 10
 			}
 		},
@@ -654,12 +645,7 @@
 					"Only that the next ground-station pass is scheduled"
 				],
 				"value": 0,
-				"reason": [
-					"Correct. The payload SITREP confirms imagery quality, that the correct geography was captured, and that tasking metadata matches the request.",
-					"A completed downlink alone does not confirm the product is usable.",
-					"Free storage is a capacity check, not a product-quality gate.",
-					"Future pass scheduling is not part of the product release check."
-				],
+				"reason": "The payload SITREP confirms imagery quality, that the correct geography was captured, and that tasking metadata matches the request.",
 				"score": 10
 			}
 		},
@@ -681,9 +667,7 @@
 					1,
 					2
 				],
-				"reason": [
-					"Mismatched capture metadata, unexpected stored files, and altered geolocation tags indicate possible tampering (cyber). Lens defocus and battery fade are maintenance / health issues."
-				],
+				"reason": "Mismatched capture metadata, unexpected stored files, and altered geolocation tags indicate possible tampering (cyber). Lens defocus and battery fade are maintenance / health issues.",
 				"score": 10
 			}
 		},
@@ -700,12 +684,7 @@
 					"Open anomalies and the decision each one requires"
 				],
 				"value": 0,
-				"reason": [
-					"Correct. Raw telemetry and full logs belong in an annex; the combined SITREP keeps status, tasking outcome, and decisions.",
-					"Mission status is the headline of the report and must stay.",
-					"Tasking completion is the core result and must stay.",
-					"Anomalies and the decisions they require are exactly why command reads a SITREP."
-				],
+				"reason": "Raw telemetry and full logs belong in an annex; the combined SITREP keeps status, tasking outcome, and decisions.",
 				"score": 10
 			}
 		},
@@ -722,12 +701,7 @@
 					"The full list of commands sent during the pass"
 				],
 				"value": 0,
-				"reason": [
-					"Correct. The BLUF states status, whether the mission was achieved, and what command must decide.",
-					"A single telemetry value is detail, not the bottom line.",
-					"Encryption key and frequency are sensitive comms detail, not a status headline.",
-					"A command log is supporting detail, not the one-line summary."
-				],
+				"reason": "The BLUF states status, whether the mission was achieved, and what command must decide.",
 				"score": 10
 			}
 		}

@@ -412,9 +412,7 @@
 					5,
 					6
 				],
-				"reason": [
-					"GPS position can be plotted in the Plots tab and displayed on the Map. Selecting any incorrect tab scores zero."
-				],
+				"reason": "GPS position can be plotted in the Plots tab and displayed on the Map. Selecting any incorrect tab scores zero.",
 				"score": 10
 			}
 		},
@@ -430,11 +428,7 @@
 					"Singapore"
 				],
 				"value": 1,
-				"reason": [
-					"Dubai provided the best signal-to-noise ratio for this pass configuration.",
-					"Dubai provided the best signal-to-noise ratio for this pass configuration.",
-					"Dubai provided the best signal-to-noise ratio for this pass configuration."
-				],
+				"reason": "Dubai provided the best signal-to-noise ratio for this pass configuration.",
 				"score": 10
 			}
 		},
@@ -491,13 +485,7 @@
 					"Idle"
 				],
 				"value": 0,
-				"reason": [
-					"Sun pointing aligns the solar panels with the Sun to maximize power generation.",
-					"Sun pointing aligns the solar panels with the Sun to maximize power generation.",
-					"Sun pointing aligns the solar panels with the Sun to maximize power generation.",
-					"Sun pointing aligns the solar panels with the Sun to maximize power generation.",
-					"Sun pointing aligns the solar panels with the Sun to maximize power generation."
-				],
+				"reason": "Sun pointing aligns the solar panels with the Sun to maximize power generation.",
 				"score": 10
 			}
 		},
@@ -527,12 +515,7 @@
 					"Ground Network Coordinator"
 				],
 				"value": 0,
-				"reason": [
-					"The Mission Lead holds go/no-go authority for transitioning from comms checkout to payload operations.",
-					"The Mission Lead holds go/no-go authority for transitioning from comms checkout to payload operations.",
-					"The Mission Lead holds go/no-go authority for transitioning from comms checkout to payload operations.",
-					"The Mission Lead holds go/no-go authority for transitioning from comms checkout to payload operations."
-				],
+				"reason": "The Mission Lead holds go/no-go authority for transitioning from comms checkout to payload operations.",
 				"score": 10
 			}
 		},
@@ -549,12 +532,7 @@
 					"Ground Network Coordinator"
 				],
 				"value": 1,
-				"reason": [
-					"The Payload Operator executes and verifies payload-related pointing, including sun-pointing for power operations.",
-					"The Payload Operator executes and verifies payload-related pointing, including sun-pointing for power operations.",
-					"The Payload Operator executes and verifies payload-related pointing, including sun-pointing for power operations.",
-					"The Payload Operator executes and verifies payload-related pointing, including sun-pointing for power operations."
-				],
+				"reason": "The Payload Operator executes and verifies payload-related pointing, including sun-pointing for power operations.",
 				"score": 10
 			}
 		},
@@ -571,12 +549,7 @@
 					"Ground Network Coordinator"
 				],
 				"value": 0,
-				"reason": [
-					"Satellite Operations escalates link-quality issues to the Mission Lead first so the team can hold or replan payload tasking.",
-					"Satellite Operations escalates link-quality issues to the Mission Lead first so the team can hold or replan payload tasking.",
-					"Satellite Operations escalates link-quality issues to the Mission Lead first so the team can hold or replan payload tasking.",
-					"Satellite Operations escalates link-quality issues to the Mission Lead first so the team can hold or replan payload tasking."
-				],
+				"reason": "Satellite Operations escalates link-quality issues to the Mission Lead first so the team can hold or replan payload tasking.",
 				"score": 10
 			}
 		}

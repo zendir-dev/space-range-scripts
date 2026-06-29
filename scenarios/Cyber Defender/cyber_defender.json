@@ -1038,15 +1038,7 @@
 					"Western Europe"
 				],
 				"value": 3,
-				"reason": [
-					"The spoofing did not occur over Australia.",
-					"The spoofing did not occur over Central Asia.",
-					"The spoofing did not occur over India.",
-					"Correct. The spoofing occurred over the Middle-East region.",
-					"The spoofing did not occur over North-East Asia.",
-					"The spoofing did not occur over South-East Asia.",
-					"The spoofing did not occur over Western Europe."
-				],
+				"reason": "The spoofing occurred over the Middle-East region.",
 				"score": 5
 			}
 		},
@@ -1088,13 +1080,7 @@
 					"Solar Panel Open Circuit"
 				],
 				"value": 3,
-				"reason": [
-					"Battery thermal runaway is unrelated to the authored solar degradation event.",
-					"Broken Wiring is not the fault model used in this scenario.",
-					"Intermittent Connection applies to power interconnect models, not the solar degradation trigger.",
-					"Correct. The solar panel began to degrade over time, slowly loosing performance.",
-					"Open circuit is a distractor; the scenario uses a degradation rate fault instead."
-				],
+				"reason": "The solar panel began to degrade over time, slowly losing performance.",
 				"score": 4
 			}
 		},
@@ -1112,10 +1098,7 @@
 					0,
 					1
 				],
-				"reason": [
-					"Correct. Both solar panels were affected by the fault.",
-					"Correct. Both solar panels were affected by the fault."
-				],
+				"reason": "Both solar panels were affected by the fault.",
 				"score": 2
 			}
 		},
@@ -1155,19 +1138,7 @@
 					4,
 					6
 				],
-				"reason": [
-					"Ping (APID 100) was not one of the two scripted inject APIDs for this question.",
-					"Battery (APID 200) was not one of the two scripted inject APIDs for this question.",
-					"Power Source (APID 201) was not one of the two scripted inject APIDs for this question.",
-					"Power Node (APID 202) was not one of the two scripted inject APIDs for this question.",
-					"Correct. Magnetometer (APID 300) receives a Cyber overlay for five minutes starting at 840 s (~14 min).",
-					"GPS (APID 301) was not one of the two scripted inject APIDs for this question.",
-					"Correct. EM Sensor (APID 302) receives a Cyber overlay for five minutes starting at 1920 s (~32 min).",
-					"Computer (APID 400) was not one of the two scripted inject APIDs for this question.",
-					"Reaction Wheels (APID 401) was not one of the two scripted inject APIDs for this question.",
-					"Receiver (APID 500) was not one of the two scripted inject APIDs for this question.",
-					"Transmitter (APID 501) was not one of the two scripted inject APIDs for this question."
-				],
+				"reason": "Magnetometer (APID 300) receives a Cyber overlay for five minutes starting at 840 s (~14 min). EM Sensor (APID 302) receives a Cyber overlay for five minutes starting at 1920 s (~32 min).",
 				"score": 10
 			}
 		},
@@ -1232,12 +1203,7 @@
 					"4"
 				],
 				"value": 1,
-				"reason": [
-					"Incorrect. Two episodes of jamming occurred.",
-					"Correct. Two episodes of jamming occurred.",
-					"Incorrect. Two episodes of jamming occurred.",
-					"Incorrect. Two episodes of jamming occurred."
-				],
+				"reason": "Two episodes of jamming occurred.",
 				"score": 5
 			}
 		},
@@ -1260,15 +1226,7 @@
 					0,
 					5
 				],
-				"reason": [
-					"Correct. The first broadcast barrage aligns with the Dubai pass segment in the scripted visibility model (~9-25 min), so operators are keyed through Dubai during that jam.",
-					"Easter Island is not affected by the downlink jamming attack.",
-					"Miami is not affected by the downlink jamming attack.",
-					"Mumbai is not affected by the downlink jamming attack.",
-					"Paris is not affected by the downlink jamming attack.",
-					"Correct. The second broadcast barrage aligns with the Singapore pass segment (~38-69 min), so operators are keyed through Singapore during that jam.",
-					"Sydney is not affected by the downlink jamming attack."
-				],
+				"reason": "The first broadcast barrage aligns with the Dubai pass segment in the scripted visibility model (~9-25 min), so operators are keyed through Dubai during that jam. The second broadcast barrage aligns with the Singapore pass segment (~38-69 min), so operators are keyed through Singapore during that jam.",
 				"score": 5
 			}
 		},
@@ -1299,13 +1257,7 @@
 					"Frequency Hopping"
 				],
 				"value": 4,
-				"reason": [
-					"Resetting the antenna would not help with the downlink jamming attack.",
-					"Rebooting the computer would not help with the downlink jamming attack.",
-					"Cycling the encryption key would not help with the downlink jamming attack.",
-					"Downlinking data would not help with the downlink jamming attack.",
-					"Frequency hopping would help with the downlink jamming attack by moving to an unjammed frequency."
-				],
+				"reason": "Frequency hopping would help with the downlink jamming attack by moving to an unjammed frequency. The other options would not help with the downlink jamming attack.",
 				"score": 3
 			}
 		},
@@ -1325,15 +1277,7 @@
 					"Sydney"
 				],
 				"value": 3,
-				"reason": [
-					"The spacecraft was not connected to Dubai during the replay attack.",
-					"The spacecraft was not connected to Easter Island during the replay attack.",
-					"The spacecraft was not connected to Miami during the replay attack.",
-					"Correct. The spacecraft was connected to Mumbai during the replay attack.",
-					"The spacecraft was not connected to Paris during the replay attack.",
-					"The spacecraft was not connected to Singapore during the replay attack.",
-					"The spacecraft was not connected to Sydney during the replay attack."
-				],
+				"reason": "The spacecraft was connected to Mumbai during the replay attack.",
 				"score": 8
 			}
 		},
@@ -1354,13 +1298,7 @@
 					2,
 					4
 				],
-				"reason": [
-					"Resetting the antenna would not help with the uplink replay attack.",
-					"Rebooting the computer would not help with the uplink replay attack.",
-					"Cycling the encryption key would help with the uplink replay attack by changing the on-board cipher.",
-					"Downlinking data would not help with the uplink replay attack.",
-					"Frequency hopping would help with the uplink replay attack by moving to an unjammed frequency."
-				],
+				"reason": "Cycling the encryption key would help with the uplink replay attack by changing the on-board cipher. Frequency hopping would help with the uplink replay attack by moving to an unjammed frequency. The other options would not help with the uplink replay attack.",
 				"score": 7
 			}
 		},
@@ -1378,13 +1316,7 @@
 					"Transmitter Bit Rate Reduced"
 				],
 				"value": 2,
-				"reason": [
-					"The camera chain is not disabled by this Storage event.",
-					"Bit corruption would be the legacy Storage Corruption recipe; this scenario uses Storage Full instead.",
-					"Correct. The storage capacity was reduced to 100000 bytes, matching the telemetry data.",
-					"The event does not wipe stored objects.",
-					"The transmitter is unrelated to the Storage trigger."
-				],
+				"reason": "The storage capacity was reduced to 100000 bytes, matching the telemetry data.",
 				"score": 4
 			}
 		},
@@ -1413,11 +1345,7 @@
 					"Wheel Z"
 				],
 				"value": 0,
-				"reason": [
-					"Correct. This wheel became stuck, where the speed could not be changed.",
-					"Reaction Wheel Y is not stuck. The stuck condition is where the wheel speed could not be controlled.",
-					"Reaction Wheel Z is not stuck. The stuck condition is where the wheel speed could not be controlled."
-				],
+				"reason": "Wheel X was the only one to have the stuck condition. This is why it's speed could not be changed.",
 				"score": 3
 			}
 		},
@@ -1473,12 +1401,7 @@
 					"4"
 				],
 				"value": 0,
-				"reason": [
-					"Incorrect. Two episodes of jamming occurred.",
-					"Correct. One episode of jamming occurred.",
-					"Incorrect. Three episodes of jamming occurred.",
-					"Incorrect. Four episodes of jamming occurred."
-				],
+				"reason": "One episode of jamming occurred.",
 				"score": 5
 			}
 		},
@@ -1500,15 +1423,7 @@
 				"value": [
 					3
 				],
-				"reason": [
-					"The spacecraft was not connected to Dubai during the uplink jamming attack.",
-					"The spacecraft was not connected to Easter Island during the uplink jamming attack.",
-					"The spacecraft was not connected to Miami during the uplink jamming attack.",
-					"Correct. The spacecraft was connected to Mumbai during the uplink jamming attack.",
-					"The spacecraft was not connected to Paris during the uplink jamming attack.",
-					"The spacecraft was not connected to Singapore during the uplink jamming attack.",
-					"The spacecraft was not connected to Sydney during the uplink jamming attack."
-				],
+				"reason": "The spacecraft was connected to Mumbai during the uplink jamming attack.",
 				"score": 5
 			}
 		},
@@ -1539,13 +1454,7 @@
 					"Frequency Hopping"
 				],
 				"value": 4,
-				"reason": [
-					"Resetting the antenna would not help with the uplink jamming attack.",
-					"Rebooting the computer would not help with the uplink jamming attack.",
-					"Cycling the encryption key would not help with the downlink jamming attack.",
-					"Downlinking data would not help with the uplink jamming attack.",
-					"Frequency hopping would help with the uplink jamming attack by moving to an unjammed frequency."
-				],
+				"reason": "Frequency hopping would help with the uplink jamming attack by moving to an unjammed frequency. The other options would not help with the uplink jamming attack.",
 				"score": 3
 			}
 		},
