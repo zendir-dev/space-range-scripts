@@ -323,6 +323,8 @@
                     "offset": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
                 },
                 "physics": {
+                    "attitude": [52, 68, 20],
+                    "attitude_rate": [0.0, 0.0, 0.0],
                     "override_mass": true,
                     "mass": 63000.0,
                     "center_of_mass": [ 0.0, 0.0, 0.0 ],
@@ -569,7 +571,8 @@
                 "visualization": {
                     "mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/SecondStage/BP_Z_SC_SecondStage_Chassis",
                     "scale": 0.2,
-                    "offset": [ 0.0, 0.0, 0.0 ]
+                    "offset": [ 0.0, 0.0, 0.0 ],
+					"hide": true
                 },
                 "controller": {
                     "ping_interval": 10000000.0,
