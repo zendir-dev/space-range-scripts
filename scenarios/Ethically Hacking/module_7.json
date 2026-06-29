@@ -545,12 +545,7 @@
 					"Safe-mode the spacecraft until imagery is requested"
 				],
 				"value": 1,
-				"reason": [
-					"Payload capture should wait until link quality and pass plan are confirmed.",
-					"Correct. The Mission Lead briefs contact status, the pass window, which ground station is in use, and what the team must accomplish before commanding begins.",
-					"Key rotation is not the standard first action at pass start.",
-					"Safe-mode is an anomaly response, not a nominal pass-start procedure."
-				],
+				"reason": "The Mission Lead briefs contact status, the pass window, which ground station is in use, and what the team must accomplish before commanding begins.",
 				"score": 10
 			}
 		},
@@ -567,12 +562,7 @@
 					"Scheduled telemetry downlink during a good pass"
 				],
 				"value": 1,
-				"reason": [
-					"Camera configuration is a standard Payload Operations task once tasking is accepted.",
-					"Correct. Safe-mode and reset decisions affect the whole pass plan and should be approved by the Mission Lead.",
-					"Routine pointing is normally executed by Satellite or Payload Operations once tasking is approved.",
-					"Nominal downlink during a healthy pass is typically delegated."
-				],
+				"reason": "Safe-mode and reset decisions affect the whole pass plan and should be approved by the Mission Lead.",
 				"score": 10
 			}
 		},
@@ -589,12 +579,7 @@
 					"Whether the camera aperture should be changed before the next orbit"
 				],
 				"value": 2,
-				"reason": [
-					"Safe-mode is not the default end-of-pass action when operations were nominal.",
-					"Battery telemetry alone is insufficient for an end-of-pass review.",
-					"Correct. After each pass the Mission Lead confirms tasking status, captures anomalies, and sets expectations for the next contact opportunity.",
-					"Camera settings are a Payload Operations detail, not the primary end-of-pass brief."
-				],
+				"reason": "After each pass the Mission Lead confirms tasking status, captures anomalies, and sets expectations for the next contact opportunity.",
 				"score": 10
 			}
 		},
@@ -611,12 +596,7 @@
 					"Verify link with station and monitor SNR"
 				],
 				"value": 3,
-				"reason": [
-					"Capture is a Payload Operations step after the link is healthy.",
-					"Downlink may follow once the pass plan is confirmed, not as the first action.",
-					"Schedule changes are not the standard acquisition step.",
-					"Correct. Acquire the link, confirm SNR is acceptable, and monitor telemetry before handing off or supporting payload tasking."
-				],
+				"reason": "Acquire the link, confirm SNR is acceptable, and monitor telemetry before handing off or supporting payload tasking.",
 				"score": 10
 			}
 		},
@@ -638,9 +618,7 @@
 					3,
 					4
 				],
-				"reason": [
-					"Link degradation, unexpected safe-mode, and missing command acks all require a pause and Mission Lead brief. Routine pings and nominal battery telemetry do not."
-				],
+				"reason": "Link degradation, unexpected safe-mode, and missing command acks all require a pause and Mission Lead brief. Routine pings and nominal battery telemetry do not.",
 				"score": 10
 			}
 		},
@@ -657,12 +635,7 @@
 					"Reset the spacecraft computer automatically at pass end"
 				],
 				"value": 1,
-				"reason": [
-					"Starting capture too late in the window risks incomplete products and wasted power.",
-					"Correct. Satellite Operations monitors the pass timeline, hands status to the Mission Lead, and avoids starting work that cannot finish before link loss.",
-					"Silent command flooding at pass end creates risk and leaves the team without situational awareness.",
-					"Computer reset is an approved anomaly response, not a routine pass-end procedure."
-				],
+				"reason": "Satellite Operations monitors the pass timeline, hands status to the Mission Lead, and avoids starting work that cannot finish before link loss.",
 				"score": 10
 			}
 		},
@@ -703,12 +676,7 @@
 					"The current encryption key value"
 				],
 				"value": 0,
-				"reason": [
-					"Correct. Payload Operations verifies the imagery quality, that the correct geography was captured, and that tasking metadata matches the request.",
-					"A completed downlink alone does not confirm the product is usable.",
-					"Future pass scheduling is not part of the product release check.",
-					"Encryption key is a communications concern, not a product-quality gate."
-				],
+				"reason": "Payload Operations verifies the imagery quality, that the correct geography was captured, and that tasking metadata matches the request.",
 				"score": 10
 			}
 		},
@@ -730,9 +698,7 @@
 					2,
 					4
 				],
-				"reason": [
-					"Corrupted imagery, wrong geography, and count/colour mismatches are all reasons to hold a product. Nominal pings and acceptable pass-start SNR do not clear a suspect product on their own."
-				],
+				"reason": "Corrupted imagery, wrong geography, and count/colour mismatches are all reasons to hold a product. Nominal pings and acceptable pass-start SNR do not clear a suspect product on their own.",
 				"score": 10
 			}
 		}
