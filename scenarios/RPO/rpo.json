@@ -259,10 +259,45 @@
                     },
                     {
                         "class": "Laser Range Finder",
-                        "name": "Laser Range Finder",
+                        "name": "LRF 0",
                         "mesh": "None",
                         "enabled": true,
-                        "position": [ 0.0, 0.0, 0.0 ],
+                        "position": [ 0.04, 0.36, -0.015 ],
+                        "rotation": [ -90.0, 0.0, 0.0 ],
+                        "data": {
+                            "Mass": 1.0,
+                            "Operating Range": 10000.0
+                        },
+                        "models": [
+                            {
+                                "class": "Laser Range Finder Calibration Error Model",
+                                "enabled": true,
+                                "data": {
+                                    "Calibration Bias": 5.0,
+                                    "Calibration Scale": 1.00
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "class": "Laser Range Finder",
+                        "name": "LRF 120",
+                        "mesh": "None",
+                        "enabled": true,
+                        "position": [ -0.02, 0.36, 0.02 ],
+                        "rotation": [ -90.0, 0.0, 0.0 ],
+                        "data": {
+                            "Mass": 1.0,
+                            "Operating Range": 10000.0
+                        }
+                    },
+                    {
+                        "class": "Laser Range Finder",
+                        "name": "LRF 240",
+                        "mesh": "None",
+                        "enabled": true,
+                        "position": [ -0.02, 0.36, -0.05 ],
+                        "rotation": [ -90.0, 0.0, 0.0 ],
                         "data": {
                             "Mass": 1.0,
                             "Operating Range": 10000.0
