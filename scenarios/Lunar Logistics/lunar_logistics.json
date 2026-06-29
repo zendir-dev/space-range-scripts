@@ -274,14 +274,15 @@
 						],
 						"data": {
 							"Mass": 3.0,
-							"Aperture": 20.0,
+							"Aperture": 30.0,
 							"Resolution": [
 								1024,
 								1024
 							],
 							"Min Field Of View": 1.0,
 							"Field Of View": 10.0,
-							"Max Field Of View": 15.0
+							"Max Field Of View": 15.0,
+                            "Focusing Distance": 100.0
 						}
 					},
 					{
