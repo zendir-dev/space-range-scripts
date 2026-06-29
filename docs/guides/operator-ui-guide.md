@@ -131,7 +131,7 @@ See [Concepts → Telemetry → Configuration Report](../concepts/telemetry.md#c
 
 ## Fuel Bus Configuration
 
-The **Fuel Bus Configuration** panel edits valve commanded openness (0–100%) and pump enabled/disabled state. The panel appears only when the asset includes at least one **Fuel Valve** or **Fuel Pump**.
+The **Fuel Bus Configuration** panel edits valve commanded openness (0–100%) and pump on/off plus motor **Speed Input** (rad/s). Components are grouped under **Valves** and **Pumps** section headings (each section appears only when that type is present). Pump speed is disabled while the pump is off.
 
 State loading, multi-operator sync, and in-progress edit protection work the same way as [Power Bus Configuration](#power-bus-configuration):
 

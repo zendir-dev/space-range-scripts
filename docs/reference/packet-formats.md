@@ -381,6 +381,14 @@ After XTCE decode, parse with `json.loads(report["Data"])`. Scope controls which
         "Commanded Percent Open": 1.0,
         "Percent Open": 1.0
       }
+    },
+    {
+      "name": "Feed Pump",
+      "class": "Fuel Pump",
+      "configuration": {
+        "Is Pump Enabled": true,
+        "Speed Input": 50.0
+      }
     }
   ],
   "computer": {
@@ -426,7 +434,7 @@ After XTCE decode, parse with `json.loads(report["Data"])`. Scope controls which
 | `fuel_bus` | array | Fuel-bus components (valves, pumps) with session-mutable configuration. Omitted when scope excludes fuel_bus or every candidate component has nothing to report. |
 | `fuel_bus[].name` | string | Component name. |
 | `fuel_bus[].class` | string | `Fuel Valve` or `Fuel Pump`. |
-| `fuel_bus[].configuration` | object | `Commanded Percent Open`, `Percent Open` (valve); `Is Pump Enabled` (pump). |
+| `fuel_bus[].configuration` | object | `Commanded Percent Open`, `Percent Open` (valve); `Is Pump Enabled`, `Speed Input` (pump). |
 | `computer` | object | Guidance operator state: `pointing` (active mode) and `configs` (last-applied Args per mode, without repeating `pointing`). Stored from executed [`guidance`](../api-reference/spacecraft-commands.md#guidance) commands; cleared on scenario reset. |
 | `computer.pointing` | string | Active pointing mode (`idle`, `inertial`, `velocity`, `sun`, `nadir`, `ground`, `location`, `relative`). |
 | `computer.configs` | object | Per-mode settings. Keys match [`guidance`](../api-reference/spacecraft-commands.md#guidance) Args for that mode (e.g. `target`, `alignment`, `pitch`/`roll`/`yaw`, `station`, `spacecraft`, `component`). |

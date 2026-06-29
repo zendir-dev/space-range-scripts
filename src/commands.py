@@ -500,17 +500,24 @@ def fuel_bus_configure(
     component_type: Literal["valve", "pump"],
     target: str,
     value,
+    *,
+    speed_input: float | None = None,
 ) -> dict:
-    """Configure one fuel-bus component (single-entry batch)."""
+    """Configure one fuel-bus component (single-entry batch).
+
+    For pumps, ``value`` is ``is_pump_enabled``. Pass ``speed_input`` (rad/s) to
+    set motor speed in the same entry.
+    """
     param_key = _FUEL_CONFIGURE_ENTRY_KEYS[component_type]
-    return fuel_bus_configure_values([
-        {
-            "type": component_type,
-            "action": "configure",
-            "target": target,
-            param_key: value,
-        },
-    ])
+    entry: dict = {
+        "type": component_type,
+        "action": "configure",
+        "target": target,
+        param_key: value,
+    }
+    if component_type == "pump" and speed_input is not None:
+        entry["speed_input"] = speed_input
+    return fuel_bus_configure_values([entry])
 
 
 # ---------------------------------------------------------------------------

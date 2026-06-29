@@ -589,7 +589,8 @@ Sets session-mutable values on fuel-bus components (valves and pumps). Same `val
         "type": "pump",
         "action": "configure",
         "target": "Feed Pump",
-        "is_pump_enabled": true
+        "is_pump_enabled": true,
+        "speed_input": 50.0
       }
     ]
   }
@@ -602,13 +603,18 @@ Sets session-mutable values on fuel-bus components (valves and pumps). Same `val
 | --- | --- | --- | --- | --- |
 | `valve` | `commanded_percent_open` | `number` `0–1` | Target openness (`0` = closed, `1` = fully open) | `Fuel Valve` |
 | `pump` | `is_pump_enabled` | `bool` | Whether the pump is enabled | `Fuel Pump` |
+| `pump` | `speed_input` | `number` (rad/s) | Motor speed input (`SetSpeedInput`) | `Fuel Pump` |
 
-### Convenience valve actions
+For `pump` + `configure`, include **at least one** of `is_pump_enabled` or `speed_input`. Both may be set in the same entry.
+
+### Convenience valve and pump actions
 
 | `type` | `action` | Effect |
 | --- | --- | --- |
 | `valve` | `open` | Sets `commanded_percent_open` to `1.0` |
 | `valve` | `close` | Sets `commanded_percent_open` to `0.0` |
+| `pump` | `enable` | Sets `is_pump_enabled` to `true` |
+| `pump` | `disable` | Sets `is_pump_enabled` to `false` |
 
 After a successful `fuel_bus` command, the spacecraft automatically queues a Configuration Report for `scope: "fuel_bus"`.
 
@@ -734,7 +740,7 @@ These align with the spacecraft `power_bus` command `configure` actions (`switch
 | Class | `configuration` fields |
 | --- | --- |
 | `Fuel Valve` | `Commanded Percent Open`, `Percent Open` (actual; read-only) |
-| `Fuel Pump` | `Is Pump Enabled` |
+| `Fuel Pump` | `Is Pump Enabled`, `Speed Input` (rad/s) |
 
 These align with the spacecraft `fuel_bus` command `configure` actions (`valve`, `pump`).
 
