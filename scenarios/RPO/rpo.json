@@ -704,6 +704,45 @@
                 "reason": "The debris rocket body carries a black NASA marking on the chassis Text component.",
                 "score": 10
             }
+        },
+        {
+            "section": "Link Budget",
+            "title": "At what time (in minutes) did the Lunar Gateway lose access to the Deep Space Network?",
+            "description": "Monitor the Link Budget panel and ground-station visibility for Canberra (Deep Space Network). Track when the Lunar Gateway hub loses usable contact with the DSN and report the elapsed simulation time in minutes from session start.",
+            "type": "number",
+            "answer": {
+                "unit": "min",
+                "value": 13.67,
+                "tolerance": 1.0,
+                "reason": "The Lunar Gateway loses DSN access at approximately 820 s (13.67 simulation minutes) for this lunar orbit and Canberra ground-station geometry.",
+                "score": 10
+            }
+        },
+        {
+            "section": "Link Budget",
+            "title": "How long in minutes was the telecommunications blackout?",
+            "description": "Using the Link Budget panel and connection telemetry, measure the interval from DSN loss of the Lunar Gateway until contact is restored. Report the blackout duration in minutes.",
+            "type": "number",
+            "answer": {
+                "unit": "min",
+                "value": 19.0,
+                "tolerance": 1.0,
+                "reason": "The Canberra DSN blackout lasts approximately 19 simulation minutes before the Lunar Gateway regains contact.",
+                "score": 10
+            }
+        },
+        {
+            "section": "Link Budget",
+            "title": "What is the nominal downlink signal-to-noise ratio from your spacecraft to the Deep Space Network?",
+            "description": "While the downlink is healthy (before the DSN blackout), read the nominal downlink signal-to-noise ratio from the Link Budget panel or Receiver / Transmitter telemetry for your spacecraft to Canberra. Report the value in dB.",
+            "type": "number",
+            "answer": {
+                "unit": "dB",
+                "value": 51.92,
+                "tolerance": 1.0,
+                "reason": "The nominal downlink SNR from the client spacecraft to Canberra is approximately 51.92 dB under the configured link budget.",
+                "score": 10
+            }
         }
     ]
 }
