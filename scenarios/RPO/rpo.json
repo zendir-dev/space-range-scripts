@@ -597,7 +597,7 @@
                 },
                 "physics": {
                     "attitude": [0.0, 0.0, 90.0],
-                    "attitude_rate": [0.0, 5.0, 0.0],
+                    "attitude_rate": [5.0, 0.0, 0.0],
                     "override_mass": true,
                     "mass": 100.0,
                     "center_of_mass": [ 0.0, 0.0, 0.0 ],
@@ -614,7 +614,20 @@
                     "enable_rpo_software": false,
 					"enable_intercept": false
                 },
-                "components": []
+                "components": [
+                    {
+                        "class": "Text",
+                        "name": "Marking",
+                        "enabled": true,
+                        "position": [ 0.0, 0.2, 0.066 ],
+                        "rotation": [ -90.0, 0.0, 40.0 ],
+                        "data": {
+                            "Text": "NASA",
+                            "Color": "#0010FF",
+                            "Scale": 0.3
+                        }
+                    }
+                ]
             }
         ],
         "collections": [
@@ -638,109 +651,6 @@
     "objects": {
         "ground": [
             {
-                "id": "GO_001",
-                "type": "text",
-                "name": "Word 01",
-                "planet": "Earth",
-                "latitude": 20.3276,
-                "longitude": 38.4139,
-                "altitude": 0,
-                "scale": 250000.0,
-                "data": {
-                    "text": "TARGET #1",
-                    "em_gain": 1000.0,
-                    "em_frequency": 0.0
-                }
-            },
-            {
-                "id": "GO_002",
-                "type": "text",
-                "name": "Word 02",
-                "planet": "Earth",
-                "latitude": 130.3276,
-                "longitude": -4.587338,
-                "altitude": -58.789197,
-                "scale": 250000.0,
-                "data": {
-                    "text": "TARGET #2",
-                    "em_gain": 10000.0,
-                    "em_frequency": 0.0
-                }
-            },
-            {
-                "id": "GO_003",
-                "type": "text",
-                "name": "Word 03",
-                "planet": "Earth",
-                "latitude": 0.468603,
-                "longitude": 73.282957,
-                "altitude": 0,
-                "scale": 80000.0,
-                "data": {
-                    "text": "TARGET #3",
-                    "em_gain": 10000.0,
-                    "em_frequency": 1900.0
-                }
-            },
-            {
-                "id": "GO_004",
-                "type": "text",
-                "name": "Word 04",
-                "planet": "Earth",
-                "latitude": -1.065574,
-                "longitude": 32.957629,
-                "altitude": 0,
-                "scale": 100000.0,
-                "data": {
-                    "text": "TARGET #4",
-                    "em_gain": 10000.0,
-                    "em_frequency": 0.0
-                }
-            },
-            {
-                "id": "GO_005",
-                "type": "text",
-                "name": "Word 05",
-                "planet": "Earth",
-                "latitude": -21.804771,
-                "longitude": 114.222107,
-                "altitude": 0,
-                "scale": 250000.0,
-                "data": {
-                    "text": "TARGET #5",
-                    "em_gain": 10000.0,
-                    "em_frequency": 0.0
-                }
-            },
-            {
-                "id": "GO_006",
-                "type": "text",
-                "name": "Word 06",
-                "planet": "Earth",
-                "latitude": 0,
-                "longitude": 0,
-                "altitude": 0,
-                "scale": 150000.0,
-                "data": {
-                    "text": "TARGET #6",
-                    "em_gain": 10000.0,
-                    "em_frequency": 0.0
-                }
-            },
-            {
-                "id": "GO_007",
-                "type": "text",
-                "name": "Hidden Word",
-                "planet": "Sun",
-                "latitude": 10.4,
-                "longitude": 70.3,
-                "altitude": 0,
-                "scale": 127439768.0,
-                "data": {
-                    "text": "83 80 65 67 69 83 79 70 84 87 65 82 69 83 85 77 77 73 84 "
-                }
-            },
-            {
                 "id": "GO_008",
                 "type": "text",
                 "name": "Bonus Word",
@@ -752,23 +662,48 @@
                 "data": {
                     "text": "ALDRIN WAS HERE"
                 }
-            },
-            {
-                "id": "GO_009",
-                "type": "vessel",
-                "name": "Ship",
-                "planet": "Earth",
-                "latitude": -0.6,
-                "longitude": 1.9,
-                "altitude": 32.3,
-                "scale": 100,
-                "data": {
-                    "heading" : 90.0,
-                    "speed" : 15.0
-                }
             }
         ]
     },
     "events": [
+    ],
+    "questions": [
+        {
+            "section": "Debris",
+            "title": "What is the distance between the Lunar Gateway hub and the debris rocket body?",
+            "description": "Use the Laser Range Finder on your spacecraft: command relative pointing to aim at the debris rocket body, read MeasuredRange from LRF telemetry, and account for sensor calibration where needed. Report the separation between the Lunar Gateway hub and the rocket body in metres.",
+            "type": "number",
+            "answer": {
+                "unit": "m",
+                "value": 52.16,
+                "tolerance": 8.0,
+                "reason": "The co-orbital debris rocket body is positioned 52.16 m from the Lunar Gateway hub at scenario start.",
+                "score": 10
+            }
+        },
+        {
+            "section": "Debris",
+            "title": "At what rate (RPM) is the debris rocket body spinning?",
+            "description": "The debris is tumbling about its body axis. Use the optical camera or timed observations of the chassis markings together with Laser Range Finder passes to characterise the motion, then report the spin rate in revolutions per minute (RPM).",
+            "type": "number",
+            "answer": {
+                "unit": "RPM",
+                "value": 0.8333,
+                "tolerance": 0.1,
+                "reason": "The debris attitude rate is 5 deg/s about the body Y axis, which equals 0.8333 RPM.",
+                "score": 10
+            }
+        },
+        {
+            "section": "Debris",
+            "title": "Who does the rocket body (R/B) belong to?",
+            "description": "Inspect the debris rocket body with your optical camera or during a close Laser Range Finder pass. Read the owner marking painted on the chassis and enter the organisation name exactly as shown.",
+            "type": "text",
+            "answer": {
+                "value": "NASA",
+                "reason": "The debris rocket body carries a black NASA marking on the chassis Text component.",
+                "score": 10
+            }
+        }
     ]
 }
