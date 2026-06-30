@@ -541,20 +541,7 @@
 							"Dry Mass": 5.0,
 							"Maximum Outgoing Flow Rate": 2.0,
 							"Desired Ingoing Flow Rate": 0.0
-						},
-						"models": [
-							{
-								"class": "Fuel Leak Error Model",
-								"enabled": true,
-								"data": {
-									"Degradation Rate": 1.0,
-									"Leak Coefficient": 0.2,
-									"Max Leak Fraction": 1.0,
-									"Leak Onset Flow Rate": 0.04,
-									"Force Failure": false
-								}
-							}
-						]
+						}
 					},
 					{
 						"class": "Fuel Valve",
@@ -563,9 +550,22 @@
 						"enabled": true,
 						"data": {
 							"Commanded Percent Open": 0.0,
-							"Max Flow Rate": 2.0,
+							"Max Flow Rate": 0.04,
 							"Mass": 0.4
-						}
+						},
+						"models": [
+							{
+								"class": "Fuel Leak Error Model",
+								"enabled": true,
+								"data": {
+									"Degradation Rate": 1.0,
+									"Leak Coefficient": 0.5,
+									"Max Leak Fraction": 1.0,
+									"Leak Onset Flow Rate": 0.02,
+									"Force Failure": false
+								}
+							}
+						]
 					},
 					{
 						"class": "Fuel Interconnect",
@@ -598,9 +598,9 @@
 					"enabled": true,
 					"position": [0.0, 0.0, 0.1],
 					"data": {
-						"Max Flow Rate": 1.0,
-						"Efficiency": 1.0,
-                        "Max Speed": 10.0,
+						"Max Flow Rate": 0.2,
+						"Efficiency": 0.8,
+						"Max Speed": 0.5,
 						"Is Pump Enabled": true,
 						"Allow Flow When Disabled": false,
 						"Mass": 1.5
@@ -613,7 +613,7 @@
 					"enabled": true,
 					"data": {
 						"Is Open": false,
-						"Resistance": 1.0,
+						"Resistance": 0.1,
 						"Mass": 0.5
 					}
 				},
@@ -624,9 +624,9 @@
 					"enabled": true,
 					"data": {
 						"Current Threshold": 1.0,
-						"Threshold Duration": 5.0,
-						"Reset Duration": 60.0,
-						"Resistance": 1.0,
+						"Threshold Duration": 0.0,
+						"Reset Duration": 0.0,
+						"Resistance": 0.1,
 						"Mass": 0.3
 					}
 				},
@@ -661,7 +661,7 @@
 					"enabled": true,
 					"data": {
 						"Is Open": true,
-						"Resistance": 1.0,
+						"Resistance": 0.1,
 						"Mass": 0.5
 					}
 				},
@@ -672,8 +672,8 @@
 					"enabled": true,
 					"data": {
 						"Current Threshold": 1.0,
-						"Threshold Duration": 5.0,
-						"Reset Duration": 60.0,
+						"Threshold Duration": 0.0,
+						"Reset Duration": 0.0,
 						"Resistance": 1.0,
 						"Mass": 0.3
 					}
@@ -1071,7 +1071,7 @@
 							"Amount": 55.0,
 							"Dry Mass": 40.0,
 							"Maximum Outgoing Flow Rate": 10.0,
-							"Desired Ingoing Flow Rate": 0.2
+							"Desired Ingoing Flow Rate": 0.0
 						}
 					},
 					{
@@ -1088,7 +1088,7 @@
 							"Amount": 55.0,
 							"Dry Mass": 40.0,
 							"Maximum Outgoing Flow Rate": 10.0,
-							"Desired Ingoing Flow Rate": 0.2
+							"Desired Ingoing Flow Rate": 0.0
 						}
 					},
 					{
@@ -1464,7 +1464,7 @@
 				"unit": "kg/s",
 				"value": 0.2,
 				"tolerance": 0.05,
-				"reason": "The hub port tank Desired Ingoing Flow Rate is configured at 0.2 kg/s.",
+				"reason": "NEEDS UPDATING AS RATE OF TRANSFER IS USER DEPENDANT NOW.",
 				"score": 10
 			}
 		},
