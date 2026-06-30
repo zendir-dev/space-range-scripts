@@ -14,9 +14,9 @@
 		"atmosphere": false,
 		"magnetosphere": false,
 		"gps": true,
-		"cloud_opacity": 0.7,
-		"cloud_contrast": 2.5,
-		"ambient_light": 0.1
+		"cloud_opacity": 1.5,
+		"cloud_contrast": 2.3,
+		"ambient_light": 0
 	},
 	"ground_stations": {
 		"locations": [
@@ -1304,16 +1304,17 @@
 	"objects": {
 		"ground": [
 			{
-				"id": "GO_008",
+				"id": "TEXT",
 				"type": "text",
-				"name": "Bonus Word",
+				"name": "Lunar Crater",
 				"planet": "Moon",
-				"latitude": -0.6,
-				"longitude": 1.9,
-				"altitude": 32.3,
-				"scale": 1265845.125,
+				"latitude": -56.0,
+				"longitude": -160.0,
+				"altitude": 0,
+				"scale": 1000000,
 				"data": {
-					"text": "ALDRIN WAS HERE"
+					"text": "*",
+					"color": "#3D3D3D"
 				}
 			}
 		]
@@ -1344,10 +1345,7 @@
 					"No \u2014 all three LRFs agree within measurement noise"
 				],
 				"value": 0,
-				"reason": [
-					"Correct. LRF 0 carries a +5 m calibration bias; LRF 120 and LRF 240 are nominal. All three share the same hub sightline from their fixed mountings.",
-					"LRF 0 reads approximately 5 m long compared to LRF 120 and LRF 240 on the hub while docked and immediately after undock."
-				],
+				"reason": "LRF 0 carries a +5 m calibration bias; LRF 120 and LRF 240 are nominal. All three share the same hub sightline from their fixed mountings.",
 				"score": 2
 			}
 		},
@@ -1364,12 +1362,7 @@
 					"None \u2014 all sensors are nominal"
 				],
 				"value": 0,
-				"reason": [
-					"Correct. LRF 0 has a Calibration Error of +5 m on the fixed hub sightline.",
-					"LRF 120 has no calibration error.",
-					"LRF 240 has no calibration error.",
-					"LRF 0 has a Calibration Error of +5 m on the fixed hub sightline."
-				],
+				"reason": "LRF 0 has a Calibration Error of +5 m on the fixed hub sightline.",
 				"score": 4
 			}
 		},
@@ -1476,6 +1469,32 @@
 			}
 		},
 		{
+			"section": "Lunar Observation",
+			"title": "What is the latitude of the star-shaped crater on the far side of the Moon?",
+			"description": "Use your optical camera to survey the lunar surface and locate the distinctive star-shaped crater on the Moon's far side. Report its latitude in degrees to the nearest 5\u00b0. South of the equator is negative.",
+			"type": "number",
+			"answer": {
+				"unit": "deg",
+				"value": -56.0,
+				"tolerance": 2.5,
+				"reason": "The star-shaped crater ground marker is placed at latitude -56\u00b0 on the Moon.",
+				"score": 10
+			}
+		},
+		{
+			"section": "Lunar Observation",
+			"title": "What is the longitude of the star-shaped crater on the far side of the Moon?",
+			"description": "Using the same camera pass, fix the longitude of the star-shaped crater on the Moon's far side. Report longitude in degrees to the nearest 5\u00b0. West of the prime meridian is negative.",
+			"type": "number",
+			"answer": {
+				"unit": "deg",
+				"value": -160.0,
+				"tolerance": 2.5,
+				"reason": "The star-shaped crater ground marker is placed at longitude -160\u00b0 on the Moon's far side.",
+				"score": 10
+			}
+		},
+		{
 			"section": "Procedure",
 			"title": "What anomaly occurred during the fuel transfer operation?",
 			"description": "During the fuel transfer procedure, an anomaly was detected that affected the propellant flow. Analyze the telemetry data from the fuel and power subsystems to identify what went wrong. Select all that apply.",
@@ -1490,14 +1509,7 @@
 					"Pump motor mechanical failure"
 				],
 				"value": [1],
-				"reason": [
-					"The Fuel Tank has a gradual Fuel Leak Error Model, but the primary transfer anomaly was an electrical fault in the pump power circuit, not a pressure-loss leak.",
-					"Correct. The Pump Controller has a Short To Ground Error Model that causes a short-circuit fault in the power delivery circuit. This faulty circuitry affects the power delivery to the fuel pump, causing the fuse to blow and interrupting the power path.",
-					"The fill valve was operating nominally throughout the scenario.",
-					"The fuel interconnect seal was intact and functioning properly.",
-					"The battery maintained adequate voltage levels throughout the operation.",
-					"The pump motor itself was mechanically sound; the issue was with the electrical supply circuit (short to ground in the Pump Controller)."
-				],
+				"reason": "The Pump Controller has a Short To Ground Error Model that causes a short-circuit fault in the power delivery circuit. This faulty circuitry affects the power delivery to the fuel pump, causing the fuse to blow and interrupting the power path.",
 				"score": 10
 			}
 		}
