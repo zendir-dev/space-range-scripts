@@ -648,8 +648,8 @@
 							"enabled": true,
 							"data": {
 								"Short Resistance": 1e-12,
-								"Trigger Mean": 500.0,
-								"Trigger Std": 50.0
+								"Trigger Mean": 900.0,
+								"Trigger Std": 0.0
 							}
 						}
 					]
