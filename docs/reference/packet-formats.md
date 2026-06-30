@@ -200,6 +200,7 @@ Source: `USpaceRangeSubsystem::InitializeSpacePacketDefinitions` (`studio/Plugin
 | 403 | Thruster | `ThrusterOperationMessage` | `ADCS` | Has a `Cold Gas Thruster` or `Ion Thruster`. |
 | 404 | Formation Flying | `FormationFlyingMessage` | `ADCS` | Active during a [`rendezvous`](../api-reference/spacecraft-commands.md#rendezvous). |
 | 405 | Fuel Tank | `FuelAmountMessage` | `ADCS` | One per `Fuel Tank` / `Fuel Source` component (fuel `Amount`, `Capacity`). |
+| 406 | Fuel Flow | `FuelFlowMessage` | `ADCS` | One per `Fuel Pump`, `Fuel Valve`, or `Fuel Interconnect` (`TransferredMass`, `CurrentRate`, `PercentFull`, stall flags, …). |
 | **Telemetry / RF (500-599)** | | | | |
 | 500 | Receiver | `ReceiverMessage` | `Telemetry` | Has a `Receiver`. |
 | 501 | Transmitter | `TransmitterMessage` | `Telemetry` | Has a `Transmitter`. |
