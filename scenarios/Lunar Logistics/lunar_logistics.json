@@ -191,17 +191,17 @@
 					{
 						"source_component": "Fuel Tank",
 						"source_terminal": "out",
-						"target_component": "Fill Valve",
-						"target_terminal": "in"
-					},
-					{
-						"source_component": "Fill Valve",
-						"source_terminal": "out",
 						"target_component": "Fuel Pump",
 						"target_terminal": "in"
 					},
 					{
 						"source_component": "Fuel Pump",
+						"source_terminal": "out",
+						"target_component": "Fill Valve",
+						"target_terminal": "in"
+					},
+					{
+						"source_component": "Fill Valve",
 						"source_terminal": "out",
 						"target_component": "Fuel Interconnect",
 						"target_terminal": "in"
@@ -539,8 +539,22 @@
 							"Capacity": 80.0,
 							"Amount": 80.0,
 							"Dry Mass": 5.0,
-							"Maximum Outgoing Flow Rate": 2.0
-						}
+							"Maximum Outgoing Flow Rate": 2.0,
+							"Desired Ingoing Flow Rate": 0.0
+						},
+						"models": [
+							{
+								"class": "Fuel Leak Error Model",
+								"enabled": true,
+								"data": {
+									"Degradation Rate": 1.0,
+									"Leak Coefficient": 0.2,
+									"Max Leak Fraction": 1.0,
+									"Leak Onset Flow Rate": 0.04,
+									"Force Failure": false
+								}
+							}
+						]
 					},
 					{
 						"class": "Fuel Valve",
@@ -584,25 +598,13 @@
 					"enabled": true,
 					"position": [0.0, 0.0, 0.1],
 					"data": {
-						"Max Flow Rate": 2.0,
-						"Efficiency": 0.9,
+						"Max Flow Rate": 1.0,
+						"Efficiency": 1.0,
+                        "Max Speed": 10.0,
 						"Is Pump Enabled": true,
 						"Allow Flow When Disabled": false,
 						"Mass": 1.5
-					},
-					"models": [
-						{
-							"class": "Fuel Leak Error Model",
-							"enabled": true,
-							"data": {
-								"Degradation Rate": 1e-5,
-								"Leak Coefficient": 0.01,
-								"Max Leak Fraction": 0.5,
-								"Leak Onset Flow Rate": 0.0,
-								"Force Failure": false
-							}
-						}
-					]
+					}
 				},
 				{
 					"class": "Power Switch",
@@ -1489,7 +1491,7 @@
 				],
 				"value": [1],
 				"reason": [
-					"No fuel tank leak was present in this scenario.",
+					"The Fuel Tank has a gradual Fuel Leak Error Model, but the primary transfer anomaly was an electrical fault in the pump power circuit, not a pressure-loss leak.",
 					"Correct. The Pump Controller has a Short To Ground Error Model that causes a short-circuit fault in the power delivery circuit. This faulty circuitry affects the power delivery to the fuel pump, causing the fuse to blow and interrupting the power path.",
 					"The fill valve was operating nominally throughout the scenario.",
 					"The fuel interconnect seal was intact and functioning properly.",
