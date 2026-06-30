@@ -139,23 +139,23 @@
 					{
 						"source_component": "Battery",
 						"source_terminal": "out",
-						"target_component": "Pump Switch",
+						"target_component": "Fuel Pump Switch",
 						"target_terminal": "in"
 					},
 					{
-						"source_component": "Pump Switch",
+						"source_component": "Fuel Pump Switch",
 						"source_terminal": "out",
-						"target_component": "Pump Fuse",
+						"target_component": "Fuel Pump Fuse",
 						"target_terminal": "in"
 					},
 					{
-						"source_component": "Pump Fuse",
+						"source_component": "Fuel Pump Fuse",
 						"source_terminal": "out",
-						"target_component": "Pump Controller",
+						"target_component": "Fuel Pump Controller",
 						"target_terminal": "in"
 					},
 					{
-						"source_component": "Pump Controller",
+						"source_component": "Fuel Pump Controller",
 						"source_terminal": "out",
 						"target_component": "Fuel Pump",
 						"target_terminal": "in"
@@ -163,23 +163,23 @@
 					{
 						"source_component": "Battery",
 						"source_terminal": "out",
-						"target_component": "Backup Pump Switch",
+						"target_component": "Backup Fuel Pump Switch",
 						"target_terminal": "in"
 					},
 					{
-						"source_component": "Backup Pump Switch",
+						"source_component": "Backup Fuel Pump Switch",
 						"source_terminal": "out",
-						"target_component": "Backup Pump Fuse",
+						"target_component": "Backup Fuel Pump Fuse",
 						"target_terminal": "in"
 					},
 					{
-						"source_component": "Backup Pump Fuse",
+						"source_component": "Backup Fuel Pump Fuse",
 						"source_terminal": "out",
-						"target_component": "Backup Pump Controller",
+						"target_component": "Backup Fuel Pump Controller",
 						"target_terminal": "in"
 					},
 					{
-						"source_component": "Backup Pump Controller",
+						"source_component": "Backup Fuel Pump Controller",
 						"source_terminal": "out",
 						"target_component": "Fuel Pump",
 						"target_terminal": "in"
@@ -197,11 +197,11 @@
 					{
 						"source_component": "Fuel Pump",
 						"source_terminal": "out",
-						"target_component": "Fill Valve",
+						"target_component": "Interconnect Valve",
 						"target_terminal": "in"
 					},
 					{
-						"source_component": "Fill Valve",
+						"source_component": "Interconnect Valve",
 						"source_terminal": "out",
 						"target_component": "Fuel Interconnect",
 						"target_terminal": "in"
@@ -545,7 +545,7 @@
 					},
 					{
 						"class": "Fuel Valve",
-						"name": "Fill Valve",
+						"name": "Interconnect Valve",
 						"mesh": "None",
 						"enabled": true,
 						"data": {
@@ -608,7 +608,7 @@
 				},
 				{
 					"class": "Power Switch",
-					"name": "Pump Switch",
+					"name": "Fuel Pump Switch",
 					"mesh": "None",
 					"enabled": true,
 					"data": {
@@ -619,7 +619,7 @@
 				},
 				{
 					"class": "Power Fuse",
-					"name": "Pump Fuse",
+					"name": "Fuel Pump Fuse",
 					"mesh": "None",
 					"enabled": true,
 					"data": {
@@ -632,7 +632,7 @@
 				},
 				{
 					"class": "Power Sink",
-					"name": "Pump Controller",
+					"name": "Fuel Pump Controller",
 					"mesh": "None",
 					"enabled": true,
 					"data": {
@@ -656,7 +656,7 @@
 				},
 				{
 					"class": "Power Switch",
-					"name": "Backup Pump Switch",
+					"name": "Backup Fuel Pump Switch",
 					"mesh": "None",
 					"enabled": true,
 					"data": {
@@ -667,7 +667,7 @@
 				},
 				{
 					"class": "Power Fuse",
-					"name": "Backup Pump Fuse",
+					"name": "Backup Fuel Pump Fuse",
 					"mesh": "None",
 					"enabled": true,
 					"data": {
@@ -680,7 +680,7 @@
 				},
 				{
 					"class": "Power Sink",
-					"name": "Backup Pump Controller",
+					"name": "Backup Fuel Pump Controller",
 					"mesh": "None",
 					"enabled": true,
 					"data": {
@@ -1445,7 +1445,7 @@
 		{
 			"section": "Fuel Operations",
 			"title": "How many kg of fuel is needed to fill the Lunar Gateway hub port tank to capacity?",
-			"description": "While docked, open your Fill Valve with fuel_bus and transfer propellant through the fuel interconnect until the hub port tank stops accepting fuel. Compare your spacecraft tank level before and after, or read the hub tank telemetry, to determine how many kg were required to reach a full tank.",
+			"description": "While docked, open your Interconnect Valve with fuel_bus and transfer propellant through the fuel interconnect until the hub port tank stops accepting fuel. Compare your spacecraft tank level before and after, or read the hub tank telemetry, to determine how many kg were required to reach a full tank.",
 			"type": "number",
 			"answer": {
 				"unit": "kg",
@@ -1503,13 +1503,13 @@
 				"options": [
 					"Fuel tank leak causing pressure loss",
 					"Faulty circuitry powering the pump",
-					"Fill valve stuck in closed position",
+					"Interconnect Valve stuck in closed position",
 					"Fuel interconnect seal failure",
 					"Battery undervoltage condition",
 					"Pump motor mechanical failure"
 				],
 				"value": [1],
-				"reason": "The Pump Controller has a Short To Ground Error Model that causes a short-circuit fault in the power delivery circuit. This faulty circuitry affects the power delivery to the fuel pump, causing the fuse to blow and interrupting the power path.",
+				"reason": "The Fuel Pump Controller has a Short To Ground Error Model that causes a short-circuit fault in the power delivery circuit. This faulty circuitry affects the power delivery to the fuel pump, causing the fuse to blow and interrupting the power path.",
 				"score": 10
 			}
 		}
