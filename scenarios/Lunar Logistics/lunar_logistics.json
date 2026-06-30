@@ -116,44 +116,98 @@
 					"enable_rpo_software": false,
 					"enable_intercept": false
 				},
-				"power": {
-					"bus": [
-						{
-							"source_component": "Solar Panel +X",
-							"source_terminal": "out",
-							"target_component": "Battery",
-							"target_terminal": "out"
-						},
-						{
-							"source_component": "Solar Panel -X",
-							"source_terminal": "out",
-							"target_component": "Battery",
-							"target_terminal": "out"
-						},
-						{
-							"source_component": "Battery",
-							"source_terminal": "out",
-							"target_component": "Power Interconnect",
-							"target_terminal": "in"
-						}
-					]
-				},
-				"fuel": {
-					"bus": [
-						{
-							"source_component": "Fuel Tank",
-							"source_terminal": "out",
-							"target_component": "Fill Valve",
-							"target_terminal": "in"
-						},
-						{
-							"source_component": "Fill Valve",
-							"source_terminal": "out",
-							"target_component": "Fuel Interconnect",
-							"target_terminal": "out"
-						}
-					]
-				},
+			"power": {
+				"bus": [
+					{
+						"source_component": "Solar Panel +X",
+						"source_terminal": "out",
+						"target_component": "Battery",
+						"target_terminal": "out"
+					},
+					{
+						"source_component": "Solar Panel -X",
+						"source_terminal": "out",
+						"target_component": "Battery",
+						"target_terminal": "out"
+					},
+					{
+						"source_component": "Battery",
+						"source_terminal": "out",
+						"target_component": "Power Interconnect",
+						"target_terminal": "in"
+					},
+					{
+						"source_component": "Battery",
+						"source_terminal": "out",
+						"target_component": "Pump Switch",
+						"target_terminal": "in"
+					},
+					{
+						"source_component": "Pump Switch",
+						"source_terminal": "out",
+						"target_component": "Pump Fuse",
+						"target_terminal": "in"
+					},
+					{
+						"source_component": "Pump Fuse",
+						"source_terminal": "out",
+						"target_component": "Pump Controller",
+						"target_terminal": "in"
+					},
+					{
+						"source_component": "Pump Controller",
+						"source_terminal": "out",
+						"target_component": "Fuel Pump",
+						"target_terminal": "in"
+					},
+					{
+						"source_component": "Battery",
+						"source_terminal": "out",
+						"target_component": "Backup Pump Switch",
+						"target_terminal": "in"
+					},
+					{
+						"source_component": "Backup Pump Switch",
+						"source_terminal": "out",
+						"target_component": "Backup Pump Fuse",
+						"target_terminal": "in"
+					},
+					{
+						"source_component": "Backup Pump Fuse",
+						"source_terminal": "out",
+						"target_component": "Backup Pump Controller",
+						"target_terminal": "in"
+					},
+					{
+						"source_component": "Backup Pump Controller",
+						"source_terminal": "out",
+						"target_component": "Fuel Pump",
+						"target_terminal": "in"
+					}
+				]
+			},
+			"fuel": {
+				"bus": [
+					{
+						"source_component": "Fuel Tank",
+						"source_terminal": "out",
+						"target_component": "Fill Valve",
+						"target_terminal": "in"
+					},
+					{
+						"source_component": "Fill Valve",
+						"source_terminal": "out",
+						"target_component": "Fuel Pump",
+						"target_terminal": "in"
+					},
+					{
+						"source_component": "Fuel Pump",
+						"source_terminal": "out",
+						"target_component": "Fuel Interconnect",
+						"target_terminal": "in"
+					}
+				]
+			},
 				"components": [
 					{
 						"class": "Solar Panel",
@@ -515,18 +569,130 @@
 							"Vent To Space When Unconnected": false
 						}
 					},
-					{
-						"class": "Power Interconnect",
-						"name": "Power Interconnect",
-						"data": {
-							"Is Open": true,
-							"Mass": 0.2
-						}
+				{
+					"class": "Power Interconnect",
+					"name": "Power Interconnect",
+					"data": {
+						"Is Open": true,
+						"Mass": 0.2
 					}
-				]
-			},
-			{
-				"id": "SC_002",
+				},
+				{
+					"class": "Fuel Pump",
+					"name": "Fuel Pump",
+					"mesh": "None",
+					"enabled": true,
+					"position": [0.0, 0.0, 0.1],
+					"data": {
+						"Max Flow Rate": 2.0,
+						"Efficiency": 0.9,
+						"Is Pump Enabled": true,
+						"Allow Flow When Disabled": false,
+						"Mass": 1.5
+					},
+					"models": [
+						{
+							"class": "Fuel Leak Error Model",
+							"enabled": true,
+							"data": {
+								"Degradation Rate": 1e-5,
+								"Leak Coefficient": 0.01,
+								"Max Leak Fraction": 0.5,
+								"Leak Onset Flow Rate": 0.0,
+								"Force Failure": false
+							}
+						}
+					]
+				},
+				{
+					"class": "Power Switch",
+					"name": "Pump Switch",
+					"mesh": "None",
+					"enabled": true,
+					"data": {
+						"Is Open": false,
+						"Resistance": 1.0,
+						"Mass": 0.5
+					}
+				},
+				{
+					"class": "Power Fuse",
+					"name": "Pump Fuse",
+					"mesh": "None",
+					"enabled": true,
+					"data": {
+						"Current Threshold": 1.0,
+						"Threshold Duration": 5.0,
+						"Reset Duration": 60.0,
+						"Resistance": 1.0,
+						"Mass": 0.3
+					}
+				},
+				{
+					"class": "Power Sink",
+					"name": "Pump Controller",
+					"mesh": "None",
+					"enabled": true,
+					"data": {
+						"Is Active": true,
+						"Nominal Voltage Drop": 12.0,
+						"Nominal Power": 8.0,
+						"Resistance": 1.0,
+						"Mass": 0.5
+					},
+					"models": [
+						{
+							"class": "Short To Ground Error Model",
+							"enabled": true,
+							"data": {
+								"Short Resistance": 1e-12,
+								"Trigger Mean": 500.0,
+								"Trigger Std": 50.0
+							}
+						}
+					]
+				},
+				{
+					"class": "Power Switch",
+					"name": "Backup Pump Switch",
+					"mesh": "None",
+					"enabled": true,
+					"data": {
+						"Is Open": true,
+						"Resistance": 1.0,
+						"Mass": 0.5
+					}
+				},
+				{
+					"class": "Power Fuse",
+					"name": "Backup Pump Fuse",
+					"mesh": "None",
+					"enabled": true,
+					"data": {
+						"Current Threshold": 1.0,
+						"Threshold Duration": 5.0,
+						"Reset Duration": 60.0,
+						"Resistance": 1.0,
+						"Mass": 0.3
+					}
+				},
+				{
+					"class": "Power Sink",
+					"name": "Backup Pump Controller",
+					"mesh": "None",
+					"enabled": true,
+					"data": {
+						"Is Active": true,
+						"Nominal Voltage Drop": 12.0,
+						"Nominal Power": 8.0,
+						"Resistance": 1.0,
+						"Mass": 0.5
+					}
+				}
+			]
+		},
+		{
+			"id": "SC_002",
 				"name": "Hub",
 				"orbit": {
 					"planet": "Moon",
@@ -1304,6 +1470,32 @@
 				"value": 0.2,
 				"tolerance": 0.05,
 				"reason": "The hub port tank Desired Ingoing Flow Rate is configured at 0.2 kg/s.",
+				"score": 10
+			}
+		},
+		{
+			"section": "Procedure",
+			"title": "What anomaly occurred during the fuel transfer operation?",
+			"description": "During the fuel transfer procedure, an anomaly was detected that affected the propellant flow. Analyze the telemetry data from the fuel and power subsystems to identify what went wrong. Select all that apply.",
+			"type": "checkbox",
+			"answer": {
+				"options": [
+					"Fuel tank leak causing pressure loss",
+					"Faulty circuitry powering the pump",
+					"Fill valve stuck in closed position",
+					"Fuel interconnect seal failure",
+					"Battery undervoltage condition",
+					"Pump motor mechanical failure"
+				],
+				"value": [1],
+				"reason": [
+					"No fuel tank leak was present in this scenario.",
+					"Correct. The Pump Controller has a Short To Ground Error Model that causes a short-circuit fault in the power delivery circuit. This faulty circuitry affects the power delivery to the fuel pump, causing the fuse to blow and interrupting the power path.",
+					"The fill valve was operating nominally throughout the scenario.",
+					"The fuel interconnect seal was intact and functioning properly.",
+					"The battery maintained adequate voltage levels throughout the operation.",
+					"The pump motor itself was mechanically sound; the issue was with the electrical supply circuit (short to ground in the Pump Controller)."
+				],
 				"score": 10
 			}
 		}
