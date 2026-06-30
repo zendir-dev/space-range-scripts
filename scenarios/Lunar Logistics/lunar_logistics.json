@@ -1423,9 +1423,9 @@
 			"type": "number",
 			"answer": {
 				"unit": "min",
-				"value": 19.0,
+				"value": 5.33,
 				"tolerance": 1.0,
-				"reason": "The Canberra DSN blackout lasts approximately 19 simulation minutes before the Lunar Gateway regains contact.",
+				"reason": "The Canberra DSN blackout lasts just over 5 minutes before the Lunar Gateway regains contact.",
 				"score": 10
 			}
 		},
