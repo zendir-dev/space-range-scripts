@@ -1325,6 +1325,90 @@
 	"events": [],
 	"questions": [
 		{
+			"section": "Fuel Operations",
+			"title": "How many kg of fuel is needed to fill the Lunar Gateway hub port tank to capacity?",
+			"description": "While docked, open your Interconnect Valve with fuel_bus and transfer propellant through the fuel interconnect until the hub port tank stops accepting fuel. Compare your spacecraft tank level before and after, or read the hub tank telemetry, to determine how many kg were required to reach a full tank.",
+			"type": "number",
+			"answer": {
+				"unit": "kg",
+				"value": 45.0,
+				"tolerance": 1.0,
+				"reason": "Each hub port tank (Tank D / Tank E) has Capacity 100 kg and starts at Amount 55 kg, so 45 kg is required to fill it.",
+				"score": 10
+			}
+		},
+		{
+			"section": "Fuel Operations",
+			"title": "What is the rate at which fuel is transferred to the hub?",
+			"description": "While docked and transferring propellant, monitor fuel telemetry or observe tank levels over time to determine the steady transfer rate into the Lunar Gateway hub port tank. Report the rate in kg/s.",
+			"type": "number",
+			"answer": {
+				"unit": "kg/s",
+				"value": 0.2,
+				"tolerance": 0.05,
+				"reason": "NEEDS UPDATING AS RATE OF TRANSFER IS USER DEPENDANT NOW.",
+				"score": 10
+			}
+		},
+		{
+			"section": "Link Budget",
+			"title": "How long in minutes was the telecommunications blackout?",
+			"description": "Using the Link Budget panel and connection telemetry, measure the interval from DSN loss of the Lunar Gateway until contact is restored. Report the blackout duration in minutes.",
+			"type": "number",
+			"answer": {
+				"unit": "min",
+				"value": 5.33,
+				"tolerance": 1.0,
+				"reason": "The Canberra DSN blackout lasts just over 5 minutes before the Lunar Gateway regains contact.",
+				"score": 10
+			}
+		},
+		{
+			"section": "Link Budget",
+			"title": "What is the nominal downlink signal-to-noise ratio from your spacecraft to the Deep Space Network?",
+			"description": "While the downlink is healthy (before the DSN blackout), read the nominal downlink signal-to-noise ratio from the Link Budget panel or Receiver / Transmitter telemetry for your spacecraft to Canberra. Report the value in dB.",
+			"type": "number",
+			"answer": {
+				"unit": "dB",
+				"value": 51.92,
+				"tolerance": 1.0,
+				"reason": "The nominal downlink SNR from the client spacecraft to Canberra is approximately 51.92 dB under the configured link budget.",
+				"score": 10
+			}
+		},
+		{
+			"section": "Link Budget",
+			"title": "At what time (in minutes) did the Lunar Gateway lose access to the Deep Space Network?",
+			"description": "Monitor the Link Budget panel and ground-station visibility for Canberra (Deep Space Network). Track when the Lunar Gateway hub loses usable contact with the DSN and report the elapsed simulation time in minutes from session start.",
+			"type": "number",
+			"answer": {
+				"unit": "min",
+				"value": 13.67,
+				"tolerance": 1.0,
+				"reason": "The Lunar Gateway loses DSN access at approximately 820 s (13.67 simulation minutes) for this lunar orbit and Canberra ground-station geometry.",
+				"score": 10
+			}
+		},
+		{
+			"section": "Docked Procedures",
+			"title": "What anomaly occurred during the fuel transfer operation?",
+			"description": "During the fuel transfer procedure, an anomaly was detected that affected the propellant flow. Analyze the telemetry data from the fuel and power subsystems to identify what went wrong. Select all that apply.",
+			"type": "checkbox",
+			"answer": {
+				"options": [
+					"Fuel tank leak causing pressure loss",
+					"Faulty circuitry powering the pump",
+					"Interconnect Valve stuck in closed position",
+					"Fuel interconnect seal failure",
+					"Battery undervoltage condition",
+					"Pump motor mechanical failure"
+				],
+				"value": [1],
+				"reason": "The Fuel Pump Controller has a Short To Ground Error Model that causes a short-circuit fault in the power delivery circuit. This faulty circuitry affects the power delivery to the fuel pump, causing the fuse to blow and interrupting the power path.",
+				"score": 10
+			}
+		},
+		{
 			"section": "Undocking",
 			"title": "What separation velocity (m/s) does your spacecraft acquire immediately after undocking from the hub?",
 			"description": "Your three laser range finders are body-fixed and already sighted on the Lunar Gateway while docked. Command undock and plot MeasuredVelocity from LRF telemetry (APID 305) \u2014 the sensors auto-compute range rate without repointing. Read the peak magnitude immediately after the separation impulse and report the separation velocity in metres per second.",
@@ -1370,7 +1454,7 @@
 			}
 		},
 		{
-			"section": "Debris",
+			"section": "Debris Inspection",
 			"title": "What is the distance between the Lunar Gateway hub and the debris rocket body?",
 			"description": "Use the Laser Range Finder on your spacecraft: command relative pointing to aim at the debris rocket body, read MeasuredRange from LRF telemetry, and account for sensor calibration where needed. Report the separation between the Lunar Gateway hub and the rocket body in metres.",
 			"type": "number",
@@ -1383,7 +1467,7 @@
 			}
 		},
 		{
-			"section": "Debris",
+			"section": "Debris Inspection",
 			"title": "At what rate (RPM) is the debris rocket body spinning?",
 			"description": "The debris is tumbling about its body axis. Use the optical camera or timed observations of the chassis markings together with Laser Range Finder passes to characterise the motion, then report the spin rate in revolutions per minute (RPM).",
 			"type": "number",
@@ -1396,78 +1480,13 @@
 			}
 		},
 		{
-			"section": "Debris",
+			"section": "Debris Inspection",
 			"title": "Who does the rocket body (R/B) belong to?",
 			"description": "Inspect the debris rocket body with your optical camera or during a close Laser Range Finder pass. Read the owner marking painted on the chassis and enter the organisation name exactly as shown.",
 			"type": "text",
 			"answer": {
 				"value": "NASA",
 				"reason": "The debris rocket body carries a black NASA marking on the chassis Text component.",
-				"score": 10
-			}
-		},
-		{
-			"section": "Link Budget",
-			"title": "At what time (in minutes) did the Lunar Gateway lose access to the Deep Space Network?",
-			"description": "Monitor the Link Budget panel and ground-station visibility for Canberra (Deep Space Network). Track when the Lunar Gateway hub loses usable contact with the DSN and report the elapsed simulation time in minutes from session start.",
-			"type": "number",
-			"answer": {
-				"unit": "min",
-				"value": 13.67,
-				"tolerance": 1.0,
-				"reason": "The Lunar Gateway loses DSN access at approximately 820 s (13.67 simulation minutes) for this lunar orbit and Canberra ground-station geometry.",
-				"score": 10
-			}
-		},
-		{
-			"section": "Link Budget",
-			"title": "How long in minutes was the telecommunications blackout?",
-			"description": "Using the Link Budget panel and connection telemetry, measure the interval from DSN loss of the Lunar Gateway until contact is restored. Report the blackout duration in minutes.",
-			"type": "number",
-			"answer": {
-				"unit": "min",
-				"value": 5.33,
-				"tolerance": 1.0,
-				"reason": "The Canberra DSN blackout lasts just over 5 minutes before the Lunar Gateway regains contact.",
-				"score": 10
-			}
-		},
-		{
-			"section": "Link Budget",
-			"title": "What is the nominal downlink signal-to-noise ratio from your spacecraft to the Deep Space Network?",
-			"description": "While the downlink is healthy (before the DSN blackout), read the nominal downlink signal-to-noise ratio from the Link Budget panel or Receiver / Transmitter telemetry for your spacecraft to Canberra. Report the value in dB.",
-			"type": "number",
-			"answer": {
-				"unit": "dB",
-				"value": 51.92,
-				"tolerance": 1.0,
-				"reason": "The nominal downlink SNR from the client spacecraft to Canberra is approximately 51.92 dB under the configured link budget.",
-				"score": 10
-			}
-		},
-		{
-			"section": "Fuel Operations",
-			"title": "How many kg of fuel is needed to fill the Lunar Gateway hub port tank to capacity?",
-			"description": "While docked, open your Interconnect Valve with fuel_bus and transfer propellant through the fuel interconnect until the hub port tank stops accepting fuel. Compare your spacecraft tank level before and after, or read the hub tank telemetry, to determine how many kg were required to reach a full tank.",
-			"type": "number",
-			"answer": {
-				"unit": "kg",
-				"value": 45.0,
-				"tolerance": 1.0,
-				"reason": "Each hub port tank (Tank D / Tank E) has Capacity 100 kg and starts at Amount 55 kg, so 45 kg is required to fill it.",
-				"score": 10
-			}
-		},
-		{
-			"section": "Fuel Operations",
-			"title": "What is the rate at which fuel is transferred to the hub?",
-			"description": "While docked and transferring propellant, monitor fuel telemetry or observe tank levels over time to determine the steady transfer rate into the Lunar Gateway hub port tank. Report the rate in kg/s.",
-			"type": "number",
-			"answer": {
-				"unit": "kg/s",
-				"value": 0.2,
-				"tolerance": 0.05,
-				"reason": "NEEDS UPDATING AS RATE OF TRANSFER IS USER DEPENDANT NOW.",
 				"score": 10
 			}
 		},
@@ -1494,25 +1513,6 @@
 				"value": -160.0,
 				"tolerance": 2.5,
 				"reason": "The star-shaped crater ground marker is placed at longitude -160\u00b0 on the Moon's far side.",
-				"score": 10
-			}
-		},
-		{
-			"section": "Procedure",
-			"title": "What anomaly occurred during the fuel transfer operation?",
-			"description": "During the fuel transfer procedure, an anomaly was detected that affected the propellant flow. Analyze the telemetry data from the fuel and power subsystems to identify what went wrong. Select all that apply.",
-			"type": "checkbox",
-			"answer": {
-				"options": [
-					"Fuel tank leak causing pressure loss",
-					"Faulty circuitry powering the pump",
-					"Interconnect Valve stuck in closed position",
-					"Fuel interconnect seal failure",
-					"Battery undervoltage condition",
-					"Pump motor mechanical failure"
-				],
-				"value": [1],
-				"reason": "The Fuel Pump Controller has a Short To Ground Error Model that causes a short-circuit fault in the power delivery circuit. This faulty circuitry affects the power delivery to the fuel pump, causing the fuse to blow and interrupting the power path.",
 				"score": 10
 			}
 		}
