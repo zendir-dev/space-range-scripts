@@ -28,23 +28,23 @@
 	"teams": [
 		{
 			"enabled": true,
-			"id": 111111,
-			"password": "AAAAAA",
-			"name": "Red Team",
-			"key": 6,
-			"frequency": 473,
+			"id": 1,
+			"password": "8XTPWN",
+			"name": "Team Green",
+			"key": 87,
+			"frequency": 745,
 			"collection": "Main",
-			"color": "#FF0000"
+			"color": "#00FF00"
 		},
 		{
 			"enabled": true,
-			"id": 222222,
-			"password": "CCCCCC",
-			"name": "Blue Team",
-			"key": 8,
-			"frequency": 475,
+			"id": 2,
+			"password": "5LZQVB",
+			"name": "Team Yellow",
+			"key": 154,
+			"frequency": 889,
 			"collection": "Main",
-			"color": "#00AAFF"
+			"color": "#FFFF00"
 		}
 	],
 	"assets": {
@@ -1268,37 +1268,37 @@
 	},
 	"docking": [
 		{
-			"from_team": 111111,
+			"from_team": 1,
 			"from_target": "Docking Adapter",
 			"to_asset": "SC_002",
 			"to_target": "Docking D"
 		},
 		{
-			"from_team": 222222,
+			"from_team": 2,
 			"from_target": "Docking Adapter",
 			"to_asset": "SC_002",
 			"to_target": "Docking E"
 		},
 		{
-			"from_team": 111111,
+			"from_team": 1,
 			"from_target": "Fuel Transfer",
 			"to_asset": "SC_002",
 			"to_target": "Fuel Transfer D"
 		},
 		{
-			"from_team": 222222,
+			"from_team": 2,
 			"from_target": "Fuel Transfer",
 			"to_asset": "SC_002",
 			"to_target": "Fuel Transfer E"
 		},
 		{
-			"from_team": 111111,
+			"from_team": 1,
 			"from_target": "Power Transfer Switch",
 			"to_asset": "SC_002",
 			"to_target": "Power Transfer Switch D"
 		},
 		{
-			"from_team": 222222,
+			"from_team": 2,
 			"from_target": "Power Transfer Switch",
 			"to_asset": "SC_002",
 			"to_target": "Power Transfer Switch E"
