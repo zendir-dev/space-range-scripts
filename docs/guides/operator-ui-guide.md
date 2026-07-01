@@ -99,7 +99,7 @@ Forms only show fields the API supports; if you can't find a knob in the UI, it'
 
 ## Power Bus Configuration
 
-The **Power Bus Configuration** panel (under **Control**) edits session-mutable bus configuration — switch open/closed, current limits, regulation voltage, and load power. **Fuse** rows show the trip current (A) read-only from the scenario; operators can **Reset** a blown fuse but cannot change the threshold from this panel. The panel appears only when the asset includes at least one **Power Switch**, **Power Current Limiter**, **Power Voltage Regulator**, **Power Fuse**, or **Power Diode** (from [`list_entity`](../api-reference/ground-requests.md#list_entity)). It does **not** show static scenario `data` (like `Mass` or `Resistance`) or live simulation telemetry (voltages, currents, battery state of charge).
+The **Power Bus Configuration** panel (under **Control**) edits session-mutable bus configuration — switch open/closed, current limits, and regulation voltage. **Fuse** rows show the trip current (A) read-only from the scenario; operators can **Reset** a blown fuse but cannot change the threshold from this panel. **Load** rows show nominal power (W) read-only. The panel appears only when the asset includes at least one **Power Switch**, **Power Current Limiter**, **Power Voltage Regulator**, **Power Fuse**, or **Power Diode** (from [`list_entity`](../api-reference/ground-requests.md#list_entity)). It does **not** show static scenario `data` (like `Mass` or `Resistance`) or live simulation telemetry (voltages, currents, battery state of charge).
 
 ### How state is loaded
 
