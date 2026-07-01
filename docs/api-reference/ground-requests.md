@@ -149,8 +149,9 @@ Static schematic of one spacecraft: its components and jammer status. This is **
     "asset_id": "A3F2C014",
     "neutral": false,
     "components": [
-      { "name": "Solar Panel +X", "class": "Solar Panel", "component_id": 5, "is_imager": false },
-      { "name": "Camera",         "class": "Camera",       "component_id": 12, "is_imager": true }
+      { "name": "Solar Panel +X", "class": "Solar Panel", "component_id": 5, "is_imager": false, "is_sensor": false, "is_antenna": false },
+      { "name": "Camera",         "class": "Camera",       "component_id": 12, "is_imager": true,  "is_sensor": true,  "is_antenna": false },
+      { "name": "Receiver",       "class": "Receiver",     "component_id": 18, "is_imager": false, "is_sensor": false, "is_antenna": true }
     ],
     "jammer": { "is_active": false, "frequency": 0.0, "power": 0.0 }
   },
@@ -166,7 +167,9 @@ Static schematic of one spacecraft: its components and jammer status. This is **
 | `components[].name` | Friendly name. **Use this for `target` and `component` arguments in spacecraft commands.** Case-insensitive matching. |
 | `components[].class` | Component class (e.g. `Camera`, `Solar Panel`, `Battery`). |
 | `components[].component_id` | Index used as the **CCSDS APID-like discriminator** in telemetry messages, so you can tell which physical component a packet came from. |
-| `components[].is_imager` | `true` for cameras / CCDs — components that can produce imagery. |
+| `components[].is_imager` | `true` for cameras / CCDs — components that can produce imagery. Used by the Operator UI **Camera** panel and [`camera` / `capture`](spacecraft-commands.md#camera) flows. |
+| `components[].is_sensor` | `true` when the component class inherits from **`Sensor`** (magnetometers, GPS, cameras, laser range finders, EM sensors, etc.). |
+| `components[].is_antenna` | `true` when the component class inherits from **`Antenna`** (receivers, transmitters, jammers, optical comms, etc.). |
 | `jammer` | Present only if the spacecraft has a jamming transmitter. |
 | `jammer.is_active` | Whether the jammer is currently transmitting. |
 | `jammer.frequency` | Active jam frequency in MHz. |

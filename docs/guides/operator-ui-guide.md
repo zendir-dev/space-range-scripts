@@ -99,7 +99,7 @@ Forms only show fields the API supports; if you can't find a knob in the UI, it'
 
 ## Power Bus Configuration
 
-The **Power Bus Configuration** panel (under **Control**) edits session-mutable bus configuration — switch open/closed, fuse thresholds, current limits, regulation voltage, and load power. The panel appears only when the asset includes at least one **Power Switch**, **Power Current Limiter**, **Power Voltage Regulator**, **Power Fuse**, or **Power Diode** (from [`list_entity`](../api-reference/ground-requests.md#list_entity)). It does **not** show static scenario `data` (like `Mass` or `Resistance`) or live simulation telemetry (voltages, currents, battery state of charge).
+The **Power Bus Configuration** panel (under **Control**) edits session-mutable bus configuration — switch open/closed, current limits, regulation voltage, and load power. **Fuse** rows show the trip current (A) read-only from the scenario; operators can **Reset** a blown fuse but cannot change the threshold from this panel. The panel appears only when the asset includes at least one **Power Switch**, **Power Current Limiter**, **Power Voltage Regulator**, **Power Fuse**, or **Power Diode** (from [`list_entity`](../api-reference/ground-requests.md#list_entity)). It does **not** show static scenario `data` (like `Mass` or `Resistance`) or live simulation telemetry (voltages, currents, battery state of charge).
 
 ### How state is loaded
 
@@ -115,7 +115,7 @@ Every operator on the team subscribes to the same **Downlink** topic. When any o
 
 - **Refresh** (sync icon in the panel header) — sends `get_configuration` with `scope: "power_bus"` for the selected asset.
 - **Update Bus** — sends one [`power_bus`](../api-reference/spacecraft-commands.md#power_bus) command with a `values` array (one entry per changed component). The spacecraft automatically downlinks a Configuration Report for `scope: "power_bus"` so other operators pick up the new state on the next pass.
-- **Reset** (fuse rows only) — enabled when `Is Fuse Blown` is true; sends `power_bus` with `action: "reset"` (which also triggers the automatic Configuration Report). Shows a **BLOWN** label while the fuse is open.
+- **Reset** (fuse rows only) — enabled when `Is Fuse Blown` is true; sends `power_bus` with `action: "reset"` (which also triggers the automatic Configuration Report). Shows a **BLOWN** label while the fuse is open. The fuse **Current Threshold** field beside Reset is read-only (display only).
 
 If you don't see updates immediately, the report may still be queued on board — trigger a [`downlink`](../api-reference/spacecraft-commands.md#downlink) or wait for auto-downlink on ping.
 
@@ -160,12 +160,25 @@ Scheduled guidance that has not yet run does **not** update `computer` configura
 
 Same rule as Power: if your draft differs from the last applied snapshot, incoming reports update `configs` for other modes but leave your active draft fields alone until you match the applied state again.
 
+### Target component selection
+
+The **Target Component** dropdown is filtered by **Pointing Mode**, using flags from [`list_entity`](../api-reference/ground-requests.md#list_entity):
+
+| Pointing mode | Components offered |
+| --- | --- |
+| **Inertial** | All on-board components |
+| **Sun** | **`Solar Panel`** class only |
+| **Velocity**, **Nadir**, **Ground**, **Location** | Components with **`is_sensor`** or **`is_antenna`** (sensors, cameras, LRFs, receivers, transmitters, etc.) |
+| **Relative** | Components with **`is_sensor`** or **`is_antenna`**, **or** **`Docking Adapter`** class |
+
+If no components match the filter, the dropdown shows *No eligible components*. Switching mode re-selects the first valid entry when the current choice is no longer allowed. When a mode has no saved target in the Configuration Report, **Nadir**, **Ground**, **Location**, and **Relative** default to the first **`is_imager`** component in the filtered list (then name match on “camera”, then the first eligible component).
+
 ### Relative mode
 
 When **Pointing Mode** is **Relative**, the panel adds:
 
 - **Spacecraft** — asset ID of another team spacecraft to point toward (same value as the `spacecraft` guidance argument).
-- **Aim Component** — optional dropdown of components on the selected target spacecraft (from [`list_entity`](../api-reference/ground-requests.md#list_entity)). **None** omits `component` and aims at the target spacecraft origin. Choosing a component sends its name as `component`; the on-board controller offsets the aim point by that component's body-frame position on the target hull.
+- **Aim Component** — optional dropdown of **all** components on the selected target spacecraft (from [`list_entity`](../api-reference/ground-requests.md#list_entity); no type filter). **None** omits `component` and aims at the target spacecraft origin. Choosing a component sends its name as `component`; the on-board controller offsets the aim point by that component's body-frame position on the target hull.
 
 The target component list is populated from cached `list_entity` data for the selected spacecraft. If the dropdown is empty, ensure entity lists have been received for that asset (they load when you join or when components are refreshed).
 

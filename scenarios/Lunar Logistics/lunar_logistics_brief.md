@@ -34,10 +34,10 @@ At some point between **10** and **20** minutes into the operation, it is expect
 
 ### Phase 3 - Undocking & Inspection
 
-After logistics tasks are complete, and once the blackout has occurred, perform the following actions:
+After logistics tasks are complete, and **once the blackout has finished**, perform the following actions:
 
-1. **Undock from the Lunar Gateway** — Command separation through your docking adapter. There is **no RPO guidance software** and **no onboard thrusters**; attitude control reaction wheels are **disabled**. After undock you drift under the separation impulse only — plan observations accordingly.
-2. **Characterize relative motion** — Three body-fixed laser range finders (LRF 0, LRF 120, LRF 240) are already sighted on the hub at undock. Use them (and cameras) to measure range, range rate, and any sensor disagreement after separation.
+1. **Undock from the Lunar Gateway:** Command separation through your docking adapter. There is **no** RPO guidance software and **no** onboard thrusters. After undock, you drift under the separation impulse only.
+2. **Characterize Relative Motion:** Three body-fixed laser range finders (LRF 0, LRF 120, LRF 240) are already sighted on the hub at undock. Use them to measure range, range rate, and any sensor disagreement after separation.
 3. **Inspect co-orbital debris** — A rocket body (R/B) orbits near the hub. Determine its range, spin rate, and identity markings using your optical camera and laser range finders.
 4. **Conduct lunar observation** — Use the main optical camera to survey the lunar surface and locate features of interest on the far side.
 

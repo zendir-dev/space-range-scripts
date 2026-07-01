@@ -101,7 +101,7 @@ Sets the spacecraft's pointing mode through the on-board ADCS. Each `pointing` v
 | Argument | Default | Range / Values | Unit | Description |
 | --- | --- | --- | --- | --- |
 | `pointing` | `inertial` | `inertial`, `velocity`, `sun`, `nadir`, `ground`, `location`, `relative`, `idle` | — | Pointing law to engage. `idle` disables the controller and stops drawing reaction-wheel torque. Any unrecognised value also falls through to `idle`. |
-| `target` | _(spacecraft body)_ | component name | — | Component on the spacecraft whose face should align with the pointing direction. Case-insensitive match against the spacecraft's component list (see [`list_entity`](ground-requests.md#list_entity)). If omitted, the alignment is interpreted in the spacecraft body frame. |
+| `target` | _(spacecraft body)_ | component name | — | Component on the spacecraft whose face should align with the pointing direction. Case-insensitive match against the spacecraft's component list (see [`list_entity`](ground-requests.md#list_entity)). If omitted, the alignment is interpreted in the spacecraft body frame. The Operator UI limits eligible `target` values by `pointing` mode (see below); the on-board controller accepts any valid component name. |
 | `alignment` | `+z` | `+x`, `-x`, `+y`, `-y`, `+z`, `-z` | — | Which axis of the `target` to point along the pointing direction. Most components (cameras, panels, antennas) have their working face on `+z`. |
 
 ### Args by `pointing` mode
@@ -142,7 +142,20 @@ Sets the spacecraft's pointing mode through the on-board ADCS. Each `pointing` v
 | Argument | Default | Description |
 | --- | --- | --- |
 | `spacecraft` | _(none)_ | Asset ID of another spacecraft in the simulation. If the ID does not resolve, the controller engages but holds its current target. |
-| `component` | _(none)_ | Optional **name** of a hardware component on the **target** spacecraft (`spacecraft`). Same naming as [`list_entity`](ground-requests.md#list_entity) / local `target`. Omit, leave empty, or set to `none` to aim at the target spacecraft origin. When set to a valid component on the target hull, the controller applies that component's body-frame position (`GetPosition_LB_B()`, metres) as a target offset before slewing. If the name does not resolve, the offset is treated as `(0, 0, 0)`. |
+| `component` | _(none)_ | Optional **name** of a hardware component on the **target** spacecraft (`spacecraft`). Same naming as [`list_entity`](ground-requests.md#list_entity) / local `target`. Omit, leave empty, or set to `none` to aim at the target spacecraft origin. When set to a valid component on the target hull, the controller applies that component's body-frame position (`GetPosition_LB_B()`, metres) as a target offset before slewing. If the name does not resolve, the offset is treated as `(0, 0, 0)`. In the Operator UI, **Aim Component** lists all components on the target spacecraft (no type filter). |
+
+### Eligible `target` components (Operator UI)
+
+The **Guidance Controller** panel filters the **Target Component** dropdown by pointing mode. Custom clients may use the same rules with [`list_entity`](ground-requests.md#list_entity) flags:
+
+| `pointing` | Eligible components |
+| --- | --- |
+| `inertial` | All components |
+| `sun` | `class` is **`Solar Panel`** |
+| `velocity`, `nadir`, `ground`, `location` | `is_sensor` **or** `is_antenna` is `true` |
+| `relative` | `is_sensor` **or** `is_antenna` is `true`, **or** `class` is **`Docking Adapter`** |
+
+In **`relative`** mode, **Aim Component** on the target spacecraft is **not** filtered — any component from [`list_entity`](ground-requests.md#list_entity) may be chosen.
 
 ### Notes
 
