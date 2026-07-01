@@ -553,7 +553,7 @@
 						"enabled": true,
 						"data": {
 							"Commanded Percent Open": 0.0,
-							"Max Flow Rate": 0.04,
+							"Max Flow Rate": 0.05,
 							"Mass": 0.4
 						},
 						"models": [
@@ -651,7 +651,7 @@
 							"enabled": true,
 							"data": {
 								"Short Resistance": 1e-12,
-								"Trigger Mean": 900.0,
+								"Trigger Mean": 780.0,
 								"Trigger Std": 0.0
 							}
 						}
