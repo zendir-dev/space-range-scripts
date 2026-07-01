@@ -121,11 +121,17 @@
 					{
 						"source_component": "Solar Panel +X",
 						"source_terminal": "out",
-						"target_component": "Battery",
-						"target_terminal": "out"
+						"target_component": "Solar Panel Isolation Switch",
+						"target_terminal": "in"
 					},
 					{
 						"source_component": "Solar Panel -X",
+						"source_terminal": "out",
+						"target_component": "Solar Panel Isolation Switch",
+						"target_terminal": "in"
+					},
+					{
+						"source_component": "Solar Panel Isolation Switch",
 						"source_terminal": "out",
 						"target_component": "Battery",
 						"target_terminal": "out"
@@ -250,6 +256,17 @@
 							"Area": 0.3,
 							"Efficiency": 0.4,
 							"Mass": 10.0
+						}
+					},
+					{
+						"class": "Power Switch",
+						"name": "Solar Panel Isolation Switch",
+						"mesh": "None",
+						"enabled": true,
+						"data": {
+							"Is Open": true,
+							"Resistance": 0.1,
+							"Mass": 0.5
 						}
 					},
 					{
