@@ -139,7 +139,7 @@
 					{
 						"source_component": "Battery",
 						"source_terminal": "out",
-						"target_component": "Power Interconnect",
+						"target_component": "Power Transfer Switch",
 						"target_terminal": "in"
 					},
 					{
@@ -169,23 +169,23 @@
 					{
 						"source_component": "Battery",
 						"source_terminal": "out",
-						"target_component": "Backup Fuel Pump Switch",
+						"target_component": "Fuel Pump Switch (Backup)",
 						"target_terminal": "in"
 					},
 					{
-						"source_component": "Backup Fuel Pump Switch",
+						"source_component": "Fuel Pump Switch (Backup)",
 						"source_terminal": "out",
-						"target_component": "Backup Fuel Pump Fuse",
+						"target_component": "Fuel Pump Fuse (Backup)",
 						"target_terminal": "in"
 					},
 					{
-						"source_component": "Backup Fuel Pump Fuse",
+						"source_component": "Fuel Pump Fuse (Backup)",
 						"source_terminal": "out",
-						"target_component": "Backup Fuel Pump Controller",
+						"target_component": "Fuel Pump Controller (Backup)",
 						"target_terminal": "in"
 					},
 					{
-						"source_component": "Backup Fuel Pump Controller",
+						"source_component": "Fuel Pump Controller (Backup)",
 						"source_terminal": "out",
 						"target_component": "Fuel Pump",
 						"target_terminal": "in"
@@ -203,13 +203,13 @@
 					{
 						"source_component": "Fuel Pump",
 						"source_terminal": "out",
-						"target_component": "Interconnect Valve",
+						"target_component": "Transfer Valve",
 						"target_terminal": "in"
 					},
 					{
-						"source_component": "Interconnect Valve",
+						"source_component": "Transfer Valve",
 						"source_terminal": "out",
-						"target_component": "Fuel Interconnect",
+						"target_component": "Fuel Transfer",
 						"target_terminal": "in"
 					}
 				]
@@ -548,7 +548,7 @@
 					},
 					{
 						"class": "Fuel Valve",
-						"name": "Interconnect Valve",
+						"name": "Transfer Valve",
 						"mesh": "None",
 						"enabled": true,
 						"data": {
@@ -572,7 +572,7 @@
 					},
 					{
 						"class": "Fuel Interconnect",
-						"name": "Fuel Interconnect",
+						"name": "Fuel Transfer",
 						"mesh": "None",
 						"enabled": true,
 						"position": [
@@ -588,7 +588,7 @@
 					},
 				{
 					"class": "Power Interconnect",
-					"name": "Power Interconnect",
+					"name": "Power Transfer Switch",
 					"data": {
 						"Is Open": true,
 						"Mass": 0.2
@@ -659,7 +659,7 @@
 				},
 				{
 					"class": "Power Switch",
-					"name": "Backup Fuel Pump Switch",
+					"name": "Fuel Pump Switch (Backup)",
 					"mesh": "None",
 					"enabled": true,
 					"data": {
@@ -670,7 +670,7 @@
 				},
 				{
 					"class": "Power Fuse",
-					"name": "Backup Fuel Pump Fuse",
+					"name": "Fuel Pump Fuse (Backup)",
 					"mesh": "None",
 					"enabled": true,
 					"data": {
@@ -683,7 +683,7 @@
 				},
 				{
 					"class": "Power Sink",
-					"name": "Backup Fuel Pump Controller",
+					"name": "Fuel Pump Controller (Backup)",
 					"mesh": "None",
 					"enabled": true,
 					"data": {
@@ -784,13 +784,13 @@
 						{
 							"source_component": "Battery",
 							"source_terminal": "out",
-							"target_component": "Power Interconnect D",
+							"target_component": "Power Transfer Switch D",
 							"target_terminal": "in"
 						},
 						{
 							"source_component": "Battery",
 							"source_terminal": "out",
-							"target_component": "Power Interconnect E",
+							"target_component": "Power Transfer Switch E",
 							"target_terminal": "in"
 						}
 					]
@@ -798,7 +798,7 @@
 				"fuel": {
 					"bus": [
 						{
-							"source_component": "Fuel Interconnect D",
+							"source_component": "Fuel Transfer D",
 							"source_terminal": "out",
 							"target_component": "Valve D",
 							"target_terminal": "in"
@@ -810,7 +810,7 @@
 							"target_terminal": "in"
 						},
 						{
-							"source_component": "Fuel Interconnect E",
+							"source_component": "Fuel Transfer E",
 							"source_terminal": "out",
 							"target_component": "Valve E",
 							"target_terminal": "in"
@@ -1116,7 +1116,7 @@
 					},
 					{
 						"class": "Fuel Interconnect",
-						"name": "Fuel Interconnect D",
+						"name": "Fuel Transfer D",
 						"mesh": "None",
 						"position": [
 							-1.506,
@@ -1131,7 +1131,7 @@
 					},
 					{
 						"class": "Fuel Interconnect",
-						"name": "Fuel Interconnect E",
+						"name": "Fuel Transfer E",
 						"mesh": "None",
 						"position": [
 							0.004,
@@ -1146,12 +1146,12 @@
 					},
 					{
 						"class": "Power Interconnect",
-						"name": "Power Interconnect D",
+						"name": "Power Transfer Switch D",
 						"mesh": "None"
 					},
 					{
 						"class": "Power Interconnect",
-						"name": "Power Interconnect E",
+						"name": "Power Transfer Switch E",
 						"mesh": "None"
 					}
 				]
@@ -1281,27 +1281,27 @@
 		},
 		{
 			"from_team": 111111,
-			"from_target": "Fuel Interconnect",
+			"from_target": "Fuel Transfer",
 			"to_asset": "SC_002",
-			"to_target": "Fuel Interconnect D"
+			"to_target": "Fuel Transfer D"
 		},
 		{
 			"from_team": 222222,
-			"from_target": "Fuel Interconnect",
+			"from_target": "Fuel Transfer",
 			"to_asset": "SC_002",
-			"to_target": "Fuel Interconnect E"
+			"to_target": "Fuel Transfer E"
 		},
 		{
 			"from_team": 111111,
-			"from_target": "Power Interconnect",
+			"from_target": "Power Transfer Switch",
 			"to_asset": "SC_002",
-			"to_target": "Power Interconnect D"
+			"to_target": "Power Transfer Switch D"
 		},
 		{
 			"from_team": 222222,
-			"from_target": "Power Interconnect",
+			"from_target": "Power Transfer Switch",
 			"to_asset": "SC_002",
-			"to_target": "Power Interconnect E"
+			"to_target": "Power Transfer Switch E"
 		}
 	],
 	"objects": {
@@ -1327,7 +1327,7 @@
 		{
 			"section": "Fuel Operations",
 			"title": "How many kg of fuel is needed to fill the Lunar Gateway hub port tank to capacity?",
-			"description": "While docked, open your Interconnect Valve with fuel_bus and transfer propellant through the fuel interconnect until the hub port tank stops accepting fuel. Compare your spacecraft tank level before and after, or read the hub tank telemetry, to determine how many kg were required to reach a full tank.",
+			"description": "While docked, open your Transfer Valve with fuel_bus and transfer propellant through the fuel transfer until the hub port tank stops accepting fuel. Compare your spacecraft tank level before and after, or read the hub tank telemetry, to determine how many kg were required to reach a full tank.",
 			"type": "number",
 			"answer": {
 				"unit": "kg",
@@ -1398,8 +1398,8 @@
 				"options": [
 					"Fuel tank leak causing pressure loss",
 					"Faulty circuitry powering the pump",
-					"Interconnect Valve stuck in closed position",
-					"Fuel interconnect seal failure",
+					"Transfer Valve stuck in closed position",
+					"Fuel transfer seal failure",
 					"Battery undervoltage condition",
 					"Pump motor mechanical failure"
 				],
