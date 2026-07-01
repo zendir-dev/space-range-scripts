@@ -1325,6 +1325,39 @@
 	"events": [],
 	"questions": [
 		{
+			"section": "Spacecraft Health",
+			"title": "What is the initial battery charge fraction of your Microsat at scenario start?",
+			"description": "Check the Battery telemetry (state packet) immediately after connecting. Report the Charge Fraction as a decimal value between 0 and 1.",
+			"type": "number",
+			"answer": {
+				"unit": "fraction",
+				"value": 0.15,
+				"tolerance": 0.02,
+				"reason": "The Microsat battery is configured with Charge Fraction 0.15 (15%) at scenario start — critically low and requiring immediate power management action.",
+				"score": 2
+			}
+		},
+		{
+			"section": "Spacecraft Health",
+			"title": "Which switches can be closed to enable your spacecraft to charge?",
+			"description": "Your Microsat has a multiple switches that can be closed to enable your spacecraft to charge. Inspect the power bus configuration to identify which switch gates potential sources of power.",
+			"type": "checkbox",
+			"answer": {
+				"options": [
+					"Fuel Pump Switch",
+					"Fuel Pump Switch - Backup",
+					"Power Transfer Switch",
+					"Solar Panel Isolation Switch"
+				],
+				"value": [2, 3],
+				"reason": [
+					"The Power Transfer Switch connects the Microsat battery to the Power Interconnect that links to the Lunar Gateway. Closing it allows the Gateway's battery to charge the Microsat's battery.",
+					"The Solar Panel Isolation Switch gates solar panel input to the battery, not hub power transfer."
+				],
+				"score": 4
+			}
+		},
+		{
 			"section": "Fuel Operations",
 			"title": "How many kg of fuel is needed to fill the Lunar Gateway hub port tank to capacity?",
 			"description": "While docked, open your Transfer Valve with fuel_bus and transfer propellant through the fuel transfer until the hub port tank stops accepting fuel. Compare your spacecraft tank level before and after, or read the hub tank telemetry, to determine how many kg were required to reach a full tank.",
