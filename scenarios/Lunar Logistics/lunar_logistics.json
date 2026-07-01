@@ -1334,7 +1334,7 @@
 				"value": 0.15,
 				"tolerance": 0.02,
 				"reason": "The Microsat battery is configured with Charge Fraction 0.15 (15%) at scenario start — critically low and requiring immediate power management action.",
-				"score": 2
+				"score": 8
 			}
 		},
 		{
@@ -1354,7 +1354,7 @@
 					"The Power Transfer Switch connects the Microsat battery to the Power Interconnect that links to the Lunar Gateway. Closing it allows the Gateway's battery to charge the Microsat's battery.",
 					"The Solar Panel Isolation Switch gates solar panel input to the battery, not hub power transfer."
 				],
-				"score": 4
+				"score": 12
 			}
 		},
 		{
@@ -1366,21 +1366,23 @@
 				"unit": "kg",
 				"value": 45.0,
 				"tolerance": 1.0,
-				"reason": "Each hub port tank (Tank D / Tank E) has Capacity 100 kg and starts at Amount 55 kg, so 45 kg is required to fill it.",
-				"score": 10
+				"reason": "Each hub port tank has Capacity 100 kg and starts at Amount 55 kg, so 45 kg is required to fill it.",
+				"score": 12
 			}
 		},
 		{
 			"section": "Fuel Operations",
-			"title": "What is the rate at which fuel is transferred to the hub?",
-			"description": "While docked and transferring propellant, monitor fuel telemetry or observe tank levels over time to determine the steady transfer rate into the Lunar Gateway hub port tank. Report the rate in kg/s.",
-			"type": "number",
+			"title": "Which of the following are supported by your fuel transfer telemetry?",
+			"description": "Review fuel tank and fuel flow telemetry types from your docked transfer operation. Select every statement that your data supports.",
+			"type": "checkbox",
 			"answer": {
-				"unit": "kg/s",
-				"value": 0.2,
-				"tolerance": 0.05,
-				"reason": "NEEDS UPDATING AS RATE OF TRANSFER IS USER DEPENDANT NOW.",
-				"score": 10
+				"options": [
+					"Hub port tank amount increased during transfer",
+					"Microsat fuel tank amount decreased during transfer",
+					"The changes in the stored amounts of fuel of both tanks are balanced"				],
+				"value": [0, 1],
+				"reason": "During transfer the hub and Microsat tank levels both change, but propellant accounting does not balance — more leaves your tank than arrives at the hub. The Transfer Valve (0.05 kg/s), not the Fuel Pump (0.2 kg/s), sets the maximum transfer rate.",
+				"score": 8
 			}
 		},
 		{
@@ -1393,7 +1395,7 @@
 				"value": 5.33,
 				"tolerance": 1.0,
 				"reason": "The Canberra DSN blackout lasts just over 5 minutes before the Lunar Gateway regains contact.",
-				"score": 10
+				"score": 12
 			}
 		},
 		{
@@ -1406,7 +1408,7 @@
 				"value": 51.92,
 				"tolerance": 1.0,
 				"reason": "The nominal downlink SNR from the client spacecraft to Canberra is approximately 51.92 dB under the configured link budget.",
-				"score": 10
+				"score": 8
 			}
 		},
 		{
@@ -1436,7 +1438,7 @@
 				],
 				"value": [0, 1, 2, 3],
 				"reason": "Mission-critical pre-undock steps: complete the fuel transfer, close valves and disable pump, ensure battery health and power stability, run final diagnostics.",
-				"score": 10
+				"score": 8
 			}
 		},
 		{
@@ -1454,7 +1456,7 @@
 				],
 				"value": [0, 3],
 				"reason": "The Fuel Pump Controller suffers a short-to-ground fault that blows the primary fuse and interrupts pump power, and the Transfer Valve carries a fuel leak that vents propellant during transfer. Inspect coupled fuel and power telemetry together to identify both faults.",
-				"score": 10
+				"score": 12
 			}
 		},
 		{
@@ -1467,7 +1469,7 @@
 				"value": 0.015,
 				"tolerance": 0.005,
 				"reason": "The Docking Adapter applies a Separation Force that accelerates the spacecraft. With the static LRFs already on your spacecraft, positioned around the docking interface, the seperation velocity is the measured velocity of the LRFs.",
-				"score": 5
+				"score": 12
 			}
 		},
 		{
@@ -1482,7 +1484,7 @@
 				],
 				"value": 0,
 				"reason": "LRF 0 carries a +5 m calibration bias; LRF 120 and LRF 240 are nominal. All three share the same hub sightline from their fixed mountings.",
-				"score": 2
+				"score": 6
 			}
 		},
 		{
@@ -1499,7 +1501,7 @@
 				],
 				"value": 0,
 				"reason": "LRF 0 has a Calibration Error of +5 m on the fixed hub sightline.",
-				"score": 4
+				"score": 12
 			}
 		},
 		{
@@ -1525,7 +1527,7 @@
 				"value": 0.8333,
 				"tolerance": 0.1,
 				"reason": "The debris attitude rate is 5 deg/s about the body Y axis, which equals 0.8333 RPM.",
-				"score": 10
+				"score": 12
 			}
 		},
 		{
@@ -1536,7 +1538,7 @@
 			"answer": {
 				"value": "NASA",
 				"reason": "The debris rocket body carries a black NASA marking on the chassis Text component.",
-				"score": 10
+				"score": 8
 			}
 		},
 		{
