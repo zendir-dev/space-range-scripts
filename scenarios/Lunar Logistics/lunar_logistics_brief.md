@@ -7,7 +7,7 @@
 
 ## Overview
 
-You are the operator of a logistics microsatellite in lunar orbit, currently **docked** to the **Lunar Gateway Hub**. Your spacecraft shares the cis-lunar environment with the hub and a co-orbital debris object. Each team operates an identical microsat from a separate docking port.
+You are the operator of a logistics microsatellite in lunar orbit, currently **docked** to the **Lunar Gateway Hub**. Your spacecraft shares the cislunar environment with the hub and a co-orbital debris object. Each team operates an identical microsat from a separate docking port.
 
 Questions and scoring are delivered in the **Tasks** section. Use this brief for mission context, spacecraft configuration, and communications constraints.
 

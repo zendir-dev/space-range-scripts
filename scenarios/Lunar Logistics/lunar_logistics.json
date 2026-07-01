@@ -107,9 +107,9 @@
 					]
 				},
 				"controller": {
-					"safe_fraction": 0.1,
+					"safe_fraction": 0.03,
 					"capture_tax": 0.001,
-					"downlink_tax": 0.005,
+					"downlink_tax": 0.002,
 					"ping_interval": 3.0,
 					"reset_interval": 60.0,
 					"jamming_multiplier": 100.0,
