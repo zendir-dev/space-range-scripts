@@ -8,7 +8,7 @@
 		"speed": 3.0,
 		"step_size": 0.1,
 		"integrator": "Euler",
-		"end_time": 0.0
+		"end_time": 2700.0
 	},
 	"universe": {
 		"atmosphere": false,
@@ -141,9 +141,9 @@
 						0.0,
 						0.0,
 						0.0,
-						2.0,
 						0.0,
-						2.0
+						0.0,
+						1.0
 					]
 				},
 				"physics": {
@@ -246,7 +246,7 @@
 						],
 						"data": {
 							"Area": 0.3,
-							"Efficiency": 0.4,
+							"Efficiency": 0.3,
 							"Mass": 10.0
 						}
 					},
@@ -314,7 +314,10 @@
 							"Resolution": [
 								1024,
 								1024
-							]
+							],
+							"Min Field of View": 10.0,
+							"Max Field of View": 90.0,
+							"Focusing Distance": 100000.0
 						}
 					},
 					{
@@ -418,17 +421,18 @@
 	"objects": {
 		"ground": [
 			{
-				"id": "Word",
-				"type": "text",
-				"name": "Word",
+				"id": "GO_001",
+				"type": "vessel",
+				"name": "Ship",
 				"planet": "Earth",
 				"latitude": 19.8,
 				"longitude": 63.6,
-				"altitude": 3,
-				"scale": 100000,
-				"color": "#FFFFFF",
+				"altitude": 1,
+				"scale": 240,
+				"color": "#FFFF00",
 				"data": {
-					"text": "TRAINING"
+					"heading": 90.0,
+					"speed": 0.0
 				}
 			}
 		]
@@ -436,38 +440,73 @@
 	"events": [],
 	"questions": [
 		{
-			"section": "Examples",
-			"title": "What does the word on the ground spell?",
-			"description": "There exists a word on the West coast of India, in the Arabian Sea. Use your camera and guidance to capture an image and spell out the word.",
-			"type": "text",
-			"answer": {
-				"value": "TRAINING",
-				"score": 10
-			}
-		},
-		{
-			"section": "Examples",
-			"title": "What is the semi-major axis (km) of your spacecraft's orbit?",
-			"description": "Using the telemetry data calculate the semi major axis of your spacecraft's orbit, to the nearest 100 km.",
+			"section": "Telemetry & Health",
+			"title": "What is the minimum downlink effective signal-to-noise ratio with the ground station?",
+			"description": "While your spacecraft is in contact with a visible ground station, read the downlink signal-to-noise ratio from the Link Budget panel in Telemetry. Report the value in dB.",
 			"type": "number",
 			"answer": {
-				"unit": "km",
-				"value": 7500.0,
-				"tolerance": 100.0,
-				"reason": "7500.0 km. This can be calculated by the GPS data.",
+				"unit": "dB",
+				"value": 90.0,
+				"tolerance": 10.0,
+				"reason": "Read the downlink SNR from the Link Budget panel when the spacecraft is visible to a ground station. Validate the exact value via scenario dry-run.",
 				"score": 10
 			}
 		},
 		{
-			"section": "Examples",
-			"title": "What is the battery capacity of your spacecraft in Ah?",
-			"description": "Using the telemetry data calculate the battery capacity of your spacecraft in Ah.",
+			"section": "Telemetry & Health",
+			"title": "What is the battery capacity in amp-hours?",
+			"description": "Read the battery nominal capacity from battery telemetry or component configuration data. Report the value in amp-hours.",
 			"type": "number",
 			"answer": {
 				"unit": "Ah",
 				"value": 80.0,
 				"tolerance": 1.0,
-				"reason": "80.0 Ah. This can be calculated by the battery specifications.",
+				"reason": "The battery is configured with a nominal capacity of 80 Ah.",
+				"score": 10
+			}
+		},
+		{
+			"section": "Telemetry & Health",
+			"title": "Which solar panel is producing more power?",
+			"description": "Compare power output telemetry for Solar Panel +X and Solar Panel -X. Identify which panel is supplying more electrical power at the time you take the measurement.",
+			"type": "select",
+			"answer": {
+				"options": [
+					"Solar Panel +X",
+					"Solar Panel -X"
+				],
+				"value": 0,
+				"reason": "The Solar Panel +X has a higher efficiency than the Solar Panel -X, so it is producing more power.",
+				"score": 10
+			}
+		},
+		{
+			"section": "Observations",
+			"title": "What colour is the ship found near the Arabian Sea?",
+			"description": "A ship is located off the west coast of India, in the Arabian Sea. Use guidance pointing and your camera to capture an image of the vessel and identify its hull colour.",
+			"type": "select",
+			"answer": {
+				"options": [
+					"Blue",
+					"Green",
+					"Red",
+					"Yellow"
+				],
+				"value": 3,
+				"reason": "The vessel at this location is configured with a yellow hull colour.",
+				"score": 10
+			}
+		},
+		{
+			"section": "Observations",
+			"title": "What is the semi-major axis of the spacecraft's orbit?",
+			"description": "Use GPS telemetry or plotted position data to determine the semi-major axis of your spacecraft's orbit. Report the value in km to the nearest 100 km.",
+			"type": "number",
+			"answer": {
+				"unit": "km",
+				"value": 7500.0,
+				"tolerance": 100.0,
+				"reason": "The configured semi-major axis is 7500 km. This can be derived from GPS telemetry.",
 				"score": 10
 			}
 		}
