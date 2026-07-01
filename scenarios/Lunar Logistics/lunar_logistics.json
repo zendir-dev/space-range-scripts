@@ -13,7 +13,7 @@
 	"universe": {
 		"atmosphere": false,
 		"magnetosphere": false,
-		"gps": true,
+		"gps": false,
 		"cloud_opacity": 1.5,
 		"cloud_contrast": 2.3,
 		"ambient_light": 0
@@ -380,20 +380,6 @@
 							"Min Field Of View": 30.0,
 							"Field Of View": 45.0,
 							"Max Field Of View": 60.0
-						}
-					},
-					{
-						"class": "GPS Sensor",
-						"name": "GPS Sensor",
-						"mesh": "None",
-						"enabled": true,
-						"position": [
-							0.0,
-							0.0,
-							0.2
-						],
-						"data": {
-							"Mass": 2.0
 						}
 					},
 					{

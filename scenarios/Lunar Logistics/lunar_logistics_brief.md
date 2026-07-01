@@ -75,12 +75,63 @@ Each team operates one identical **Microsat**. Each team will be given a designa
 | Comms | Receiver and transmitter |
 | Propulsion / ACDS | No thrusters, three reaction wheels |
 
-### Payload and sensors
+---
 
-- **Main Camera:** Nadir/survey imaging; 1024×1024, variable field of view (1°–15°).
-- **Docking Camera:** Berthing aid; 256×256, wide field of view (30°–60°).
+## Cameras
+
+The microsat carries two optical cameras mounted on **opposite faces** of the spacecraft. They point in opposite directions along the body axis - you cannot use both for the same target without reorienting the vehicle.
+
+| Camera | Boresight | While docked |
+| --- | --- | --- |
+| **Docking Camera** | Toward the Lunar Gateway | **Faces the hub** - use for berthing views and close-range hub inspection |
+| **Main Camera** | Away from the hub | Points outward from the docking interface - use for lunar surface and debris inspection |
+
+### Docking Camera
+
+**Purpose:** Close-range imaging while berthed at the Lunar Gateway. Use it to inspect the hub interface, monitor docking alignment, and capture proximity context before and after undock commands.
+
+| Spec | Value |
+| --- | --- |
+| Resolution | 256 × 256 |
+| Field of view | 30° – 60° (default 45°) |
+| Mass | 0.5 kg |
+
+Wide field of view is suited to the short range between your spacecraft and the hub while docked.
+
+### Main Camera
+
+**Purpose:** Primary survey payload for lunar surface observation and target imaging. Use it to locate far-side surface features, inspect co-orbital debris markings, and capture imagery when the spacecraft attitude brings a target into the -Y boresight.
+
+| Spec | Value |
+| --- | --- |
+| Resolution | 1024 × 1024 |
+| Field of view | 1° – 15° (default 10°) |
+| Aperture | 30 mm |
+| Focusing distance | 100 m |
+
+Narrower field of view and higher resolution support detailed surface and debris characterization; command guidance pointing to aim the boresight at your target.
+
+### Other sensors
+
 - **Laser Range Finders:** LRF 0, LRF 120, and LRF 240; body-fixed on the +Y face, 10 km operating range. All three are aligned on the hub sightline while docked.
-- **GPS Sensor:** nabled for position/navigation context.
+
+---
+
+## Lunar Observation
+
+After undock, your team may be tasked with surveying the lunar surface using the **Main Camera**. A reference lunar map is provided below to support that work.
+
+### Lunar reference map
+
+![Lunar reference map](https://zendir-public-media-bucket.s3.ap-southeast-2.amazonaws.com/space_range/scenarios/lunar_logistics/lunar_map.png)
+
+Use this map alongside live imagery and spacecraft telemetry during lunar observation tasks:
+
+- **Plan Camera Pointing:** The Main Camera has a narrow field of view; use the map to anticipate when a target region will enter the boresight and coordinate guidance commands with the Payload Operator.
+- **Identify Surface Features:** Cross-check camera frames against map landmarks to confirm you are imaging the correct area before reporting coordinates or feature descriptions.
+- **Fix Latitude and Longitude:** Once a distinctive surface feature is found in imagery, use the map grid to estimate its position on the lunar sphere and validate your answer against what you see in successive frames.
+
+The Payload Operator should keep the map open while commanding survey imagery so the team can correlate what the camera sees with known lunar geography in real time.
 
 ---
 
