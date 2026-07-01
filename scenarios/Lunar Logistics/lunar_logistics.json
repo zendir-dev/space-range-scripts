@@ -559,8 +559,8 @@
 								"enabled": true,
 								"data": {
 									"Degradation Rate": 1.0,
-									"Leak Coefficient": 0.5,
-									"Max Leak Fraction": 1.0,
+									"Leak Coefficient": 0.05,
+									"Max Leak Fraction": 0.5,
 									"Leak Onset Flow Rate": 0.02,
 									"Force Failure": false
 								}
