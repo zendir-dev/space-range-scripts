@@ -1,7 +1,7 @@
 **Scenario:** Lunar Logistics  
 **Epoch:** 2026-02-14 00:00:00 UTC  
 **Duration:** 60 minutes  
-**Ground Segment:** Canberra Deep Space Network (DSN)
+**Ground Segment:** Deep Space Network (DSN) - Canberra
 
 ---
 
@@ -9,7 +9,7 @@
 
 You are the operator of a logistics microsatellite in lunar orbit, currently **docked** to the **Lunar Gateway Hub**. Your spacecraft shares the cislunar environment with the hub and a co-orbital debris object. Each team operates an identical microsat from a separate docking port.
 
-Questions and scoring are delivered in the **Tasks** section. Use this brief for mission context, spacecraft configuration, and communications constraints.
+> Questions and scoring are delivered in the **Tasks** section. Use this brief for mission context, spacecraft configuration, and communications constraints.
 
 ---
 
@@ -20,13 +20,13 @@ Questions and scoring are delivered in the **Tasks** section. Use this brief for
 While attached to the Lunar Gateway:
 
 1. **Assess Spacecraft State:**  Review power, fuel, and subsystem telemetry before commanding transfers.
-2. **Support Hub Propellant Resupply:** Your microsat carries a full onboard fuel supply. Configure the fuel path and transfer propellant into the hub port tank through the fuel interconnect until the hub stops accepting fuel or your procedure is complete.
-3. **Manage Power Sharing:** Your power interconnect is available for bidirectional energy exchange with the hub. Monitor battery charge and hub power while docked; low starting charge fraction means solar recharge and power routing matter during early operations. Ensure your battery does not go below 10% charge.
+2. **Support Hub Propellant Resupply:** Your microsat carries a full onboard fuel supply. Configure the fuel bus and transfer propellant into the hub port tank through the fuel interconnect until the hub stops accepting fuel or your procedure is complete.
+3. **Manage Power Sharing:** Your power interconnect is available for bidirectional energy exchange with the hub. Monitor battery charge and hub power while docked; low starting charge fraction means solar recharge and power routing matter during early operations. Ensure your battery does not go below 5% charge.
 4. **Execute Fuel Transfer Safely:** The fuel path includes a pump, valves, and redundant power feeds. Watch fuel and power telemetry throughout the transfer; anomalies can interrupt flow and must be diagnosed from subsystem data.
 
 ### Phase 2 - Communications Blackout
 
-At some point between **10** and **20** minutes into the operation, it is expected that your spacecraft will lose access to the Deep Space Network (DSN) as the spacecraft is eclipsed by the moon. Ensure the following:
+At some point between **10** and **20 minutes** into the operation, it is expected that your spacecraft will lose access to the Deep Space Network (DSN) as the spacecraft is eclipsed by the moon. Ensure the following:
 
 1. **Suspend Operations:** Ensure that before the blackout occurs, operations are suspended to ensure that systems do not fail during the process.
 2. **Run Diagnostics:** Once the blackout has ended and communications resumes with the DSN, run a full diagnostics check on all systems, validating that no issues occurred during the time.
@@ -51,7 +51,7 @@ After logistics tasks are complete, and **once the blackout has finished**, perf
 | Propulsion | No thrusters installed |
 | Attitude Control | Reaction wheels present but **disabled** while docked |
 | RPO Software | **Not available** - no automated rendezvous/proximity guidance |
-| Post-Undock Manoeuvring | Separation impulse only; no return-to-hub manoeuvre |
+| Post-Undock Maneuvering | Separation impulse only; no return-to-hub maneuver |
 | Starting Fuel | 80 kg capacity, tank **full** at session start |
 | Starting Battery | 40 Wh capacity, **15% charge** at session start |
 | Interconnect Valve | **Closed** (0%) at start - must be commanded open for fuel transfer |
@@ -71,9 +71,10 @@ Each team operates one identical **Microsat**. Each team will be given a designa
 | Docking | Single docking adapter |
 | Power storage | Battery, 40 Wh nominal capacity |
 | Propellant | Fuel tank, 80 kg capacity |
-| Sensors | GPS; three laser range finders; main optical camera; docking camera |
+| Sensors | Three laser range finders; main optical camera; docking camera |
 | Comms | Receiver and transmitter |
-| Propulsion / ACDS | No thrusters, three reaction wheels |
+| Propulsion | No thrusters|
+| ADCS | Three reaction wheels |
 
 ---
 
@@ -90,10 +91,10 @@ The microsat carries two optical cameras mounted on **opposite faces** of the sp
 
 **Purpose:** Close-range imaging while berthed at the Lunar Gateway. Use it to inspect the hub interface, monitor docking alignment, and capture proximity context before and after undock commands.
 
-| Spec | Value |
+| Specification | Value |
 | --- | --- |
 | Resolution | 256 × 256 |
-| Field of view | 30° – 60° (default 45°) |
+| Field of View | 30° – 60° (default 45°) |
 | Mass | 0.5 kg |
 
 Wide field of view is suited to the short range between your spacecraft and the hub while docked.
@@ -102,14 +103,16 @@ Wide field of view is suited to the short range between your spacecraft and the 
 
 **Purpose:** Primary survey payload for lunar surface observation and target imaging. Use it to locate far-side surface features, inspect co-orbital debris markings, and capture imagery when the spacecraft attitude brings a target into the -Y boresight.
 
-| Spec | Value |
+| Specification | Value |
 | --- | --- |
 | Resolution | 1024 × 1024 |
-| Field of view | 1° – 15° (default 10°) |
+| Field of View | 1° – 15° (default 10°) |
 | Aperture | 30 mm |
-| Focusing distance | 100 m |
+| Focusing Distance | 100 m |
 
 Narrower field of view and higher resolution support detailed surface and debris characterization; command guidance pointing to aim the boresight at your target.
+
+> For debris inspection and lunar observation, it is recommended that the 'Main Camera' is used over the 'Docking Camera', as the field of view and resolution are more appropriate for these tasks.
 
 ### Other sensors
 
@@ -124,6 +127,7 @@ Electrical power is generated by two body-mounted solar panels, stored in a sing
 ### Power Network Diagram
 
 ![Microsat power network](https://zendir-public-media-bucket.s3.ap-southeast-2.amazonaws.com/space_range/scenarios/lunar_logistics/power_network_diagram.png)
+
 ---
 
 ### Component starting states
@@ -132,11 +136,14 @@ Electrical power is generated by two body-mounted solar panels, stored in a sing
 | --- | --- |
 | Solar Panel +X / -X | Enabled |
 | Battery | 15% charge fraction |
-| Power Interconnect | **Open** (connected to hub while docked) |
+| Power Transfer Switch | **Open** (connected to hub while docked) |
+| Solar Panel Isolation Switch | **Open** |
 | Fuel Pump Switch | **Closed** |
-| Backup Fuel Pump Switch | **Open** |
+| Fuel Pump Switch - Backup | **Open** |
+| Fuel Pump Fuse | Stable |
+| Fuel Pump Fuse - Backup | Stable |
 | Fuel Pump Controller | Active (primary path) |
-| Backup Fuel Pump Controller | Active (redundant path) |
+| Fuel Pump Controller - Backup | Active (redundant path) |
 
 ---
 
@@ -160,9 +167,11 @@ Propellant flows from the onboard tank through a pump and valve to the **fuel in
 
 ### Fuel transfer notes
 
-- Open the **Interconnect Valve** and energize the **Fuel Pump** power path before expecting flow into the hub.
-- The hub port tanks accept ingoing propellant at a configured desired rate; monitor spacecraft tank telemetry during transfer.
-- If flow stops unexpectedly, inspect **fuel and power subsystems together** - pump power is routed through switched, fused controller paths.
+1. Open the **Interconnect Valve** and energize the **Fuel Pump** power path before expecting flow into the hub.
+2. The hub port tanks accept ingoing propellant at a configured desired rate; monitor spacecraft tank telemetry during transfer.
+3. If flow stops unexpectedly, inspect **fuel and power subsystems together** - pump power is routed through switched, fused controller paths.
+
+> Once undocked, fuel and power transfer will not be available with the Lunar Gateway hub. Ensure that all docked operations are completed once the undocking process commences.
 
 ---
 
@@ -224,8 +233,8 @@ Split responsibilities early. The Mission Lead should assign these roles at the 
 ## Before You Begin
 
 1. Log in to the operator terminal with your team credentials.
-2. Confirm docked state, subsystem telemetry, and Link Budget at **T+0**.
-3. Read the in-simulation questions to understand scored tasks - prioritize by team expertise.
+2. Confirm docked state, subsystem telemetry, and Link Budget are nominal.
+3. Read the in-simulation tasks to understand scored questions - prioritize by team expertise.
 
 ---
 
