@@ -169,23 +169,23 @@
 					{
 						"source_component": "Battery",
 						"source_terminal": "out",
-						"target_component": "Fuel Pump Switch (Backup)",
+						"target_component": "Fuel Pump Switch - Backup",
 						"target_terminal": "in"
 					},
 					{
-						"source_component": "Fuel Pump Switch (Backup)",
+						"source_component": "Fuel Pump Switch - Backup",
 						"source_terminal": "out",
-						"target_component": "Fuel Pump Fuse (Backup)",
+						"target_component": "Fuel Pump Fuse - Backup",
 						"target_terminal": "in"
 					},
 					{
-						"source_component": "Fuel Pump Fuse (Backup)",
+						"source_component": "Fuel Pump Fuse - Backup",
 						"source_terminal": "out",
-						"target_component": "Fuel Pump Controller (Backup)",
+						"target_component": "Fuel Pump Controller - Backup",
 						"target_terminal": "in"
 					},
 					{
-						"source_component": "Fuel Pump Controller (Backup)",
+						"source_component": "Fuel Pump Controller - Backup",
 						"source_terminal": "out",
 						"target_component": "Fuel Pump",
 						"target_terminal": "in"
@@ -659,7 +659,7 @@
 				},
 				{
 					"class": "Power Switch",
-					"name": "Fuel Pump Switch (Backup)",
+					"name": "Fuel Pump Switch - Backup",
 					"mesh": "None",
 					"enabled": true,
 					"data": {
@@ -670,7 +670,7 @@
 				},
 				{
 					"class": "Power Fuse",
-					"name": "Fuel Pump Fuse (Backup)",
+					"name": "Fuel Pump Fuse - Backup",
 					"mesh": "None",
 					"enabled": true,
 					"data": {
@@ -683,7 +683,7 @@
 				},
 				{
 					"class": "Power Sink",
-					"name": "Fuel Pump Controller (Backup)",
+					"name": "Fuel Pump Controller - Backup",
 					"mesh": "None",
 					"enabled": true,
 					"data": {
