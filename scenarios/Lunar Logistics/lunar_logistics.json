@@ -454,7 +454,7 @@
 							"Mass": 5.0,
 							"Capture Distance": 0.05,
 							"Capture Angle": 20.0,
-							"Separation Force": 3.0,
+							"Separation Force": 1.5,
 							"Separation Duration": 1.0
 						}
 					},
@@ -1378,46 +1378,62 @@
 		},
 		{
 			"section": "Link Budget",
-			"title": "At what time (in minutes) did the Lunar Gateway lose access to the Deep Space Network?",
-			"description": "Monitor the Link Budget panel and ground-station visibility for Canberra (Deep Space Network). Track when the Lunar Gateway hub loses usable contact with the DSN and report the elapsed simulation time in minutes from session start.",
+			"title": "At what time (in minutes) did your spacecraft lose access to the Deep Space Network?",
+			"description": "Monitor the Link Budget panel and ground-station visibility for Canberra (Deep Space Network). Track when your spacecraft loses usable contact with the DSN and report the elapsed simulation time in minutes from session start.",
 			"type": "number",
 			"answer": {
 				"unit": "min",
 				"value": 13.67,
 				"tolerance": 1.0,
-				"reason": "The Lunar Gateway loses DSN access at approximately 820 s (13.67 simulation minutes) for this lunar orbit and Canberra ground-station geometry.",
+				"reason": "Your spacecraft loses DSN access at approximately 820 s (13.67 simulation minutes) for this lunar orbit and Canberra ground-station geometry.",
 				"score": 10
 			}
 		},
 		{
 			"section": "Docked Procedures",
-			"title": "What anomaly occurred during the fuel transfer operation?",
-			"description": "During the fuel transfer procedure, an anomaly was detected that affected the propellant flow. Analyze the telemetry data from the fuel and power subsystems to identify what went wrong. Select all that apply.",
+			"title": "Which nominal tasks must be completed before undocking from the Lunar Gateway?",
+			"description": "Before commanding separation from the hub, you must complete all docked logistics and post-blackout verifications. Select all critical tasks that must be done while still berthed.",
 			"type": "checkbox",
 			"answer": {
 				"options": [
-					"Fuel tank leak causing pressure loss",
-					"Faulty circuitry powering the pump",
-					"Transfer Valve stuck in closed position",
-					"Fuel transfer seal failure",
-					"Battery undervoltage condition",
-					"Pump motor mechanical failure"
+					"Transfer required fuel into the Lunar Gateway tank to full capacity",
+					"Close the interconnect valve and disable the fuel pump after transfer is complete",
+					"Verify battery charge is sufficient for independent operation and end power sharing",
+					"Run full diagnostics on all systems to validate safe to undock"				
 				],
-				"value": [1],
-				"reason": "The Fuel Pump Controller has a Short To Ground Error Model that causes a short-circuit fault in the power delivery circuit. This faulty circuitry affects the power delivery to the fuel pump, causing the fuse to blow and interrupting the power path.",
+				"value": [0, 1, 2, 3],
+				"reason": "Mission-critical pre-undock steps: complete the fuel transfer, close valves and disable pump, ensure battery health and power stability, run final diagnostics.",
+				"score": 10
+			}
+		},
+		{
+			"section": "Docked Procedures",
+			"title": "Which anomalies did you observe during docked procedures?",
+			"description": "Before undocking from the Lunar Gateway, review telemetry and subsystem records from your docked logistics operations. Select all anomalies you observed during docked procedures.",
+			"type": "checkbox",
+			"answer": {
+				"options": [
+					"Electrical fault in the fuel pump power path",
+					"Lunar Gateway tank overfill protection failure",
+					"Transfer valve stuck in the closed position",
+					"Fuel leakage at the transfer valve",
+					"None of the above"
+				],
+				"value": [0, 3],
+				"reason": "The Fuel Pump Controller suffers a short-to-ground fault that blows the primary fuse and interrupts pump power, and the Transfer Valve carries a fuel leak that vents propellant during transfer. Inspect coupled fuel and power telemetry together to identify both faults.",
 				"score": 10
 			}
 		},
 		{
 			"section": "Undocking",
 			"title": "What separation velocity (m/s) does your spacecraft acquire immediately after undocking from the hub?",
-			"description": "Your three laser range finders are body-fixed and already sighted on the Lunar Gateway while docked. Command undock and plot MeasuredVelocity from LRF telemetry (APID 305) \u2014 the sensors auto-compute range rate without repointing. Read the peak magnitude immediately after the separation impulse and report the separation velocity in metres per second.",
+			"description": "Your three laser range finders are body-fixed and already sighted on the Lunar Gateway while docked. Command undock and plot MeasuredVelocity from LRF telemetry the sensors auto-compute range rate without repointing.",
 			"type": "number",
 			"answer": {
 				"unit": "m/s",
-				"value": 0.03,
-				"tolerance": 0.008,
-				"reason": "The Docking Adapter applies Separation Force 3 N over Separation Duration 1 s to the 100 kg Microsat, giving \u0394v = (3 \u00d7 1) / 100 = 0.03 m/s. With the static LRFs already on the hub, this appears as MeasuredVelocity on LRF telemetry at undock.",
+				"value": 0.015,
+				"tolerance": 0.005,
+				"reason": "The Docking Adapter applies a Separation Force that accelerates the spacecraft. With the static LRFs already on your spacecraft, positioned around the docking interface, the seperation velocity is the measured velocity of the LRFs.",
 				"score": 5
 			}
 		},
@@ -1428,8 +1444,8 @@
 			"type": "select",
 			"answer": {
 				"options": [
-					"Yes \u2014 at least one LRF is miscalibrated",
-					"No \u2014 all three LRFs agree within measurement noise"
+					"Yes",
+					"No"
 				],
 				"value": 0,
 				"reason": "LRF 0 carries a +5 m calibration bias; LRF 120 and LRF 240 are nominal. All three share the same hub sightline from their fixed mountings.",
@@ -1446,7 +1462,7 @@
 					"LRF 0",
 					"LRF 120",
 					"LRF 240",
-					"None \u2014 all sensors are nominal"
+					"None, all sensors are nominal"
 				],
 				"value": 0,
 				"reason": "LRF 0 has a Calibration Error of +5 m on the fixed hub sightline.",
