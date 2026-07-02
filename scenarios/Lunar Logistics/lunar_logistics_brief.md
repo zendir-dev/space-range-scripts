@@ -62,6 +62,12 @@ After logistics tasks are complete, and **once the blackout has finished**, perf
 
 Each team operates one identical **Microsat**. Each team will be given a designated docking port on the hub, which the spacecraft will begin docked from.
 
+### Schematic
+
+The following image describes the schematic for the spacecraft, including the location of the sensors, payloads and docking port.
+
+![Microsat schematic](https://zendir-public-media-bucket.s3.ap-southeast-2.amazonaws.com/space_range/scenarios/lunar_logistics/schematic.png)
+
 ### Platform Summary
 
 | Item | Configuration |
@@ -101,7 +107,7 @@ Wide field of view is suited to the short range between your spacecraft and the 
 
 ### Main Camera
 
-**Purpose:** Primary survey payload for lunar surface observation and target imaging. Use it to locate far-side surface features, inspect co-orbital debris markings, and capture imagery when the spacecraft attitude brings a target into the -Y boresight.
+**Purpose:** Primary survey payload for lunar surface observation and target imaging. Use it to locate far-side surface features, inspect co-orbital debris markings, and capture imagery when the spacecraft attitude brings a target into the boresight.
 
 | Specification | Value |
 | --- | --- |
@@ -116,7 +122,7 @@ Narrower field of view and higher resolution support detailed surface and debris
 
 ### Other sensors
 
-- **Laser Range Finders:** LRF 0, LRF 120, and LRF 240; body-fixed on the +Y face, 10 km operating range. All three are aligned on the hub sightline while docked.
+- **Laser Range Finders:** LRF 0, LRF 120, and LRF 240; 10 km operating range. All three are aligned on the hub sightline while docked.
 
 ---
 

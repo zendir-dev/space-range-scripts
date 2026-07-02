@@ -114,7 +114,13 @@
 					"reset_interval": 60.0,
 					"jamming_multiplier": 100.0,
 					"enable_rpo_software": false,
-					"enable_intercept": false
+					"enable_intercept": false,
+					"pid": {
+						"k":     15.0,
+						"p":     20.0,
+						"ki":    -1.0,
+						"limit": -20.0
+					}
 				},
 			"power": {
 				"bus": [
@@ -1363,7 +1369,7 @@
 				"unit": "kg",
 				"value": 45.0,
 				"tolerance": 1.0,
-				"reason": "Each hub port tank has 100 kg capacity and starts at with 55 kg of fuel, so 45 kg is required to fill it.",
+				"reason": "Each hub port tank has 100 kg capacity and starts at with 55 kg of fuel, so 45 kg is required to fill it. However, the exact amount of fuel lost from the Microsat tank may not equate to the amount of fuel gained in Lunar Gateway.",
 				"score": 12
 			}
 		},
@@ -1459,7 +1465,7 @@
 		},
 		{
 			"section": "Undocking",
-			"title": "What separation velocity (m/s) does the Microsat acquire immediately after undocking from the hub?",
+			"title": "What separation velocity (m/s) does the Microsat acquire after undocking from the hub?",
 			"description": "The three laser range finders are body-fixed and already sighted on the Lunar Gateway while docked. Undock the Microsat and determine the separation velocity from the LRF telemetry.",
 			"type": "number",
 			"answer": {
@@ -1488,7 +1494,7 @@
 		{
 			"section": "Undocking",
 			"title": "Which laser range finder is miscalibrated?",
-			"description": "With all three static LRFs already sighted on the Lunar Gateway, compare telemetry from the LRFs. One unit will show a persistent offset from the others.",
+			"description": "With all three static LRFs already sighted on the Lunar Gateway, determine which LRF is miscalibrated by comparing the telemetry from the LRFs.",
 			"type": "select",
 			"answer": {
 				"options": [
@@ -1523,7 +1529,7 @@
 			"answer": {
 				"unit": "RPM",
 				"value": 0.8333,
-				"tolerance": 0.1,
+				"tolerance": 0.18,
 				"reason": "The debris attitude rate is 5 deg/s about the body axis, which equals 0.8333 RPM.",
 				"score": 10
 			}

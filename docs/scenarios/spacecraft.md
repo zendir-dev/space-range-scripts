@@ -136,7 +136,13 @@ The `physics` block is **optional** — omit it and Studio falls back to a sensi
   "reset_interval":          60.0,
   "jamming_multiplier":      100.0,
   "enable_rpo_software":              false,
-  "enable_intercept": true
+  "enable_intercept":                 true,
+  "pid": {
+    "k":     3.5,
+    "p":     30.0,
+    "ki":    -1.0,
+    "limit": -20.0
+  }
 }
 ```
 
@@ -152,6 +158,19 @@ The `physics` block is **optional** — omit it and Studio falls back to a sensi
 | `enable_intercept` | `bool` | `true` | If `true`, the spacecraft records uplink packets it overhears for SIGINT-style replay (downlinked as [Uplink Intercept](../reference/packet-formats.md#uplink-intercept) records). Set `false` to save memory in scenarios that do not exercise this feature. |
 
 Studio reads **`enable_intercept`** first; when it is omitted, loading falls back to the legacy key **`record_uplink_intercept`** so older scenario JSON keeps working.
+
+### `controller.pid` — MRP attitude controller tuning
+
+Optional sub-object for the guidance computer's MRP feedback controller. Omit the whole `pid` block, or omit individual keys inside it, to keep the defaults below.
+
+| Key | JSON type | Default | Description |
+| --- | --- | --- | --- |
+| `k` | `number` | `3.5` | Proportional gain on MRP attitude error. |
+| `p` | `number` | `30.0` | Rate-error feedback gain. |
+| `ki` | `number` | `-1.0` | Integral gain on rate error. |
+| `limit` | `number` | `-20.0` | Integral wind-up limit (`IntegralLimit` in the feedback software). |
+
+When the scenario is constructed, Studio reads these values from the spacecraft `controller` block and writes them to the guidance computer MRP controller configuration message.
 
 The `controller` block is **optional**; defaults work for most exercises. The keys that change most between scenarios are `safe_fraction` (lower for fault-injection scenarios where teams should be forced to manage power), `reset_interval` (lower for fast-paced exercises), and `enable_rpo_software` (only set `true` on spacecraft that need to manoeuvre).
 
