@@ -29,6 +29,16 @@
 		{
 			"enabled": true,
 			"id": 1,
+			"password": "R4K7MZ",
+			"name": "Team Blue",
+			"key": 42,
+			"frequency": 612,
+			"collection": "Main",
+			"color": "#0050FF"
+		},
+		{
+			"enabled": true,
+			"id": 2,
 			"password": "8XTPWN",
 			"name": "Team Green",
 			"key": 87,
@@ -38,13 +48,33 @@
 		},
 		{
 			"enabled": true,
-			"id": 2,
+			"id": 3,
 			"password": "5LZQVB",
 			"name": "Team Yellow",
 			"key": 154,
 			"frequency": 889,
 			"collection": "Main",
 			"color": "#FFFF00"
+		},
+		{
+			"enabled": true,
+			"id": 4,
+			"password": "2WCF9H",
+			"name": "Team Orange",
+			"key": 203,
+			"frequency": 534,
+			"collection": "Main",
+			"color": "#FF7000"
+		},
+		{
+			"enabled": true,
+			"id": 5,
+			"password": "7SMXKE",
+			"name": "Team Purple",
+			"key": 29,
+			"frequency": 823,
+			"collection": "Main",
+			"color": "#8600FF"
 		}
 	],
 	"assets": {
@@ -790,6 +820,24 @@
 						{
 							"source_component": "Battery",
 							"source_terminal": "out",
+							"target_component": "Power Transfer Switch A",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "Battery",
+							"source_terminal": "out",
+							"target_component": "Power Transfer Switch B",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "Battery",
+							"source_terminal": "out",
+							"target_component": "Power Transfer Switch C",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "Battery",
+							"source_terminal": "out",
 							"target_component": "Power Transfer Switch D",
 							"target_terminal": "in"
 						},
@@ -803,6 +851,42 @@
 				},
 				"fuel": {
 					"bus": [
+						{
+							"source_component": "Fuel Transfer A",
+							"source_terminal": "out",
+							"target_component": "Valve A",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "Valve A",
+							"source_terminal": "out",
+							"target_component": "Tank A",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "Fuel Transfer B",
+							"source_terminal": "out",
+							"target_component": "Valve B",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "Valve B",
+							"source_terminal": "out",
+							"target_component": "Tank B",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "Fuel Transfer C",
+							"source_terminal": "out",
+							"target_component": "Valve C",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "Valve C",
+							"source_terminal": "out",
+							"target_component": "Tank C",
+							"target_terminal": "in"
+						},
 						{
 							"source_component": "Fuel Transfer D",
 							"source_terminal": "out",
@@ -1068,6 +1152,57 @@
 					},
 					{
 						"class": "Fuel Source",
+						"name": "Tank A",
+						"mesh": "None",
+						"position": [
+							0.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Capacity": 100.0,
+							"Amount": 55.0,
+							"Dry Mass": 40.0,
+							"Maximum Outgoing Flow Rate": 10.0,
+							"Desired Ingoing Flow Rate": 0.0
+						}
+					},
+					{
+						"class": "Fuel Source",
+						"name": "Tank B",
+						"mesh": "None",
+						"position": [
+							0.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Capacity": 100.0,
+							"Amount": 55.0,
+							"Dry Mass": 40.0,
+							"Maximum Outgoing Flow Rate": 10.0,
+							"Desired Ingoing Flow Rate": 0.0
+						}
+					},
+					{
+						"class": "Fuel Source",
+						"name": "Tank C",
+						"mesh": "None",
+						"position": [
+							0.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Capacity": 100.0,
+							"Amount": 55.0,
+							"Dry Mass": 40.0,
+							"Maximum Outgoing Flow Rate": 10.0,
+							"Desired Ingoing Flow Rate": 0.0
+						}
+					},
+					{
+						"class": "Fuel Source",
 						"name": "Tank D",
 						"mesh": "None",
 						"position": [
@@ -1102,6 +1237,36 @@
 					},
 					{
 						"class": "Fuel Valve",
+						"name": "Valve A",
+						"mesh": "None",
+						"data": {
+							"Commanded Percent Open": 1.0,
+							"Max Flow Rate": 2.0,
+							"Mass": 0.4
+						}
+					},
+					{
+						"class": "Fuel Valve",
+						"name": "Valve B",
+						"mesh": "None",
+						"data": {
+							"Commanded Percent Open": 1.0,
+							"Max Flow Rate": 2.0,
+							"Mass": 0.4
+						}
+					},
+					{
+						"class": "Fuel Valve",
+						"name": "Valve C",
+						"mesh": "None",
+						"data": {
+							"Commanded Percent Open": 1.0,
+							"Max Flow Rate": 2.0,
+							"Mass": 0.4
+						}
+					},
+					{
+						"class": "Fuel Valve",
 						"name": "Valve D",
 						"mesh": "None",
 						"data": {
@@ -1118,6 +1283,51 @@
 							"Commanded Percent Open": 1.0,
 							"Max Flow Rate": 2.0,
 							"Mass": 0.4
+						}
+					},
+					{
+						"class": "Fuel Interconnect",
+						"name": "Fuel Transfer A",
+						"mesh": "None",
+						"position": [
+							-0.005,
+							0.318,
+							0.002
+						],
+						"data": {
+							"Mass": 0.5,
+							"Is Bidirectional": true,
+							"Vent To Space When Unconnected": false
+						}
+					},
+					{
+						"class": "Fuel Interconnect",
+						"name": "Fuel Transfer B",
+						"mesh": "None",
+						"position": [
+							-1.503,
+							0.354,
+							0.002
+						],
+						"data": {
+							"Mass": 0.5,
+							"Is Bidirectional": true,
+							"Vent To Space When Unconnected": false
+						}
+					},
+					{
+						"class": "Fuel Interconnect",
+						"name": "Fuel Transfer C",
+						"mesh": "None",
+						"position": [
+							-2.109,
+							-0.003,
+							0.006
+						],
+						"data": {
+							"Mass": 0.5,
+							"Is Bidirectional": true,
+							"Vent To Space When Unconnected": false
 						}
 					},
 					{
@@ -1149,6 +1359,21 @@
 							"Is Bidirectional": true,
 							"Vent To Space When Unconnected": false
 						}
+					},
+					{
+						"class": "Power Interconnect",
+						"name": "Power Transfer Switch A",
+						"mesh": "None"
+					},
+					{
+						"class": "Power Interconnect",
+						"name": "Power Transfer Switch B",
+						"mesh": "None"
+					},
+					{
+						"class": "Power Interconnect",
+						"name": "Power Transfer Switch C",
+						"mesh": "None"
 					},
 					{
 						"class": "Power Interconnect",
@@ -1277,10 +1502,28 @@
 			"from_team": 1,
 			"from_target": "Docking Adapter",
 			"to_asset": "SC_002",
-			"to_target": "Docking D"
+			"to_target": "Docking A"
 		},
 		{
 			"from_team": 2,
+			"from_target": "Docking Adapter",
+			"to_asset": "SC_002",
+			"to_target": "Docking B"
+		},
+		{
+			"from_team": 3,
+			"from_target": "Docking Adapter",
+			"to_asset": "SC_002",
+			"to_target": "Docking C"
+		},
+		{
+			"from_team": 4,
+			"from_target": "Docking Adapter",
+			"to_asset": "SC_002",
+			"to_target": "Docking D"
+		},
+		{
+			"from_team": 5,
 			"from_target": "Docking Adapter",
 			"to_asset": "SC_002",
 			"to_target": "Docking E"
@@ -1289,10 +1532,28 @@
 			"from_team": 1,
 			"from_target": "Fuel Transfer",
 			"to_asset": "SC_002",
-			"to_target": "Fuel Transfer D"
+			"to_target": "Fuel Transfer A"
 		},
 		{
 			"from_team": 2,
+			"from_target": "Fuel Transfer",
+			"to_asset": "SC_002",
+			"to_target": "Fuel Transfer B"
+		},
+		{
+			"from_team": 3,
+			"from_target": "Fuel Transfer",
+			"to_asset": "SC_002",
+			"to_target": "Fuel Transfer C"
+		},
+		{
+			"from_team": 4,
+			"from_target": "Fuel Transfer",
+			"to_asset": "SC_002",
+			"to_target": "Fuel Transfer D"
+		},
+		{
+			"from_team": 5,
 			"from_target": "Fuel Transfer",
 			"to_asset": "SC_002",
 			"to_target": "Fuel Transfer E"
@@ -1301,10 +1562,28 @@
 			"from_team": 1,
 			"from_target": "Power Transfer Switch",
 			"to_asset": "SC_002",
-			"to_target": "Power Transfer Switch D"
+			"to_target": "Power Transfer Switch A"
 		},
 		{
 			"from_team": 2,
+			"from_target": "Power Transfer Switch",
+			"to_asset": "SC_002",
+			"to_target": "Power Transfer Switch B"
+		},
+		{
+			"from_team": 3,
+			"from_target": "Power Transfer Switch",
+			"to_asset": "SC_002",
+			"to_target": "Power Transfer Switch C"
+		},
+		{
+			"from_team": 4,
+			"from_target": "Power Transfer Switch",
+			"to_asset": "SC_002",
+			"to_target": "Power Transfer Switch D"
+		},
+		{
+			"from_team": 5,
 			"from_target": "Power Transfer Switch",
 			"to_asset": "SC_002",
 			"to_target": "Power Transfer Switch E"
