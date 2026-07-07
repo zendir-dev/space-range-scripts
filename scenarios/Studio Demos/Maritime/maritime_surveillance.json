@@ -1,0 +1,489 @@
+{
+	"metadata": {
+		"name": "Maritime Surveillance",
+		"description": "A studio demonstration of Earth-observation maritime surveillance. Two teams operate a shared imaging microsat in mid-altitude Earth orbit while four yellow vessels transit the Arabian Sea off the west coast of India. Participants practise camera pointing, telemetry readout, and vessel identification using guidance, GPS, and the Link Budget panel."
+	},
+	"simulation": {
+		"epoch": "2025/04/15 07:30:00",
+		"speed": 3.0,
+		"step_size": 0.1,
+		"integrator": "Euler",
+		"end_time": 2700.0
+	},
+	"universe": {
+		"atmosphere": false,
+		"magnetosphere": true,
+		"gps": true,
+		"cloud_opacity": 0.9,
+		"cloud_contrast": 2.5,
+		"ambient_light": 0.25
+	},
+	"ground_stations": {
+		"locations": [
+			"Paris",
+			"Dubai",
+			"Singapore",
+			"Sydney",
+			"Auckland"
+		],
+		"min_elevation": 0,
+		"max_range": 0,
+		"scale": 100
+	},
+	"teams": [
+		{
+			"enabled": true,
+			"id": 1,
+			"password": "AAAAAA",
+			"name": "Team Blue",
+			"key": 42,
+			"frequency": 612,
+			"collection": "Main",
+			"color": "#00FFFF"
+		},
+		{
+			"enabled": true,
+			"id": 2,
+			"password": "BBBBBB",
+			"name": "Team Red",
+			"key": 238,
+			"frequency": 847,
+			"collection": "Main",
+			"color": "#FF0000"
+		}
+	],
+	"assets": {
+		"space": [
+			{
+				"id": "SC_001",
+				"name": "Microsat",
+				"orbit": {
+					"planet": "Earth",
+					"values": [
+						7500.0,
+						0.0,
+						45.0,
+						220.0,
+						0,
+						80.0
+					],
+					"offset": [
+						0.0,
+						0.0,
+						0.0,
+						0.0,
+						0.0,
+						1.0
+					]
+				},
+				"physics": {
+					"override_mass": true,
+					"mass": 100.0,
+					"center_of_mass": [
+						0.0,
+						0.0,
+						0.0
+					],
+					"inertia_tensor": [
+						[
+							10.0,
+							0.0,
+							0.0
+						],
+						[
+							0.0,
+							10.0,
+							0.0
+						],
+						[
+							0.0,
+							0.0,
+							10.0
+						]
+					]
+				},
+				"visualization": {
+					"mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/ZenSat/BP_Z_SC_ZenSat_Chassis",
+					"scale": 1.0,
+					"offset": [
+						0.0,
+						0.0,
+						0.12
+					]
+				},
+				"controller": {
+					"safe_fraction": 0.1,
+					"capture_tax": 0.001,
+					"downlink_tax": 0.01,
+					"ping_interval": 20.0,
+					"reset_interval": 60.0,
+					"jamming_multiplier": 100.0,
+					"enable_rpo_software": false
+				},
+				"power": {
+					"bus": [
+						{
+							"source_component": "Solar Panel +X",
+							"source_terminal": "out",
+							"target_component": "Battery",
+							"target_terminal": "out"
+						},
+						{
+							"source_component": "Solar Panel -X",
+							"source_terminal": "out",
+							"target_component": "Battery",
+							"target_terminal": "out"
+						}
+					]
+				},
+				"components": [
+					{
+						"class": "Solar Panel",
+						"name": "Solar Panel +X",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.8,
+							0.276313,
+							-0.2
+						],
+						"rotation": [
+							35.0,
+							0.0,
+							0.0
+						],
+						"scale": 1.0,
+						"data": {
+							"Area": 0.3,
+							"Efficiency": 0.4,
+							"Mass": 10.0
+						}
+					},
+					{
+						"class": "Solar Panel",
+						"name": "Solar Panel -X",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							-0.8,
+							0.276313,
+							-0.2
+						],
+						"rotation": [
+							35.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Area": 0.3,
+							"Efficiency": 0.3,
+							"Mass": 10.0
+						}
+					},
+					{
+						"class": "Reaction Wheels",
+						"name": "Reaction Wheels",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Mass": 9.0
+						}
+					},
+					{
+						"class": "Computer",
+						"name": "Computer",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Battery",
+						"name": "Battery",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Nominal Capacity": 80.0,
+							"Charge Fraction": 1.0,
+							"Mass": 5.0
+						}
+					},
+					{
+						"class": "Camera",
+						"name": "Camera",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							-0.36,
+							-0.16
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Mass": 5.0,
+							"Resolution": [
+								1024,
+								1024
+							],
+							"Min Field of View": 10.0,
+							"Max Field of View": 90.0,
+							"Focusing Distance": 100000.0
+						}
+					},
+					{
+						"class": "GPS Sensor",
+						"name": "GPS Sensor",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Receiver",
+						"name": "Receiver",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							-0.36,
+							-0.16
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Antenna Gain": 3.0,
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Transmitter",
+						"name": "Transmitter",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							-0.36,
+							-0.16
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Mass": 1.0
+						}
+					},
+					{
+						"class": "Storage",
+						"name": "Storage",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							-0.2
+						],
+						"data": {
+							"Mass": 4.0
+						}
+					},
+					{
+						"class": "EM Sensor",
+						"name": "EM Sensor",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							-0.36,
+							-0.16
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Mass": 2.0
+						}
+					}
+				]
+			}
+		],
+		"collections": [
+			{
+				"id": "Main",
+				"space_assets": [
+					"SC_001"
+				]
+			}
+		]
+	},
+	"objects": {
+		"ground": [
+			{
+				"id": "GO_001",
+				"type": "vessel",
+				"name": "Ship 01",
+				"planet": "Earth",
+				"latitude": 19.5,
+				"longitude": 63.2,
+				"altitude": 1,
+				"scale": 240,
+				"color": "#FFFF00",
+				"data": {
+					"heading": 42.0,
+					"speed": 8.0
+				}
+			},
+			{
+				"id": "GO_002",
+				"type": "vessel",
+				"name": "Ship 02",
+				"planet": "Earth",
+				"latitude": 20.1,
+				"longitude": 63.9,
+				"altitude": 1,
+				"scale": 240,
+				"color": "#FFFF00",
+				"data": {
+					"heading": 168.0,
+					"speed": 10.0
+				}
+			},
+			{
+				"id": "GO_003",
+				"type": "vessel",
+				"name": "Ship 03",
+				"planet": "Earth",
+				"latitude": 19.7,
+				"longitude": 64.1,
+				"altitude": 1,
+				"scale": 240,
+				"color": "#FFFF00",
+				"data": {
+					"heading": 287.0,
+					"speed": 7.5
+				}
+			},
+			{
+				"id": "GO_004",
+				"type": "vessel",
+				"name": "Ship 04",
+				"planet": "Earth",
+				"latitude": 20.3,
+				"longitude": 63.4,
+				"altitude": 1,
+				"scale": 240,
+				"color": "#FFFF00",
+				"data": {
+					"heading": 115.0,
+					"speed": 9.0
+				}
+			}
+		]
+	},
+	"events": [],
+	"questions": [
+		{
+			"section": "Telemetry & Health",
+			"title": "What is the minimum downlink effective signal-to-noise ratio with the ground station?",
+			"description": "While your spacecraft is in contact with a visible ground station, read the downlink signal-to-noise ratio from the Link Budget panel in Telemetry. Report the value in dB.",
+			"type": "number",
+			"answer": {
+				"unit": "dB",
+				"value": 90.0,
+				"tolerance": 10.0,
+				"reason": "Read the downlink SNR from the Link Budget panel when the spacecraft is visible to a ground station. Validate the exact value via scenario dry-run.",
+				"score": 10
+			}
+		},
+		{
+			"section": "Telemetry & Health",
+			"title": "What is the battery capacity in amp-hours?",
+			"description": "Read the battery nominal capacity from battery telemetry or component configuration data. Report the value in amp-hours.",
+			"type": "number",
+			"answer": {
+				"unit": "Ah",
+				"value": 80.0,
+				"tolerance": 1.0,
+				"reason": "The battery is configured with a nominal capacity of 80 Ah.",
+				"score": 10
+			}
+		},
+		{
+			"section": "Telemetry & Health",
+			"title": "Which solar panel is producing more power?",
+			"description": "Compare power output telemetry for Solar Panel +X and Solar Panel -X. Identify which panel is supplying more electrical power at the time you take the measurement.",
+			"type": "select",
+			"answer": {
+				"options": [
+					"Solar Panel +X",
+					"Solar Panel -X"
+				],
+				"value": 0,
+				"reason": "The Solar Panel +X has a higher efficiency than the Solar Panel -X, so it is producing more power.",
+				"score": 10
+			}
+		},
+		{
+			"section": "Observations",
+			"title": "What colour is the ship found near the Arabian Sea?",
+			"description": "A ship is located off the west coast of India, in the Arabian Sea. Use guidance pointing and your camera to capture an image of the vessel and identify its hull colour.",
+			"type": "select",
+			"answer": {
+				"options": [
+					"Blue",
+					"Green",
+					"Red",
+					"Yellow"
+				],
+				"value": 3,
+				"reason": "The vessel at this location is configured with a yellow hull colour.",
+				"score": 10
+			}
+		},
+		{
+			"section": "Observations",
+			"title": "What is the semi-major axis of the spacecraft's orbit?",
+			"description": "Use GPS telemetry or plotted position data to determine the semi-major axis of your spacecraft's orbit. Report the value in km to the nearest 100 km.",
+			"type": "number",
+			"answer": {
+				"unit": "km",
+				"value": 7500.0,
+				"tolerance": 100.0,
+				"reason": "The configured semi-major axis is 7500 km. This can be derived from GPS telemetry.",
+				"score": 10
+			}
+		}
+	]
+}
