@@ -7,7 +7,8 @@
 		"epoch": "2026/02/02 08:00:00",
 		"speed": 1.0,
 		"step_size": 0.05,
-		"integrator": "Euler"
+		"integrator": "Euler",
+		"end_time": 3600.0
 	},
 	"universe": {
 		"atmosphere": false,
