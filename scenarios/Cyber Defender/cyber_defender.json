@@ -369,7 +369,11 @@
 							"Resolution": [
 								1024,
 								1024
-							]
+							],
+							"Min Field Of View": 5.0,
+							"Field Of View": 45.0,
+							"Max Field Of View": 100.0,
+							"Focusing Distance": 1000000.0
 						}
 					},
 					{
@@ -662,7 +666,7 @@
 				"scale": 70,
 				"color": "#00FF00",
 				"data": {
-					"heading": 95.0,
+					"heading": 120.0,
 					"speed": 8.0
 				}
 			},
@@ -722,7 +726,7 @@
 				"scale": 70,
 				"color": "#00FF00",
 				"data": {
-					"heading": 92.0,
+					"heading": 75.0,
 					"speed": 4.5
 				}
 			},
@@ -752,7 +756,7 @@
 				"scale": 70,
 				"color": "#FFFF00",
 				"data": {
-					"heading": 310.0,
+					"heading": 330.0,
 					"speed": 0.0
 				}
 			}
@@ -771,7 +775,7 @@
 				"SC_OPS"
 			],
 			"Data": {
-				"Degradation Rate": 150000.0
+				"Degradation Rate": 250000.0
 			}
 		},
 		{
@@ -936,7 +940,7 @@
 		{
 			"Enabled": true,
 			"Name": "Reaction Wheel Nominal",
-			"Time": 1800.0,
+			"Time": 2000.0,
 			"Repeat": false,
 			"Interval": 1.0,
 			"Type": "Spacecraft",
@@ -1123,7 +1127,7 @@
 		{
 			"section": "Cyber Injects",
 			"title": "Two different messages were injected with hidden text. Which messages were affected?",
-			"description": "Some messages had injected text, disrupting the data found within the packets. This was due to a cyber attack. Which messages were affected?",
+			"description": "Some messages had injected text, disrupting the data found within the packets, at two separate times. This was due to a cyber attack. Which messages were affected?",
 			"type": "checkbox",
 			"answer": {
 				"options": [
@@ -1214,14 +1218,12 @@
 		},
 		{
 			"section": "Downlink Jamming",
-			"title": "Which ground stations were affected by the downlink jamming attack?",
-			"description": "The rogue spacecraft held a saturating barrage jam on your team's frequency. Which ground stations were affected by the jamming attack? All cyber events occurred in the first 45 minutes of the session.",
+			"title": "Which ground station(s) were affected by the downlink jamming attack?",
+			"description": "The rogue spacecraft held a saturating barrage jam on your team's frequency. Which ground station(s) were affected by the jamming attack? All cyber events occurred in the first 45 minutes of the session.",
 			"type": "checkbox",
 			"answer": {
 				"options": [
 					"Dubai",
-					"Easter Island",
-					"Miami",
 					"Mumbai",
 					"Paris",
 					"Singapore",
@@ -1229,7 +1231,7 @@
 				],
 				"value": [
 					0,
-					5
+					3
 				],
 				"reason": "The first broadcast barrage aligns with the Dubai pass segment in the scripted visibility model (~9-25 min), so operators are keyed through Dubai during that jam. The second broadcast barrage aligns with the Singapore pass segment (~38-69 min), so operators are keyed through Singapore during that jam.",
 				"score": 5
@@ -1274,14 +1276,12 @@
 			"answer": {
 				"options": [
 					"Dubai",
-					"Easter Island",
-					"Miami",
 					"Mumbai",
 					"Paris",
 					"Singapore",
 					"Sydney"
 				],
-				"value": 3,
+				"value": 1,
 				"reason": "The spacecraft was connected to Mumbai during the replay attack.",
 				"score": 8
 			}
@@ -1412,21 +1412,19 @@
 		},
 		{
 			"section": "Uplink Jamming",
-			"title": "To which ground station were you connected to during the uplink jamming attack?",
+			"title": "To which ground station(s) were you connected to during the uplink jamming attack?",
 			"description": "The rogue spacecraft held a saturating barrage jam on your team's frequency. Which ground station(s) were you connected to during the uplink jamming attack? All cyber events occurred in the first 45 minutes of the session.",
 			"type": "checkbox",
 			"answer": {
 				"options": [
 					"Dubai",
-					"Easter Island",
-					"Miami",
 					"Mumbai",
 					"Paris",
 					"Singapore",
 					"Sydney"
 				],
 				"value": [
-					3
+					1
 				],
 				"reason": "The spacecraft was connected to Mumbai during the uplink jamming attack.",
 				"score": 5

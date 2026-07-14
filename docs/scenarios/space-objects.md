@@ -28,6 +28,7 @@ Each entry is loaded when the scenario starts.
 | `mesh` | `string` | `"none"` | Visual mesh. Either a static-mesh name or the full path to a Blueprint physical-object class used as the chassis. `"none"` (or empty) leaves the object with no visual mesh. |
 | `scale` | `number` | `1.0` | Visual scale factor applied to the mesh. |
 | `color` | `string` (hex) | `"#FFFFFF"` | Hex RGB. Accepts `#RRGGBB` or `#RGB`. |
+| `trackable` | `boolean` | `true` | When `true`, the object is broadcast to every team's operator UI as a selectable [relative-pointing](../api-reference/spacecraft-commands.md#relative) target (in the `trackable[]` list of [`list_assets`](../api-reference/ground-requests.md#list_assets)). Set `false` to keep an object in the scene but hidden from targeting. |
 
 ## Positioning: `orbit` vs `geodetic`
 
@@ -43,6 +44,7 @@ Pair `geodetic` with `dynamic_type: "Static"` for a marker that stays put, or wi
 - Space objects are passive: no controller, no components, no telemetry. They exist to populate the scene (debris fields, rendezvous/inspection targets, visual references).
 - `Orbit` is the natural default — the object coasts along its Keplerian orbit without integrating perturbations.
 - Choose distinct `color` values so objects can be referred to by colour in imagery or inspection exercises.
+- Space objects are **trackable by default**, so they show up in the operator UI as relative-pointing targets. Because they have no components, the "Aim Component" option resolves to `None` (pointing at the object's centre). Set `trackable: false` to hide one from targeting.
 
 ## Example cluster
 

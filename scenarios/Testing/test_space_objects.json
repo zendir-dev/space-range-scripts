@@ -379,7 +379,8 @@
 				"geodetic": [0.0, 150.0, 35786000.0],
 				"planet": "Earth",
 				"dynamic_type": "Static",
-				"color": "#00FF00"
+				"color": "#00FF00",
+				"trackable": false
 			}
 		]
 	},

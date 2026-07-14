@@ -107,6 +107,9 @@ No arguments.
     "space": [
       { "asset_id": "A3F2C014", "name": "Microsat", "rpo_software_enabled": true, "intercept_enabled": true, "neutral": false, "controllable": true },
       { "asset_id": "1B9E0F77", "name": "Station",  "rpo_software_enabled": false, "intercept_enabled": false, "neutral": true, "controllable": false }
+    ],
+    "trackable": [
+      { "asset_id": "7C1D9A02", "name": "Defunct Satellite", "neutral": false, "controllable": false, "trackable": true }
     ]
   },
   "success": true
@@ -122,6 +125,9 @@ No arguments.
 | `space[].intercept_enabled` | `true` if this spacecraft is configured to record raw uplink intercepts (pre-decode RF payloads into on-board storage for SIGINT / replay). Mirrors scenario `enable_intercept` on the controller. When `false`, no new intercept records are retained. |
 | `space[].neutral` | `true` if this is a neutral (team-less) shared craft. Neutral craft can be referenced as a target but cannot be controlled, and expose no telemetry. |
 | `space[].controllable` | `true` for the team's own assets; `false` for neutral craft. |
+| `trackable[]` | Array of extra pointable [relative-pointing](spacecraft-commands.md#relative) targets in addition to `space[]`: [space objects](../scenarios/space-objects.md) flagged `trackable` (default `true`). Broadcast to every team regardless of ownership; read-only, not controllable, and have no components. |
+| `trackable[].asset_id` | Reference ID. Pass as the `spacecraft` argument of a [`relative`](spacecraft-commands.md#relative) guidance command to point at this object. |
+| `trackable[].name` | Friendly name of the object. |
 
 ---
 
