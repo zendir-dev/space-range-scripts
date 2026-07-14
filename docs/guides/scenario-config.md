@@ -312,6 +312,37 @@ Ground objects are **passive** — they don't generate telemetry, can't be comma
 
 ---
 
+## `objects.space[]` — passive orbital objects
+
+Bare spacecraft in orbit with **no controller and no components** — debris, spent rocket bodies, defunct satellites, or visual markers.
+
+```json
+{
+  "name":         "Defunct Satellite",
+  "orbit":        [7800.0, 0.01, 51.6, 90.0, 0.0, 0.0],
+  "planet":       "Earth",
+  "dynamic_type": "Orbit",
+  "mesh":         "None",
+  "scale":        1.0,
+  "color":        "#FFFFFF"
+}
+```
+
+| Field | Description |
+| --- | --- |
+| `name` | Display name. |
+| `orbit` | Six Keplerian elements `[SMA (km), ecc, inc (deg), RAAN (deg), argp (deg), true anomaly (deg)]`. Used when `geodetic` is absent. |
+| `geodetic` | Optional `[lat (deg), lon (deg), alt (m)]`. **Mutually exclusive** with `orbit`; takes precedence when present. |
+| `planet` | Body the object orbits (`Earth`, `Moon`, `Mars`). |
+| `dynamic_type` | `Orbit` (default), `Static`, `Integration`, or `Lookup`. |
+| `mesh` | Static-mesh name or Blueprint class path. `None` for an invisible object. |
+| `scale` | Visual size factor for the mesh. |
+| `color` | Hex RGB. |
+
+Like ground objects, space objects are **passive** — no telemetry, no commands, not part of any team. See [space-objects.md](../scenarios/space-objects.md) for full details.
+
+---
+
 ## `events[]` — scripted failures and anomalies
 
 Studio fires these on the simulation timeline. They're how an instructor injects scripted hardware failures or environmental events without having to be at the controls.

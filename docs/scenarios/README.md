@@ -49,6 +49,7 @@ Every scenario JSON has this shape. **Every section is optional** except `teams`
 | `assets.neutral` | Team-less shared craft (single instance, targetable by all) | [spacecraft.md#neutral-team-less-shared-craft](spacecraft.md#neutral-team-less-shared-craft) |
 | `docking` | Pre-dock team craft to ports (e.g. each team to a hub port) at scenario start | [spacecraft.md#docking-start-the-scenario-already-docked](spacecraft.md#docking-start-the-scenario-already-docked) |
 | `objects.ground` | Vessels, text labels, and other passive ground actors | [ground-objects.md](ground-objects.md) |
+| `objects.space` | Passive orbital objects (bare spacecraft, no controller/components) | [space-objects.md](space-objects.md) |
 | `events` | Scripted failures and GPS effects on the simulation timeline | [events.md](events.md) |
 | `questions` | Q&A scoring (text, number, select, checkbox) | [questions.md](questions.md) |
 | (recipes) | End-to-end annotated patterns for common scenario shapes | [recipes.md](recipes.md) |
@@ -95,7 +96,7 @@ When the scenario JSON is loaded (Studio UI scenario picker or admin/scenario AP
 5. `assets.space[]` instantiates each spacecraft: orbit → physics → visualization → controller → components.
 6. `assets.collections[]` is recorded so that team `collection` strings resolve to spacecraft IDs, and `assets.neutral[]` spawns shared team-less craft.
 7. `docking[]` places and docks the configured chaser craft onto their target ports (after all craft are built).
-8. `objects.ground[]` instantiates vessels / text actors.
+8. `objects.ground[]` instantiates vessels / text actors, and `objects.space[]` instantiates passive orbital objects.
 9. `events[]` are registered on the simulation event queue (they fire later, on `Time`).
 10. `questions[]` are stored on the subsystem and exposed to teams via [`list_questions`](../api-reference/ground-requests.md#list_questions).
 

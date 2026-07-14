@@ -67,6 +67,7 @@ This documentation is for **users** of Space Range — operators, integrators, a
 - [`assets.space[]` & `assets.collections[]`](scenarios/spacecraft.md) — spacecraft definitions and team-asset map.
 - [`components[]`](scenarios/components.md) — full per-class field reference for every component.
 - [`objects.ground[]`](scenarios/ground-objects.md) — vessels, text labels, and other passive ground actors.
+- [`objects.space[]`](scenarios/space-objects.md) — passive orbital objects (bare spacecraft with no controller or components).
 - [`events[]`](scenarios/events.md) — scripted Spacecraft, GPS, and Cyber events with full `Data` schemas.
 - [`questions[]`](scenarios/questions.md) — Q&A scoring (text, number, select, checkbox).
 - [Recipes & agent checklist](scenarios/recipes.md) — annotated end-to-end patterns and an agent-author checklist.
