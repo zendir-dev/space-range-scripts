@@ -4,7 +4,7 @@ A field manual for the things that go wrong. Each section is structured the same
 
 If your problem isn't here, the canonical investigation order is:
 
-1. Is the simulation actually running? ([`admin_get_simulation`](../api-reference/admin-requests.md#admin_get_simulation) or watch the session clock.)
+1. Is the simulation actually running? Check Session `state` is `running`, or call [`admin_get_simulation`](../api-reference/admin-requests.md#admin_get_simulation).
 2. Are you on the right topic? (Game name, team ID, controller name — see [MQTT topics](../api-reference/mqtt-topics.md).)
 3. Are you using the right password? (Team password vs admin password — see [Encryption](../concepts/encryption.md).)
 4. Are XOR + Caesar applied in the right order? (See [Decoding telemetry](decoding-telemetry.md).)
@@ -30,7 +30,7 @@ If your problem isn't here, the canonical investigation order is:
 Zendir/SpaceRange/<GAME>/Session
 ```
 
-If you receive a JSON tick at ~3 Hz, the broker and game name are correct. Move on to checking team-scoped topics. If you receive nothing, the broker host or game name is wrong.
+If you receive a JSON tick every ~0.3 s, the broker and game name are correct. Check `state` — only `running` means sim time is advancing. If you receive nothing, the broker host or game name is wrong (or Studio is offline).
 
 **Fix.** Confirm `GAME` matches Studio's configured game name *exactly*, including spaces and case. The Operator UI auto-uppercases the game name; do the same in custom clients.
 
@@ -61,7 +61,7 @@ If you receive a JSON tick at ~3 Hz, the broker and game name are correct. Move 
 **Likely causes**:
 
 1. Wrong team password.
-2. You're trying to XOR the unencrypted Session topic.
+2. You're trying to XOR the unencrypted Session or Info topic.
 3. Your password contains whitespace or padding that Studio doesn't have.
 
 **Diagnostic.**
@@ -152,7 +152,7 @@ If it doesn't appear at all:
 **Fix.** `Time` is **simulation time, absolute** (sim seconds since `t=0`). To schedule "in 60 seconds", read the current sim time from the Session topic, add 60, and use that.
 
 ```python
-session = latest_session_message  # {"time": 742.18, "instance": ...}
+session = latest_session_message  # {"time": 742.18, "state": "running", "instance": ...}
 cmd["Time"] = session["time"] + 60.0
 ```
 

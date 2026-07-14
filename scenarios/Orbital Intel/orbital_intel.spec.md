@@ -84,7 +84,7 @@ TrueAnomaly   = 0.004 deg
 `SC_002` (`Recon`) is near the defender and is configured with:
 
 - `visualization.hide: true`, so the rogue is not presented as an obvious map target.
-- `enable_rpo: true`, supporting proximity-operations style behaviour if extended later.
+- `enable_rpo_software: true`, supporting proximity-operations style behaviour if extended later.
 - A high-gain receiver, transmitter, and jammer.
 - Text labels reading `RECON`, used by the rogue-identification question if teams image it.
 

@@ -451,9 +451,13 @@ Every helper in `src/commands.py` returns a `dict` that unpacks directly into `s
 | Camera | `camera_configure(...)`, `camera_capture(target, name)` | Configure FOV / resolution / focal length / aperture / focusing distance, then capture a full-resolution image into on-board storage. |
 | Telemetry | `telemetry_configure(frequency, key)` | Update RF link frequency (MHz) and Caesar key (0–255) on the spacecraft and the ground network together. |
 | Thruster | `thruster_fire(target, duration)`, `thruster_stop(target)` | Fire / stop a named thruster for a delta-V manoeuvre. |
-| Rendezvous | `rendezvous_start(target_id, dx, dy, dz)`, `rendezvous_stop(target_id)` | Hold an LVLH offset (m) from another spacecraft. Requires `enable_rpo: true`. |
+| Rendezvous | `rendezvous_start(target_id, dx, dy, dz)`, `rendezvous_stop(target_id)` | Hold an LVLH offset (m) from another spacecraft. Requires `enable_rpo_software: true`. |
 | Docking | `docking_dock(target_id, component)`, `docking_undock(target_id, component)` | Physically dock / undock with a named component on another spacecraft. |
 | Reset | `component_reset(target)` | Reboot a single component (or the whole bus, if you reset `Computer`). |
+| Schedule | `get_schedule()`, `remove_command_by_id(id)`, `remove_command_by_time_command(time, command)`, `update_command(...)` | Inspect and manage the on-board command queue (reply: Schedule Report, APID 101). |
+| Power bus | `power_bus_configure_values(entries)`, `power_bus_configure(type, target, value)`, `power_bus_fuse_reset(target)` | Configure switches, fuses, limiters, regulators, loads in one batched `power_bus` command; manually reset blown fuses. |
+| Fuel bus | `fuel_bus_configure_values(entries)`, `fuel_bus_configure(type, target, value)` | Configure valves and pumps in one batched `fuel_bus` command. |
+| Configuration | `get_configuration(scope=None, components=None)` | Request session-mutable operator settings (reply: Configuration Report, APID 102). Omit `scope` for power_bus + fuel_bus + computer + camera; or one scope for a single section. |
 
 > All helpers accept the same `target` argument as the underlying commands — the **component name** (as configured in your scenario JSON), not a class alias. `alignment` defaults to `+z` for guidance helpers.
 

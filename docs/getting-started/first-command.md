@@ -286,4 +286,5 @@ You now have the full pattern any client follows: connect → resolve assets →
 - **More commands:** [API Reference → Spacecraft commands](../api-reference/spacecraft-commands.md) covers every command type and its `Args`.
 - **Structured telemetry:** [Guides → Decoding telemetry](../guides/decoding-telemetry.md) shows how to parse Space Packets via XTCE so you can pull out individual fields rather than substring-matching.
 - **Scheduling and editing the queue:** [Concepts → Commands and scheduling](../concepts/commands-and-scheduling.md) for `Time > 0`, `get_schedule`, `remove_command`, and `update_command`.
+- **Operator configuration (power bus, etc.):** [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration) and [Operator UI → Power](../guides/operator-ui-guide.md#power).
 - **Don't want to write a client?** Use the bundled [Operator UI](operator-ui.md) instead.

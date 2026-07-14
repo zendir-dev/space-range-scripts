@@ -10,8 +10,8 @@ This page is a working catalogue of complete scenario patterns derived from the 
 | --- | --- | --- |
 | Imagery / detection exercise on Earth | `Maritime_Surveillance.json` | Many ground vessels (`objects.ground[]`), two teams sharing one collection. |
 | Telemetry-loss / packet-corruption exercise | `Telemetry_Drop.json` | Single transmitter packet-corruption event with paired recovery context. |
-| Unresponsive-spacecraft / command-rejection exercise | `Unresponsive_Satellite.json`, `Command_Rejection.json` | Show how to use `enable_rpo`, `enable_intercept` and computer fault models. |
-| Docking / RPO exercise | `Docking_Procedure.json` | Two spacecraft with `Docking Adapter` components; `enable_rpo: true` on the controller. |
+| Unresponsive-spacecraft / command-rejection exercise | `Unresponsive_Satellite.json`, `Command_Rejection.json` | Show how to use `enable_rpo_software`, `enable_intercept` and computer fault models. |
+| Docking / RPO exercise | `Docking_Procedure.json` | Two spacecraft with `Docking Adapter` components; set `enable_rpo_software: true` only on craft that need autonomous rendezvous. |
 | Pointing / attitude error | `Payload_Misalignment.json` | Reaction-wheel `Stuck Index` event and guidance noise model. |
 | GPS denial | (see GPS event recipes in [`events.md`](./events.md)) | No shipped scenario uses GPS jamming end-to-end yet — combine the events template with a `Maritime_Surveillance` shell. |
 | Multi-section assessment with full Q&A | `Orbital Intel/orbital_intel.json` | Long `questions[]`, multiple ground objects, multiple events, multi-team. |
@@ -164,7 +164,9 @@ The matching `Target` strings for other components follow the table in [`events.
 
 ## Recipe 4 — Docking / RPO exercise
 
-Use when the brief is *"two spacecraft must rendezvous and dock"*. Both spacecraft need a `Docking Adapter`, the controller flag `enable_rpo: true`, and orbits chosen so the two paths intersect.
+Use when the brief is *"two spacecraft must rendezvous and dock"*. Both spacecraft need a `Docking Adapter`. Set `enable_rpo_software: true` on the chaser if it should run autonomous rendezvous before docking; orbits must be chosen so the two paths intersect.
+
+**Starting docked / shared power:** If the exercise should begin with **both power buses already merged** (before or in addition to the `docking` command), add a `Power Interconnect` on each hull, wire each into that spacecraft's `power.bus` (typically `Battery` `out` → `Interconnect` `in`), and add **one** power-interconnect entry to the top-level [`docking`](spacecraft.md#docking-start-the-scenario-already-docked) block linking the two. See [spacecraft.md — Power interconnects](spacecraft.md#power-interconnects).
 
 ```json
 "assets": {
@@ -172,7 +174,7 @@ Use when the brief is *"two spacecraft must rendezvous and dock"*. Both spacecra
     {
       "id": "ALPHA", "name": "Alpha",
       "orbit": { "planet": "Earth", "values": [7000.0, 0.0, 51.6, 0.0, 0.0, 0.0] },
-      "controller": { "enable_rpo": true },
+      "controller": { "enable_rpo_software": true },
       "components": [
         { "class": "Solar Panel", "name": "Solar Panel", "data": { "Area": 0.5, "Mass": 10.0 } },
         { "class": "Battery",     "name": "Battery",     "data": { "Nominal Capacity": 80.0, "Mass": 5.0 } },
@@ -182,13 +184,20 @@ Use when the brief is *"two spacecraft must rendezvous and dock"*. Both spacecra
         { "class": "Storage",     "name": "Storage",     "data": { "Mass": 4.0 } },
         { "class": "Reaction Wheels", "name": "Reaction Wheels", "data": { "Mass": 1.5 } },
         { "class": "Thruster",    "name": "Thruster",    "data": { "Mass": 3.0 } },
-        { "class": "Docking Adapter", "name": "Dock", "data": { "Mass": 2.0 } }
-      ]
+        { "class": "Docking Adapter", "name": "Dock", "data": { "Mass": 2.0 } },
+        { "class": "Power Interconnect", "name": "Interconnect" }
+      ],
+      "power": {
+        "bus": [
+          { "source_component": "Solar Panel", "source_terminal": "out", "target_component": "Battery", "target_terminal": "out" },
+          { "source_component": "Battery", "source_terminal": "out", "target_component": "Interconnect", "target_terminal": "in" }
+        ]
+      }
     },
     {
       "id": "BRAVO", "name": "Bravo",
       "orbit": { "planet": "Earth", "values": [7000.0, 0.0, 51.6, 0.0, 5.0, 0.0] },
-      "controller": { "enable_rpo": true },
+      "controller": { "enable_rpo_software": true },
       "components": [
         { "class": "Solar Panel", "name": "Solar Panel", "data": { "Area": 0.5, "Mass": 10.0 } },
         { "class": "Battery",     "name": "Battery",     "data": { "Nominal Capacity": 80.0, "Mass": 5.0 } },
@@ -197,18 +206,30 @@ Use when the brief is *"two spacecraft must rendezvous and dock"*. Both spacecra
         { "class": "Transmitter", "name": "Transmitter", "data": { "Mass": 1.0 } },
         { "class": "Storage",     "name": "Storage",     "data": { "Mass": 4.0 } },
         { "class": "Reaction Wheels", "name": "Reaction Wheels", "data": { "Mass": 1.5 } },
-        { "class": "Docking Adapter", "name": "Dock", "data": { "Mass": 2.0 } }
-      ]
+        { "class": "Docking Adapter", "name": "Dock", "data": { "Mass": 2.0 } },
+        { "class": "Power Interconnect", "name": "Interconnect" }
+      ],
+      "power": {
+        "bus": [
+          { "source_component": "Solar Panel", "source_terminal": "out", "target_component": "Battery", "target_terminal": "out" },
+          { "source_component": "Battery", "source_terminal": "out", "target_component": "Interconnect", "target_terminal": "in" }
+        ]
+      }
     }
   ],
   "collections": [
     { "id": "Chaser", "space_assets": ["ALPHA"] },
     { "id": "Target", "space_assets": ["BRAVO"] }
   ]
-}
+},
+"docking": [
+  { "from_team": 111111, "from_asset": "ALPHA", "from_target": "Interconnect", "to_team": 111111, "to_asset": "BRAVO", "to_target": "Interconnect" }
+]
 ```
 
 The two spacecraft share `semi_major_axis` and `inclination` so they're on the same orbital plane; the chaser has a `true_anomaly` offset to give it the rendezvous gap.
+
+The `docking` power-interconnect entry above addresses both hulls by team + asset (here both on team `111111`). If the two craft are on **different teams**, drop `from_asset`/`to_asset` and use `from_team`/`to_team` directly. Either way the two power buses merge at t=0; use this only when the brief needs a **shared bus at start**.
 
 ---
 

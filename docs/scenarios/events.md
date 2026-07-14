@@ -1,6 +1,6 @@
 # `events[]` — scheduled scenario events
 
-The `events[]` array is the timeline of "things that happen" once the simulation starts. Each entry is an `FScenarioEvent` (`studio/Plugins/SpaceRange/Source/SpaceRange/Public/Structs/ScenarioEvent.h`) parsed by `FScenarioEvent::LoadFromJson` and dispatched by `USpaceRangeSubsystem` once `simulation.time` reaches the event's `Time`.
+The `events[]` array is the timeline of "things that happen" once the simulation starts. Each entry fires when simulated time reaches its `Time` (and repeats on `Interval` when `Repeat` is true).
 
 Three event types exist:
 
@@ -10,11 +10,11 @@ Three event types exist:
 | `GPS` | Add/remove a GPS spoofing region or jamming source on the global GPS subsystem. |
 | `Cyber` | Apply packet-level telemetry tampering overlays (APID-targeted byte patching in CCSDS user data). |
 
-There is no `Ground` or `Scenario` event type — older docs may mention them, but the current `EScenarioEventType` enum (`studio/.../Enums/ScenarioEventType.h`) lists `Spacecraft`, `GPS`, and `Cyber`. Anything else falls back to `Spacecraft` with a warning.
+There is no `Ground` or `Scenario` event type — older docs may mention them. Only `Spacecraft`, `GPS`, and `Cyber` are supported; other `Type` values fall back to `Spacecraft` with a warning.
 
 ## Common fields
 
-Every event uses the same outer shape. Field names parse case-insensitively (`UJSONLibrary` is case-insensitive), but the canonical examples in `Plugins/SpaceRange/Resources/Events/*.json` use PascalCase, so prefer that for consistency:
+Every event uses the same outer shape. Field names are case-insensitive when loaded; the Studio **Add Event** templates use PascalCase, so prefer that for consistency:
 
 | Key | JSON type | Default | Description |
 | --- | --- | --- | --- |
@@ -28,26 +28,24 @@ Every event uses the same outer shape. Field names parse case-insensitively (`UJ
 | `Target` | `string` | `""` | `Spacecraft`: component/error-model target. `Cyber`: currently must be `Spacecraft` (case-insensitive). `GPS`: ignored. |
 | `Data` | `object` | `{}` | A flat map of keys to string-or-number values. Schema depends on `Type` — see sections below. |
 
-> The runtime stores `Data` as a `TMap<FString, FString>`. Internally, `.` in keys is rewritten to `$.` to prevent `UJSONLibrary` from interpreting them as nested lookups. Keep your JSON keys flat — do not nest objects inside `Data`.
+> Keep `Data` keys **flat** — do not nest objects inside `Data`. Avoid `.` in key names unless you intend a dotted lookup (unusual for events).
 
 ## Spacecraft events
 
 A `Spacecraft` event injects state into one or more components on the spacecraft.
 
-### Pipeline
+### How targeting works
 
-When the event fires (`USpacecraftController::ExecuteEvent`):
+When a `Spacecraft` event fires:
 
-1. Split `Target` on the first `-` into `<component>` and `<error_model>`.
-2. Resolve `<component>` to physical objects on the spacecraft. Match is **case-insensitive** by either:
-   - Component **name** (the `name` field on the component asset), or
-   - Component **class alias** (`Battery`, `Solar Panel`, `Reaction Wheels`, …) resolved via `USpaceRangeLibrary::GetPhysicalObjectClass`. See [`components.md`](./components.md) for the full alias table.
-3. Strip spaces from each `Data` key (so `"Bit Rate"` becomes `BitRate`).
-4. Pass the data map and `<error_model>` (may be empty) to the matching `UBaseExtension::Failure(...)` on every resolved component.
+1. Studio splits `Target` on the first `-` into **component** and optional **error model**.
+2. It resolves the component on each affected spacecraft by **name** (`components[].name`) or by **class alias** (`Battery`, `Solar Panel`, `Reaction Wheels`, …). See [`components.md`](./components.md) for aliases.
+3. Spaces are stripped from each `Data` key before matching (`"Bit Rate"` → `BitRate`).
+4. Values are applied to every matching component on every spacecraft listed in `Assets` (or all spacecraft if `Assets` is empty).
 
-If `<error_model>` is empty, the extension treats keys as **direct property names** on the component (or its base extension) and assigns each value via `UVariableLibrary`. Common targets: `Capacity`, `Bit Rate`, `Stuck Index`, `Fault State`, etc.
+If there is **no** error-model suffix, `Data` keys set **direct properties** on the component (e.g. `Capacity`, `Bit Rate`, `Stuck Index`, `Fault State`).
 
-If `<error_model>` is non-empty, the extension finds (or creates) the named `UErrorModelBase` subobject on the component and assigns properties on it instead.
+If an error-model suffix is present (e.g. `Battery-IntermittentConnectionErrorModel`), `Data` keys set properties on that **error model** attached to the component.
 
 ### Spacecraft event Target syntax
 
@@ -75,11 +73,11 @@ Restrict the impact to specific spacecraft via `Assets`:
 
 ### Spacecraft event `Data`
 
-`Data` is a flat string-or-number map. Keys correspond to `UPROPERTY` names on either the targeted component, its `UBaseExtension`, or its `UErrorModelBase` subobject — with spaces stripped before matching. `bool`, `int`, `float`, `double`, `FString` and `enum` properties are all accepted; `UVariableLibrary::CreateVariantFromString` does the conversion.
+`Data` is a flat string-or-number map. Keys must match the property names the component or error model expects, with spaces stripped before matching. Booleans, integers, floats, and strings are all accepted in JSON.
 
 ### Canonical Spacecraft event recipes
 
-These are taken verbatim from `Plugins/SpaceRange/Resources/Events/Spacecraft.json` and represent the supported templates. Use them as-is or adjust the numbers.
+These match the Studio **Add Event → Spacecraft** templates. Use them as-is or adjust the numbers.
 
 #### Storage — fill the disk to force a downlink
 
@@ -237,11 +235,11 @@ These are taken verbatim from `Plugins/SpaceRange/Resources/Events/Spacecraft.js
 
 `Stuck Index` is `0`, `1`, `2`, or `3` (which wheel jams).
 
-> Newer error models added to `Plugins/SpaceRange/Source/SpaceRange/Private/Extensions/*ErrorModel*.cpp` will accept whatever properties they declare. The reliable rule is: a key in `Data` is the property name on the target with spaces stripped. Open the matching `*Extension.cpp` to see what properties are declared.
+> For error-model events, each `Data` key must match a property that error model exposes (spaces stripped). If a key is wrong, the event may no-op for that component — test in Studio with a low `Time` first.
 
 ## GPS events
 
-`GPS` events configure spoofing regions and jamming sources on the global `UGlobalPositioningSystem`. They ignore `Target` and `Assets` — the only relevant fields are `Time`, `Repeat`, `Interval` and `Data`. The dispatch logic lives in `USpaceRangeSubsystem::ExecuteGPSEvent`.
+`GPS` events configure spoofing regions and jamming sources on the global GPS constellation. They ignore `Target` and `Assets` — the only relevant fields are `Time`, `Repeat`, `Interval`, and `Data`.
 
 `Data.Type` selects the sub-mode and is **required**:
 
@@ -452,7 +450,7 @@ When `Clear On Reset` is `true`:
 
 ### Canonical `Cyber` examples
 
-Templates are shipped in `Plugins/SpaceRange/Resources/Events/Cyber.json`.
+Templates are available from Studio **Add Event → Cyber**.
 
 #### ASCII patch on Ping (APID 100)
 
@@ -520,6 +518,4 @@ Templates are shipped in `Plugins/SpaceRange/Resources/Events/Cyber.json`.
 
 - [`questions.md`](./questions.md) — define what teams have to figure out about your events.
 - [`components.md`](./components.md) — class-alias table for `Target` strings.
-- `studio/Plugins/SpaceRange/Resources/Events/Spacecraft.json` — canonical Spacecraft event templates (also surfaced in admin UI).
-- `studio/Plugins/SpaceRange/Resources/Events/GPS.json` — canonical GPS event templates.
-- `studio/Plugins/SpaceRange/Resources/Events/Cyber.json` — canonical Cyber telemetry tamper templates.
+- Studio **Add Event** menu — canonical Spacecraft, GPS, and Cyber templates to copy from.

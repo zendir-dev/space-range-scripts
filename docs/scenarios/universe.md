@@ -1,6 +1,6 @@
 # `universe` — environment toggles
 
-The `universe` block toggles environment systems and tunes a few visual parameters. It maps to `FUniverseDefinition` in `studio/Plugins/SpaceRange/Source/SpaceRange/Public/Definitions/UniverseDefinition.h`, parsed by `UniverseDefinitionFromJson` in `SpaceRangeDefinitionFunctionLibrary.cpp`.
+The `universe` block toggles environment systems and tunes a few visual parameters.
 
 ```json
 "universe": {

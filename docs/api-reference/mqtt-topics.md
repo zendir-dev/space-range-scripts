@@ -1,6 +1,6 @@
 # MQTT Topics
 
-Every public Space Range interaction is one of seven MQTT topics. This page is the canonical map: what each topic is for, who publishes/subscribes, the payload shape, and the encryption layer applied.
+Every public Space Range interaction uses a small set of MQTT topics under `Zendir/SpaceRange/<GAME>/`. This page is the canonical map: what each topic is for, who publishes/subscribes, the payload shape, and the encryption layer applied.
 
 All topics are rooted at `Zendir/SpaceRange/<GAME>/...` where `<GAME>` is the game name configured in Studio (case-significant; copy it exactly as the instructor gave it).
 
@@ -11,6 +11,7 @@ All topics are rooted at `Zendir/SpaceRange/<GAME>/...` where `<GAME>` is the ga
 | Topic | Direction | Payload | Encryption |
 | --- | --- | --- | --- |
 | `Zendir/SpaceRange/<GAME>/Session` | Studio → all | JSON (ASCII) | **none** |
+| `Zendir/SpaceRange/<GAME>/Info` | Studio → all | JSON (ASCII) | **none** |
 | `Zendir/SpaceRange/<GAME>/<TEAM>/Uplink` | Client → Studio | JSON command envelope | XOR(team password) |
 | `Zendir/SpaceRange/<GAME>/<TEAM>/Downlink` | Studio → client | 5-byte header + Caesar-encoded body | XOR(team password) — Caesar layer inside |
 | `Zendir/SpaceRange/<GAME>/<TEAM>/Request` | Client → Studio | JSON request envelope | XOR(team password) |
@@ -35,12 +36,29 @@ Zendir/SpaceRange/<GAME>/Session
 
 - **Direction:** Studio → all.
 - **Encryption:** None.
-- **Cadence:** ~3 Hz while the simulation is running.
-- **Payload:** Plain ASCII JSON.
+- **Cadence:** ~every 0.3 s of real time (~3.3 Hz) while Studio is connected.
+- **Payload:** Plain ASCII JSON (`timestamp`, `time`, `utc`, `instance`, `state`).
 
-The simulation clock and instance ID. The only public topic that is **not** encrypted, because it carries no team-specific information. Used by every client to drive its own clock and to detect scenario resets via the `instance` field.
+The simulation clock, state (`running` / `standby` / `paused` / `ended`), and instance ID. The only public topic that is **not** encrypted. Clients use `time` for scheduling, `state` to know whether the sim is advancing, and `instance` to detect resets. The legacy `running` boolean is deprecated — use `state`.
 
 → Full reference: [Session stream](session-stream.md).
+
+---
+
+## Info
+
+```text
+Zendir/SpaceRange/<GAME>/Info
+```
+
+- **Direction:** Studio → all.
+- **Encryption:** None.
+- **Cadence:** Event-driven (game metadata, roster, or score changes only).
+- **Payload:** Plain ASCII JSON (`game`, `teams[]` with stringified score objects).
+
+Scenario title, duration, team colours, and live **correct** / **incorrect** point totals for scoreboards. The latest message stays on the topic for late subscribers.
+
+→ Full reference: [Info stream](info-stream.md).
 
 ---
 
@@ -191,6 +209,7 @@ For a single team operator, the minimum viable subscription set is:
 
 ```text
 Zendir/SpaceRange/<GAME>/Session
+Zendir/SpaceRange/<GAME>/Info
 Zendir/SpaceRange/<GAME>/<TEAM>/Downlink
 Zendir/SpaceRange/<GAME>/<TEAM>/Response
 ```
@@ -201,6 +220,7 @@ For an admin client:
 
 ```text
 Zendir/SpaceRange/<GAME>/Session
+Zendir/SpaceRange/<GAME>/Info
 Zendir/SpaceRange/<GAME>/Admin/Response
 ```
 
@@ -224,6 +244,7 @@ In production, keep subscriptions narrow — broker traffic is per-subscription 
 ## Next
 
 - [Session stream](session-stream.md) — the unencrypted clock topic in detail.
+- [Info stream](info-stream.md) — game metadata and team scores.
 - [Spacecraft commands](spacecraft-commands.md) — every uplink command type.
 - [Ground requests](ground-requests.md) — every team request type.
 - [Admin requests](admin-requests.md) — every admin request type.

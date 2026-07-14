@@ -74,8 +74,9 @@ Space Range emits two distinct Message types out of the box:
 | --- | --- | --- |
 | **Ping** | Periodically (cadence is a per-spacecraft setting), and on demand via the `downlink` command with `ping=true`. | `Ping` |
 | **Schedule Report** | In response to the [`get_schedule`](../api-reference/spacecraft-commands.md#get_schedule) command. | `ScheduleReport` |
+| **Configuration Report** | After [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration), or automatically after [`power_bus`](../api-reference/spacecraft-commands.md#power_bus) / [`fuel_bus`](../api-reference/spacecraft-commands.md#fuel_bus) / [`guidance`](../api-reference/spacecraft-commands.md#guidance) / [`camera`](../api-reference/spacecraft-commands.md#camera) / [`capture`](../api-reference/spacecraft-commands.md#capture), when there is configuration to report. | `ConfigurationReport` |
 
-Both ride the same path and are demultiplexed on the client side using the **APID** field of the Space Packet primary header. The XTCE schema tells you which APID corresponds to which message.
+All ride the same path and are demultiplexed on the client side using the **APID** field of the Space Packet primary header. The XTCE schema tells you which APID corresponds to which message.
 
 ### Ping
 
@@ -104,6 +105,18 @@ A Schedule Report is a one-shot dump of the spacecraft's current pending command
 A Schedule Report is generated only in direct response to [`get_schedule`](../api-reference/spacecraft-commands.md#get_schedule). It is not periodic.
 
 > **The `Commands` field is a JSON-encoded string, not a JSON array.** Both Ping and Schedule Report deliver their command lists as a string field whose contents are valid JSON. After XTCE-parsing the packet, you must call `JSON.parse(packet.Commands)` (or equivalent) to access the array. This is a deliberate choice that keeps the XTCE schema fixed-size and lets the JSON grow.
+
+### Configuration Report
+
+A Configuration Report is a one-shot snapshot of **session-mutable operator configuration** — values operators can change during the exercise (power bus settings, guidance pointing modes, etc.), not static scenario `data` or live simulation telemetry. Fields:
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `Data` | string (JSON) | Configuration snapshot. May include `power`, `computer` (guidance), and/or `camera` (imager settings), depending on `scope`. Defaults to `"{}"`. |
+
+A Configuration Report is generated after [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration) or automatically after a successful [`power_bus`](../api-reference/spacecraft-commands.md#power_bus), [`fuel_bus`](../api-reference/spacecraft-commands.md#fuel_bus), [`guidance`](../api-reference/spacecraft-commands.md#guidance), [`camera`](../api-reference/spacecraft-commands.md#camera), or [`capture`](../api-reference/spacecraft-commands.md#capture) command, and **only when** the requested scope has data to report. If nothing matches, no packet is sent.
+
+> **`Data` is a JSON-encoded string, not a nested object.** After XTCE-parsing the packet, call `JSON.parse(packet.Data)` to access the snapshot (same pattern as Schedule Report `Commands`).
 
 The full binary layouts are in [Reference → Packet formats](../reference/packet-formats.md).
 

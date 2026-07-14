@@ -169,6 +169,7 @@ Each spacecraft is the most complex object in the scenario. The shape:
   "physics": { ... },
   "visualization": { ... },
   "controller": { ... },
+  "power": { ... },
   "components": [ ... ]
 }
 ```
@@ -178,9 +179,10 @@ Each spacecraft is the most complex object in the scenario. The shape:
 | `id` | Unique string referenced by `assets.collections[].space_assets`. The 8-character hex `asset_id` you see at runtime is **derived** from this. |
 | `name` | Display name. The Operator UI and ground-controller responses strip the team name prefix from this for cleanliness. |
 | `orbit` | Initial orbit (Keplerian). `values` is `[a (km), e, i (deg), Ω (deg), ω (deg), ν (deg)]`; `offset` is a small per-axis perturbation to avoid identical co-located twins. |
-| `physics` | Mass, centre-of-mass offset, and 3×3 inertia tensor. Drives attitude dynamics. |
+| `physics` | Mass, centre-of-mass, inertia tensor, and optional initial attitude / body rate. Drives attitude dynamics. |
 | `visualization` | The Unreal mesh path and scale used to render the spacecraft. `hide: true` hides it visually but keeps it simulating. |
 | `controller` | Per-spacecraft tuning (see below). |
+| `power` | Optional electrical-bus wiring between solar panels, batteries, and jammer. See [spacecraft.md — power](../scenarios/spacecraft.md#power--electrical-bus). |
 | `components` | The on-board hardware list. |
 
 #### `controller`
@@ -193,7 +195,7 @@ Each spacecraft is the most complex object in the scenario. The shape:
   "ping_interval":      20.0,
   "reset_interval":     60.0,
   "jamming_multiplier": 100.0,
-  "enable_rpo":         false
+  "enable_rpo_software":         false
 }
 ```
 
@@ -205,7 +207,17 @@ Each spacecraft is the most complex object in the scenario. The shape:
 | `ping_interval` | Sim seconds between auto-Pings. Affects how quickly teams see command acks. |
 | `reset_interval` | Sim seconds the spacecraft is offline after a `reset` (or after [`encryption`](../api-reference/spacecraft-commands.md#encryption) which causes a reboot). |
 | `jamming_multiplier` | Scales the per-watt RF interference produced by the spacecraft's jammer payload. |
-| `enable_rpo` | `true` enables [`rendezvous`](../api-reference/spacecraft-commands.md#rendezvous) and [`docking`](../api-reference/spacecraft-commands.md#docking). |
+| `enable_rpo_software` | `true` installs RPO flight software so [`rendezvous`](../api-reference/spacecraft-commands.md#rendezvous) can run. [`docking`](../api-reference/spacecraft-commands.md#docking) depends on `Docking Adapter` components, not this flag. |
+
+#### `power`
+
+Optional. The `power` object holds the on-board bus:
+
+- **`bus`** — on-board connections (`source_component`, `source_terminal`, `target_component`, `target_terminal`). Component names must match `components[].name`. Bus-capable classes include `Solar Panel`, `Battery`, `Power Switch`, `Power Fuse`, `Power Diode`, `Power Current Limiter`, `Power Voltage Regulator`, `Power Sink`, `Power Interconnect`, and payload types that participate in the bus (e.g. `Camera`, `Transmitter`). See [Power bus network components](../scenarios/components.md#power-bus-network-components). If `bus` is omitted or empty, Studio auto-connects solar panels → first battery and battery → jammer (when those parts exist).
+
+Cross-spacecraft power links (between `Power Interconnect` components on different hulls) are declared in the top-level [`docking`](../scenarios/spacecraft.md#docking-start-the-scenario-already-docked) block, not inside `power`.
+
+Full rules, restrictions, and docking guidance: [spacecraft.md — power](../scenarios/spacecraft.md#power--electrical-bus) and [Power interconnects](../scenarios/spacecraft.md#power-interconnects).
 
 #### `components[]`
 
@@ -239,11 +251,12 @@ Each entry instantiates one piece of on-board hardware. The `class` decides whic
 | `Solar Panel` | `Area` (m²), `Efficiency` (`0–1`), `Mass` |
 | `Battery` | `Nominal Capacity` (Wh), `Charge Fraction` (`0–1`), `Mass` |
 | `Reaction Wheels` | `Mass` (and class-specific torque limits in some builds) |
-| `Camera` | `Mass`. Optical settings (`fov`, `aperture`, etc.) come from the `camera` command, not config. |
+| `Camera` | `Mass`, `Sample Rate`, `Min Field Of View`, `Field Of View`, `Max Field Of View`, `Aperture`, `Focal Length`, `Focusing Distance`, `Pixel Pitch`, `Circle Of Confusion`, `Resolution`. Min/max FOV clamp operator `fov`; initial FOV and other optics can be set at load. Runtime changes sync via Configuration Report `camera[]`. |
 | `Receiver` / `Transmitter` | `Antenna Gain` (dB), `Mass` |
 | `Storage` | `Mass` (capacity scales with mass in default builds) |
 | `Jammer` | `Power` (W), `Antenna Gain` (dB), `Lookup` (RF pattern CSV file) |
 | `Computer`, `GPS Sensor`, `EM Sensor`, `Magnetometer`, `Gyroscope`, `External Force Torque` | `Mass` |
+| `Laser Range Finder` | `Operating Range`, `Range Accuracy Constant` |
 | `Docking Adapter` | `Mass`, `Half Cone Angle` (deg) |
 | `Text` | `Text` (string), `Color` (hex), `Scale`. Pure visual/labelling component. |
 

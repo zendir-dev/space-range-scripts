@@ -146,7 +146,23 @@
 					"ping_interval": 20.0,
 					"reset_interval": 60.0,
 					"jamming_multiplier": 100.0,
-					"enable_rpo": false
+					"enable_rpo_software": false
+				},
+				"power": {
+					"bus": [
+						{
+							"source_component": "Solar Panel +X",
+							"source_terminal": "out",
+							"target_component": "Battery",
+							"target_terminal": "out"
+						},
+						{
+							"source_component": "Solar Panel -X",
+							"source_terminal": "out",
+							"target_component": "Battery",
+							"target_terminal": "out"
+						}
+					]
 				},
 				"components": [
 					{
@@ -252,7 +268,11 @@
 							0.0
 						],
 						"data": {
-							"Mass": 5.0
+							"Mass": 5.0,
+							"Resolution": [
+								1024,
+								1024
+							]
 						}
 					},
 					{
@@ -408,7 +428,10 @@
 					"ping_interval": 20.0,
 					"reset_interval": 60.0,
 					"jamming_multiplier": 100.0,
-					"enable_rpo": true
+					"enable_rpo_software": true
+				},
+				"power": {
+					"bus": []
 				},
 				"components": [
 					{
@@ -799,9 +822,7 @@
 			"Interval": 1.0,
 			"Type": "Spacecraft",
 			"Target": "Battery-IntermittentConnectionErrorModel",
-			"Assets": [
-
-			],
+			"Assets": [],
 			"Data": {
 				"Intermittent Mean": 1,
 				"Intermittent Std": 2
@@ -810,7 +831,7 @@
 	],
 	"questions": [
 		{
-			"section": "Red Sea (Counter‑Piracy)",
+			"section": "Red Sea (Counter-Piracy)",
 			"title": "How many commercial vessels in the Straight?",
 			"description": "The commercial vessels are represented by the large green ships located in the Bab el-Mandeb Straight. How many commercial vessels can you count in the straight?",
 			"type": "number",
@@ -821,7 +842,7 @@
 			}
 		},
 		{
-			"section": "Red Sea (Counter‑Piracy)",
+			"section": "Red Sea (Counter-Piracy)",
 			"title": "How many vessels are currently damaged?",
 			"description": "From the fleet, identified by the large green ships located in the Bab el-Mandeb Straight, how many have been stationary for at least one orbit?",
 			"type": "number",
@@ -832,7 +853,7 @@
 			}
 		},
 		{
-			"section": "Red Sea (Counter‑Piracy)",
+			"section": "Red Sea (Counter-Piracy)",
 			"title": "Identify the destructive vessel",
 			"description": "Which non-green colored ship do you suspect to be a bad actor that may have caused the damage to the green shipping line in the straight?",
 			"type": "select",
@@ -844,12 +865,7 @@
 					"Yellow"
 				],
 				"value": 3,
-				"reason": [
-					"Its Yellow, the only ship hovering near the damaged ships in the straight",
-					"Its Yellow, the only ship hovering near the damaged ships in the straight",
-					"Its Yellow, the only ship hovering near the damaged ships in the straight",
-					"Its Yellow, the only ship hovering near the damaged ships in the straight"
-				],
+				"reason": "Its Yellow, the only ship hovering near the damaged ships in the straight",
 				"score": 8
 			}
 		},
@@ -904,9 +920,7 @@
 					"Uplink Jamming"
 				],
 				"value": 1,
-				"reason": [
-					"The downlink communication link has a low signal-to-noise ratio causing data loss, which is consistent with a jamming attack on the downlink frequency."
-				],
+				"reason": "The downlink communication link has a low signal-to-noise ratio causing data loss, which is consistent with a jamming attack on the downlink frequency.",
 				"score": 2
 			}
 		},
@@ -928,9 +942,7 @@
 				"value": [
 					6
 				],
-				"reason": [
-					"Downlink jamming occured over the Dubai and Easter Island ground stations, as evidenced by the low signal to noise ratio and data loss observed in the telemetry data received from those stations."
-				],
+				"reason": "Downlink jamming occured over the Dubai and Easter Island ground stations, as evidenced by the low signal to noise ratio and data loss observed in the telemetry data received from those stations.",
 				"score": 4
 			}
 		},
@@ -947,9 +959,7 @@
 					"Frequency Hopping"
 				],
 				"value": 3,
-				"reason": [
-					"Frequency hopping can be used to mitigate the effects of downlink jamming by rapidly switching the communication frequency to avoid the interference, allowing the spacecraft to restore normal operations and maintain communication with ground stations."
-				],
+				"reason": "Frequency hopping can be used to mitigate the effects of downlink jamming by rapidly switching the communication frequency to avoid the interference, allowing the spacecraft to restore normal operations and maintain communication with ground stations.",
 				"score": 2
 			}
 		},
@@ -1007,9 +1017,7 @@
 					"Transmitter"
 				],
 				"value": 0,
-				"reason": [
-					"The battery component started producing power spikes half-way through the mission. This could be fixed with a simple reset."
-				],
+				"reason": "The battery component started producing power spikes half-way through the mission. This could be fixed with a simple reset.",
 				"score": 5
 			}
 		},

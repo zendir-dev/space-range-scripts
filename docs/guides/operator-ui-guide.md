@@ -83,6 +83,8 @@ Forms surfaced (one panel each):
 | **Thruster** | [`thrust`](../api-reference/spacecraft-commands.md#thrust) | Burn config. Only shown if a thruster is present. |
 | **Rendezvous** | [`rendezvous`](../api-reference/spacecraft-commands.md#rendezvous) | Target asset selection. Only shown if RPO is enabled and ≥2 assets exist. |
 | **Docking** | [`docking`](../api-reference/spacecraft-commands.md#docking) | Phases of docking. Requires a docking adapter and RPO. |
+| **Power Bus Configuration** | [`power_bus`](../api-reference/spacecraft-commands.md#power_bus) + [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration) | Switches, fuses, limiters, regulators, and loads by bus branch. Shown when the asset has a switch, limiter, regulator, fuse, or diode. See [Power Bus Configuration](#power-bus-configuration) below. |
+| **Fuel Bus Configuration** | [`fuel_bus`](../api-reference/spacecraft-commands.md#fuel_bus) + [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration) | Valves and pumps on the propellant network. Shown when the asset has a valve or pump. See [Fuel Bus Configuration](#fuel-bus-configuration) below. |
 
 Every form has the same submit pattern:
 
@@ -92,6 +94,119 @@ Every form has the same submit pattern:
 4. Watch the response in **Log** ("Sent" entry) and the next Ping in **Data** for the execution result.
 
 Forms only show fields the API supports; if you can't find a knob in the UI, it's because the wire API doesn't accept it. Drop to a custom client if you need something niche.
+
+---
+
+## Power Bus Configuration
+
+The **Power Bus Configuration** panel (under **Control**) edits session-mutable bus configuration — switch open/closed, current limits, and regulation voltage. **Fuse** rows show the trip current (A) read-only from the scenario; operators can **Reset** a blown fuse but cannot change the threshold from this panel. **Load** rows show nominal power (W) read-only. The panel appears only when the asset includes at least one **Power Switch**, **Power Current Limiter**, **Power Voltage Regulator**, **Power Fuse**, or **Power Diode** (from [`list_entity`](../api-reference/ground-requests.md#list_entity)). It does **not** show static scenario `data` (like `Mass` or `Resistance`) or live simulation telemetry (voltages, currents, battery state of charge).
+
+### How state is loaded
+
+1. When the scenario first loads component data for an asset ([`list_entity`](../api-reference/ground-requests.md#list_entity)), the UI automatically uplinks [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration) with no `scope` (power_bus + fuel_bus + computer + camera, once per asset per session).
+2. The spacecraft replies with a **Configuration Report** (APID 102) on Downlink when RF allows.
+3. The UI stores the parsed snapshot per asset and fills the Power Bus controls from that buffer.
+
+Until the first report arrives, controls show type defaults (e.g. switches closed, limiter at 5 A). After a report lands, values reflect the spacecraft.
+
+### Multi-operator sync
+
+Every operator on the team subscribes to the same **Downlink** topic. When any operator's Configuration Report is downlinked, **all** connected UIs update their local buffer and refresh unchanged controls.
+
+- **Refresh** (sync icon in the panel header) — sends `get_configuration` with `scope: "power_bus"` for the selected asset.
+- **Update Bus** — sends one [`power_bus`](../api-reference/spacecraft-commands.md#power_bus) command with a `values` array (one entry per changed component). The spacecraft automatically downlinks a Configuration Report for `scope: "power_bus"` so other operators pick up the new state on the next pass.
+- **Reset** (fuse rows only) — enabled when `Is Fuse Blown` is true; sends `power_bus` with `action: "reset"` (which also triggers the automatic Configuration Report). Shows a **BLOWN** label while the fuse is open. The fuse **Current Threshold** field beside Reset is read-only (display only).
+
+If you don't see updates immediately, the report may still be queued on board — trigger a [`downlink`](../api-reference/spacecraft-commands.md#downlink) or wait for auto-downlink on ping.
+
+### In-progress edits
+
+If you are actively editing a control (draft differs from the last applied value), an incoming Configuration Report **does not** overwrite that field. All other unchanged fields are updated from the report. This lets two operators work on different branches without clobbering each other's partial edits.
+
+### Wire format
+
+See [Concepts → Telemetry → Configuration Report](../concepts/telemetry.md#configuration-report) and [Reference → Packet formats → Configuration Report](../reference/packet-formats.md#configuration-report-packet).
+
+---
+
+## Fuel Bus Configuration
+
+The **Fuel Bus Configuration** panel edits valve commanded openness (0–100%) and pump on/off plus motor **Speed Input** (rad/s). Components are grouped under **Valves** and **Pumps** section headings (each section appears only when that type is present). Pump speed is disabled while the pump is off.
+
+State loading, multi-operator sync, and in-progress edit protection work the same way as [Power Bus Configuration](#power-bus-configuration):
+
+- **Refresh** — `get_configuration` with `scope: "fuel_bus"`.
+- **Update Bus** — one [`fuel_bus`](../api-reference/spacecraft-commands.md#fuel_bus) command with all pending `values[]` entries; automatic Configuration Report follows on success.
+
+---
+
+## Guidance
+
+The **Guidance Controller** panel edits the on-board ADCS pointing mode. Like Power, it syncs from the **Configuration Report** `computer` section — not from live attitude telemetry.
+
+### How state is loaded
+
+The same initial [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration) request (no `scope`) hydrates `computer.pointing` (active mode) and `computer.configs` (last-applied settings per mode). Switching pointing mode in the dropdown loads the saved `configs` entry for that mode when one exists.
+
+The spacecraft stores `computer` from **executed** [`guidance`](../api-reference/spacecraft-commands.md#guidance) command Args (component `target` names, alignment strings, per-mode fields). That snapshot is cleared when the scenario instance resets.
+
+### Multi-operator sync
+
+After any operator's **executed** [`guidance`](../api-reference/spacecraft-commands.md#guidance) command succeeds, the spacecraft automatically downlinks a Configuration Report (`scope: "computer"`). All UIs merge the new `computer` snapshot.
+
+Scheduled guidance that has not yet run does **not** update `computer` configuration until it executes.
+
+### In-progress edits
+
+Same rule as Power: if your draft differs from the last applied snapshot, incoming reports update `configs` for other modes but leave your active draft fields alone until you match the applied state again.
+
+### Target component selection
+
+The **Target Component** dropdown is filtered by **Pointing Mode**, using flags from [`list_entity`](../api-reference/ground-requests.md#list_entity):
+
+| Pointing mode | Components offered |
+| --- | --- |
+| **Inertial** | All on-board components |
+| **Sun** | **`Solar Panel`** class only |
+| **Velocity**, **Nadir**, **Ground**, **Location** | Components with **`is_sensor`** or **`is_antenna`** (sensors, cameras, LRFs, receivers, transmitters, etc.) |
+| **Relative** | Components with **`is_sensor`** or **`is_antenna`**, **or** **`Docking Adapter`** class |
+
+If no components match the filter, the dropdown shows *No eligible components*. Switching mode re-selects the first valid entry when the current choice is no longer allowed. When a mode has no saved target in the Configuration Report, **Nadir**, **Ground**, **Location**, and **Relative** default to the first **`is_imager`** component in the filtered list (then name match on “camera”, then the first eligible component).
+
+### Relative mode
+
+When **Pointing Mode** is **Relative**, the panel adds:
+
+- **Spacecraft** — asset ID of another team spacecraft to point toward (same value as the `spacecraft` guidance argument).
+- **Aim Component** — optional dropdown of **all** components on the selected target spacecraft (from [`list_entity`](../api-reference/ground-requests.md#list_entity); no type filter). **None** omits `component` and aims at the target spacecraft origin. Choosing a component sends its name as `component`; the on-board controller offsets the aim point by that component's body-frame position on the target hull.
+
+The target component list is populated from cached `list_entity` data for the selected spacecraft. If the dropdown is empty, ensure entity lists have been received for that asset (they load when you join or when components are refreshed).
+
+### Rendezvous
+
+The **Rendezvous Maneuver** panel uses the same optional **Aim Component** pattern as relative guidance: it names a component on the **target** spacecraft so the LVLH hold is anchored on that hardware instead of the target origin. The LVLH `offset` values are applied on top of that anchor. **None** omits `component`.
+
+---
+
+## Camera
+
+The **Camera Capture** panel configures imager optics and triggers [`capture`](../api-reference/spacecraft-commands.md#capture). It syncs from the Configuration Report `camera` section.
+
+### How state is loaded
+
+The initial [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration) request hydrates per-imager entries in `camera[]`. Switching **Camera Unit** loads the saved `configuration` for that component when one exists.
+
+Each entry includes **`min_field_of_view`** and **`max_field_of_view`** (from scenario `Min Field Of View` / `Max Field Of View` on that camera). The **Field of View** slider is clamped to that range; capture is disabled if FOV is outside it.
+
+Stored operator settings (`fov`, `resolution`, `aperture`, …) come from executed [`camera`](../api-reference/spacecraft-commands.md#camera) / [`capture`](../api-reference/spacecraft-commands.md#capture) Args. Cleared on scenario reset.
+
+### Multi-operator sync
+
+After any operator's **Capture Image** (or standalone `camera` command), the spacecraft downlinks a Configuration Report (`scope: "camera"`). All UIs merge the new `camera` snapshot.
+
+### In-progress edits
+
+Same draft≠applied rule as Power and Guidance: local field edits are preserved until they match the last applied snapshot.
 
 ---
 
@@ -118,7 +233,7 @@ The view shows pending commands only. Commands that have already executed appear
 
 ## Plot
 
-Time-series plots of selected telemetry fields. Most useful in long scenarios.
+Time-series plots of selected telemetry fields. Most useful in long scenarios. **Schedule Report** (APID 101) and **Configuration Report** (APID 102) are excluded — they are one-shot operator snapshots, not periodic telemetry trends.
 
 - **Left rail** — pick fields to plot. Fields are categorised by component (Battery, Reaction Wheels, Receiver, …) and supports multi-select. Up to 8 series at once is comfortable.
 - **Centre** — chart with shared time axis. Auto-scrolls during live play; freeze with the pause button to inspect history.

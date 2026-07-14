@@ -51,7 +51,8 @@ All topics are rooted at `Zendir/SpaceRange/<GAME>/...`, where `<GAME>` is the g
 
 | Direction | Topic | Encrypted with | Purpose |
 | --- | --- | --- | --- |
-| Studio → all | `Zendir/SpaceRange/<GAME>/Session` | none | Simulation clock and instance ID. |
+| Studio → all | `Zendir/SpaceRange/<GAME>/Session` | none | Simulation clock (`time`, `utc`), real-time `timestamp`, `state`, and `instance` ID (~0.3 s cadence). |
+| Studio → all | `Zendir/SpaceRange/<GAME>/Info` | none | Game metadata and team scores (event-driven). |
 | Client → Studio | `Zendir/SpaceRange/<GAME>/<TEAM>/Uplink` | XOR(team password) | Spacecraft commands. |
 | Studio → client | `Zendir/SpaceRange/<GAME>/<TEAM>/Downlink` | XOR(team password) | RF-realistic telemetry packets (Caesar cipher inside). |
 | Client → Studio | `Zendir/SpaceRange/<GAME>/<TEAM>/Request` | XOR(team password) | Ground controller requests. |

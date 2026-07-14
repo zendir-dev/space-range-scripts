@@ -61,6 +61,10 @@ Communications
 Maintenance
 : [`reset`](#reset) — reboot a malfunctioning component.
 
+Power bus
+: [`power_bus`](#power_bus) — set switch state, fuse threshold, limiter, regulator, or load power; [`fuel_bus`](#fuel_bus) — valve and pump state.
+: [`get_configuration`](#get_configuration) — read back session-mutable operator settings (power bus + guidance; Configuration Report).
+
 Propulsion
 : [`thrust`](#thrust) — fire a thruster for a duration.
 
@@ -97,7 +101,7 @@ Sets the spacecraft's pointing mode through the on-board ADCS. Each `pointing` v
 | Argument | Default | Range / Values | Unit | Description |
 | --- | --- | --- | --- | --- |
 | `pointing` | `inertial` | `inertial`, `velocity`, `sun`, `nadir`, `ground`, `location`, `relative`, `idle` | — | Pointing law to engage. `idle` disables the controller and stops drawing reaction-wheel torque. Any unrecognised value also falls through to `idle`. |
-| `target` | _(spacecraft body)_ | component name | — | Component on the spacecraft whose face should align with the pointing direction. Case-insensitive match against the spacecraft's component list (see [`list_entity`](ground-requests.md#list_entity)). If omitted, the alignment is interpreted in the spacecraft body frame. |
+| `target` | _(spacecraft body)_ | component name | — | Component on the spacecraft whose face should align with the pointing direction. Case-insensitive match against the spacecraft's component list (see [`list_entity`](ground-requests.md#list_entity)). If omitted, the alignment is interpreted in the spacecraft body frame. The Operator UI limits eligible `target` values by `pointing` mode (see below); the on-board controller accepts any valid component name. |
 | `alignment` | `+z` | `+x`, `-x`, `+y`, `-y`, `+z`, `-z` | — | Which axis of the `target` to point along the pointing direction. Most components (cameras, panels, antennas) have their working face on `+z`. |
 
 ### Args by `pointing` mode
@@ -138,11 +142,27 @@ Sets the spacecraft's pointing mode through the on-board ADCS. Each `pointing` v
 | Argument | Default | Description |
 | --- | --- | --- |
 | `spacecraft` | _(none)_ | Asset ID of another spacecraft in the simulation. If the ID does not resolve, the controller engages but holds its current target. |
+| `component` | _(none)_ | Optional **name** of a hardware component on the **target** spacecraft (`spacecraft`). Same naming as [`list_entity`](ground-requests.md#list_entity) / local `target`. Omit, leave empty, or set to `none` to aim at the target spacecraft origin. When set to a valid component on the target hull, the controller applies that component's body-frame position (`GetPosition_LB_B()`, metres) as a target offset before slewing. If the name does not resolve, the offset is treated as `(0, 0, 0)`. In the Operator UI, **Aim Component** lists all components on the target spacecraft (no type filter). |
+
+### Eligible `target` components (Operator UI)
+
+The **Guidance Controller** panel filters the **Target Component** dropdown by pointing mode. Custom clients may use the same rules with [`list_entity`](ground-requests.md#list_entity) flags:
+
+| `pointing` | Eligible components |
+| --- | --- |
+| `inertial` | All components |
+| `sun` | `class` is **`Solar Panel`** |
+| `velocity`, `nadir`, `ground`, `location` | `is_sensor` **or** `is_antenna` is `true` |
+| `relative` | `is_sensor` **or** `is_antenna` is `true`, **or** `class` is **`Docking Adapter`** |
+
+In **`relative`** mode, **Aim Component** on the target spacecraft is **not** filtered — any component from [`list_entity`](ground-requests.md#list_entity) may be chosen.
 
 ### Notes
 
 - After `idle`, the spacecraft will drift; nothing will resist disturbance torques. Re-issue a non-idle `guidance` command to take control again.
 - Switching modes is instantaneous in the controller, but the spacecraft physically slews under the dynamics of its reaction wheels and inertia. Allow time before issuing a [`capture`](#capture).
+- After a successful `guidance` command, the spacecraft automatically queues a Configuration Report with `scope: "computer"` so other operators can sync guidance settings. See [`get_configuration`](#get_configuration).
+- The spacecraft stores the `computer` section from **executed** guidance Args (component `target` names, alignment strings, per-mode fields). It is not reverse-engineered from on-board guidance message objects. Stored guidance configuration is cleared when the scenario instance resets.
 
 ---
 
@@ -199,13 +219,14 @@ Configures a camera on the spacecraft. This does **not** capture an image (unles
 | `focusing_distance` | `4.0` | `0.0 … 1000000.0` | m | Distance to the in-focus plane. Use the approximate range to your imaging target. |
 | `aperture` | `1.0` | `0.0 … 1000.0` | mm | Lens diameter. Larger = brighter image and wider FOV. |
 | `focal_length` | `100.0` | `0.0 … 1000.0` | mm | Distance from nodal point to sensor. Longer = narrower FOV. |
-| `fov` | `60.0` | `0.01 … 150.0` | deg | Field of view, used together with focal length and aperture for the projected image. |
+| `fov` | `60.0` | per-camera | deg | Field of view. Must be within **`[min_field_of_view, max_field_of_view]`** for the target imager. Those limits come from scenario `data` (`Min Field Of View` / `Max Field Of View` on the component) and default to `0 … 180°` when omitted. See [components.md — Camera](../scenarios/components.md#camera-optical-camera--heatmap-camera-infrared). |
 | `sample` | `false` | `true`, `false` | — | Capture and downlink a 32×32 preview on the next Ping. Useful for confirming the optics without committing to a full image. |
 
 ### Notes
 
 - The configuration sticks until the next `camera` command — multiple `capture` calls can share the same setup.
 - An imager with `monochromatic = true` followed by a colour `capture` returns greyscale; the capture command does not override imaging mode.
+- After a successful `camera` command, the spacecraft automatically queues a Configuration Report with `scope: "camera"`. [`capture`](#capture) does the same (it configures the imager before storing the image).
 
 ---
 
@@ -224,13 +245,14 @@ Captures a still image with a previously configured camera and stores it in the 
 
 | Argument | Default | Description |
 | --- | --- | --- |
-| `target` | _(none)_ | Camera component to capture from (case-insensitive). Must be the same kind of imager as configured by [`camera`](#camera). |
+| `target` | _(none)_ | Camera component to capture from (case-insensitive). Must be the same kind of imager as configured by [`camera`](#camera). Capture also applies any imaging Args in the same payload before storing the image. |
 | `name` | `image` | Image label. Stored in the **first 50 bytes** of the image data as ASCII; longer names are truncated, shorter names are padded. The remaining bytes are the JPEG payload. |
 
 ### Notes
 
 - The image is not downlinked automatically. Send a [`downlink`](#downlink) (or pre-arm with `ping = true`) to get it to the ground.
 - If the spacecraft is not pointed correctly, the resulting image will be of empty space. Use a [`guidance`](#guidance) ahead of the capture and allow time for the slew.
+- Capture accepts the same imaging Args as [`camera`](#camera) (resolution, `fov`, etc.) and configures the imager before storing the frame. After success, a Configuration Report (`scope: "camera"`) is queued automatically.
 
 ---
 
@@ -397,17 +419,18 @@ Engages a perch-mode hold relative to another spacecraft. The chaser holds a fix
 | `target` | _(none)_ | asset ID | — | The spacecraft to perch relative to. The LVLH frame is anchored on this target. |
 | `active` | `false` | `true`, `false` | — | `true` engages the controller; `false` releases it. |
 | `offset` | `[0, 0, 0]` | `[-10000, 10000]` per axis | m | Desired `[X, Y, Z]` offset in the target's LVLH frame. |
+| `component` | _(none)_ | component name | — | Optional **name** of a hardware component on the **target** spacecraft (`target`). Same naming as [`list_entity`](ground-requests.md#list_entity). Omit, leave empty, or set to `none` to hold relative to the target spacecraft origin. When set to a valid component on the target hull, the controller applies that component's body-frame position (`GetPosition_LB_B()`, metres) as the LVLH anchor offset before applying `offset`. If the name does not resolve, the anchor offset is treated as `(0, 0, 0)`. Each chaser spacecraft owns its own target ephemeris translator, so multiple chasers can hold on the same target with different component anchors. |
 
 ### Notes
 
-- The spacecraft must have RPO enabled in the scenario. If `rpo_enabled` is `false` in [`list_assets`](ground-requests.md#list_assets), the command is silently ignored.
+- The spacecraft must have RPO flight software enabled in the scenario. If `rpo_software_enabled` is `false` in [`list_assets`](ground-requests.md#list_assets), the command is silently ignored.
 - The maneuver uses the spacecraft's existing thrusters/control authority — bring fuel.
 
 ---
 
 ## `docking`
 
-Initiates or releases a docking with another team's spacecraft. The current spacecraft must have at least one Docking Adapter component and RPO must be enabled. Docking only completes once the two spacecraft are physically close enough — the command sets the target; the simulation does the connection.
+Initiates or releases a docking with another spacecraft (a team craft or a neutral hub). The current spacecraft must have at least one Docking Adapter component. Docking only completes once the two spacecraft are physically close enough — the command sets the target; the simulation does the connection. Undocking (`dock: false`) releases with a **separation impulse** so the two craft gently push apart.
 
 ```json
 {
@@ -432,6 +455,9 @@ Initiates or releases a docking with another team's spacecraft. The current spac
 
 - Plan your approach with [`rendezvous`](#rendezvous) first. The docking command sets intent; physics handles capture.
 - Once docked, both spacecraft become rigidly attached until an explicit `dock = false` is issued.
+- Undocking applies a separation impulse along the docking axis. The push is governed by the `Separation Force` (N) and `Separation Duration` (s) values on the **chaser's Docking Adapter** component (set in the scenario `data`; default 100 N over 0.5 s — the RPO scenario uses 1.0 s). See [components](../scenarios/components.md).
+- The live docked/undocked state, and which target/port a craft is docked to, is reported via [`get_configuration`](#get_configuration) (`docking` section) and pushed automatically whenever it changes. The Operator UI uses this to pre-fill and lock the docking controls.
+- Spacecraft can also **start the scenario already docked** — see the scenario [`docking`](../scenarios/spacecraft.md#docking-start-the-scenario-already-docked) block.
 
 ---
 
@@ -454,6 +480,302 @@ No arguments are read.
 
 - The reply is delivered via the normal Downlink path, so it's subject to RF availability. If you don't see one, you may need to wait for a pass or downlink window.
 - Sensitive `Args` (passwords, etc.) are redacted in the report.
+
+---
+
+## `power_bus`
+
+Sets session-mutable values and imperative actions on power-bus components. Targets are matched by **component name** (case-insensitive), same as [`list_entity`](ground-requests.md#list_entity).
+
+Every `power_bus` command uses a single `values` array. Each element describes **one** component change:
+
+| Field (per entry) | Description |
+| --- | --- |
+| `type` | Component family (`switch`, `fuse`, `current_limiter`, `voltage_regulator`, `load`). |
+| `action` | Verb for that family (`configure`, `reset`, …). |
+| `target` | Component name. |
+| *(configure only)* | One type-specific parameter key (see registry below). Additional keys may be added per type in future. |
+
+Send **one** uplink per logical operation (e.g. one **Update Bus** with every pending change). Entries are applied **in array order** (first to last). Invalid entries are skipped silently; duplicate `target` entries — last wins. An empty or missing `values` array is a silent no-op.
+
+### Example — multiple changes in one command
+
+```json
+{
+  "Asset": "A3F2C014",
+  "Command": "power_bus",
+  "Time": 0,
+  "Args": {
+    "values": [
+      {
+        "type": "switch",
+        "action": "configure",
+        "target": "EPS Switch",
+        "state": false
+      },
+      {
+        "type": "fuse",
+        "action": "configure",
+        "target": "EPS Fuse",
+        "current_threshold": 50.0
+      },
+      {
+        "type": "current_limiter",
+        "action": "configure",
+        "target": "Camera Limiter",
+        "current_limit": 2.3
+      },
+      {
+        "type": "voltage_regulator",
+        "action": "configure",
+        "target": "Camera Regulator",
+        "regulation_voltage": 12.0
+      },
+      {
+        "type": "load",
+        "action": "configure",
+        "target": "Camera Load",
+        "nominal_power": 5.7
+      }
+    ]
+  }
+}
+```
+
+### `configure` parameter keys
+
+| `type` | Parameter key | Type | Meaning | Classes |
+| --- | --- | --- | --- | --- |
+| `switch` | `state` | `bool` | `true` = open, `false` = closed | `Power Switch`, `Power Interconnect` |
+| `fuse` | `current_threshold` | `number` (A) | Over-current threshold | `Power Fuse` |
+| `current_limiter` | `current_limit` | `number` (A) | Branch current limit | `Power Current Limiter` |
+| `voltage_regulator` | `regulation_voltage` | `number` (V) | Regulation set-point | `Power Voltage Regulator` |
+| `load` | `nominal_power` | `number` (W) | Nominal load power | `Power Sink` |
+
+### `reset` actions
+
+**Fuse reset** — manually clear a blown fuse (no-op if the fuse is not blown):
+
+```json
+{
+  "Asset": "A3F2C014",
+  "Command": "power_bus",
+  "Time": 0,
+  "Args": {
+    "values": [
+      {
+        "type": "fuse",
+        "action": "reset",
+        "target": "EPS Fuse"
+      }
+    ]
+  }
+}
+```
+
+This is separate from **auto-reset** (`Reset Duration` in scenario `data`), which the simulation handles when current drops.
+
+After a successful `power_bus` command, the spacecraft **automatically** queues a Configuration Report for `scope: "power_bus"` (same as [`get_configuration`](#get_configuration) with that scope). Scripts and other clients can also call `get_configuration` explicitly. The Operator UI still uses **Refresh** for on-demand sync and requests an initial snapshot when components are first loaded.
+
+Python helpers: `commands.power_bus_configure_values(...)`, `commands.power_bus_configure(...)`, `commands.power_bus_fuse_reset(...)` in [`src/commands.py`](../src/commands.py).
+
+---
+
+## `fuel_bus`
+
+Sets session-mutable values on fuel-bus components (valves and pumps). Same `values[]` batching model as [`power_bus`](#power_bus).
+
+```json
+{
+  "Asset": "A3F2C014",
+  "Command": "fuel_bus",
+  "Time": 0,
+  "Args": {
+    "values": [
+      {
+        "type": "valve",
+        "action": "configure",
+        "target": "Main Valve",
+        "commanded_percent_open": 1.0
+      },
+      {
+        "type": "pump",
+        "action": "configure",
+        "target": "Feed Pump",
+        "is_pump_enabled": true,
+        "speed_input": 50.0
+      }
+    ]
+  }
+}
+```
+
+### `configure` parameter keys
+
+| `type` | Parameter key | Type | Meaning | Classes |
+| --- | --- | --- | --- | --- |
+| `valve` | `commanded_percent_open` | `number` `0–1` | Target openness (`0` = closed, `1` = fully open) | `Fuel Valve` |
+| `pump` | `is_pump_enabled` | `bool` | Whether the pump is enabled | `Fuel Pump` |
+| `pump` | `speed_input` | `number` (rad/s) | Motor speed input (`SetSpeedInput`) | `Fuel Pump` |
+
+For `pump` + `configure`, include **at least one** of `is_pump_enabled` or `speed_input`. Both may be set in the same entry.
+
+### Convenience valve and pump actions
+
+| `type` | `action` | Effect |
+| --- | --- | --- |
+| `valve` | `open` | Sets `commanded_percent_open` to `1.0` |
+| `valve` | `close` | Sets `commanded_percent_open` to `0.0` |
+| `pump` | `enable` | Sets `is_pump_enabled` to `true` |
+| `pump` | `disable` | Sets `is_pump_enabled` to `false` |
+
+After a successful `fuel_bus` command, the spacecraft automatically queues a Configuration Report for `scope: "fuel_bus"`.
+
+Python helpers: `commands.fuel_bus_configure_values(...)`, `commands.fuel_bus_configure(...)` in [`src/commands.py`](../src/commands.py).
+
+---
+
+## `get_configuration`
+
+Asks the spacecraft to report **session-mutable operator configuration** — values that can change during the exercise via operator commands, not static scenario parameters (like `Mass`) and not simulation telemetry (voltages, sensor readings, battery state of charge). The spacecraft replies with a **Configuration Report** telemetry message when there is configuration to report; see [Concepts → Telemetry](../concepts/telemetry.md#configuration-report) for the wire format.
+
+```json
+{
+  "Asset": "A3F2C014",
+  "Command": "get_configuration",
+  "Time": 0,
+  "Args": {
+    "scope": "power_bus",
+    "components": ["EPS Switch"]
+  }
+}
+```
+
+| Argument | Description |
+| --- | --- |
+| `scope` | Optional filter. Omit or `"all"` → **power_bus**, **fuel_bus**, **computer**, **camera**, and **docking**. `"power_bus"`, `"fuel_bus"`, `"computer"`, `"camera"`, or `"docking"` → that section only. Unknown scopes are ignored and **no report is sent**. |
+| `components` | Optional string array (**power_bus**, **fuel_bus**, and **camera** scopes). One component = one element. Omit or `[]` for all matching components. Names are matched case-insensitively (same as `target` elsewhere). |
+
+### Report shape (`Data` JSON)
+
+```json
+{
+  "power_bus": [
+    {
+      "name": "EPS Switch",
+      "class": "Power Switch",
+      "configuration": { "Is Open": false }
+    }
+  ],
+  "fuel_bus": [
+    {
+      "name": "Main Valve",
+      "class": "Fuel Valve",
+      "configuration": { "Commanded Percent Open": 1.0, "Percent Open": 1.0 }
+    }
+  ],
+  "computer": {
+    "pointing": "nadir",
+    "configs": {
+      "inertial": {
+        "target": "Battery",
+        "alignment": "+z",
+        "pitch": 0.0,
+        "roll": 0.0,
+        "yaw": 45.0
+      },
+      "ground": {
+        "target": "Camera",
+        "alignment": "+z",
+        "station": "singapore"
+      }
+    }
+  },
+  "camera": [
+    {
+      "name": "Camera",
+      "class": "Camera",
+      "configuration": {
+        "monochromatic": false,
+        "resolution": 1024,
+        "coc": 0.03,
+        "pixel_pitch": 0.012,
+        "focusing_distance": 1000000.0,
+        "aperture": 4.0,
+        "focal_length": 100.0,
+        "fov": 60.0
+      }
+    }
+  ],
+  "docking": {
+    "adapter": "Docking Adapter",
+    "docked": true,
+    "target": "B1C2D3E4",
+    "target_component": "Docking A"
+  }
+}
+```
+
+- **`power_bus`** — array of per-component power entries (see table below).
+- **`fuel_bus`** — array of per-component fuel entries (valves and pumps).
+- **`computer`** — guidance computer operator state (stored from successful [`guidance`](#guidance) command Args, not from simulation internals):
+  - **`pointing`** — active mode (`idle`, `inertial`, `velocity`, `sun`, `nadir`, `ground`, `location`, `relative`).
+  - **`configs`** — last-applied settings **per mode** (only modes that have been configured at least once). Keys match [`guidance`](#guidance) Args for that mode (without repeating `pointing`). Includes `target` component names and normalised `alignment` strings (`+z`, `-x`, …). Switching modes in the UI can restore these saved values.
+  - Cleared to `{ "pointing": "idle", "configs": {} }` when the scenario instance resets.
+- **`camera`** — array of per-imager entries (same shape as `power[]`). Stored from successful [`camera`](#camera) / [`capture`](#capture) command Args:
+  - **`name`** / **`class`** — imager component (from [`list_entity`](ground-requests.md#list_entity); `is_imager` components).
+  - **`configuration`** — last-applied settings using [`camera`](#camera) Arg names (`monochromatic`, `resolution`, `fov`, …). **`Charge Coupled Device`** entries include `fov` only. Capture `name` (filename) and `sample` are not stored.
+  - Cleared when the scenario instance resets. Only imagers configured at least once appear.
+- **`docking`** — live docking state of this craft's docking adapter (present only when the craft has a Docking Adapter). Reflects the real simulation state, not stored command Args:
+  - **`adapter`** — name of this craft's docking adapter.
+  - **`docked`** — whether it is currently docked.
+  - **`target`** — when docked, the `asset_id` of the spacecraft it is docked to (a team craft or a neutral hub).
+  - **`target_component`** — when docked, the name of the port (Docking Adapter) on the target it is attached to.
+
+Configuration Reports are also queued automatically after successful [`power_bus`](#power_bus) (`scope: "power_bus"`), [`fuel_bus`](#fuel_bus) (`scope: "fuel_bus"`), [`guidance`](#guidance) (`scope: "computer"`), and [`camera`](#camera) / [`capture`](#capture) (`scope: "camera"`) commands. A `scope: "docking"` report is queued automatically **whenever the docking state changes** — both from a commanded [`docking`](#docking) dock/undock and from proximity capture during a close approach — so every team member sees the live docked/undocked state.
+
+### Power bus fields
+
+Only components with session-mutable configuration are included. Components with nothing to report are omitted.
+
+| Class | `configuration` fields |
+| --- | --- |
+| `Power Switch`, `Power Interconnect` | `Is Open` |
+| `Power Fuse` | `Current Threshold`, `Is Fuse Blown` |
+| `Power Current Limiter` | `Current Limit` |
+| `Power Voltage Regulator` | `Regulation Voltage` |
+| `Power Sink` | `Nominal Power` |
+
+These align with the spacecraft `power_bus` command `configure` actions (`switch`, `fuse`, `current_limiter`, `voltage_regulator`, `load`). `Is Fuse Blown` is updated by simulation and cleared by `power_bus` + `action: "reset"`.
+
+### Fuel bus fields
+
+| Class | `configuration` fields |
+| --- | --- |
+| `Fuel Valve` | `Commanded Percent Open`, `Percent Open` (actual; read-only) |
+| `Fuel Pump` | `Is Pump Enabled`, `Speed Input` (rad/s) |
+
+These align with the spacecraft `fuel_bus` command `configure` actions (`valve`, `pump`).
+
+### Notes
+
+- The reply is delivered via the normal Downlink path (RF), same as [`get_schedule`](#get_schedule).
+- If no matching components have configuration data, **no Configuration Report is sent** (silent no-op).
+- Use [`list_entity`](../api-reference/ground-requests.md#list_entity) to discover component names before filtering `components`.
+
+### Operator UI
+
+The bundled Operator UI uses this command to keep **Power Bus Configuration**, **Fuel Bus Configuration**, **Guidance**, **Camera**, and **Docking** in sync across operators:
+
+- Requests `get_configuration` (no `scope` → power_bus + fuel_bus + computer + camera + docking) once when each asset's components are first loaded (`list_entity`).
+- **Power Bus Configuration** — shown when the asset has a switch, limiter, regulator, fuse, or diode; picks up updates after each `power_bus` command; **Refresh** requests `scope: "power_bus"`.
+- **Fuel Bus Configuration** — shown when the asset has a valve or pump; picks up updates after each `fuel_bus` command; **Refresh** requests `scope: "fuel_bus"`.
+- **Guidance** — picks up updates from automatic reports after each executed `guidance` command; per-mode values in `configs` repopulate the form when switching pointing mode.
+- **Camera** — picks up updates after each `camera` / `capture`; switching imager in the dropdown restores that component's saved `configuration`.
+- **Docking** — reflects the live docked state: when docked, the target and port are shown and locked, the **Dock** button is disabled and **Undock** is enabled; when undocked, the reverse. Updates arrive automatically on any docking state change.
+- Parses APID 102 on Downlink into a per-asset buffer; see [Guides → Operator UI](../guides/operator-ui-guide.md).
+
+Python: `commands.get_configuration(scope=None)` in [`src/commands.py`](../src/commands.py) — omit `scope` for both sections.
 
 ---
 

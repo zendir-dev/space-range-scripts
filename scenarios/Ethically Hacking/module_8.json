@@ -1,0 +1,713 @@
+{
+	"metadata": {
+		"name": "Module 8",
+		"description": "Earth observation exercise over the Aegean Sea and the Tasman Sea between Australia and New Zealand. Mid-inclination LEO pass with global ground-station coverage and natural contact gaps between passes."
+	},
+	"simulation": {
+		"epoch": "2025/10/15 05:00:00",
+		"speed": 4.0,
+		"step_size": 0.12,
+		"integrator": "Euler",
+		"end_time": 9600.0
+	},
+	"universe": {
+		"atmosphere": false,
+		"magnetosphere": false,
+		"gps": true,
+		"cloud_opacity": 0.85,
+		"cloud_contrast": 2.5,
+		"ambient_light": 0.07
+	},
+	"ground_stations": {
+		"locations": [
+			"Ankara",
+			"Auckland",
+			"Bangkok",
+			"Santiago"
+		],
+		"min_elevation": 10,
+		"max_range": 0,
+		"scale": 100
+	},
+	"teams": [
+		{
+			"enabled": true,
+			"id": 473829,
+			"password": "R4K7MZ",
+			"name": "Team Blue",
+			"key": 42,
+			"frequency": 612,
+			"collection": "Main",
+			"color": "#0050FF"
+		},
+		{
+			"enabled": true,
+			"id": 916354,
+			"password": "8XTPWN",
+			"name": "Team Green",
+			"key": 87,
+			"frequency": 745,
+			"collection": "Main",
+			"color": "#00FF00"
+		},
+		{
+			"enabled": true,
+			"id": 263718,
+			"password": "5LZQVB",
+			"name": "Team Yellow",
+			"key": 154,
+			"frequency": 889,
+			"collection": "Main",
+			"color": "#FFFF00"
+		},
+		{
+			"enabled": true,
+			"id": 584927,
+			"password": "2WCF9H",
+			"name": "Team Orange",
+			"key": 203,
+			"frequency": 534,
+			"collection": "Main",
+			"color": "#FF7000"
+		},
+		{
+			"enabled": true,
+			"id": 731456,
+			"password": "N6RGYD",
+			"name": "Team Pink",
+			"key": 117,
+			"frequency": 678,
+			"collection": "Main",
+			"color": "#FF8CEC"
+		},
+		{
+			"enabled": true,
+			"id": 629540,
+			"password": "B8WNHQ",
+			"name": "Team White",
+			"key": 72,
+			"frequency": 712,
+			"collection": "Main",
+			"color": "#FFFFFF"
+		},
+		{
+			"enabled": true,
+			"id": 395082,
+			"password": "7SMXKE",
+			"name": "Team Purple",
+			"key": 29,
+			"frequency": 823,
+			"collection": "Main",
+			"color": "#8600FF"
+		},
+		{
+			"enabled": true,
+			"id": 847163,
+			"password": "4PVTZ3",
+			"name": "Team Cyan",
+			"key": 195,
+			"frequency": 561,
+			"collection": "Main",
+			"color": "#00FFFF"
+		},
+		{
+			"enabled": true,
+			"id": 152837,
+			"password": "6JCMFR",
+			"name": "Team Red",
+			"key": 238,
+			"frequency": 847,
+			"collection": "Main",
+			"color": "#FF0000"
+		}
+	],
+	"assets": {
+		"space": [
+			{
+				"id": "SC_001",
+				"name": "Microsat",
+				"orbit": {
+					"planet": "Earth",
+					"values": [
+						9500.0,
+						0.0,
+						63.0,
+						80.0,
+						0.0,
+						25.0
+					],
+					"offset": [
+						0.0,
+						0.0,
+						0.0,
+						0.0,
+						0.0,
+						0.01
+					]
+				},
+				"physics": {
+					"override_mass": true,
+					"mass": 100.0,
+					"center_of_mass": [
+						0.0,
+						0.0,
+						0.0
+					],
+					"inertia_tensor": [
+						[
+							10.0,
+							0.0,
+							0.0
+						],
+						[
+							0.0,
+							10.0,
+							0.0
+						],
+						[
+							0.0,
+							0.0,
+							10.0
+						]
+					]
+				},
+				"visualization": {
+					"mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/ZenSat/BP_Z_SC_ZenSat_Chassis",
+					"scale": 1.0,
+					"offset": [
+						0.0,
+						0.0,
+						0.12
+					]
+				},
+				"controller": {
+					"safe_fraction": 0.1,
+					"capture_tax": 0.001,
+					"downlink_tax": 0.01,
+					"ping_interval": 12.0,
+					"reset_interval": 120.0,
+					"jamming_multiplier": 100.0,
+					"enable_rpo_software": false
+				},
+				"power": {
+					"bus": [
+						{
+							"source_component": "Solar Panel +X",
+							"source_terminal": "out",
+							"target_component": "Battery",
+							"target_terminal": "out"
+						},
+						{
+							"source_component": "Solar Panel -X",
+							"source_terminal": "out",
+							"target_component": "Battery",
+							"target_terminal": "out"
+						}
+					]
+				},
+				"components": [
+					{
+						"class": "Solar Panel",
+						"name": "Solar Panel +X",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.8,
+							0.276313,
+							-0.2
+						],
+						"rotation": [
+							35.0,
+							0.0,
+							0.0
+						],
+						"scale": 1.0,
+						"data": {
+							"Area": 0.3,
+							"Efficiency": 0.4,
+							"Mass": 10.0
+						}
+					},
+					{
+						"class": "Solar Panel",
+						"name": "Solar Panel -X",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							-0.8,
+							0.276313,
+							-0.2
+						],
+						"rotation": [
+							35.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Area": 0.3,
+							"Efficiency": 0.4,
+							"Mass": 10.0
+						}
+					},
+					{
+						"class": "Reaction Wheels",
+						"name": "Reaction Wheels",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Mass": 9.0
+						}
+					},
+					{
+						"class": "Computer",
+						"name": "Computer",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Battery",
+						"name": "Battery",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Nominal Capacity": 80.0,
+							"Charge Fraction": 1.0,
+							"Mass": 5.0
+						}
+					},
+					{
+						"class": "Camera",
+						"name": "Camera",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							-0.36,
+							-0.16
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Mass": 5.0,
+							"Resolution": [
+								1024,
+								1024
+							]
+						}
+					},
+					{
+						"class": "GPS Sensor",
+						"name": "GPS Sensor",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Receiver",
+						"name": "Receiver",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							-0.36,
+							-0.16
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Antenna Gain": 3.0,
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Transmitter",
+						"name": "Transmitter",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							-0.36,
+							-0.16
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Mass": 1.0
+						}
+					},
+					{
+						"class": "Storage",
+						"name": "Storage",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							-0.2
+						],
+						"data": {
+							"Mass": 4.0
+						}
+					}
+				]
+			}
+		],
+		"collections": [
+			{
+				"id": "Main",
+				"space_assets": [
+					"SC_001"
+				]
+			}
+		]
+	},
+	"objects": {
+		"ground": [
+			{
+				"id": "GO_A01",
+				"type": "vessel",
+				"name": "Aegean Red A",
+				"planet": "Earth",
+				"latitude": 37.5,
+				"longitude": 24.5,
+				"altitude": 1,
+				"scale": 35,
+				"color": "#FF0000",
+				"data": {
+					"heading": 145.0,
+					"speed": 0.0
+				}
+			},
+			{
+				"id": "GO_A02",
+				"type": "vessel",
+				"name": "Aegean Red B",
+				"planet": "Earth",
+				"latitude": 37.2,
+				"longitude": 25.0,
+				"altitude": 1,
+				"scale": 35,
+				"color": "#FF0000",
+				"data": {
+					"heading": 160.0,
+					"speed": 0.0
+				}
+			},
+			{
+				"id": "GO_A03",
+				"type": "vessel",
+				"name": "Aegean Red C",
+				"planet": "Earth",
+				"latitude": 36.9,
+				"longitude": 25.4,
+				"altitude": 1,
+				"scale": 35,
+				"color": "#FF0000",
+				"data": {
+					"heading": 150.0,
+					"speed": 0.0
+				}
+			},
+			{
+				"id": "GO_T01",
+				"type": "vessel",
+				"name": "Tasman Orange A",
+				"planet": "Earth",
+				"latitude": -38.5,
+				"longitude": 162.0,
+				"altitude": 1,
+				"scale": 35,
+				"color": "#FF7000",
+				"data": {
+					"heading": 100.0,
+					"speed": 0.0
+				}
+			},
+			{
+				"id": "GO_T02",
+				"type": "vessel",
+				"name": "Tasman Orange B",
+				"planet": "Earth",
+				"latitude": -39.0,
+				"longitude": 163.0,
+				"altitude": 1,
+				"scale": 35,
+				"color": "#FF7000",
+				"data": {
+					"heading": 115.0,
+					"speed": 0.0
+				}
+			},
+			{
+				"id": "GO_T03",
+				"type": "vessel",
+				"name": "Tasman Orange C",
+				"planet": "Earth",
+				"latitude": -38.0,
+				"longitude": 161.5,
+				"altitude": 1,
+				"scale": 35,
+				"color": "#FF7000",
+				"data": {
+					"heading": 90.0,
+					"speed": 0.0
+				}
+			},
+			{
+				"id": "GO_T04",
+				"type": "vessel",
+				"name": "Tasman Orange D",
+				"planet": "Earth",
+				"latitude": -39.5,
+				"longitude": 164.0,
+				"altitude": 1,
+				"scale": 35,
+				"color": "#FF7000",
+				"data": {
+					"heading": 130.0,
+					"speed": 0.0
+				}
+			},
+			{
+				"id": "GO_T05",
+				"type": "vessel",
+				"name": "Tasman Orange E",
+				"planet": "Earth",
+				"latitude": -38.8,
+				"longitude": 162.5,
+				"altitude": 1,
+				"scale": 35,
+				"color": "#FF7000",
+				"data": {
+					"heading": 105.0,
+					"speed": 0.0
+				}
+			},
+			{
+				"id": "GO_T06",
+				"type": "vessel",
+				"name": "Tasman Orange F",
+				"planet": "Earth",
+				"latitude": -39.2,
+				"longitude": 163.5,
+				"altitude": 1,
+				"scale": 35,
+				"color": "#FF7000",
+				"data": {
+					"heading": 95.0,
+					"speed": 0.0
+				}
+			}
+		]
+	},
+	"events": [],
+	"questions": [
+		{
+			"section": "Satellite Operations",
+			"title": "SITREP source: which interface best establishes link quality for the last pass?",
+			"description": "A SITREP must state where its link-health claim comes from. Select the single most defensible source on the operator terminal.",
+			"type": "select",
+			"answer": {
+				"options": [
+					"Receiver / Transmitter SNR in the Telemetry tab",
+					"Battery charge fraction in the Telemetry tab",
+					"The latest captured image in the Images tab",
+					"The command list in the Schedule tab"
+				],
+				"value": 0,
+				"reason": "Link quality in a SITREP is grounded in receiver/transmitter SNR telemetry recorded during the pass.",
+				"score": 10
+			}
+		},
+		{
+			"section": "Satellite Operations",
+			"title": "Which telemetry signatures on the next pass would move your SITREP from GREEN to YELLOW?",
+			"description": "Select every non-nominal signature that should downgrade the status to caution (YELLOW).",
+			"type": "checkbox",
+			"answer": {
+				"options": [
+					"SNR drops below the mission threshold",
+					"Spacecraft enters SAFE mode unexpectedly",
+					"An uplink command is not acknowledged",
+					"Routine ping arrives on its nominal cadence",
+					"Battery charge fraction holding at nominal",
+					"Reaction-wheel speeds trending toward saturation"
+				],
+				"value": [
+					0,
+					1,
+					2,
+					5
+				],
+				"reason": "Degraded SNR, unexpected safe-mode, missing command acks, and reaction-wheel saturation are all cautions. A nominal ping cadence and nominal battery charge are GREEN indicators, not YELLOW.",
+				"score": 10
+			}
+		},
+		{
+			"section": "Satellite Operations",
+			"title": "Which comms data points are cyber-relevant (not just maintenance-relevant) for the SITREP?",
+			"description": "Select the items that indicate possible interference or intrusion rather than routine health.",
+			"type": "checkbox",
+			"answer": {
+				"options": [
+					"Uplink Intercept records showing commands the team never sent",
+					"An RF noise / interference spike inconsistent with the range geometry",
+					"Command acknowledgements for commands the operator did not issue",
+					"Battery temperature drifting within normal limits",
+					"Solar panel output varying with sun angle"
+				],
+				"value": [
+					0,
+					1,
+					2
+				],
+				"reason": "Unexpected intercepted or issued commands and unexplained interference point to possible jamming or spoofing (cyber). Normal battery temperature and sun-driven panel variation are routine maintenance telemetry.",
+				"score": 10
+			}
+		},
+		{
+			"section": "Satellite Operations",
+			"title": "SITREP data point: what ping cadence (seconds) confirms nominal command-ack timing?",
+			"description": "Use the Messages / Telemetry data to report the automatic ping interval, in seconds.",
+			"type": "number",
+			"answer": {
+				"unit": "s",
+				"value": 3.0,
+				"tolerance": 0.5,
+				"reason": "The spacecraft controller is configured with a 3.0 s ping interval.",
+				"score": 10
+			}
+		},
+		{
+			"section": "Payload Operations",
+			"title": "Capture result: how many red vessels were imaged in the Aegean Sea?",
+			"description": "From your Earth-observation captures, report the red vessel count for the payload SITREP.",
+			"type": "number",
+			"answer": {
+				"value": 3.0,
+				"tolerance": 0,
+				"reason": "Three red vessels are located in the Aegean Sea.",
+				"score": 10
+			}
+		},
+		{
+			"section": "Payload Operations",
+			"title": "Capture result: how many orange vessels were imaged in the Tasman Sea?",
+			"description": "From your Earth-observation captures of the Tasman Sea between Australia and New Zealand, report the orange vessel count for the payload SITREP.",
+			"type": "number",
+			"answer": {
+				"value": 6.0,
+				"tolerance": 0,
+				"reason": "Six orange vessels are located in the Tasman Sea between Australia and New Zealand.",
+				"score": 10
+			}
+		},
+		{
+			"section": "Payload Operations",
+			"title": "Before the payload SITREP declares a capture 'good', what must be verified?",
+			"description": "Select the data-quality gate that must pass before a captured product is reported as usable.",
+			"type": "select",
+			"answer": {
+				"options": [
+					"Image quality, correct target region, and tasking metadata all match the request",
+					"Only that the downlink completed without an error code",
+					"Only that on-board storage has free space for the next capture",
+					"Only that the next ground-station pass is scheduled"
+				],
+				"value": 0,
+				"reason": "The payload SITREP confirms imagery quality, that the correct geography was captured, and that tasking metadata matches the request.",
+				"score": 10
+			}
+		},
+		{
+			"section": "Payload Operations",
+			"title": "Which payload signals are cyber-relevant rather than maintenance-relevant?",
+			"description": "Select the payload findings that suggest tampering or intrusion rather than hardware wear.",
+			"type": "checkbox",
+			"answer": {
+				"options": [
+					"Image timestamp / metadata does not match the commanded capture time",
+					"Stored files appear that the team never commanded",
+					"Capture geolocation tags differ from the tasked target region",
+					"Gradual lens defocus consistent with thermal drift",
+					"Slow battery capacity fade over many charge cycles"
+				],
+				"value": [
+					0,
+					1,
+					2
+				],
+				"reason": "Mismatched capture metadata, unexpected stored files, and altered geolocation tags indicate possible tampering (cyber). Lens defocus and battery fade are maintenance / health issues.",
+				"score": 10
+			}
+		},
+		{
+			"section": "Mission Lead",
+			"title": "Combining the SatOps and Payload SITREPs, what should the Mission Lead DROP?",
+			"description": "Command leadership needs decisions, not raw data. Select what to drop when merging the two reports into one mission SITREP.",
+			"type": "select",
+			"answer": {
+				"options": [
+					"Per-step raw telemetry samples and full command logs",
+					"Overall mission status (green / yellow / red)",
+					"Whether primary tasking was completed",
+					"Open anomalies and the decision each one requires"
+				],
+				"value": 0,
+				"reason": "Raw telemetry and full logs belong in an annex; the combined SITREP keeps status, tasking outcome, and decisions.",
+				"score": 10
+			}
+		},
+		{
+			"section": "Mission Lead",
+			"title": "What should the single most important line (BLUF) of the mission SITREP state?",
+			"description": "If command reads only one line, it must carry the essentials. Select the best bottom-line-up-front sentence.",
+			"type": "select",
+			"answer": {
+				"options": [
+					"Mission status, whether primary tasking was achieved, and any decision required",
+					"The exact battery charge percentage at pass end",
+					"The current encryption key and uplink frequency",
+					"The full list of commands sent during the pass"
+				],
+				"value": 0,
+				"reason": "The BLUF states status, whether the mission was achieved, and what command must decide.",
+				"score": 10
+			}
+		}
+	]
+}

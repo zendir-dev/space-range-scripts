@@ -281,7 +281,7 @@ The APID column matters for Phase 3 telemetry overlays (§ 9, A9-A10 — Magneto
   "ping_interval": 3.0,
   "reset_interval": 20.0,
   "jamming_multiplier": 100.0,
-  "enable_rpo": false,
+  "enable_rpo_software": false,
   "enable_intercept": false
 }
 ```
@@ -308,7 +308,7 @@ The APID column matters for Phase 3 telemetry overlays (§ 9, A9-A10 — Magneto
   "ping_interval": 3.0,
   "reset_interval": 20.0,
   "jamming_multiplier": 100.0,
-  "enable_rpo": false,
+  "enable_rpo_software": false,
   "enable_intercept": true
 }
 ```

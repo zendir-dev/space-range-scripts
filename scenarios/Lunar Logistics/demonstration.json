@@ -1,0 +1,1375 @@
+{
+	"metadata": {
+		"name": "Demonstration",
+		"description": "This scenario tests teams' ability to perform lunar logistics operations with a central hub spacecraft. This includes docked procedures, such as fuel transfer and power sharing, as well as undocking and debris inspection."
+	},
+	"simulation": {
+		"epoch": "2026/02/14 00:00:00",
+		"speed": 1.0,
+		"step_size": 0.1,
+		"integrator": "Euler",
+		"end_time": 3600.0
+	},
+	"universe": {
+		"atmosphere": false,
+		"magnetosphere": false,
+		"gps": false,
+		"cloud_opacity": 1.5,
+		"cloud_contrast": 2.3,
+		"ambient_light": 0
+	},
+	"ground_stations": {
+		"locations": [
+			"Canberra"
+		],
+		"min_elevation": 0,
+		"max_range": 0
+	},
+	"teams": [
+		{
+			"enabled": true,
+			"id": 1,
+			"password": "AAAAAA",
+			"name": "Team Blue",
+			"key": 87,
+			"frequency": 745,
+			"collection": "Main",
+			"color": "#3377FF"
+		}
+	],
+	"assets": {
+		"space": [
+			{
+				"id": "SC_001",
+				"name": "Microsat",
+				"orbit": {
+					"planet": "Moon",
+					"values": [
+						7100.0,
+						0.03,
+						39.0,
+						38.0,
+						156,
+						280.0
+					],
+					"offset": [
+						0.0,
+						0.0,
+						0.0,
+						0.0,
+						0.0,
+						0.01
+					]
+				},
+				"physics": {
+					"override_mass": true,
+					"mass": 100.0,
+					"center_of_mass": [
+						0.0,
+						0.0,
+						0.0
+					],
+					"inertia_tensor": [
+						[
+							10.0,
+							0.0,
+							0.0
+						],
+						[
+							0.0,
+							10.0,
+							0.0
+						],
+						[
+							0.0,
+							0.0,
+							10.0
+						]
+					]
+				},
+				"visualization": {
+					"mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/ZenSat/BP_Z_SC_ZenSat_Chassis",
+					"scale": 1.0,
+					"offset": [
+						0.0,
+						0.0,
+						0.12
+					]
+				},
+				"controller": {
+					"safe_fraction": 0.03,
+					"capture_tax": 0.001,
+					"downlink_tax": 0.002,
+					"ping_interval": 3.0,
+					"reset_interval": 60.0,
+					"jamming_multiplier": 100.0,
+					"enable_rpo_software": false,
+					"enable_intercept": false
+				},
+			"power": {
+				"bus": [
+					{
+						"source_component": "Solar Panel +X",
+						"source_terminal": "out",
+						"target_component": "Battery",
+						"target_terminal": "in"
+					},
+					{
+						"source_component": "Solar Panel -X",
+						"source_terminal": "out",
+						"target_component": "Battery",
+						"target_terminal": "in"
+					},
+					{
+						"source_component": "Battery",
+						"source_terminal": "in",
+						"target_component": "Power Transfer Switch",
+						"target_terminal": "in"
+					}
+				]
+			},
+			"fuel": {
+				"bus": [
+					{
+						"source_component": "Fuel Tank",
+						"source_terminal": "out",
+						"target_component": "Fuel Pump",
+						"target_terminal": "in"
+					},
+					{
+						"source_component": "Fuel Pump",
+						"source_terminal": "out",
+						"target_component": "Transfer Valve",
+						"target_terminal": "in"
+					},
+					{
+						"source_component": "Transfer Valve",
+						"source_terminal": "out",
+						"target_component": "Fuel Transfer",
+						"target_terminal": "in"
+					}
+				]
+			},
+				"components": [
+					{
+						"class": "Solar Panel",
+						"name": "Solar Panel +X",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.8,
+							0.276313,
+							-0.2
+						],
+						"rotation": [
+							35.0,
+							0.0,
+							0.0
+						],
+						"scale": 1.0,
+						"data": {
+							"Area": 0.3,
+							"Efficiency": 0.4,
+							"Mass": 10.0
+						}
+					},
+					{
+						"class": "Solar Panel",
+						"name": "Solar Panel -X",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							-0.8,
+							0.276313,
+							-0.2
+						],
+						"rotation": [
+							35.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Area": 0.3,
+							"Efficiency": 0.4,
+							"Mass": 10.0
+						}
+					},
+					{
+						"class": "External Force Torque",
+						"name": "External Force Torque",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Max Force": 5000,
+							"Max Torque": 2000
+						}
+					},
+					{
+						"class": "Reaction Wheels",
+						"name": "Reaction Wheels",
+						"mesh": "None",
+						"enabled": false,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Mass": 9.0
+						}
+					},
+					{
+						"class": "Computer",
+						"name": "Computer",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Battery",
+						"name": "Battery",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Nominal Capacity": 40.0,
+							"Charge Fraction": 0.15,
+							"Mass": 5.0
+						}
+					},
+					{
+						"class": "Optical Camera",
+						"name": "Main Camera",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							-0.011,
+							-0.307,
+							-0.01
+						],
+						"rotation": [
+							90,
+							0,
+							0
+						],
+						"data": {
+							"Mass": 3.0,
+							"Aperture": 30.0,
+							"Resolution": [
+								1024,
+								1024
+							],
+							"Min Field Of View": 1.0,
+							"Field Of View": 10.0,
+							"Max Field Of View": 15.0,
+                            "Focusing Distance": 100.0
+						}
+					},
+					{
+						"class": "Optical Camera",
+						"name": "Docking Camera",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							-0.147,
+							0.357,
+							-0.132
+						],
+						"rotation": [
+							-90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Mass": 0.5,
+							"Resolution": [
+								256,
+								256
+							],
+							"Min Field Of View": 30.0,
+							"Field Of View": 45.0,
+							"Max Field Of View": 60.0
+						}
+					},
+					{
+						"class": "Receiver",
+						"name": "Receiver",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							-0.36,
+							-0.16
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Antenna Gain": 3.0,
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Transmitter",
+						"name": "Transmitter",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							-0.36,
+							-0.16
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Mass": 1.0
+						}
+					},
+					{
+						"class": "Storage",
+						"name": "Storage",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							-0.2
+						],
+						"data": {
+							"Mass": 4.0
+						}
+					},
+					{
+						"class": "Docking Adapter",
+						"name": "Docking Adapter",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.36,
+							-0.015
+						],
+						"rotation": [
+							-90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Mass": 5.0,
+							"Capture Distance": 0.05,
+							"Capture Angle": 20.0,
+							"Separation Force": 1.5,
+							"Separation Duration": 1.0
+						}
+					},
+					{
+						"class": "Laser Range Finder",
+						"name": "LRF 0",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.04,
+							0.36,
+							-0.015
+						],
+						"rotation": [
+							-90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Mass": 1.0,
+							"Operating Range": 10000.0
+						},
+						"models": [
+							{
+								"class": "Laser Range Finder Calibration Error Model",
+								"enabled": true,
+								"data": {
+									"Calibration Bias": 5.0,
+									"Calibration Scale": 1.0
+								}
+							}
+						]
+					},
+					{
+						"class": "Laser Range Finder",
+						"name": "LRF 120",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							-0.02,
+							0.36,
+							0.02
+						],
+						"rotation": [
+							-90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Mass": 1.0,
+							"Operating Range": 10000.0
+						}
+					},
+					{
+						"class": "Laser Range Finder",
+						"name": "LRF 240",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							-0.02,
+							0.36,
+							-0.05
+						],
+						"rotation": [
+							-90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Mass": 1.0,
+							"Operating Range": 10000.0
+						}
+					},
+					{
+						"class": "Fuel Source",
+						"name": "Fuel Tank",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.15
+						],
+						"data": {
+							"Capacity": 80.0,
+							"Amount": 80.0,
+							"Dry Mass": 5.0,
+							"Maximum Outgoing Flow Rate": 2.0,
+							"Desired Ingoing Flow Rate": 0.0
+						}
+					},
+					{
+						"class": "Fuel Valve",
+						"name": "Transfer Valve",
+						"mesh": "None",
+						"enabled": true,
+						"data": {
+							"Commanded Percent Open": 0.0,
+							"Max Flow Rate": 0.05,
+							"Mass": 0.4
+						},
+						"models": [
+							{
+								"class": "Fuel Leak Error Model",
+								"enabled": true,
+								"data": {
+									"Degradation Rate": 1.0,
+									"Leak Coefficient": 0.05,
+									"Max Leak Fraction": 0.5,
+									"Leak Onset Flow Rate": 0.02,
+									"Force Failure": false
+								}
+							}
+						]
+					},
+					{
+						"class": "Fuel Interconnect",
+						"name": "Fuel Transfer",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.36,
+							-0.015
+						],
+						"data": {
+							"Mass": 0.5,
+							"Is Bidirectional": true,
+							"Vent To Space When Unconnected": false
+						}
+					},
+				{
+					"class": "Power Interconnect",
+					"name": "Power Transfer Switch",
+					"data": {
+						"Is Open": true,
+						"Mass": 0.2
+					}
+				},
+				{
+					"class": "Fuel Pump",
+					"name": "Fuel Pump",
+					"mesh": "None",
+					"enabled": true,
+					"position": [0.0, 0.0, 0.1],
+					"data": {
+						"Max Flow Rate": 0.2,
+						"Efficiency": 0.8,
+						"Max Speed": 0.5,
+						"Is Pump Enabled": true,
+						"Allow Flow When Disabled": false,
+						"Mass": 1.5
+					}
+				}
+			]
+		},
+		{
+			"id": "SC_002",
+				"name": "Hub",
+				"orbit": {
+					"planet": "Moon",
+					"values": [
+						14753.33,
+						0.864,
+						52.0,
+						315.10799,
+						145.8,
+						175.5
+					],
+					"offset": [
+						0.0,
+						0.0,
+						0.0,
+						0.0,
+						0.0,
+						0.0
+					]
+				},
+				"physics": {
+					"attitude": [
+						52,
+						68,
+						20
+					],
+					"attitude_rate": [
+						0.0,
+						0.0,
+						0.0
+					],
+					"override_mass": true,
+					"mass": 63000.0,
+					"center_of_mass": [
+						0.0,
+						0.0,
+						0.0
+					],
+					"inertia_tensor": [
+						[
+							1000000.0,
+							0.0,
+							0.0
+						],
+						[
+							0.0,
+							1000000.0,
+							0.0
+						],
+						[
+							0.0,
+							0.0,
+							1000000.0
+						]
+					]
+				},
+				"visualization": {
+					"mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/GatewayCore/BP_Z_SC_GatewayCore_Chassis",
+					"scale": 0.2,
+					"offset": [
+						0.0,
+						0.0,
+						0.0
+					]
+				},
+				"controller": {
+					"safe_fraction": 0.1,
+					"capture_tax": 0.001,
+					"downlink_tax": 0.005,
+					"ping_interval": 3.0,
+					"reset_interval": 60.0,
+					"jamming_multiplier": 100.0,
+					"enable_rpo_software": false,
+					"enable_intercept": false
+				},
+				"power": {
+					"bus": [
+						{
+							"source_component": "Solar Panel",
+							"source_terminal": "out",
+							"target_component": "Battery",
+							"target_terminal": "out"
+						},
+						{
+							"source_component": "Battery",
+							"source_terminal": "out",
+							"target_component": "Power Transfer Switch D",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "Battery",
+							"source_terminal": "out",
+							"target_component": "Power Transfer Switch E",
+							"target_terminal": "in"
+						}
+					]
+				},
+				"fuel": {
+					"bus": [
+						{
+							"source_component": "Fuel Transfer D",
+							"source_terminal": "out",
+							"target_component": "Valve D",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "Valve D",
+							"source_terminal": "out",
+							"target_component": "Tank D",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "Fuel Transfer E",
+							"source_terminal": "out",
+							"target_component": "Valve E",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "Valve E",
+							"source_terminal": "out",
+							"target_component": "Tank E",
+							"target_terminal": "in"
+						}
+					]
+				},
+				"components": [
+					{
+						"class": "Solar Panel",
+						"mesh": "None",
+						"position": [
+							0.05,
+							0.0,
+							0.0
+						],
+						"rotation": [
+							0.0,
+							90.0,
+							0.0
+						],
+						"scale": 1.0,
+						"data": {
+							"Area": 0.3,
+							"Efficiency": 0.4,
+							"Mass": 10.0
+						}
+					},
+					{
+						"class": "Reaction Wheels",
+						"mesh": "None",
+						"position": [
+							0.0,
+							0.0,
+							-0.1
+						],
+						"data": {
+							"Mass": 9.0
+						}
+					},
+					{
+						"class": "Computer",
+						"mesh": "None",
+						"position": [
+							0.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Battery",
+						"mesh": "None",
+						"position": [
+							0.0,
+							0.0,
+							0.05
+						],
+						"data": {
+							"Nominal Capacity": 5000.0,
+							"Charge Fraction": 1.0,
+							"Nominal Voltage": 240.0,
+							"Mass": 50.0
+						}
+					},
+					{
+						"class": "Optical Camera",
+						"name": "Camera",
+						"mesh": "None",
+						"position": [
+							0.152,
+							0.362,
+							0.021
+						],
+						"rotation": [
+							-90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Mass": 5.0,
+							"Sample Rate": 10.0,
+							"Resolution": [
+								1024,
+								1024
+							]
+						}
+					},
+					{
+						"class": "Receiver",
+						"mesh": "None",
+						"position": [
+							0.0,
+							-0.05,
+							0.0
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Antenna Gain": 3.0,
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "GPS Sensor",
+						"mesh": "None",
+						"position": [
+							0.0,
+							0.0,
+							0.05
+						],
+						"data": {
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Transmitter",
+						"mesh": "None",
+						"position": [
+							0.0,
+							-0.05,
+							0.0
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Mass": 1.0
+						}
+					},
+					{
+						"class": "Storage",
+						"mesh": "None",
+						"position": [
+							0.0,
+							0.0,
+							-0.012
+						],
+						"data": {
+							"Mass": 4.0
+						}
+					},
+					{
+						"class": "Docking Adapter",
+						"name": "Docking A",
+						"position": [
+							-0.005,
+							0.318,
+							0.002
+						],
+						"rotation": [
+							-90.0,
+							0.0,
+							-90.0
+						],
+						"data": {
+							"Mass": 5.0,
+							"Capture Distance": 0.05,
+							"Capture Angle": 20.0
+						}
+					},
+					{
+						"class": "Docking Adapter",
+						"name": "Docking B",
+						"position": [
+							-1.503,
+							0.354,
+							0.002
+						],
+						"rotation": [
+							-90.0,
+							0.0,
+							-90.0
+						],
+						"data": {
+							"Mass": 5.0,
+							"Capture Distance": 0.05,
+							"Capture Angle": 20.0
+						}
+					},
+					{
+						"class": "Docking Adapter",
+						"name": "Docking C",
+						"position": [
+							-2.109,
+							-0.003,
+							0.006
+						],
+						"rotation": [
+							0.0,
+							-90.0,
+							0.0
+						],
+						"data": {
+							"Mass": 5.0,
+							"Capture Distance": 0.05,
+							"Capture Angle": 20.0
+						}
+					},
+					{
+						"class": "Docking Adapter",
+						"name": "Docking D",
+						"position": [
+							-1.506,
+							-1.767,
+							0.0
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							-90.0
+						],
+						"data": {
+							"Mass": 5.0,
+							"Capture Distance": 0.05,
+							"Capture Angle": 20.0
+						}
+					},
+					{
+						"class": "Docking Adapter",
+						"name": "Docking E",
+						"position": [
+							0.004,
+							-1.689,
+							0.004
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							-90.0
+						],
+						"data": {
+							"Mass": 5.0,
+							"Capture Distance": 0.05,
+							"Capture Angle": 20.0
+						}
+					},
+					{
+						"class": "Fuel Source",
+						"name": "Tank D",
+						"mesh": "None",
+						"position": [
+							0.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Capacity": 100.0,
+							"Amount": 55.0,
+							"Dry Mass": 40.0,
+							"Maximum Outgoing Flow Rate": 10.0,
+							"Desired Ingoing Flow Rate": 0.0
+						}
+					},
+					{
+						"class": "Fuel Source",
+						"name": "Tank E",
+						"mesh": "None",
+						"position": [
+							0.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Capacity": 100.0,
+							"Amount": 55.0,
+							"Dry Mass": 40.0,
+							"Maximum Outgoing Flow Rate": 10.0,
+							"Desired Ingoing Flow Rate": 0.0
+						}
+					},
+					{
+						"class": "Fuel Valve",
+						"name": "Valve D",
+						"mesh": "None",
+						"data": {
+							"Commanded Percent Open": 1.0,
+							"Max Flow Rate": 2.0,
+							"Mass": 0.4
+						}
+					},
+					{
+						"class": "Fuel Valve",
+						"name": "Valve E",
+						"mesh": "None",
+						"data": {
+							"Commanded Percent Open": 1.0,
+							"Max Flow Rate": 2.0,
+							"Mass": 0.4
+						}
+					},
+					{
+						"class": "Fuel Interconnect",
+						"name": "Fuel Transfer D",
+						"mesh": "None",
+						"position": [
+							-1.506,
+							-1.767,
+							0.0
+						],
+						"data": {
+							"Mass": 0.5,
+							"Is Bidirectional": true,
+							"Vent To Space When Unconnected": false
+						}
+					},
+					{
+						"class": "Fuel Interconnect",
+						"name": "Fuel Transfer E",
+						"mesh": "None",
+						"position": [
+							0.004,
+							-1.689,
+							0.004
+						],
+						"data": {
+							"Mass": 0.5,
+							"Is Bidirectional": true,
+							"Vent To Space When Unconnected": false
+						}
+					},
+					{
+						"class": "Power Interconnect",
+						"name": "Power Transfer Switch D",
+						"mesh": "None"
+					},
+					{
+						"class": "Power Interconnect",
+						"name": "Power Transfer Switch E",
+						"mesh": "None"
+					}
+				]
+			},
+			{
+				"id": "SC_003",
+				"name": "Debris",
+				"orbit": {
+					"planet": "Moon",
+					"values": [
+						14753.33,
+						0.864,
+						52.0,
+						315.10799,
+						145.8,
+						175.5001
+					],
+					"offset": [
+						0.0,
+						0.0,
+						0.0,
+						0.0,
+						0.0,
+						0.0
+					]
+				},
+				"physics": {
+					"attitude": [
+						0.0,
+						0.0,
+						90.0
+					],
+					"attitude_rate": [
+						5.0,
+						0.0,
+						0.0
+					],
+					"override_mass": true,
+					"mass": 100.0,
+					"center_of_mass": [
+						0.0,
+						0.0,
+						0.0
+					],
+					"inertia_tensor": [
+						[
+							10000.0,
+							0.0,
+							0.0
+						],
+						[
+							0.0,
+							10000.0,
+							0.0
+						],
+						[
+							0.0,
+							0.0,
+							10000.0
+						]
+					]
+				},
+				"visualization": {
+					"mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/SecondStage/BP_Z_SC_SecondStage_Chassis",
+					"scale": 0.2,
+					"offset": [
+						0.0,
+						0.0,
+						0.0
+					],
+					"hide": true
+				},
+				"controller": {
+					"ping_interval": 10000000.0,
+					"enable_rpo_software": false,
+					"enable_intercept": false
+				},
+				"components": [
+					{
+						"class": "Text",
+						"name": "Marking",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.2,
+							0.066
+						],
+						"rotation": [
+							-90.0,
+							0.0,
+							40.0
+						],
+						"data": {
+							"Text": "NASA",
+							"Color": "#0010FF",
+							"Scale": 0.3
+						}
+					}
+				]
+			}
+		],
+		"collections": [
+			{
+				"id": "Main",
+				"space_assets": [
+					"SC_001"
+				]
+			}
+		],
+		"neutral": [
+			"SC_002",
+			"SC_003"
+		]
+	},
+	"docking": [
+		{
+			"from_team": 1,
+			"from_target": "Docking Adapter",
+			"to_asset": "SC_002",
+			"to_target": "Docking D"
+		},
+		{
+			"from_team": 1,
+			"from_target": "Fuel Transfer",
+			"to_asset": "SC_002",
+			"to_target": "Fuel Transfer D"
+		},
+		{
+			"from_team": 1,
+			"from_target": "Power Transfer Switch",
+			"to_asset": "SC_002",
+			"to_target": "Power Transfer Switch D"
+		}
+	],
+	"objects": {
+	},
+	"events": [],
+	"questions": [
+		{
+			"section": "Spacecraft Health",
+			"title": "What is the initial charge fraction of the Microsat's battery at scenario start?",
+			"description": "Check the Battery telemetry and report the Charge Fraction as a decimal value between 0 and 1.",
+			"type": "number",
+			"answer": {
+				"unit": "fraction",
+				"value": 0.15,
+				"tolerance": 0.01,
+				"reason": "The Microsat battery is configured with Charge Fraction 0.15 (15%) at scenario start - critically low and requiring immediate power management action.",
+				"score": 8
+			}
+		},
+		{
+			"section": "Spacecraft Health",
+			"title": "Which switches can be closed to enable the Microsat to charge?",
+			"description": "The Microsat has multiple switches that can be closed to enable it to charge. Inspect the power bus configuration to identify which switch gates potential sources of power.",
+			"type": "checkbox",
+			"answer": {
+				"options": [
+					"Fuel Pump Switch",
+					"Fuel Pump Switch - Backup",
+					"Power Transfer Switch",
+					"Solar Panel Isolation Switch"
+				],
+				"value": [2, 3],
+				"reason": "Both the Power Transfer Switch and the Solar Panel Isolation Switch can be closed to enable the Microsat to charge.",
+				"score": 12
+			}
+		},
+		{
+			"section": "Fuel Operations",
+			"title": "How much fuel is needed to fill the Lunar Gateway hub port tank to full capacity?",
+			"description": "While docked, open the Transfer Valve and transfer propellant through the fuel transfer until the hub port tank stops accepting fuel.",
+			"type": "number",
+			"answer": {
+				"unit": "kg",
+				"value": 45.0,
+				"tolerance": 1.0,
+				"reason": "Each hub port tank has 100 kg capacity and starts at with 55 kg of fuel, so 45 kg is required to fill it.",
+				"score": 12
+			}
+		},
+		{
+			"section": "Fuel Operations",
+			"title": "Which of the following statements are supported by the fuel transfer telemetry?",
+			"description": "Review fuel tank and fuel flow telemetry types from the docked transfer operation. Select every statement that the telemetry supports.",
+			"type": "checkbox",
+			"answer": {
+				"options": [
+					"The Hub port tank fuel mass increased during transfer",
+					"The Microsat fuel tank fuel mass decreased during transfer",
+					"The changes in the stored mass of fuel of both tanks are balanced"				
+				],
+				"value": [0, 1],
+				"reason": "During transfer the hub and Microsat tank both change, but propellant accounting does not balance - more leaves the Microsat tank than arrives at the hub. The Transfer Valve (0.05 kg/s), not the Fuel Pump (0.2 kg/s), sets the maximum transfer rate.",
+				"score": 8
+			}
+		},
+		{
+			"section": "Link Budgets",
+			"title": "At what time (in minutes) did the Microsat lose access to the Deep Space Network (DSN)?",
+			"description": "Monitor the Link Budget panel and ground-station visibility for Canberra (Deep Space Network). Track when the Microsat loses usable contact with the DSN and report the elapsed simulation time in minutes from session start.",
+			"type": "number",
+			"answer": {
+				"unit": "min",
+				"value": 13.67,
+				"tolerance": 1.0,
+				"reason": "The Microsat loses DSN access at approximately 820 seconds (13.67 minutes) for this lunar orbit and Canberra ground-station geometry.",
+				"score": 6
+			}
+		},
+		{
+			"section": "Link Budgets",
+			"title": "How long in minutes was the telecommunications blackout?",
+			"description": "Using the Link Budget panel and connection telemetry, measure the interval from DSN loss of the Microsat until contact is restored. Report the blackout duration in minutes.",
+			"type": "number",
+			"answer": {
+				"unit": "min",
+				"value": 5.33,
+				"tolerance": 1.0,
+				"reason": "The Canberra DSN blackout lasts just over 5 minutes before the Microsat regains contact.",
+				"score": 6
+			}
+		},
+		{
+			"section": "Link Budgets",
+			"title": "What is the maximum downlink signal-to-noise ratio from the Microsat to the Deep Space Network?",
+			"description": "While the downlink is healthy, determine the maximum downlink signal-to-noise ratio for the Microsat to the Deep Space Network. Report the value in dB.",
+			"type": "number",
+			"answer": {
+				"unit": "dB",
+				"value": 47.98,
+				"tolerance": 2.0,
+				"reason": "The maximum downlink SNR from the Microsat to the Deep Space Network is approximately 48 dB.",
+				"score": 8
+			}
+		},
+		{
+			"section": "Docked Procedures",
+			"title": "Which nominal tasks must be completed before undocking from the Lunar Gateway?",
+			"description": "Before commanding separation from the hub, complete all docked logistics and post-blackout verifications. Select all critical tasks that must be done while docked.",
+			"type": "checkbox",
+			"answer": {
+				"options": [
+					"Transfer required fuel into the Lunar Gateway tank to full capacity",
+					"Close the interconnect valve and disable the fuel pump after transfer",
+					"Verify battery charge is sufficient for independent operation",
+					"Run full diagnostics on all systems to validate safe undocking"				
+				],
+				"value": [0, 1, 2, 3],
+				"reason": "Mission-critical pre-undock steps: complete the fuel transfer, close valves and disable pump, ensure battery health, run final diagnostics.",
+				"score": 8
+			}
+		},
+		{
+			"section": "Docked Procedures",
+			"title": "Which anomalies were observed during docked procedures?",
+			"description": "Before undocking from the Lunar Gateway, review telemetry and subsystem records from the docked logistics operations. Select all anomalies that were observed during docked procedures.",
+			"type": "checkbox",
+			"answer": {
+				"options": [
+					"Electrical fault in the fuel pump power path",
+					"Lunar Gateway tank overfill protection failure",
+					"Transfer valve stuck in the closed position",
+					"Fuel leakage at the transfer valve",
+					"None of the above"
+				],
+				"value": [0, 3],
+				"reason": "The Fuel Pump Controller suffers a short-to-ground fault that blows the primary fuse and interrupts pump power, and the Transfer Valve carries a fuel leak that vents propellant during transfer. Inspect coupled fuel and power telemetry together to identify both faults.",
+				"score": 12
+			}
+		},
+		{
+			"section": "Undocking",
+			"title": "What separation velocity (m/s) does the Microsat acquire immediately after undocking from the hub?",
+			"description": "The three laser range finders are body-fixed and already sighted on the Lunar Gateway while docked. Undock the Microsat and determine the separation velocity from the LRF telemetry.",
+			"type": "number",
+			"answer": {
+				"unit": "m/s",
+				"value": 0.015,
+				"tolerance": 0.005,
+				"reason": "The Docking Adapter applies a Separation Force that accelerates the spacecraft. With the static LRFs already on the Microsat, positioned around the docking interface, the seperation velocity is the measured velocity of the LRFs.",
+				"score": 10
+			}
+		},
+		{
+			"section": "Undocking",
+			"title": "After undocking, do any of the LRFs show a calibration anomaly?",
+			"description": "The LRFs (LRF 0, LRF 120, LRF 240) are static body-mounted sensors, all already pointed at the Lunar Gateway when undocked. Report whether any sensor consistently disagrees with the others.",
+			"type": "select",
+			"answer": {
+				"options": [
+					"Yes",
+					"No"
+				],
+				"value": 0,
+				"reason": "One of the LRFs has a calibration anomaly.",
+				"score": 4
+			}
+		},
+		{
+			"section": "Undocking",
+			"title": "Which laser range finder is miscalibrated?",
+			"description": "With all three static LRFs already sighted on the Lunar Gateway, compare telemetry from the LRFs. One unit will show a persistent offset from the others.",
+			"type": "select",
+			"answer": {
+				"options": [
+					"LRF 0",
+					"LRF 120",
+					"LRF 240",
+					"None, all sensors are nominal"
+				],
+				"value": 0,
+				"reason": "LRF 0 has a calibration error of +5 m.",
+				"score": 6
+			}
+		},
+		{
+			"section": "Debris Inspection",
+			"title": "What is the distance between the Lunar Gateway hub and the debris rocket body?",
+			"description": "Use the Laser Range Finder on your spacecraft: command relative pointing to aim at the debris rocket body, read MeasuredRange from LRF telemetry, and account for sensor calibration where needed. Report the separation between the Lunar Gateway hub and the rocket body in metres.",
+			"type": "number",
+			"answer": {
+				"unit": "m",
+				"value": 52.16,
+				"tolerance": 8.0,
+				"reason": "The co-orbital debris rocket body is positioned 52.16 m from the Lunar Gateway hub at scenario start.",
+				"score": 10
+			}
+		},
+		{
+			"section": "Debris Inspection",
+			"title": "At what rate (RPM) is the debris rocket body (R/B) spinning?",
+			"description": "The R/B is tumbling about its body axis. Use the optical camera or timed observations of the chassis markings together with Laser Range Finder passes to characterise the motion, then report the spin rate in revolutions per minute (RPM).",
+			"type": "number",
+			"answer": {
+				"unit": "RPM",
+				"value": 0.8333,
+				"tolerance": 0.1,
+				"reason": "The debris attitude rate is 5 deg/s about the body axis, which equals 0.8333 RPM.",
+				"score": 10
+			}
+		},
+		{
+			"section": "Debris Inspection",
+			"title": "Who does the rocket body (R/B) belong to?",
+			"description": "Inspect the R/B with the optical camera or during a close LRF pass. Read the owner marking painted on the chassis and report the organisation name.",
+			"type": "text",
+			"answer": {
+				"value": "NASA",
+				"reason": "The debris rocket body carries a blue NASA marking text on the chassis.",
+				"score": 10
+			}
+		},
+		{
+			"section": "Lunar Observation",
+			"title": "What is the latitude of the star-shaped crater on the Moon's surface?",
+			"description": "Use the optical camera to survey the lunar surface and locate the distinctive star-shaped crater on the Moon's surface. Report its latitude in degrees to the nearest 5\u00b0. South of the equator is negative.",
+			"type": "number",
+			"answer": {
+				"unit": "deg",
+				"value": -56.0,
+				"tolerance": 9,
+				"reason": "The star-shaped crater ground marker is placed at latitude -56\u00b0 on the Moon.",
+				"score": 10
+			}
+		},
+		{
+			"section": "Lunar Observation",
+			"title": "What is the longitude of the star-shaped crater on the Moon's surface?",
+			"description": "Using the same camera pass, fix the longitude of the star-shaped crater on the Moon's surface. Report longitude in degrees to the nearest 5\u00b0. West of the prime meridian is negative.",
+			"type": "number",
+			"answer": {
+				"unit": "deg",
+				"value": -160.0,
+				"tolerance": 9,
+				"reason": "The star-shaped crater ground marker is placed at longitude -160\u00b0 on the Moon's far side.",
+				"score": 10
+			}
+		}
+	]
+}

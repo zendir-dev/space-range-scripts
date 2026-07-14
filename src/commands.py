@@ -139,18 +139,31 @@ def guidance_spacecraft(
     target: str,
     spacecraft_id: str,
     alignment: str = "+z",
+    component: str | None = None,
 ) -> dict:
     """
     Point *target* component toward another spacecraft (relative / boresight).
 
-    *spacecraft_id* must be the live runtime asset ID (from admin ``list_team``),
-    not a scenario collection id or display name.
+    *spacecraft_id* must be the live runtime asset ID (from admin ``list_team`` or
+    ``list_assets``), not a scenario collection id or display name. The one exception is a
+    **neutral** craft (declared in ``assets.neutral``), which may also be referenced by its
+    scenario asset id string (e.g. ``"SC_HUB"``) since it is a single shared instance.
+
+    *component* — optional name of a component on the *target* spacecraft to aim at
+    instead of its origin (same naming as ``list_entity``). Omit or ``None`` for origin.
     """
-    return _cmd(
-        "guidance",
-        {"pointing": "relative", "target": target, "alignment": alignment, "spacecraft": spacecraft_id},
-        f"Point '{target}' {alignment} toward spacecraft '{spacecraft_id}'",
-    )
+    args: dict = {
+        "pointing": "relative",
+        "target": target,
+        "alignment": alignment,
+        "spacecraft": spacecraft_id,
+    }
+    if component:
+        args["component"] = component
+    label = f"Point '{target}' {alignment} toward spacecraft '{spacecraft_id}'"
+    if component:
+        label += f" ({component})"
+    return _cmd("guidance", args, label)
 
 
 def guidance_idle() -> dict:
@@ -333,18 +346,33 @@ def rendezvous_start(
     offset_x: float = 0.0,
     offset_y: float = 0.0,
     offset_z: float = 0.0,
+    component: str | None = None,
 ) -> dict:
     """
     Begin a perch-mode rendezvous with *target_id*.
 
     Offset axes are in the target's LVLH frame:
     X = radial, Y = velocity, Z = radial × velocity.
+
+    *target_id* is the runtime asset ID of the spacecraft to rendezvous with. A **neutral**
+    craft (declared in ``assets.neutral``) may also be referenced by its scenario asset id
+    string (e.g. ``"SC_HUB"``) — useful for holding station on a shared central craft.
+
+    *component* — optional name of a component on the *target* spacecraft to anchor
+    the hold on instead of its origin (same naming as ``list_entity``). Omit or ``None``
+    for the target origin.
     """
-    return _cmd(
-        "rendezvous",
-        {"target": target_id, "active": True, "offset": [offset_x, offset_y, offset_z]},
-        f"Rendezvous with '{target_id}' at LVLH offset [{offset_x}, {offset_y}, {offset_z}] m",
-    )
+    args: dict = {
+        "target": target_id,
+        "active": True,
+        "offset": [offset_x, offset_y, offset_z],
+    }
+    if component:
+        args["component"] = component
+    label = f"Rendezvous with '{target_id}' at LVLH offset [{offset_x}, {offset_y}, {offset_z}] m"
+    if component:
+        label += f" ({component})"
+    return _cmd("rendezvous", args, label)
 
 
 def rendezvous_stop(target_id: str) -> dict:
@@ -361,7 +389,12 @@ def rendezvous_stop(target_id: str) -> dict:
 # ---------------------------------------------------------------------------
 
 def docking_dock(target_id: str, component: str) -> dict:
-    """Command the spacecraft to dock with *component* on *target_id*."""
+    """Command the spacecraft to dock with *component* on *target_id*.
+
+    *target_id* may be another team-owned craft's runtime asset id, or a **neutral** craft
+    (declared in ``assets.neutral``) referenced by its asset id or scenario id string — e.g.
+    a shared station with one docking port per team.
+    """
     return _cmd(
         "docking",
         {"target": target_id, "component": component, "dock": True},
@@ -370,7 +403,11 @@ def docking_dock(target_id: str, component: str) -> dict:
 
 
 def docking_undock(target_id: str, component: str) -> dict:
-    """Undock from *component* on *target_id*."""
+    """Undock from *component* on *target_id*.
+
+    Undocking applies a separation impulse (``Separation Force`` over ``Separation Duration``,
+    configured on the chaser's Docking Adapter) so the two craft gently push apart.
+    """
     return _cmd(
         "docking",
         {"target": target_id, "component": component, "dock": False},
@@ -393,6 +430,97 @@ def encryption_rotate(password: str, frequency: float, key: int) -> dict:
 
 
 # ---------------------------------------------------------------------------
+# Power bus
+# ---------------------------------------------------------------------------
+
+_CONFIGURE_ENTRY_KEYS = {
+    "switch": "state",
+    "fuse": "current_threshold",
+    "current_limiter": "current_limit",
+    "voltage_regulator": "regulation_voltage",
+    "load": "nominal_power",
+}
+
+
+def power_bus_configure_values(entries: list[dict]) -> dict:
+    """Apply multiple power-bus changes in a single `power_bus` command."""
+    return _cmd(
+        "power_bus",
+        {"values": entries},
+        f"power_bus → {len(entries)} change(s)",
+    )
+
+
+def power_bus_configure(
+    component_type: Literal[
+        "switch",
+        "fuse",
+        "current_limiter",
+        "voltage_regulator",
+        "load",
+    ],
+    target: str,
+    value,
+) -> dict:
+    """Configure one power-bus component (single-entry batch)."""
+    param_key = _CONFIGURE_ENTRY_KEYS[component_type]
+    return power_bus_configure_values([
+        {
+            "type": component_type,
+            "action": "configure",
+            "target": target,
+            param_key: value,
+        },
+    ])
+
+
+def power_bus_fuse_reset(target: str) -> dict:
+    """Manually reset one blown fuse."""
+    return power_bus_configure_values([
+        {"type": "fuse", "action": "reset", "target": target},
+    ])
+
+
+_FUEL_CONFIGURE_ENTRY_KEYS = {
+    "valve": "commanded_percent_open",
+    "pump": "is_pump_enabled",
+}
+
+
+def fuel_bus_configure_values(entries: list[dict]) -> dict:
+    """Apply multiple fuel-bus changes in a single `fuel_bus` command."""
+    return _cmd(
+        "fuel_bus",
+        {"values": entries},
+        f"fuel_bus → {len(entries)} change(s)",
+    )
+
+
+def fuel_bus_configure(
+    component_type: Literal["valve", "pump"],
+    target: str,
+    value,
+    *,
+    speed_input: float | None = None,
+) -> dict:
+    """Configure one fuel-bus component (single-entry batch).
+
+    For pumps, ``value`` is ``is_pump_enabled``. Pass ``speed_input`` (rad/s) to
+    set motor speed in the same entry.
+    """
+    param_key = _FUEL_CONFIGURE_ENTRY_KEYS[component_type]
+    entry: dict = {
+        "type": component_type,
+        "action": "configure",
+        "target": target,
+        param_key: value,
+    }
+    if component_type == "pump" and speed_input is not None:
+        entry["speed_input"] = speed_input
+    return fuel_bus_configure_values([entry])
+
+
+# ---------------------------------------------------------------------------
 # Schedule management
 # ---------------------------------------------------------------------------
 
@@ -400,6 +528,25 @@ def encryption_rotate(password: str, frequency: float, key: int) -> dict:
 def get_schedule() -> dict:
     """Request the pending command queue (reply arrives as Schedule Report telemetry)."""
     return _cmd("get_schedule", {}, "Request on-board schedule (Schedule Report telemetry)")
+
+
+def get_configuration(
+    scope: str | None = None,
+    components: list[str] | None = None,
+) -> dict:
+    """Request session-mutable operator configuration (Configuration Report telemetry).
+
+    Omit ``scope`` for ``power_bus``, ``fuel_bus``, ``computer``, ``camera``, and
+    ``docking`` sections, or pass one scope for a single section. ``components``
+    filters power_bus, fuel_bus, and camera entries. The ``docking`` section reports
+    the live docked state (``docked``, and the ``target`` / ``target_component`` when docked).
+    """
+    args: dict = {}
+    if scope is not None:
+        args["scope"] = scope
+    if components is not None:
+        args["components"] = components
+    return _cmd("get_configuration", args, "Request operator configuration (Configuration Report telemetry)")
 
 
 def remove_command_by_id(command_id: int) -> dict:

@@ -82,7 +82,7 @@ A scenario asset representing the team's physical RF transmitter/receiver. Has l
 ## I
 
 **Instance ID**
-A monotonic integer broadcast on the [Session](../api-reference/session-stream.md) topic that increments each time the simulation is reset. Clients use it to detect resets and re-sync state.
+A unique integer on the [Session](../api-reference/session-stream.md) topic that **changes when the simulation is reset**. Clients compare it on every tick and clear cached state when it changes.
 
 **Instructor**
 The role of the human running the scenario. Holds the admin password and uses the admin API. Often the same person as the **scenario designer** during development; usually different roles during exercises.
@@ -160,8 +160,14 @@ The configured world for a session — teams, assets, ground stations, scenario 
 **Schedule Report**
 The downlinked telemetry message that lists currently scheduled (pending) commands on a spacecraft. Produced in response to [`get_schedule`](../api-reference/spacecraft-commands.md#get_schedule). Sensitive arguments (like raw bytes or new encryption keys) are redacted before transmission.
 
+**Configuration Report**
+The downlinked telemetry message that snapshots session-mutable operator configuration (power bus, guidance pointing, and imager settings). Produced in response to [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration), or automatically after successful operator commands, when the requested scope has data to report.
+
 **Session topic**
-The unencrypted MQTT topic that publishes the simulation clock and instance ID. See [API Reference → Session stream](../api-reference/session-stream.md).
+The unencrypted MQTT topic that publishes the simulation clock (`time`), simulation UTC (`utc`), real-time UNIX (`timestamp`), lifecycle `state` (`running`, `standby`, `paused`, `ended`), and `instance` ID. Published every ~0.3 s. See [API Reference → Session stream](../api-reference/session-stream.md).
+
+**Info topic**
+The unencrypted MQTT topic `Zendir/SpaceRange/<GAME>/Info` that publishes scenario metadata (`game`) and per-team score totals (`teams[]`). Published when the game definition or scores change; the latest message remains on the topic. See [API Reference → Info stream](../api-reference/info-stream.md).
 
 **Simulation time / Sim time**
 The clock used by Space Range, measured in seconds since the start of the current instance. All command `time` fields and telemetry timestamps are in simulation time unless explicitly stated otherwise.

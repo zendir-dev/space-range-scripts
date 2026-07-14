@@ -67,7 +67,7 @@ After XOR-decryption, **before** Caesar decryption, the first 5 bytes describe t
 | Value | Symbol | Inner payload |
 | --- | --- | --- |
 | `0` | `None` | Empty / sentinel. Discard. |
-| `1` | `Message` | CCSDS Space Packet (Ping, Schedule Report, or any other XTCE-defined message). |
+| `1` | `Message` | CCSDS Space Packet (Ping, Schedule Report, Configuration Report, or any other XTCE-defined message). |
 | `2` | `Media` | 50-byte name header + file bytes. |
 | `3` | `UplinkIntercept` | 32-byte intercept header + raw on-air bytes. |
 
@@ -181,6 +181,7 @@ Source: `USpaceRangeSubsystem::InitializeSpacePacketDefinitions` (`studio/Plugin
 | **System (100-199)** | | | | |
 | 100 | Ping | `PingMessage` | `System` | Periodic; every `controller.ping_interval`. |
 | 101 | Schedule Report | `ScheduleReportMessage` | `System` | Reply to [`get_schedule`](../api-reference/spacecraft-commands.md#get_schedule). |
+| 102 | Configuration Report | `ConfigurationReportMessage` | `System` | Reply to [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration), or automatically after [`power_bus`](../api-reference/spacecraft-commands.md#power_bus) / [`fuel_bus`](../api-reference/spacecraft-commands.md#fuel_bus) / [`guidance`](../api-reference/spacecraft-commands.md#guidance) / [`camera`](../api-reference/spacecraft-commands.md#camera) / [`capture`](../api-reference/spacecraft-commands.md#capture). Omitted when there is nothing to report. |
 | **Power (200-299)** | | | | |
 | 200 | Battery | `BatteryMessage` | `PowerSystem` | Has a `Battery` component. |
 | 201 | Power Source | `PowerMessage` | `PowerSystem` | Per-source power (`Solar Panel`, etc.). |
@@ -191,12 +192,15 @@ Source: `USpaceRangeSubsystem::InitializeSpacePacketDefinitions` (`studio/Plugin
 | 302 | EM Sensor | `ElectromagneticSensorMessage` | `Sensors` | Has an `EM Sensor` component (and it's enabled — see [components.md § EM Sensor](../scenarios/components.md)). |
 | 303 | CCD | `CCDDataMessage` | `Sensors` | Has a `Charge Coupled Device` (or `Camera`) component. |
 | 304 | Gyroscope | `GyroscopeDataMessage` | `Sensors` | Has a `Gyroscope` component. |
+| 305 | Laser Range Finder | `LaserRangeFinderDataMessage` | `Sensors` | Has a `Laser Range Finder` component |
 | **ADCS (400-499)** | | | | |
 | 400 | Computer | `ComputerMessage` | `ADCS` | Has a `Computer` component. |
 | 401 | Reaction Wheels | `ReactionWheelsMessage` | `ADCS` | Has a `Reaction Wheels` component. |
 | 402 | Dynamics | `DynamicsMessage` | `ADCS` | Always (covers attitude / body rates). |
 | 403 | Thruster | `ThrusterOperationMessage` | `ADCS` | Has a `Cold Gas Thruster` or `Ion Thruster`. |
 | 404 | Formation Flying | `FormationFlyingMessage` | `ADCS` | Active during a [`rendezvous`](../api-reference/spacecraft-commands.md#rendezvous). |
+| 405 | Fuel Tank | `FuelAmountMessage` | `ADCS` | One per `Fuel Tank` / `Fuel Source` component (fuel `Amount`, `Capacity`). |
+| 406 | Fuel Flow | `FuelFlowMessage` | `ADCS` | One per `Fuel Pump`, `Fuel Valve`, or `Fuel Interconnect` (`TransferredMass`, `CurrentRate`, `PercentFull`, stall flags, …). |
 | **Telemetry / RF (500-599)** | | | | |
 | 500 | Receiver | `ReceiverMessage` | `Telemetry` | Has a `Receiver`. |
 | 501 | Transmitter | `TransmitterMessage` | `Telemetry` | Has a `Transmitter`. |
@@ -337,6 +341,114 @@ The same JSON-string-of-array trick as Ping — `json.loads(report["Commands"])`
 
 ---
 
+## Configuration Report packet
+
+Sent in response to [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration), or automatically after a successful [`power_bus`](../api-reference/spacecraft-commands.md#power_bus), [`fuel_bus`](../api-reference/spacecraft-commands.md#fuel_bus), [`guidance`](../api-reference/spacecraft-commands.md#guidance), [`camera`](../api-reference/spacecraft-commands.md#camera), or [`capture`](../api-reference/spacecraft-commands.md#capture) command, and **only when** the requested scope has configuration to report.
+
+### XTCE field order
+
+| # | Field | XTCE type | Range / unit | Description |
+| --- | --- | --- | --- | --- |
+| 1 | `Data` | String | JSON object | Configuration snapshot. |
+
+### `Data` JSON shape
+
+After XTCE decode, parse with `json.loads(report["Data"])`. Scope controls which top-level keys appear (`power_bus`, `fuel_bus`, `computer`, `camera`, or any combination):
+
+```json
+{
+  "power_bus": [
+    {
+      "name": "EPS Switch",
+      "class": "Power Switch",
+      "configuration": {
+        "Is Open": false
+      }
+    },
+    {
+      "name": "EPS Fuse",
+      "class": "Power Fuse",
+      "configuration": {
+        "Current Threshold": 2.0,
+        "Is Fuse Blown": false
+      }
+    }
+  ],
+  "fuel_bus": [
+    {
+      "name": "Main Valve",
+      "class": "Fuel Valve",
+      "configuration": {
+        "Commanded Percent Open": 1.0,
+        "Percent Open": 1.0
+      }
+    },
+    {
+      "name": "Feed Pump",
+      "class": "Fuel Pump",
+      "configuration": {
+        "Is Pump Enabled": true,
+        "Speed Input": 50.0
+      }
+    }
+  ],
+  "computer": {
+    "pointing": "nadir",
+    "configs": {
+      "inertial": {
+        "target": "Battery",
+        "alignment": "+z",
+        "pitch": 0.0,
+        "roll": 0.0,
+        "yaw": 45.0
+      },
+      "nadir": {
+        "target": "Camera",
+        "alignment": "+z",
+        "planet": "earth"
+      }
+    }
+  },
+  "camera": [
+    {
+      "name": "Main Camera",
+      "class": "Optical Camera",
+      "configuration": {
+        "monochromatic": false,
+        "resolution": 1024,
+        "fov": 10.0,
+        "min_field_of_view": 1.0,
+        "max_field_of_view": 15.0,
+        "aperture": 20.0
+      }
+    }
+  ]
+}
+```
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `power_bus` | array | Power-bus components with session-mutable configuration. Omitted when scope excludes power_bus or every candidate component has nothing to report. |
+| `power_bus[].name` | string | Component name (matches [`list_entity`](../api-reference/ground-requests.md#list_entity)). |
+| `power_bus[].class` | string | Component class (e.g. `Power Switch`, `Power Fuse`). |
+| `power_bus[].configuration` | object | Current operator-mutable values only — not static scenario parameters or simulation telemetry. Keys use spaced names (`Is Open`, `Current Threshold`, …). |
+| `fuel_bus` | array | Fuel-bus components (valves, pumps) with session-mutable configuration. Omitted when scope excludes fuel_bus or every candidate component has nothing to report. |
+| `fuel_bus[].name` | string | Component name. |
+| `fuel_bus[].class` | string | `Fuel Valve` or `Fuel Pump`. |
+| `fuel_bus[].configuration` | object | `Commanded Percent Open`, `Percent Open` (valve); `Is Pump Enabled`, `Speed Input` (pump). |
+| `computer` | object | Guidance operator state: `pointing` (active mode) and `configs` (last-applied Args per mode, without repeating `pointing`). Stored from executed [`guidance`](../api-reference/spacecraft-commands.md#guidance) commands; cleared on scenario reset. |
+| `computer.pointing` | string | Active pointing mode (`idle`, `inertial`, `velocity`, `sun`, `nadir`, `ground`, `location`, `relative`). |
+| `computer.configs` | object | Per-mode settings. Keys match [`guidance`](../api-reference/spacecraft-commands.md#guidance) Args for that mode (e.g. `target`, `alignment`, `pitch`/`roll`/`yaw`, `station`, `spacecraft`, `component`). |
+| `camera` | array | Per-imager operator configuration. One entry per imager on the spacecraft (even before the first capture). Omitted when scope excludes camera or the craft has no imagers. |
+| `camera[].name` | string | Imager component name. |
+| `camera[].class` | string | `Camera`, `Optical Camera`, or `Charge Coupled Device`. |
+| `camera[].configuration` | object | Operator settings plus hardware FOV envelope. Keys use snake_case in JSON (`min_field_of_view`, `max_field_of_view`, `fov`, `monochromatic`, `resolution`, `aperture`, …). |
+| `camera[].configuration.min_field_of_view` | number (deg) | Narrowest FOV operators may command. From scenario `Min Field Of View`; default `0`. |
+| `camera[].configuration.max_field_of_view` | number (deg) | Widest FOV operators may command. From scenario `Max Field Of View`; default `180`. |
+| `camera[].configuration.fov` | number (deg) | Last-applied or initial field of view. Must stay within `[min_field_of_view, max_field_of_view]`. CCD entries include `fov` only (limits `0 … 180`). |
+
+---
+
 ## Media frame (`Format = 2`)
 
 Inside the Caesar-decoded body of a `Format = 2` frame:
@@ -435,7 +547,7 @@ for i in 0 .. len(data) - 1:
 
 ### Topics that use it
 
-Every team-scoped or admin-scoped topic except `Session`. See [MQTT topics](../api-reference/mqtt-topics.md) for the full list.
+Every team-scoped or admin-scoped topic except `Session` and `Info`. See [MQTT topics](../api-reference/mqtt-topics.md) for the full list.
 
 ---
 
@@ -469,23 +581,27 @@ The team's current Caesar key can be fetched at runtime via [`get_telemetry`](..
 
 ## Session topic payload
 
-The unencrypted heartbeat on `Zendir/SpaceRange/<GAME>/Session` is a UTF-8 JSON object, ~80–110 bytes:
+The unencrypted heartbeat on `Zendir/SpaceRange/<GAME>/Session` is a UTF-8 JSON object published every **~0.3 s** of real time:
 
 ```json
 {
-  "time":     742.18,
-  "utc":      "2026-04-15T08:30:12Z",
-  "instance": 3
+  "timestamp": 213214214121.0,
+  "time":      742.18,
+  "utc":       "2026/04/15 08:30:12",
+  "instance":  12345678,
+  "state":     "running"
 }
 ```
 
 | Field | Type | Description |
 | --- | --- | --- |
-| `time` | `float64` | Seconds since `t = 0` for the current scenario instance. |
-| `utc` | `string` | ISO-8601 UTC time of the same moment. |
-| `instance` | `int32` | Monotonic counter; increments on every `admin_set_simulation` `Stopped`. |
+| `timestamp` | `float64` | Real-time UNIX epoch seconds (wall clock at publish). Not simulation time. |
+| `time` | `float64` | Simulation seconds since `t = 0` for the current `instance`. |
+| `utc` | `string` | Simulation UTC at `time`, format `YYYY/MM/DD HH:MM:SS`. |
+| `instance` | `int32` | Scenario instance ID; changes on reset — clients should clear cached state. |
+| `state` | `string` | `running`, `standby`, `paused`, or `ended`. |
 
-Cadence is ~3 Hz. See [Session stream](../api-reference/session-stream.md) for the consumer-side details.
+The legacy boolean `running` is **deprecated** — use `state` instead. See [Session stream](../api-reference/session-stream.md) for consumer-side details.
 
 ---
 
