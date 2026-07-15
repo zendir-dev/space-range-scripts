@@ -260,6 +260,7 @@
 							"Field Of View": 60.0,
 							"Max Field Of View": 90.0,
 							"Focusing Distance": 100000.0,
+							"Aperture": 5.0,
 							"Sample Rate": 100000.0
 						}
 					},
@@ -276,11 +277,19 @@
 						"rotation": [
 							90.0,
 							0.0,
-							180.0
+							0.0
 						],
 						"data": {
+							"Area": 100,
+							"Efficiency": 0.85,
+							"Spectral Wavelength": 550.0,
+							"Atmosphere Absorption": 0.0,
+							"Point Spread Factor": 0.15,
+							"Thermal Noise": 0.005,
+							"Readout Noise": 3.0,
+							"Dark Current Noise": 0.01,
 							"Resolution": 64,
-							"Exposure Time": 0.01,
+							"Exposure Time": 0.1,
 							"Capture On Tick": false
 						}
 					}
