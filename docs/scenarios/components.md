@@ -37,7 +37,7 @@ The `class` field is matched case-insensitive after spaces are stripped. The shi
 | `GPS Sensor` | `GPS` | Position/velocity from the constellation. |
 | `Magnetometer` | — | Magnetic-field measurement. |
 | `Gyroscope` | `IMU` | Body-rate measurement. |
-| `Charge Coupled Device` | `CCD` | Low-level imaging sensor (more often used as a `Camera` model). |
+| `Charge Coupled Device` | `CCD` | Configurable imaging sensor (resolution, exposure time, FOV). Captures like a `Camera`. See [Charge Coupled Device (CCD)](#charge-coupled-device-ccd). |
 | `Laser Range Finder` | `LRF` | Range-finder for determining distance to objects nearby. |
 | `Docking Adapter` | `Docking` | RPO end-effector. Both vehicles need one to exchange a docking handshake. |
 | `Power Interconnect` | — | Cross-bus connector; pairs two spacecraft power networks at load. See [Power Interconnect](#power-interconnect). |
@@ -558,7 +558,40 @@ Use tight envelopes for mission-specific optics — for example a narrow science
 
 At runtime, operator-chosen settings (`fov`, `resolution`, `aperture`, …) are stored in the Configuration Report `camera[]` section and **sync across the team** after each `camera` / `capture` command (same pattern as Guidance). The report also includes `min_field_of_view` and `max_field_of_view` so every operator UI shows the correct slider range.
 
-Heatmap Camera and Optical Camera share the same `data` schema. `Charge Coupled Device` imagers support `Field Of View` in `data` but use the full `0 … 180°` envelope (no separate min/max properties on that class).
+Heatmap Camera and Optical Camera share the same `data` schema. `Charge Coupled Device` imagers capture using the same command/sync pipeline but expose a smaller set of settings — see [Charge Coupled Device (CCD)](#charge-coupled-device-ccd) below.
+
+---
+
+## Charge Coupled Device (CCD)
+
+A low-noise imaging sensor that captures via the same [`capture`](../api-reference/spacecraft-commands.md#capture) / [`camera`](../api-reference/spacecraft-commands.md#camera) pipeline as a `Camera`, but with a smaller, imager-specific setting set. Unlike the `Camera`, its `Resolution` is a **single integer** (a square sensor grid), and it adds an `Exposure Time`.
+
+```json
+{
+  "class": "Charge Coupled Device",
+  "name":  "Charge Coupled Device",
+  "position": [0.0, -0.36, -0.16],
+  "rotation": [90.0, 0.0, 180.0],
+  "data": {
+    "Resolution": 64,
+    "Exposure Time": 0.01,
+    "Capture On Tick": false
+  }
+}
+```
+
+| `data` key | Type | Description |
+| --- | --- | --- |
+| `Resolution` | `number` (px) | Sensor grid size as a **single integer** — the frame is `Resolution × Resolution`. Class default `16`. The Operator UI caps operator-set values to `16 … 64`. |
+| `Exposure Time` | `number` (s) | How long the sensor integrates light per capture. Class default `0.1`. The Operator UI caps operator-set values to `0.001 … 1.0`. |
+| `Field Of View` | `number` (deg) | Starting FOV. Class default `60`. The CCD uses a fixed `1° … 90°` envelope (there are no `Min/Max Field Of View` properties on this class). |
+| `Capture On Tick` | `bool` | Whether the sensor captures automatically every simulation tick. Class default `true`; set `false` to capture only on command. |
+| `Maximum ADU` | `number` (ADU) | Full-well digitisation ceiling per pixel. Class default `65535`. |
+| `Mass` | `number` (kg) | Component mass. |
+
+Radiometric / noise parameters (`Area`, `Efficiency`, `Spectral Wavelength`, `Atmosphere Absorption`, `Point Spread Factor`, `Thermal Noise`, `Readout Noise`, `Quantization Noise`, `Dark Current Noise`, `Bias`) can also be set in `data`; they default to sensible values on the class and are only needed for detailed sensor-modelling exercises.
+
+At runtime, operator-chosen `resolution`, `fov`, and `exposure_time` are stored in the Configuration Report `camera[]` section and **sync across the team** after each `camera` / `capture` command — the same pattern as a `Camera`. The Operator UI shows only Camera Unit, Field of View, Resolution, and Exposure Time for a CCD.
 
 ---
 
@@ -576,9 +609,9 @@ The `GPS Sensor` failure event accepts `Fault State` to put the sensor into a de
 
 ---
 
-## Magnetometer / Gyroscope / Electromagnetic Sensor / Charge Coupled Device
+## Magnetometer / Gyroscope / Electromagnetic Sensor
 
-These four sensor classes all share the same minimal `data` schema:
+These three sensor classes all share the same minimal `data` schema:
 
 ```json
 {

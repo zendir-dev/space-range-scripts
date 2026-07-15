@@ -20,7 +20,9 @@
 	},
 	"ground_stations": {
 		"locations": [
-			"Paris"
+			"New York",
+			"Paris",
+			"Dubai"
 		],
 		"min_elevation": 0,
 		"max_range": 0,
@@ -46,7 +48,7 @@
 				"orbit": {
 					"planet": "Earth",
 					"values": [
-						7500.0,
+						8200.0,
 						0.0,
 						45.0,
 						220.0,
@@ -124,49 +126,6 @@
 				},
 				"components": [
 					{
-						"class": "Solar Panel",
-						"name": "Solar Panel +X",
-						"mesh": "None",
-						"enabled": true,
-						"position": [
-							0.8,
-							0.276313,
-							-0.2
-						],
-						"rotation": [
-							35.0,
-							0.0,
-							0.0
-						],
-						"scale": 1.0,
-						"data": {
-							"Area": 0.3,
-							"Efficiency": 0.4,
-							"Mass": 10.0
-						}
-					},
-					{
-						"class": "Solar Panel",
-						"name": "Solar Panel -X",
-						"mesh": "None",
-						"enabled": true,
-						"position": [
-							-0.8,
-							0.276313,
-							-0.2
-						],
-						"rotation": [
-							35.0,
-							0.0,
-							0.0
-						],
-						"data": {
-							"Area": 0.3,
-							"Efficiency": 0.3,
-							"Mass": 10.0
-						}
-					},
-					{
 						"class": "Reaction Wheels",
 						"name": "Reaction Wheels",
 						"mesh": "None",
@@ -208,32 +167,6 @@
 							"Nominal Capacity": 80.0,
 							"Charge Fraction": 1.0,
 							"Mass": 5.0
-						}
-					},
-					{
-						"class": "Camera",
-						"name": "Camera",
-						"mesh": "None",
-						"enabled": true,
-						"position": [
-							0.0,
-							-0.36,
-							-0.16
-						],
-						"rotation": [
-							90.0,
-							0.0,
-							0.0
-						],
-						"data": {
-							"Mass": 5.0,
-							"Resolution": [
-								1024,
-								1024
-							],
-							"Min Field of View": 10.0,
-							"Max Field of View": 90.0,
-							"Focusing Distance": 100000.0
 						}
 					},
 					{
@@ -301,6 +234,54 @@
 						],
 						"data": {
 							"Mass": 4.0
+						}
+					},
+					{
+						"class": "Camera",
+						"name": "Camera",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							-0.36,
+							-0.16
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Resolution": [
+								1024,
+								1024
+							],
+							"Min Field Of View": 10.0,
+							"Field Of View": 60.0,
+							"Max Field Of View": 90.0,
+							"Focusing Distance": 100000.0,
+							"Sample Rate": 100000.0
+						}
+					},
+					{
+						"class": "Charge Coupled Device",
+						"name": "Charge Coupled Device",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							-0.36,
+							-0.16
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							180.0
+						],
+						"data": {
+							"Resolution": 64,
+							"Exposure Time": 0.01,
+							"Capture On Tick": false
 						}
 					}
 				]
