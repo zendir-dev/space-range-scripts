@@ -313,7 +313,7 @@
 				"planet": "Earth",
 				"dynamic_type": "Orbit",
 				"mesh": "None",
-				"scale": 1.0,
+				"scale": 100.0,
 				"color": "#FF0000"
 			},
 			{
@@ -322,7 +322,7 @@
 				"planet": "Earth",
 				"dynamic_type": "Orbit",
 				"mesh": "None",
-				"scale": 1.0,
+				"scale": 200.0,
 				"color": "#FF7000"
 			},
 			{
@@ -330,6 +330,7 @@
 				"orbit": [7520.0, 0.002, 45.5, 221.0, 10.0, 80.0],
 				"planet": "Earth",
 				"dynamic_type": "Orbit",
+				"scale": 150.0,
 				"color": "#FFFF00"
 			},
 			{
@@ -338,7 +339,7 @@
 				"planet": "Earth",
 				"dynamic_type": "Orbit",
 				"mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/ZenSat/BP_Z_SC_ZenSat_Chassis",
-				"scale": 1.0,
+				"scale": 1000.0,
 				"color": "#FFFFFF"
 			},
 			{
@@ -347,7 +348,7 @@
 				"planet": "Earth",
 				"dynamic_type": "Orbit",
 				"mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/ZenSat/BP_Z_SC_ZenSat_Chassis",
-				"scale": 2.0,
+				"scale": 2000.0,
 				"color": "#808080"
 			},
 			{
@@ -355,6 +356,7 @@
 				"orbit": [7100.0, 0.0, 98.6, 0.0, 0.0, 210.0],
 				"planet": "Earth",
 				"dynamic_type": "Orbit",
+				"scale": 500.0,
 				"color": "#00FFFF"
 			},
 			{
@@ -362,6 +364,7 @@
 				"orbit": [26600.0, 0.74, 63.4, 270.0, 270.0, 0.0],
 				"planet": "Earth",
 				"dynamic_type": "Orbit",
+				"scale": 3000.0,
 				"color": "#FF00FF"
 			},
 			{
@@ -370,6 +373,7 @@
 				"planet": "Earth",
 				"dynamic_type": "Static",
 				"color": "#00FF00",
+				"scale": 1000.0,
 				"trackable": false
 			}
 		]
