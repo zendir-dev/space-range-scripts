@@ -45,6 +45,7 @@ Every byte that arrives on `Zendir/SpaceRange/<GAME>/<TEAM>/Downlink` has the sa
 |        F=1: CCSDS Space Packet                    |
 |        F=2: Media (50B name + file)               |
 |        F=3: Uplink Intercept (32B + raw)          |
+||        F=4: CCD Frame (50B name + hdr + u16[])    |
 +---------------------------------------------------+
 ```
 
@@ -70,6 +71,7 @@ After XOR-decryption, **before** Caesar decryption, the first 5 bytes describe t
 | `1` | `Message` | CCSDS Space Packet (Ping, Schedule Report, Configuration Report, or any other XTCE-defined message). |
 | `2` | `Media` | 50-byte name header + file bytes. |
 | `3` | `UplinkIntercept` | 32-byte intercept header + raw on-air bytes. |
+| `4` | `CCDFrame` | 50-byte name header + 20-byte metadata header + `uint16` LE ADU array. |
 
 Quick decode (Python):
 
@@ -470,6 +472,54 @@ file_data = body[50:]
 
 ---
 
+## CCD detector frame (`Format = 4`)
+
+A raw 16-bit detector frame emitted by a `Charge Coupled Device` capture. Unlike a Media frame (which carries a lossy JPEG), this carries the **raw ADU array** so the operator can do lossless pixel analysis (exact values, histograms, statistics). The frame is a 50-byte name header, then a fixed 20-byte metadata header, then the ADU samples.
+
+```text
++--------------+------------------------+-----------------------------+
+|  Name (50B)  |  Metadata header (20B) |  ADU samples (W*H * bps)    |
++--------------+------------------------+-----------------------------+
+```
+
+### Name header (50 bytes)
+
+Identical to the [Media frame](#media-frame-format--2) name field: UTF-8, null-padded to 50 bytes, using the `assetId_name` convention (e.g. `A3F2C014_earth_742.ccd`). Extract `[0, 50)`, strip trailing nulls, decode UTF-8.
+
+### Metadata header (20 bytes, little-endian)
+
+| Offset | Size | Field | Type | Meaning |
+| --- | --- | --- | --- | --- |
+| 50 | 1 | `Version` | `uint8` | Header/layout version. `1` currently. |
+| 51 | 1 | `Compression` | `uint8` | `0` = uncompressed (only value currently emitted). |
+| 52 | 1 | `BytesPerSample` | `uint8` | `2` = `uint16` samples. |
+| 53 | 1 | `Reserved` | `uint8` | Zero (alignment / future use). |
+| 54 | 2 | `Width` | `uint16` LE | Frame width in pixels. |
+| 56 | 2 | `Height` | `uint16` LE | Frame height in pixels. |
+| 58 | 4 | `MaxADU` | `uint32` LE | Full-scale value (e.g. `65535`). Normalises the samples for display. |
+| 62 | 4 | `ExposureTime` | `float32` LE | Exposure in seconds. |
+| 66 | 4 | `CaptureTime` | `uint32` LE | Simulation seconds at capture. |
+| **70** | | | | **End of metadata header.** |
+
+### ADU samples
+
+`Width * Height * BytesPerSample` bytes, row-major (top-left origin), little-endian. With `BytesPerSample = 2` each sample is a `uint16` in `[0, MaxADU]`.
+
+```python
+name = body[:50].split(b"\x00", 1)[0].decode("utf-8", errors="replace")
+version, compression, bps, _ = body[50], body[51], body[52], body[53]
+width  = int.from_bytes(body[54:56], "little")
+height = int.from_bytes(body[56:58], "little")
+max_adu = int.from_bytes(body[58:62], "little")
+exposure = struct.unpack("<f", body[62:66])[0]
+capture_time = int.from_bytes(body[66:70], "little")
+adu = struct.unpack(f"<{width*height}H", body[70:70 + width*height*2])
+```
+
+> Like Media, the **ADU payload is corrupted probabilistically** before transmission — a fraction of sample bytes are bit-flipped. The 50-byte name and 20-byte metadata header are **never** corrupted, so the frame always remains structurally decodable (its dimensions and scale survive); expect occasional speckle in the pixel values themselves.
+
+---
+
 ## Uplink Intercept frame (`Format = 3`)
 
 A captured uplink frame, as recorded **before** any decode or team-ID validation. Layout:
@@ -631,6 +681,8 @@ def decode_downlink(payload: bytes,
         return parse_media(inner)                        # 50B name + bytes
     if fmt == 3:
         return parse_uplink_intercept(inner)             # 32B header + bytes
+    if fmt == 4:
+        return parse_ccd_frame(inner)                    # 50B name + 20B hdr + u16[]
     raise ValueError(f"Unknown frame format {fmt}")
 ```
 
