@@ -686,7 +686,7 @@
 							"class": "Short To Ground Error Model",
 							"enabled": true,
 							"data": {
-								"Short Resistance": 1e-12,
+								"Short Resistance": 0,
 								"Trigger Mean": 780.0,
 								"Trigger Std": 0.0
 							}
@@ -713,7 +713,7 @@
 						"Current Threshold": 1.0,
 						"Threshold Duration": 0.0,
 						"Reset Duration": 0.0,
-						"Resistance": 1.0,
+						"Resistance": 0.1,
 						"Mass": 0.3
 					}
 				},
