@@ -146,110 +146,110 @@
 					"enable_rpo_software": false,
 					"enable_intercept": false,
 					"pid": {
-						"k":     15.0,
-						"p":     20.0,
-						"ki":    -1.0,
+						"k": 15.0,
+						"p": 20.0,
+						"ki": -1.0,
 						"limit": -20.0
 					}
 				},
-			"power": {
-				"bus": [
-					{
-						"source_component": "Solar Panel +X",
-						"source_terminal": "out",
-						"target_component": "Solar Panel Isolation Switch",
-						"target_terminal": "in"
-					},
-					{
-						"source_component": "Solar Panel -X",
-						"source_terminal": "out",
-						"target_component": "Solar Panel Isolation Switch",
-						"target_terminal": "in"
-					},
-					{
-						"source_component": "Solar Panel Isolation Switch",
-						"source_terminal": "out",
-						"target_component": "Battery",
-						"target_terminal": "out"
-					},
-					{
-						"source_component": "Battery",
-						"source_terminal": "out",
-						"target_component": "Power Transfer Switch",
-						"target_terminal": "in"
-					},
-					{
-						"source_component": "Battery",
-						"source_terminal": "out",
-						"target_component": "Fuel Pump Switch",
-						"target_terminal": "in"
-					},
-					{
-						"source_component": "Fuel Pump Switch",
-						"source_terminal": "out",
-						"target_component": "Fuel Pump Fuse",
-						"target_terminal": "in"
-					},
-					{
-						"source_component": "Fuel Pump Fuse",
-						"source_terminal": "out",
-						"target_component": "Fuel Pump Controller",
-						"target_terminal": "in"
-					},
-					{
-						"source_component": "Fuel Pump Controller",
-						"source_terminal": "out",
-						"target_component": "Fuel Pump",
-						"target_terminal": "in"
-					},
-					{
-						"source_component": "Battery",
-						"source_terminal": "out",
-						"target_component": "Fuel Pump Switch - Backup",
-						"target_terminal": "in"
-					},
-					{
-						"source_component": "Fuel Pump Switch - Backup",
-						"source_terminal": "out",
-						"target_component": "Fuel Pump Fuse - Backup",
-						"target_terminal": "in"
-					},
-					{
-						"source_component": "Fuel Pump Fuse - Backup",
-						"source_terminal": "out",
-						"target_component": "Fuel Pump Controller - Backup",
-						"target_terminal": "in"
-					},
-					{
-						"source_component": "Fuel Pump Controller - Backup",
-						"source_terminal": "out",
-						"target_component": "Fuel Pump",
-						"target_terminal": "in"
-					}
-				]
-			},
-			"fuel": {
-				"bus": [
-					{
-						"source_component": "Fuel Tank",
-						"source_terminal": "out",
-						"target_component": "Fuel Pump",
-						"target_terminal": "in"
-					},
-					{
-						"source_component": "Fuel Pump",
-						"source_terminal": "out",
-						"target_component": "Transfer Valve",
-						"target_terminal": "in"
-					},
-					{
-						"source_component": "Transfer Valve",
-						"source_terminal": "out",
-						"target_component": "Fuel Transfer",
-						"target_terminal": "in"
-					}
-				]
-			},
+				"power": {
+					"bus": [
+						{
+							"source_component": "Solar Panel +X",
+							"source_terminal": "out",
+							"target_component": "Solar Panel Isolation Switch",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "Solar Panel -X",
+							"source_terminal": "out",
+							"target_component": "Solar Panel Isolation Switch",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "Solar Panel Isolation Switch",
+							"source_terminal": "out",
+							"target_component": "Battery",
+							"target_terminal": "out"
+						},
+						{
+							"source_component": "Battery",
+							"source_terminal": "out",
+							"target_component": "Power Transfer Switch",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "Battery",
+							"source_terminal": "out",
+							"target_component": "Fuel Pump Switch",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "Fuel Pump Switch",
+							"source_terminal": "out",
+							"target_component": "Fuel Pump Fuse",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "Fuel Pump Fuse",
+							"source_terminal": "out",
+							"target_component": "Fuel Pump Controller",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "Fuel Pump Controller",
+							"source_terminal": "out",
+							"target_component": "Fuel Pump",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "Battery",
+							"source_terminal": "out",
+							"target_component": "Fuel Pump Switch - Backup",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "Fuel Pump Switch - Backup",
+							"source_terminal": "out",
+							"target_component": "Fuel Pump Fuse - Backup",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "Fuel Pump Fuse - Backup",
+							"source_terminal": "out",
+							"target_component": "Fuel Pump Controller - Backup",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "Fuel Pump Controller - Backup",
+							"source_terminal": "out",
+							"target_component": "Fuel Pump",
+							"target_terminal": "in"
+						}
+					]
+				},
+				"fuel": {
+					"bus": [
+						{
+							"source_component": "Fuel Tank",
+							"source_terminal": "out",
+							"target_component": "Fuel Pump",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "Fuel Pump",
+							"source_terminal": "out",
+							"target_component": "Transfer Valve",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "Transfer Valve",
+							"source_terminal": "out",
+							"target_component": "Fuel Transfer",
+							"target_terminal": "in"
+						}
+					]
+				},
 				"components": [
 					{
 						"class": "Solar Panel",
@@ -389,7 +389,7 @@
 							"Min Field Of View": 1.0,
 							"Field Of View": 10.0,
 							"Max Field Of View": 15.0,
-                            "Focusing Distance": 100.0
+							"Focusing Distance": 100.0
 						}
 					},
 					{
@@ -622,118 +622,122 @@
 							"Vent To Space When Unconnected": false
 						}
 					},
-				{
-					"class": "Power Interconnect",
-					"name": "Power Transfer Switch",
-					"data": {
-						"Is Open": true,
-						"Mass": 0.2
-					}
-				},
-				{
-					"class": "Fuel Pump",
-					"name": "Fuel Pump",
-					"mesh": "None",
-					"enabled": true,
-					"position": [0.0, 0.0, 0.1],
-					"data": {
-						"Max Flow Rate": 0.2,
-						"Efficiency": 0.8,
-						"Max Speed": 0.5,
-						"Is Pump Enabled": true,
-						"Allow Flow When Disabled": false,
-						"Mass": 1.5
-					}
-				},
-				{
-					"class": "Power Switch",
-					"name": "Fuel Pump Switch",
-					"mesh": "None",
-					"enabled": true,
-					"data": {
-						"Is Open": false,
-						"Resistance": 0.1,
-						"Mass": 0.5
-					}
-				},
-				{
-					"class": "Power Fuse",
-					"name": "Fuel Pump Fuse",
-					"mesh": "None",
-					"enabled": true,
-					"data": {
-						"Current Threshold": 1.0,
-						"Threshold Duration": 0.0,
-						"Reset Duration": 0.0,
-						"Resistance": 0.1,
-						"Mass": 0.3
-					}
-				},
-				{
-					"class": "Power Sink",
-					"name": "Fuel Pump Controller",
-					"mesh": "None",
-					"enabled": true,
-					"data": {
-						"Is Active": true,
-						"Nominal Voltage Drop": 12.0,
-						"Nominal Power": 8.0,
-						"Resistance": 1.0,
-						"Mass": 0.5
-					},
-					"models": [
-						{
-							"class": "Short To Ground Error Model",
-							"enabled": true,
-							"data": {
-								"Short Resistance": 0,
-								"Trigger Mean": 780.0,
-								"Trigger Std": 0.0
-							}
+					{
+						"class": "Power Interconnect",
+						"name": "Power Transfer Switch",
+						"data": {
+							"Is Open": true,
+							"Mass": 0.2
 						}
-					]
-				},
-				{
-					"class": "Power Switch",
-					"name": "Fuel Pump Switch - Backup",
-					"mesh": "None",
-					"enabled": true,
-					"data": {
-						"Is Open": true,
-						"Resistance": 0.1,
-						"Mass": 0.5
+					},
+					{
+						"class": "Fuel Pump",
+						"name": "Fuel Pump",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.1
+						],
+						"data": {
+							"Max Flow Rate": 0.2,
+							"Efficiency": 0.8,
+							"Max Speed": 0.5,
+							"Is Pump Enabled": true,
+							"Allow Flow When Disabled": false,
+							"Mass": 1.5
+						}
+					},
+					{
+						"class": "Power Switch",
+						"name": "Fuel Pump Switch",
+						"mesh": "None",
+						"enabled": true,
+						"data": {
+							"Is Open": false,
+							"Resistance": 0.1,
+							"Mass": 0.5
+						}
+					},
+					{
+						"class": "Power Fuse",
+						"name": "Fuel Pump Fuse",
+						"mesh": "None",
+						"enabled": true,
+						"data": {
+							"Current Threshold": 1.0,
+							"Threshold Duration": 0.0,
+							"Reset Duration": 0.0,
+							"Resistance": 0.1,
+							"Mass": 0.3
+						}
+					},
+					{
+						"class": "Power Sink",
+						"name": "Fuel Pump Controller",
+						"mesh": "None",
+						"enabled": true,
+						"data": {
+							"Is Active": true,
+							"Nominal Voltage Drop": 12.0,
+							"Nominal Power": 8.0,
+							"Resistance": 1.0,
+							"Mass": 0.5
+						},
+						"models": [
+							{
+								"class": "Short To Ground Error Model",
+								"enabled": true,
+								"data": {
+									"Short Resistance": 0,
+									"Trigger Mean": 780.0,
+									"Trigger Std": 0.0
+								}
+							}
+						]
+					},
+					{
+						"class": "Power Switch",
+						"name": "Fuel Pump Switch - Backup",
+						"mesh": "None",
+						"enabled": true,
+						"data": {
+							"Is Open": true,
+							"Resistance": 0.1,
+							"Mass": 0.5
+						}
+					},
+					{
+						"class": "Power Fuse",
+						"name": "Fuel Pump Fuse - Backup",
+						"mesh": "None",
+						"enabled": true,
+						"data": {
+							"Current Threshold": 1.0,
+							"Threshold Duration": 0.0,
+							"Reset Duration": 0.0,
+							"Resistance": 0.1,
+							"Mass": 0.3
+						}
+					},
+					{
+						"class": "Power Sink",
+						"name": "Fuel Pump Controller - Backup",
+						"mesh": "None",
+						"enabled": true,
+						"data": {
+							"Is Active": true,
+							"Nominal Voltage Drop": 12.0,
+							"Nominal Power": 8.0,
+							"Resistance": 1.0,
+							"Mass": 0.5
+						}
 					}
-				},
-				{
-					"class": "Power Fuse",
-					"name": "Fuel Pump Fuse - Backup",
-					"mesh": "None",
-					"enabled": true,
-					"data": {
-						"Current Threshold": 1.0,
-						"Threshold Duration": 0.0,
-						"Reset Duration": 0.0,
-						"Resistance": 0.1,
-						"Mass": 0.3
-					}
-				},
-				{
-					"class": "Power Sink",
-					"name": "Fuel Pump Controller - Backup",
-					"mesh": "None",
-					"enabled": true,
-					"data": {
-						"Is Active": true,
-						"Nominal Voltage Drop": 12.0,
-						"Nominal Power": 8.0,
-						"Resistance": 1.0,
-						"Mass": 0.5
-					}
-				}
-			]
-		},
-		{
-			"id": "SC_002",
+				]
+			},
+			{
+				"id": "SC_002",
 				"name": "Hub",
 				"orbit": {
 					"planet": "Moon",
@@ -1607,7 +1611,9 @@
 			}
 		]
 	},
-	"events": [],
+	"events": [
+
+	],
 	"questions": [
 		{
 			"section": "Spacecraft Health",
@@ -1634,7 +1640,10 @@
 					"Power Transfer Switch",
 					"Solar Panel Isolation Switch"
 				],
-				"value": [2, 3],
+				"value": [
+					2,
+					3
+				],
 				"reason": "Both the Power Transfer Switch and the Solar Panel Isolation Switch can be closed to enable the Microsat to charge.",
 				"score": 12
 			}
@@ -1661,9 +1670,12 @@
 				"options": [
 					"The Hub port tank fuel mass increased during transfer",
 					"The Microsat fuel tank fuel mass decreased during transfer",
-					"The changes in the stored mass of fuel of both tanks are balanced"				
+					"The changes in the stored mass of fuel of both tanks are balanced"
 				],
-				"value": [0, 1],
+				"value": [
+					0,
+					1
+				],
 				"reason": "During transfer the hub and Microsat tank both change, but propellant accounting does not balance - more leaves the Microsat tank than arrives at the hub. The Transfer Valve (0.05 kg/s), not the Fuel Pump (0.2 kg/s), sets the maximum transfer rate.",
 				"score": 8
 			}
@@ -1717,9 +1729,14 @@
 					"Transfer required fuel into the Lunar Gateway tank to full capacity",
 					"Close the interconnect valve and disable the fuel pump after transfer",
 					"Verify battery charge is sufficient for independent operation",
-					"Run full diagnostics on all systems to validate safe undocking"				
+					"Run full diagnostics on all systems to validate safe undocking"
 				],
-				"value": [0, 1, 2, 3],
+				"value": [
+					0,
+					1,
+					2,
+					3
+				],
 				"reason": "Mission-critical pre-undock steps: complete the fuel transfer, close valves and disable pump, ensure battery health, run final diagnostics.",
 				"score": 8
 			}
@@ -1737,7 +1754,10 @@
 					"Fuel leakage at the transfer valve",
 					"None of the above"
 				],
-				"value": [0, 3],
+				"value": [
+					0,
+					3
+				],
 				"reason": "The Fuel Pump Controller suffers a short-to-ground fault that blows the primary fuse and interrupts pump power, and the Transfer Valve carries a fuel leak that vents propellant during transfer. Inspect coupled fuel and power telemetry together to identify both faults.",
 				"score": 12
 			}
