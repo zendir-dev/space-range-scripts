@@ -151,6 +151,7 @@
 					"pid_limit": -20.0
 				},
 				"power": {
+					"monitor": true,
 					"bus": [
 						{
 							"source_component": "Solar Panel +X",
