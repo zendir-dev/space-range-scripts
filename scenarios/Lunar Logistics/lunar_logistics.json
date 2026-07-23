@@ -145,12 +145,10 @@
 					"jamming_multiplier": 100.0,
 					"enable_rpo_software": false,
 					"enable_intercept": false,
-					"pid": {
-						"k": 15.0,
-						"p": 20.0,
-						"ki": -1.0,
-						"limit": -20.0
-					}
+					"pid_k": 15.0,
+					"pid_p": 20.0,
+					"pid_ki": -1.0,
+					"pid_limit": -20.0
 				},
 				"power": {
 					"bus": [

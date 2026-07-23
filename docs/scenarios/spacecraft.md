@@ -137,12 +137,10 @@ The `physics` block is **optional** — omit it and Studio falls back to a sensi
   "jamming_multiplier":      100.0,
   "enable_rpo_software":              false,
   "enable_intercept":                 true,
-  "pid": {
-    "k":     3.5,
-    "p":     30.0,
-    "ki":    -1.0,
-    "limit": -20.0
-  }
+  "pid_k":                   3.5,
+  "pid_p":                   30.0,
+  "pid_ki":                  -1.0,
+  "pid_limit":               -20.0
 }
 ```
 
@@ -159,16 +157,16 @@ The `physics` block is **optional** — omit it and Studio falls back to a sensi
 
 Studio reads **`enable_intercept`** first; when it is omitted, loading falls back to the legacy key **`record_uplink_intercept`** so older scenario JSON keeps working.
 
-### `controller.pid` — MRP attitude controller tuning
+### MRP attitude controller tuning (`pid_*`)
 
-Optional sub-object for the guidance computer's MRP feedback controller. Omit the whole `pid` block, or omit individual keys inside it, to keep the defaults below.
+Optional individual `controller` entries for the guidance computer's MRP feedback controller. Omit any of them to keep the defaults below.
 
 | Key | JSON type | Default | Description |
 | --- | --- | --- | --- |
-| `k` | `number` | `3.5` | Proportional gain on MRP attitude error. |
-| `p` | `number` | `30.0` | Rate-error feedback gain. |
-| `ki` | `number` | `-1.0` | Integral gain on rate error. |
-| `limit` | `number` | `-20.0` | Integral wind-up limit (`IntegralLimit` in the feedback software). |
+| `pid_k` | `number` | `3.5` | Proportional gain on MRP attitude error. |
+| `pid_p` | `number` | `30.0` | Rate-error feedback gain. |
+| `pid_ki` | `number` | `-1.0` | Integral gain on rate error. |
+| `pid_limit` | `number` | `-20.0` | Integral wind-up limit (`IntegralLimit` in the feedback software). |
 
 When the scenario is constructed, Studio reads these values from the spacecraft `controller` block and writes them to the guidance computer MRP controller configuration message.
 
