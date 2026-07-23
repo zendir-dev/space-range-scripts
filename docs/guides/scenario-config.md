@@ -213,6 +213,7 @@ Each spacecraft is the most complex object in the scenario. The shape:
 
 Optional. The `power` object holds the on-board bus:
 
+- **`monitor`** — when `true`, attaches a `PowerMonitor` behaviour and downlinks aggregate EPS telemetry (`PowerMonitorMessage`) for plotting.
 - **`bus`** — on-board connections (`source_component`, `source_terminal`, `target_component`, `target_terminal`). Component names must match `components[].name`. Bus-capable classes include `Solar Panel`, `Battery`, `Power Switch`, `Power Fuse`, `Power Diode`, `Power Current Limiter`, `Power Voltage Regulator`, `Power Sink`, `Power Interconnect`, and payload types that participate in the bus (e.g. `Camera`, `Transmitter`). See [Power bus network components](../scenarios/components.md#power-bus-network-components). If `bus` is omitted or empty, Studio auto-connects solar panels → first battery and battery → jammer (when those parts exist).
 
 Cross-spacecraft power links (between `Power Interconnect` components on different hulls) are declared in the top-level [`docking`](../scenarios/spacecraft.md#docking-start-the-scenario-already-docked) block, not inside `power`.

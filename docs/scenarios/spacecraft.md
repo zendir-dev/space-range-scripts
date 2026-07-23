@@ -184,6 +184,7 @@ Every spacecraft has an on-board **power bus**. The optional `power` block defin
 
 ```json
 "power": {
+  "monitor": true,
   "bus": [
     {
       "source_component": "Solar Panel +X",
@@ -203,6 +204,7 @@ Every spacecraft has an on-board **power bus**. The optional `power` block defin
 
 | Key | JSON type | Description |
 | --- | --- | --- |
+| `monitor` | `bool` | When `true`, attaches a `PowerMonitor` behaviour to the spacecraft EPS and downlinks aggregate bus telemetry (`PowerMonitorMessage`) for plotting. Default `false`. |
 | `bus` | `object[]` | Ordered list of on-board connections. Each object is one directed link on that spacecraft's bus. |
 
 Per-connection fields (names must match component `name` values on **that** spacecraft):

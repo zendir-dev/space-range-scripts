@@ -153,6 +153,7 @@
 					}
 				},
 				"power": {
+					"monitor": true,
 					"bus": [
 						{
 							"source_component": "Solar Panel +X",
