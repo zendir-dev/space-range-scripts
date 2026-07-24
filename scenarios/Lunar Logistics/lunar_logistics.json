@@ -681,7 +681,6 @@
 							"Is Active": true,
 							"Nominal Voltage Drop": 12.0,
 							"Nominal Power": 8.0,
-							"Resistance": 1.0,
 							"Mass": 0.5
 						},
 						"models": [
@@ -729,7 +728,6 @@
 							"Is Active": true,
 							"Nominal Voltage Drop": 12.0,
 							"Nominal Power": 8.0,
-							"Resistance": 1.0,
 							"Mass": 0.5
 						}
 					}
