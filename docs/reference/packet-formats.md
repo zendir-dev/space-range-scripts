@@ -188,13 +188,15 @@ Source: `USpaceRangeSubsystem::InitializeSpacePacketDefinitions` (`studio/Plugin
 | 200 | Battery | `BatteryMessage` | `PowerSystem` | Has a `Battery` component. |
 | 201 | Power Source | `PowerMessage` | `PowerSystem` | Per-source power (`Solar Panel`, etc.). |
 | 202 | Power Node | `PowerNodeMessage` | `PowerSystem` | Per-consumer node breakdown. |
+| 203 | Power Monitor | `PowerMonitorMessage` | `PowerSystem` | Aggregate EPS/bus telemetry, emitted when `controller.monitor` is `true` (attaches the `PowerMonitor` behaviour). |
 | **Sensors (300-399)** | | | | |
 | 300 | Magnetometer | `TAMDataMessage` | `Sensors` | Has a `Magnetometer` component. |
 | 301 | GPS | `GPSDataMessage` | `Sensors` | Has a `GPS Sensor` component. |
 | 302 | EM Sensor | `ElectromagneticSensorMessage` | `Sensors` | Has an `EM Sensor` component (and it's enabled — see [components.md § EM Sensor](../scenarios/components.md)). |
 | 303 | CCD | `CCDDataMessage` | `Sensors` | Has a `Charge Coupled Device` (or `Camera`) component. |
 | 304 | Gyroscope | `GyroscopeDataMessage` | `Sensors` | Has a `Gyroscope` component. |
-| 305 | Laser Range Finder | `LaserRangeFinderDataMessage` | `Sensors` | Has a `Laser Range Finder` component |
+| 305 | Laser Range Finder | `LaserRangeFinderMessage` | `Sensors` | Has a `Laser Range Finder` component. |
+| 306 | Radar | `RADARDataMessage` | `Sensors` | Has a `Radar` component. |
 | **ADCS (400-499)** | | | | |
 | 400 | Computer | `ComputerMessage` | `ADCS` | Has a `Computer` component. |
 | 401 | Reaction Wheels | `ReactionWheelsMessage` | `ADCS` | Has a `Reaction Wheels` component. |
