@@ -1109,18 +1109,21 @@
 	"docking": [
 		{
 			"from_team": 1,
+			"from_asset": "SC_001",
 			"from_target": "Docking Adapter",
 			"to_asset": "SC_002",
 			"to_target": "Docking D"
 		},
 		{
 			"from_team": 1,
+			"from_asset": "SC_001",
 			"from_target": "Fuel Transfer",
 			"to_asset": "SC_002",
 			"to_target": "Fuel Transfer D"
 		},
 		{
 			"from_team": 1,
+			"from_asset": "SC_001",
 			"from_target": "Power Transfer Switch",
 			"to_asset": "SC_002",
 			"to_target": "Power Transfer Switch D"

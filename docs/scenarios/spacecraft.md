@@ -347,11 +347,11 @@ Declare the cross-spacecraft link in the top-level [`docking`](#docking-start-th
 
 ```json
 "docking": [
-  { "from_team": 111111, "from_target": "Fuel Interconnect", "to_asset": "SC_HUB", "to_target": "Fuel Interconnect A" }
+  { "from_team": 111111, "from_asset": "SC_001", "from_target": "Fuel Interconnect", "to_asset": "SC_HUB", "to_target": "Fuel Interconnect A" }
 ]
 ```
 
-Each endpoint names a component plus the spacecraft carrying it — addressed **by team** (`from_team`/`to_team`) for per-team craft or **by asset** (`from_asset`/`to_asset`) for a specific/neutral craft such as a shared hub. See the [`docking`](#docking-start-the-scenario-already-docked) section for the full field reference and addressing rules.
+Each endpoint names a component plus the spacecraft carrying it — addressed **by team** (`from_team`/`to_team`, which also **requires** `from_asset`/`to_asset` to say which of the team's craft) for per-team craft, or **by asset** (`from_asset`/`to_asset`) for a specific/neutral craft such as a shared hub. See the [`docking`](#docking-start-the-scenario-already-docked) section for the full field reference and addressing rules.
 
 #### Requirements and restrictions
 
@@ -384,8 +384,8 @@ To feed several clients from a **single station tank** (the RPO scenario: five t
 
 ```json
 "docking": [
-  { "from_team": 111111, "from_target": "Docking Adapter",  "to_asset": "SC_002", "to_target": "Docking A" },
-  { "from_team": 111111, "from_target": "Fuel Interconnect", "to_asset": "SC_002", "to_target": "Fuel Interconnect A" }
+  { "from_team": 111111, "from_asset": "SC_001", "from_target": "Docking Adapter",  "to_asset": "SC_002", "to_target": "Docking A" },
+  { "from_team": 111111, "from_asset": "SC_001", "from_target": "Fuel Interconnect", "to_asset": "SC_002", "to_target": "Fuel Interconnect A" }
 ]
 ```
 
@@ -430,11 +430,11 @@ Declare the cross-spacecraft link in the top-level [`docking`](#docking-start-th
 
 ```json
 "docking": [
-  { "from_team": 111111, "from_target": "Interconnect", "to_asset": "SC_HUB", "to_target": "Interconnect A" }
+  { "from_team": 111111, "from_asset": "SC_001", "from_target": "Interconnect", "to_asset": "SC_HUB", "to_target": "Interconnect A" }
 ]
 ```
 
-Address each craft **by team** (`from_team`/`to_team`) or **by asset** (`from_asset`/`to_asset`, e.g. a neutral hub) — same rules as the [`docking`](#docking-start-the-scenario-already-docked) section.
+Address each craft **by team** (`from_team`/`to_team`, which also **requires** `from_asset`/`to_asset`) or **by asset** (`from_asset`/`to_asset`, e.g. a neutral hub) — same rules as the [`docking`](#docking-start-the-scenario-already-docked) section.
 
 #### Requirements and restrictions
 
@@ -455,7 +455,7 @@ The RPO scenario starts each team's client battery low (`Charge Fraction: 0.2`) 
 
 ```json
 "docking": [
-  { "from_team": 111111, "from_target": "Interconnect", "to_asset": "SC_002", "to_target": "Interconnect A" }
+  { "from_team": 111111, "from_asset": "SC_001", "from_target": "Interconnect", "to_asset": "SC_002", "to_target": "Interconnect A" }
 ]
 ```
 
@@ -562,9 +562,9 @@ The classic use is a central neutral hub with one port per team, where every tea
 
 ```json
 "docking": [
-  { "from_team": 111111, "from_target": "Docking Adapter",  "to_asset": "SC_HUB", "to_target": "Docking A" },
-  { "from_team": 111111, "from_target": "Fuel Interconnect", "to_asset": "SC_HUB", "to_target": "Fuel Interconnect A" },
-  { "from_team": 111111, "from_target": "Interconnect",      "to_asset": "SC_HUB", "to_target": "Interconnect A" }
+  { "from_team": 111111, "from_asset": "SC_001", "from_target": "Docking Adapter",  "to_asset": "SC_HUB", "to_target": "Docking A" },
+  { "from_team": 111111, "from_asset": "SC_001", "from_target": "Fuel Interconnect", "to_asset": "SC_HUB", "to_target": "Fuel Interconnect A" },
+  { "from_team": 111111, "from_asset": "SC_001", "from_target": "Interconnect",      "to_asset": "SC_HUB", "to_target": "Interconnect A" }
 ]
 ```
 
@@ -572,10 +572,10 @@ The classic use is a central neutral hub with one port per team, where every tea
 
 Each endpoint (`from` and `to`) names a **component** plus the spacecraft that carries it. The spacecraft is addressed in one of two ways — Studio **prefers the team** when its key is present, and falls back to the asset id otherwise:
 
-- **By team** (`from_team` / `to_team`, an `int`): the craft in that team that owns the named component is used. This is required for a definition that is **instanced per team** (e.g. a shared client `SC_001` that exists once per team). Add `from_asset` / `to_asset` alongside it only to disambiguate when a single team owns more than one matching craft.
+- **By team** (`from_team` / `to_team`, an `int`): the craft in that team that owns the named component is used. This is how you address a definition that is **instanced per team** (e.g. a shared client `SC_001` that exists once per team). You **must** also give the asset id (`from_asset` / `to_asset`) so Studio knows exactly which of the team's craft to use — it does **not** assume the team's first craft. If the asset id is omitted for a team endpoint, the connection is **skipped** and a warning is logged.
 - **By asset** (`from_asset` / `to_asset`, a `string`): a **specific** spacecraft is resolved directly by its scenario `id` (e.g. `"SC_HUB"`) or runtime `asset_id`. This is how you address a **neutral, team-less** craft such as a shared hub, and it stays unambiguous even when several neutral assets exist because each id is unique.
 
-So a typical hub setup uses `from_team` for each team's client and `to_asset` for the neutral hub (as above).
+So a typical hub setup pairs `from_team` + `from_asset` for each team's client with `to_asset` for the neutral hub (as above).
 
 For a docking-adapter pair Studio finds the `from` craft, **physically places it** so its adapter mates with the `to` port (coincident position, adapter facing the port), matches the target's velocity, and then docks the two. Because docking freezes the relative pose at the instant of capture, the placement is what makes the craft start cleanly attached rather than welded together at the wrong offset.
 
@@ -587,11 +587,11 @@ Notes:
 
 | Key | JSON type | Required | Description |
 | --- | --- | --- | --- |
-| `from_team` | `int` | one of team/asset | Team id of the `from` endpoint. Preferred when present. |
-| `from_asset` | `string` | one of team/asset | Scenario `id` / runtime `asset_id` of the `from` craft. Used when `from_team` is absent, or as a disambiguator within a team. |
+| `from_team` | `int` | one of team/asset | Team id of the `from` endpoint. Preferred when present; **requires** `from_asset` alongside it. |
+| `from_asset` | `string` | yes with team; else one of team/asset | Scenario `id` / runtime `asset_id` of the `from` craft. **Required** when `from_team` is present (names which of the team's craft to use), and also used to address a craft directly when `from_team` is absent. |
 | `from_target` | `string` | yes | Name of the component (`Docking Adapter`, `Fuel Interconnect`, or `Power Interconnect`) on the `from` craft. |
-| `to_team` | `int` | one of team/asset | Team id of the `to` endpoint. Preferred when present. |
-| `to_asset` | `string` | one of team/asset | Scenario `id` / runtime `asset_id` of the `to` craft (e.g. a neutral hub). Used when `to_team` is absent, or as a disambiguator within a team. |
+| `to_team` | `int` | one of team/asset | Team id of the `to` endpoint. Preferred when present; **requires** `to_asset` alongside it. |
+| `to_asset` | `string` | yes with team; else one of team/asset | Scenario `id` / runtime `asset_id` of the `to` craft (e.g. a neutral hub). **Required** when `to_team` is present (names which of the team's craft to use), and also used to address a craft directly when `to_team` is absent. |
 | `to_target` | `string` | yes | Name of the component (`Docking Adapter`, `Fuel Interconnect`, or `Power Interconnect`) on the `to` craft. |
 | `capture_distance` | `number` | no | [m] Capture distance used when establishing a dock (docking-adapter entries only). Default `0.5`. |
 | `capture_angle` | `number` | no | [deg] Capture angle used when establishing a dock (docking-adapter entries only). Default `5.0`. |

@@ -229,7 +229,7 @@ Use when the brief is *"two spacecraft must rendezvous and dock"*. Both spacecra
 
 The two spacecraft share `semi_major_axis` and `inclination` so they're on the same orbital plane; the chaser has a `true_anomaly` offset to give it the rendezvous gap.
 
-The `docking` power-interconnect entry above addresses both hulls by team + asset (here both on team `111111`). If the two craft are on **different teams**, drop `from_asset`/`to_asset` and use `from_team`/`to_team` directly. Either way the two power buses merge at t=0; use this only when the brief needs a **shared bus at start**.
+The `docking` power-interconnect entry above addresses both hulls by team + asset (here both on team `111111`). If the two craft are on **different teams**, change the `from_team`/`to_team` ids accordingly, but **keep** `from_asset`/`to_asset` — a team endpoint always needs its asset id so Studio knows which of the team's craft to use. Either way the two power buses merge at t=0; use this only when the brief needs a **shared bus at start**.
 
 ---
 

@@ -1503,90 +1503,105 @@
 	"docking": [
 		{
 			"from_team": 1,
+			"from_asset": "SC_001",
 			"from_target": "Docking Adapter",
 			"to_asset": "SC_002",
 			"to_target": "Docking A"
 		},
 		{
 			"from_team": 2,
+			"from_asset": "SC_001",
 			"from_target": "Docking Adapter",
 			"to_asset": "SC_002",
 			"to_target": "Docking B"
 		},
 		{
 			"from_team": 3,
+			"from_asset": "SC_001",
 			"from_target": "Docking Adapter",
 			"to_asset": "SC_002",
 			"to_target": "Docking C"
 		},
 		{
 			"from_team": 4,
+			"from_asset": "SC_001",
 			"from_target": "Docking Adapter",
 			"to_asset": "SC_002",
 			"to_target": "Docking D"
 		},
 		{
 			"from_team": 5,
+			"from_asset": "SC_001",
 			"from_target": "Docking Adapter",
 			"to_asset": "SC_002",
 			"to_target": "Docking E"
 		},
 		{
 			"from_team": 1,
+			"from_asset": "SC_001",
 			"from_target": "Fuel Transfer",
 			"to_asset": "SC_002",
 			"to_target": "Fuel Transfer A"
 		},
 		{
 			"from_team": 2,
+			"from_asset": "SC_001",
 			"from_target": "Fuel Transfer",
 			"to_asset": "SC_002",
 			"to_target": "Fuel Transfer B"
 		},
 		{
 			"from_team": 3,
+			"from_asset": "SC_001",
 			"from_target": "Fuel Transfer",
 			"to_asset": "SC_002",
 			"to_target": "Fuel Transfer C"
 		},
 		{
 			"from_team": 4,
+			"from_asset": "SC_001",
 			"from_target": "Fuel Transfer",
 			"to_asset": "SC_002",
 			"to_target": "Fuel Transfer D"
 		},
 		{
 			"from_team": 5,
+			"from_asset": "SC_001",
 			"from_target": "Fuel Transfer",
 			"to_asset": "SC_002",
 			"to_target": "Fuel Transfer E"
 		},
 		{
 			"from_team": 1,
+			"from_asset": "SC_001",
 			"from_target": "Power Transfer Switch",
 			"to_asset": "SC_002",
 			"to_target": "Power Transfer Switch A"
 		},
 		{
 			"from_team": 2,
+			"from_asset": "SC_001",
 			"from_target": "Power Transfer Switch",
 			"to_asset": "SC_002",
 			"to_target": "Power Transfer Switch B"
 		},
 		{
 			"from_team": 3,
+			"from_asset": "SC_001",
 			"from_target": "Power Transfer Switch",
 			"to_asset": "SC_002",
 			"to_target": "Power Transfer Switch C"
 		},
 		{
 			"from_team": 4,
+			"from_asset": "SC_001",
 			"from_target": "Power Transfer Switch",
 			"to_asset": "SC_002",
 			"to_target": "Power Transfer Switch D"
 		},
 		{
 			"from_team": 5,
+			"from_asset": "SC_001",
 			"from_target": "Power Transfer Switch",
 			"to_asset": "SC_002",
 			"to_target": "Power Transfer Switch E"

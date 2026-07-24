@@ -812,7 +812,7 @@ A **Fuel Interconnect** is a passive fuel node that bonds to **one local fuel ob
 { "source_component": "Transfer Valve", "source_terminal": "out", "target_component": "Fuel Interconnect", "target_terminal": "in" }
 ```
 
-**Then link it to its partner** in the top-level [`docking`](spacecraft.md#docking-start-the-scenario-already-docked) block as a fuel-interconnect connection — `{ "from_team": 111111, "from_target": "Fuel Interconnect", "to_asset": "SC_HUB", "to_target": "Fuel Interconnect A" }`. Both endpoints name a `Fuel Interconnect`, so Studio links (rather than docks) them; address each craft by team (`from_team`/`to_team`) or by asset (`from_asset`/`to_asset`, e.g. a neutral hub). Full rules and a multi-port hub recipe: [spacecraft.md — Fuel interconnects](spacecraft.md#fuel-interconnects).
+**Then link it to its partner** in the top-level [`docking`](spacecraft.md#docking-start-the-scenario-already-docked) block as a fuel-interconnect connection — `{ "from_team": 111111, "from_asset": "SC_001", "from_target": "Fuel Interconnect", "to_asset": "SC_HUB", "to_target": "Fuel Interconnect A" }`. Both endpoints name a `Fuel Interconnect`, so Studio links (rather than docks) them; address each craft by team (`from_team`/`to_team`, which also requires `from_asset`/`to_asset`) or by asset (`from_asset`/`to_asset`, e.g. a neutral hub). Full rules and a multi-port hub recipe: [spacecraft.md — Fuel interconnects](spacecraft.md#fuel-interconnects).
 
 **Suggested use:** servicer/depot scenarios where a tanker tops up a client across a docked interface (see `Testing/test_fuel_scenario`).
 
@@ -840,7 +840,7 @@ No class-specific `data` keys are required for typical scenarios (it inherits `I
 
 ### Cross-spacecraft link (scenario JSON)
 
-Link two interconnects in the top-level [`docking`](spacecraft.md#docking-start-the-scenario-already-docked) block as a power-interconnect connection — `{ "from_team": 111111, "from_target": "Interconnect", "to_asset": "SC_HUB", "to_target": "Interconnect A" }`. Both endpoints name a `Power Interconnect`, so Studio links (rather than docks) them; address each craft by team (`from_team`/`to_team`) or asset (`from_asset`/`to_asset`, e.g. a neutral hub). Full rules and a hub recipe: [spacecraft.md — Power interconnects](spacecraft.md#power-interconnects).
+Link two interconnects in the top-level [`docking`](spacecraft.md#docking-start-the-scenario-already-docked) block as a power-interconnect connection — `{ "from_team": 111111, "from_asset": "SC_001", "from_target": "Interconnect", "to_asset": "SC_HUB", "to_target": "Interconnect A" }`. Both endpoints name a `Power Interconnect`, so Studio links (rather than docks) them; address each craft by team (`from_team`/`to_team`, which also requires `from_asset`/`to_asset`) or asset (`from_asset`/`to_asset`, e.g. a neutral hub). Full rules and a hub recipe: [spacecraft.md — Power interconnects](spacecraft.md#power-interconnects).
 
 **Suggested use:** docking / depot scenarios where two hulls should **start** with a shared power network — e.g. the RPO hub charging docked clients.
 
