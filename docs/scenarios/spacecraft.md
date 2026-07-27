@@ -107,10 +107,11 @@ The `physics` block is **optional** — omit it and Studio falls back to a sensi
 
 ```json
 "visualization": {
-  "mesh":   "/ZendirAssetsSpace/Blueprints/Spacecraft/ZenSat/BP_Z_SC_ZenSat_Chassis",
-  "scale":  1.0,
-  "offset": [0.0, 0.0, 0.12],
-  "hide":   false
+  "mesh":         "/ZendirAssetsSpace/Blueprints/Spacecraft/ZenSat/BP_Z_SC_ZenSat_Chassis",
+  "scale":        1.0,
+  "offset":       [0.0, 0.0, 0.12],
+  "reflectivity": 0.5,
+  "hide":         false
 }
 ```
 
@@ -119,6 +120,7 @@ The `physics` block is **optional** — omit it and Studio falls back to a sensi
 | `mesh` | `string` | a default chassis | Unreal asset path to the chassis blueprint. Use `"None"` to fall back to a generic mesh. The shipped scenarios use paths such as `/ZendirAssetsSpace/Blueprints/Spacecraft/ZenSat/BP_Z_SC_ZenSat_Chassis`, `/ZendirAssetsSpace/Blueprints/Spacecraft/MRO/BP_Z_SC_MRO_Chassis`, `/ZendirAssetsSpace/Blueprints/Spacecraft/GatewayCore/BP_Z_SC_GatewayCore_Chassis`. |
 | `scale` | `number` | `1.0` | Visual scale factor of the mesh. Has no physics effect. |
 | `offset` | `number[3]` (m) | `[0,0,0]` | Visual offset of the mesh from the spacecraft origin. Use to centre the rendered chassis. |
+| `reflectivity` | `number` | `0.5` | How reflective the spacecraft material is, in the range `0.0`–`1.0`. Left at the default (`0.5`) the material properties are untouched; any other value is applied at load via `SetMaterialProperties`. This feeds sensor models such as radar cross-section, so a shinier craft is easier to detect. |
 | `hide` | `bool` | `false` | If `true`, the spacecraft is hidden from the world view but still simulates fully. Useful for "constructive-agent" rogue spacecraft that should be discovered visually. |
 
 `mesh` is a presentation-only field — telemetry and command semantics are unaffected.
