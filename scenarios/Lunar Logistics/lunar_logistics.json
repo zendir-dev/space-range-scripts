@@ -16,14 +16,15 @@
 		"gps": false,
 		"cloud_opacity": 1.5,
 		"cloud_contrast": 2.3,
-		"ambient_light": 0
+		"ambient_light": 0.0
 	},
 	"ground_stations": {
 		"locations": [
 			"Canberra"
 		],
-		"min_elevation": 0,
-		"max_range": 0
+		"min_elevation": 0.0,
+		"max_range": 0.0,
+		"scale": 1000.0
 	},
 	"teams": [
 		{
@@ -32,7 +33,7 @@
 			"password": "R4K7MZ",
 			"name": "Team Blue",
 			"key": 42,
-			"frequency": 612,
+			"frequency": 612.0,
 			"collection": "Main",
 			"color": "#0050FF"
 		},
@@ -42,7 +43,7 @@
 			"password": "8XTPWN",
 			"name": "Team Green",
 			"key": 87,
-			"frequency": 745,
+			"frequency": 745.0,
 			"collection": "Main",
 			"color": "#00FF00"
 		},
@@ -52,7 +53,7 @@
 			"password": "5LZQVB",
 			"name": "Team Yellow",
 			"key": 154,
-			"frequency": 889,
+			"frequency": 889.0,
 			"collection": "Main",
 			"color": "#FFFF00"
 		},
@@ -62,7 +63,7 @@
 			"password": "2WCF9H",
 			"name": "Team Orange",
 			"key": 203,
-			"frequency": 534,
+			"frequency": 534.0,
 			"collection": "Main",
 			"color": "#FF7000"
 		},
@@ -72,7 +73,7 @@
 			"password": "7SMXKE",
 			"name": "Team Purple",
 			"key": 29,
-			"frequency": 823,
+			"frequency": 823.0,
 			"collection": "Main",
 			"color": "#8600FF"
 		}
@@ -89,7 +90,7 @@
 						0.03,
 						39.0,
 						38.0,
-						156,
+						156.0,
 						280.0
 					],
 					"offset": [
@@ -756,16 +757,6 @@
 					]
 				},
 				"physics": {
-					"attitude": [
-						52,
-						68,
-						-36
-					],
-					"attitude_rate": [
-						0.0,
-						0.0,
-						0.0
-					],
 					"override_mass": true,
 					"mass": 63000.0,
 					"center_of_mass": [
@@ -789,6 +780,16 @@
 							0.0,
 							1000000.0
 						]
+					],
+					"attitude": [
+						52,
+						68,
+						-36
+					],
+					"attitude_rate": [
+						0.0,
+						0.0,
+						0.0
 					]
 				},
 				"visualization": {
@@ -1411,16 +1412,6 @@
 					]
 				},
 				"physics": {
-					"attitude": [
-						0.0,
-						0.0,
-						90.0
-					],
-					"attitude_rate": [
-						5.0,
-						0.0,
-						0.0
-					],
 					"override_mass": true,
 					"mass": 100.0,
 					"center_of_mass": [
@@ -1444,6 +1435,16 @@
 							0.0,
 							10000.0
 						]
+					],
+					"attitude": [
+						0.0,
+						0.0,
+						90.0
+					],
+					"attitude_rate": [
+						5.0,
+						0.0,
+						0.0
 					]
 				},
 				"visualization": {
@@ -1623,9 +1624,7 @@
 			}
 		]
 	},
-	"events": [
-
-	],
+	"events": [],
 	"questions": [
 		{
 			"section": "Spacecraft Health",
@@ -1859,26 +1858,26 @@
 		{
 			"section": "Lunar Observation",
 			"title": "What is the latitude of the star-shaped crater on the Moon's surface?",
-			"description": "Use the optical camera to survey the lunar surface and locate the distinctive star-shaped crater on the Moon's surface. Report its latitude in degrees to the nearest 5\u00b0. South of the equator is negative.",
+			"description": "Use the optical camera to survey the lunar surface and locate the distinctive star-shaped crater on the Moon's surface. Report its latitude in degrees to the nearest 5°. South of the equator is negative.",
 			"type": "number",
 			"answer": {
 				"unit": "deg",
 				"value": -56.0,
 				"tolerance": 9,
-				"reason": "The star-shaped crater ground marker is placed at latitude -56\u00b0 on the Moon.",
+				"reason": "The star-shaped crater ground marker is placed at latitude -56° on the Moon.",
 				"score": 10
 			}
 		},
 		{
 			"section": "Lunar Observation",
 			"title": "What is the longitude of the star-shaped crater on the Moon's surface?",
-			"description": "Using the same camera pass, fix the longitude of the star-shaped crater on the Moon's surface. Report longitude in degrees to the nearest 5\u00b0. West of the prime meridian is negative.",
+			"description": "Using the same camera pass, fix the longitude of the star-shaped crater on the Moon's surface. Report longitude in degrees to the nearest 5°. West of the prime meridian is negative.",
 			"type": "number",
 			"answer": {
 				"unit": "deg",
 				"value": -160.0,
 				"tolerance": 9,
-				"reason": "The star-shaped crater ground marker is placed at longitude -160\u00b0 on the Moon's far side.",
+				"reason": "The star-shaped crater ground marker is placed at longitude -160° on the Moon's far side.",
 				"score": 10
 			}
 		}

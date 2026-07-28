@@ -1351,26 +1351,26 @@
 		{
 			"section": "Lunar Observation",
 			"title": "What is the latitude of the star-shaped crater on the Moon's surface?",
-			"description": "Use the optical camera to survey the lunar surface and locate the distinctive star-shaped crater on the Moon's surface. Report its latitude in degrees to the nearest 5\u00b0. South of the equator is negative.",
+			"description": "Use the optical camera to survey the lunar surface and locate the distinctive star-shaped crater on the Moon's surface. Report its latitude in degrees to the nearest 5°. South of the equator is negative.",
 			"type": "number",
 			"answer": {
 				"unit": "deg",
 				"value": -56.0,
 				"tolerance": 9,
-				"reason": "The star-shaped crater ground marker is placed at latitude -56\u00b0 on the Moon.",
+				"reason": "The star-shaped crater ground marker is placed at latitude -56° on the Moon.",
 				"score": 10
 			}
 		},
 		{
 			"section": "Lunar Observation",
 			"title": "What is the longitude of the star-shaped crater on the Moon's surface?",
-			"description": "Using the same camera pass, fix the longitude of the star-shaped crater on the Moon's surface. Report longitude in degrees to the nearest 5\u00b0. West of the prime meridian is negative.",
+			"description": "Using the same camera pass, fix the longitude of the star-shaped crater on the Moon's surface. Report longitude in degrees to the nearest 5°. West of the prime meridian is negative.",
 			"type": "number",
 			"answer": {
 				"unit": "deg",
 				"value": -160.0,
 				"tolerance": 9,
-				"reason": "The star-shaped crater ground marker is placed at longitude -160\u00b0 on the Moon's far side.",
+				"reason": "The star-shaped crater ground marker is placed at longitude -160° on the Moon's far side.",
 				"score": 10
 			}
 		}
