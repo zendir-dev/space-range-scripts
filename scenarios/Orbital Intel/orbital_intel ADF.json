@@ -498,7 +498,7 @@
 						}
 					},
 					{
-						"class": "Text",
+						"class": "Physical Text",
 						"name": "Text Front",
 						"enabled": true,
 						"position": [
@@ -513,12 +513,12 @@
 						],
 						"data": {
 							"Text": "RECON",
-							"Color": "#FFFF0D",
-							"Scale": 50.0
+							"Font Color": "#FFFF0D",
+							"Font Size": 5000.0
 						}
 					},
 					{
-						"class": "Text",
+						"class": "Physical Text",
 						"name": "Text Back",
 						"enabled": true,
 						"position": [
@@ -533,8 +533,8 @@
 						],
 						"data": {
 							"Text": "RECON",
-							"Color": "#FFFF0D",
-							"Scale": 50.0
+							"Font Color": "#FFFF0D",
+							"Font Size": 5000.0
 						}
 					}
 				]

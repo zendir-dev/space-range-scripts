@@ -1463,7 +1463,7 @@
 				},
 				"components": [
 					{
-						"class": "Text",
+						"class": "Physical Text",
 						"name": "Marking",
 						"enabled": true,
 						"position": [
@@ -1478,8 +1478,8 @@
 						],
 						"data": {
 							"Text": "NASA",
-							"Color": "#0010FF",
-							"Scale": 0.3
+							"Font Color": "#0010FF",
+							"Font Size": 30
 						}
 					}
 				]

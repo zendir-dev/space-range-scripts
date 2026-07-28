@@ -850,15 +850,15 @@ Link two interconnects in the top-level [`docking`](spacecraft.md#docking-start-
 
 ```json
 {
-  "class": "Text",
+  "class": "Physical Text",
   "name":  "Text Front",
   "enabled": true,
   "position": [13.418, 40.162, -8.064],
   "rotation": [-1.4, 77.7, -97.2],
   "data": {
     "Text":  "RECON",
-    "Color": "#FFFF0D",
-    "Scale": 50.0
+    "Font Color": "#FFFF0D",
+    "Font Size": 50.0
   }
 }
 ```
