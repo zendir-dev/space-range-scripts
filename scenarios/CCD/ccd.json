@@ -78,7 +78,7 @@
           { "class": "Storage", "name": "Storage", "mesh": "None", "enabled": true, "position": [0.0, 0.0, -0.2], "data": { "Mass": 4.0 } },
           { "class": "Camera", "name": "Optical Camera", "mesh": "None", "enabled": true, "position": [0.0, -0.36, -0.16], "rotation": [90.0, 0.0, 0.0] },
           { "class": "Charge Coupled Device", "name": "Charge Coupled Device", "mesh": "None", "enabled": true, "position": [0.0, -0.36, -0.16], "rotation": [90.0, 0.0, 0.0], "data": { "Resolution": 64, "Exposure Time": 0.05, "Field Of View": 5.0, "Spectral Wavelength": 550, "Capture On Tick": false } },
-          { "class": "Radar", "name": "Radar", "mesh": "None", "enabled": true, "position": [0.0, 0.36, -0.16], "rotation": [-90.0, 0.0, 0.0], "data": { "FOV": 20.0, "Power": 5000.0, "Gain": 40.0, "Detection Threshold": 10.0, "Mass": 6.0 } }
+          { "class": "Radar", "name": "Radar", "mesh": "None", "enabled": true, "position": [0.0, 0.36, -0.16], "rotation": [-90.0, 0.0, 0.0], "data": { "Field Of View": 20.0, "Power": 5000.0, "Gain": 40.0, "Detection Threshold": 10.0, "Mass": 6.0 } }
         ]
       },
       {
@@ -101,7 +101,7 @@
           { "class": "Storage", "name": "Storage", "mesh": "None", "enabled": true, "position": [0.0, 0.0, -0.2], "data": { "Mass": 4.0 } },
           { "class": "Camera", "name": "Optical Camera", "mesh": "None", "enabled": true, "position": [0.0, -0.36, -0.16], "rotation": [90.0, 0.0, 0.0] },
           { "class": "Charge Coupled Device", "name": "Charge Coupled Device", "mesh": "None", "enabled": true, "position": [0.0, -0.36, -0.16], "rotation": [90.0, 0.0, 0.0], "data": { "Resolution": 64, "Exposure Time": 0.3, "Field Of View": 2.0, "Spectral Wavelength": 550, "Capture On Tick": false } },
-          { "class": "Radar", "name": "Radar", "mesh": "None", "enabled": true, "position": [0.0, 0.36, -0.16], "rotation": [-90.0, 0.0, 0.0], "data": { "FOV": 15.0, "Power": 8000.0, "Gain": 42.0, "Detection Threshold": 9.0, "Mass": 7.0 } }
+          { "class": "Radar", "name": "Radar", "mesh": "None", "enabled": true, "position": [0.0, 0.36, -0.16], "rotation": [-90.0, 0.0, 0.0], "data": { "Field Of View": 15.0, "Power": 8000.0, "Gain": 42.0, "Detection Threshold": 9.0, "Mass": 7.0 } }
         ]
       },
       {

@@ -10,9 +10,12 @@ Each entry is loaded when the scenario starts.
   "orbit":        [7800.0, 0.01, 51.6, 90.0, 0.0, 0.0],
   "planet":       "Earth",
   "dynamic_type": "Orbit",
+  "attitude":      [0.0, 0.0, 0.0],
+  "attitude_rate": [0.0, 0.0, 0.0],
   "mesh":         "/ZendirAssetsSpace/Blueprints/Spacecraft/ZenSat/BP_Z_SC_ZenSat_Chassis",
   "scale":        1.0,
-  "color":        "#FFFFFF"
+  "color":        "#FFFFFF",
+  "reflectivity": 0.5
 }
 ```
 
@@ -25,9 +28,12 @@ Each entry is loaded when the scenario starts.
 | `geodetic` | `number[3]` | _(unset)_ | Fixed `[latitude (deg), longitude (deg), altitude (m)]`. **Optional** and **mutually exclusive** with `orbit` — when present it takes precedence and the object is positioned by LLA instead of orbital elements. |
 | `planet` | `string` | `"Earth"` | Body the object orbits. Accepts `"Earth"`, `"Moon"`, `"Mars"`. |
 | `dynamic_type` | `string` | `"Orbit"` | Motion model. One of `Orbit` (fixed Keplerian propagation), `Static` (frozen position/attitude), `Integration` (full dynamics), `Lookup` (table-driven). Case-insensitive. |
+| `attitude` | `number[3]` (deg) | `[0,0,0]` | Initial body attitude as **1-2-3 Euler angles**. Applied at spawn via `SetAttitude` (converted to MRP internally). |
+| `attitude_rate` | `number[3]` (deg/s) | `[0,0,0]` | Initial body angular rate in the **body frame**. Applied at spawn via `SetAttitudeRate` (converted to rad/s internally). Useful for tumbling debris. |
 | `mesh` | `string` | `"none"` | Visual mesh. Either a static-mesh name or the full path to a Blueprint physical-object class used as the chassis. `"none"` (or empty) leaves the object with no visual mesh. |
 | `scale` | `number` | `1.0` | Visual scale factor applied to the mesh. |
 | `color` | `string` (hex) | `"#FFFFFF"` | Hex RGB. Accepts `#RRGGBB` or `#RGB`. |
+| `reflectivity` | `number` | `0.5` | How reflective the object material is (`0.0`–`1.0`). Left at the default the material properties are untouched; any other value is applied at load via `SetMaterialProperties`. Feeds sensor models such as optical / radar detection. |
 | `trackable` | `boolean` | `true` | When `true`, the object is broadcast to every team's operator UI as a selectable [relative-pointing](../api-reference/spacecraft-commands.md#relative) target (in the `trackable[]` list of [`list_assets`](../api-reference/ground-requests.md#list_assets)). Set `false` to keep an object in the scene but hidden from targeting. |
 
 ## Positioning: `orbit` vs `geodetic`

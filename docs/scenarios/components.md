@@ -38,6 +38,7 @@ The `class` field is matched case-insensitive after spaces are stripped. The shi
 | `Magnetometer` | — | Magnetic-field measurement. |
 | `Gyroscope` | `IMU` | Body-rate measurement. |
 | `Charge Coupled Device` | `CCD` | Configurable imaging sensor (resolution, exposure time, FOV). Captures like a `Camera`. See [Charge Coupled Device (CCD)](#charge-coupled-device-ccd). |
+| `RADAR` | - | Able to detect the presence of nearby objects and spacecraft based on distance and signal strength. |
 | `Laser Range Finder` | `LRF` | Range-finder for determining distance to objects nearby. |
 | `Docking Adapter` | `Docking` | RPO end-effector. Both vehicles need one to exchange a docking handshake. |
 | `Power Interconnect` | — | Cross-bus connector; pairs two spacecraft power networks at load. See [Power Interconnect](#power-interconnect). |

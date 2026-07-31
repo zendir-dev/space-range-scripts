@@ -323,9 +323,12 @@ Bare spacecraft in orbit with **no controller and no components** — debris, sp
   "orbit":        [7800.0, 0.01, 51.6, 90.0, 0.0, 0.0],
   "planet":       "Earth",
   "dynamic_type": "Orbit",
+  "attitude":      [0.0, 0.0, 0.0],
+  "attitude_rate": [0.0, 0.0, 0.0],
   "mesh":         "None",
   "scale":        1.0,
-  "color":        "#FFFFFF"
+  "color":        "#FFFFFF",
+  "reflectivity": 0.5
 }
 ```
 
@@ -336,9 +339,12 @@ Bare spacecraft in orbit with **no controller and no components** — debris, sp
 | `geodetic` | Optional `[lat (deg), lon (deg), alt (m)]`. **Mutually exclusive** with `orbit`; takes precedence when present. |
 | `planet` | Body the object orbits (`Earth`, `Moon`, `Mars`). |
 | `dynamic_type` | `Orbit` (default), `Static`, `Integration`, or `Lookup`. |
+| `attitude` | Initial body attitude as 1-2-3 Euler angles (deg). |
+| `attitude_rate` | Initial body angular rate (deg/s). Useful for tumbling debris. |
 | `mesh` | Static-mesh name or Blueprint class path. `None` for an invisible object. |
 | `scale` | Visual size factor for the mesh. |
 | `color` | Hex RGB. |
+| `reflectivity` | Material reflectivity (`0.0`–`1.0`, default `0.5`). |
 
 Like ground objects, space objects are **passive** — no telemetry, no commands, not part of any team. See [space-objects.md](../scenarios/space-objects.md) for full details.
 
