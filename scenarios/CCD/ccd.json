@@ -157,7 +157,7 @@
         "name": "R/B Titan",
         "orbit": { "planet": "Earth", "values": [42164.0, 0.0003, 1.438, 0.0, 0.0, 100.47] },
         "physics": { "override_mass": true, "mass": 950.0, "inertia_tensor": [[200.0, 0.0, 0.0], [0.0, 900.0, 0.0], [0.0, 0.0, 900.0]], "attitude_rate": [0.4, 3.0, 0.6] },
-        "visualization": { "mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/SecondStage/BP_Z_SC_SecondStage_Chassis", "scale": 500.0, "reflectivity": 0.25 },
+        "visualization": { "mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/SecondStage/BP_Z_SC_SecondStage_Chassis", "scale": 1000.0, "reflectivity": 0.25 },
         "truth": { "group": "G3", "class": "Tumbling rocket body (debris)", "attitude_rate_dps": [0.4, 3, 0.6], "tell": "large, dull; slow dominant ~3 deg/s spin -> ~120 s brightness period" }
       },
       {
@@ -165,7 +165,7 @@
         "name": "R/B Atlas",
         "orbit": { "planet": "Earth", "values": [42250.0, 0.0004, 0.6, 0.0, 0.0, 98.16] },
         "physics": { "override_mass": true, "mass": 900.0, "inertia_tensor": [[190.0, 0.0, 0.0], [0.0, 850.0, 0.0], [0.0, 0.0, 850.0]], "attitude_rate": [0.8, 2.0, 0.5] },
-        "visualization": { "mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/SecondStage/BP_Z_SC_SecondStage_Chassis", "scale": 500.0, "reflectivity": 0.22 },
+        "visualization": { "mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/SecondStage/BP_Z_SC_SecondStage_Chassis", "scale": 1000.0, "reflectivity": 0.22 },
         "truth": { "group": "G3", "class": "Tumbling rocket body (debris)", "attitude_rate_dps": [0.8, 2, 0.5], "tell": "graveyard orbit (slightly higher, drifts); slow ~2 deg/s spin -> ~180 s brightness period" }
       },
       {
@@ -173,7 +173,7 @@
         "name": "R/B Delta",
         "orbit": { "planet": "Earth", "values": [8057.105, 0.0003, 39.28, 0.0, 360, 8.64] },
         "physics": { "override_mass": true, "mass": 1000.0, "inertia_tensor": [[210.0, 0.0, 0.0], [0.0, 950.0, 0.0], [0.0, 0.0, 950.0]], "attitude_rate": [0.3, 4.5, 0.4] },
-        "visualization": { "mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/SecondStage/BP_Z_SC_SecondStage_Chassis", "scale": 500.0, "reflectivity": 0.20 },
+        "visualization": { "mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/SecondStage/BP_Z_SC_SecondStage_Chassis", "scale": 1000.0, "reflectivity": 0.20 },
         "truth": { "group": "G3", "class": "Tumbling rocket body (debris)", "attitude_rate_dps": [0.3, 4.5, 0.4], "tell": "trails the GEO node; slow ~4.5 deg/s spin -> ~80 s brightness period" }
       }
     ],

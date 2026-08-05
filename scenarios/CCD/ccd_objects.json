@@ -1,0 +1,461 @@
+{
+  "metadata": {
+    "name": "CCD (space-objects variant)",
+    "description": "Space Domain Awareness (SDA) classification exercise. Each operator team flies a shared TWO-spacecraft observation network: one LEO 'Overwatch' node (SMA 9000 km, inc 51.6 deg, RAAN 180 deg, wide-field survey) and one GEO node (geostationary, held over Singapore). Teams must detect, track, image and CLASSIFY a curated field of passive space objects using photometry (CCD / optical) and radar. The target field is modelled entirely as objects.space[] (passive, no controller, no components). REAL engine fields on those objects: 'reflectivity' (rendered surface brightness) and 'attitude_rate' (body tumble). IMPORTANT: for a body to actually keep tumbling, its 'dynamic_type' must be 'Integration' (a fixed 'Orbit' body sets the initial rate but never rotates), so the three rocket bodies use 'Integration' while the non-spinning objects stay on 'Orbit'. GROUPS: (G1) a 6-satellite LEO constellation ('Helios') co-orbital and leading the LEO Overwatch node so all six sit in the velocity field of view - four baseline members render dull (reflectivity 0.1) and (G2) TWO rogue members, Helios-3 and Helios-5, render bright (reflectivity 0.9) so teams pick them out photometrically with the CCD/optical imager. (G3) three slowly-tumbling rocket bodies near the GEO belt, each given a real attitude_rate (dominant spin 2.0 / 3.0 / 4.5 deg/s for Atlas / Titan / Delta) and enlarged scale, so their CCD light curves vary periodically and teams can measure roll rate and rate them safe / caution / unsafe for capture. (G4) a co-orbital GEO companion on a near-identical bounded relative orbit to the GEO node, and (G5) a prograde super-synchronous 'interloper' ~300 km above GEO, phased ahead in true anomaly, that slowly drifts back toward the GEO node (perception of a closing approach; closest approach ~T+45 min - verify/tune in a dry run). A scripted Spacecraft event injects a GPS Sensor 'Fault State' on the GEO node (supply-chain narrative) so its own altitude telemetry is untrustworthy until reset; teams range it with the LEO radar instead. 'truth' blocks are instructor ground-truth only and are ignored by the loader. FULL-SUN DESIGN: the epoch is set near the June solstice (max solar declination ~+23.4 deg) and every inclined orbit carries RAAN 180 deg so its orbit plane sits at a high beta angle (~75 deg for the 51.6 deg LEO plane, ~63 deg for R/B Delta), well above the eclipse-onset beta, keeping the spacecraft and targets in sunlight for the whole run; the near-equatorial GEO objects stay lit off the solstice declination alone. The run is 10800 s of simulated time (180 min) at 3.0x speed = about 60 min real time. Verify full-sun/eclipse geometry, view windows, GEO sub-longitude over Singapore, and radar detectability with a dry run and tune accordingly."
+  },
+  "simulation": {
+    "epoch": "2026/06/21 04:00:00",
+    "speed": 3.0,
+    "step_size": 0.1,
+    "integrator": "RK4",
+    "end_time": 10800.0
+  },
+  "universe": {
+    "atmosphere": false,
+    "magnetosphere": false,
+    "gps": true,
+    "cloud_opacity": 0.7,
+    "cloud_contrast": 2.5,
+    "ambient_light": 0.25
+  },
+  "ground_stations": {
+    "locations": [
+      "Casablanca",
+      "Dubai",
+      "Singapore",
+      "Sydney",
+      "Miami",
+      "Salvador",
+      "Tokyo",
+      "Honolulu",
+      "Moscow"
+    ],
+    "min_elevation": 5,
+    "max_range": 0,
+    "scale": 100
+  },
+  "teams": [
+    {
+      "enabled": true,
+      "id": 111111,
+      "password": "ALPHA1",
+      "name": "Sentinel Ops Alpha",
+      "key": 42,
+      "frequency": 612,
+      "collection": "Alpha",
+      "color": "#0064FF"
+    },
+    {
+      "enabled": true,
+      "id": 222222,
+      "password": "BRAVO2",
+      "name": "Sentinel Ops Bravo",
+      "key": 84,
+      "frequency": 745,
+      "collection": "Alpha",
+      "color": "#00C864"
+    }
+  ],
+  "assets": {
+    "space": [
+      {
+        "id": "SC_LEO",
+        "name": "Alpha-Overwatch",
+        "orbit": { "planet": "Earth", "values": [9000.0, 0.001, 51.6, 0.0, 0.0, 0.0], "offset": [0.0, 0.0, 0.0, 0.0, 0.0, 0.01] },
+        "physics": { "override_mass": true, "mass": 300.0, "center_of_mass": [0.0, 0.0, 0.0], "inertia_tensor": [[50.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]] },
+        "visualization": { "mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/ZenSat/BP_Z_SC_ZenSat_Chassis", "scale": 1.0, "offset": [0.0, 0.0, 0.12], "reflectivity": 0.5 },
+        "controller": { "safe_fraction": 0.1, "capture_tax": 0.001, "downlink_tax": 0.01, "ping_interval": 20.0, "reset_interval": 60.0, "jamming_multiplier": 100.0, "enable_rpo_software": false },
+        "power": { "bus": [ { "source_component": "Solar Panel +X", "source_terminal": "out", "target_component": "Battery", "target_terminal": "out" }, { "source_component": "Solar Panel -X", "source_terminal": "out", "target_component": "Battery", "target_terminal": "out" } ] },
+        "components": [
+          { "class": "Solar Panel", "name": "Solar Panel +X", "mesh": "None", "enabled": true, "position": [0.8, 0.276313, -0.2], "rotation": [35.0, 0.0, 0.0], "data": { "Area": 0.5, "Efficiency": 0.4, "Mass": 12.0 } },
+          { "class": "Solar Panel", "name": "Solar Panel -X", "mesh": "None", "enabled": true, "position": [-0.8, 0.276313, -0.2], "rotation": [-35.0, 0.0, 0.0], "data": { "Area": 0.5, "Efficiency": 0.4, "Mass": 12.0 } },
+          { "class": "Battery", "name": "Battery", "mesh": "None", "enabled": true, "position": [0.0, 0.0, 0.2], "data": { "Nominal Capacity": 160.0, "Charge Fraction": 1.0, "Mass": 8.0 } },
+          { "class": "Computer", "name": "Computer", "mesh": "None", "enabled": true, "position": [0.0, 0.0, 0.2], "data": { "Mass": 2.0 } },
+          { "class": "Reaction Wheels", "name": "Reaction Wheels", "mesh": "None", "enabled": true, "position": [0.0, 0.0, 0.2], "data": { "Mass": 9.0 } },
+          { "class": "GPS Sensor", "name": "GPS Sensor", "mesh": "None", "enabled": true, "position": [0.0, 0.0, 0.2], "data": { "Mass": 2.0 } },
+          { "class": "Receiver", "name": "Receiver", "mesh": "None", "enabled": true, "position": [0.0, -0.36, -0.16], "rotation": [90.0, 0.0, 0.0], "data": { "Antenna Gain": 4.0, "Mass": 2.0 } },
+          { "class": "Transmitter", "name": "Transmitter", "mesh": "None", "enabled": true, "position": [0.0, -0.36, -0.16], "rotation": [90.0, 0.0, 0.0], "data": { "Antenna Gain": 4.0, "Bit Rate": 40000.0, "Mass": 1.0 } },
+          { "class": "Storage", "name": "Storage", "mesh": "None", "enabled": true, "position": [0.0, 0.0, -0.2], "data": { "Mass": 4.0 } },
+          { "class": "Camera", "name": "Optical Camera", "mesh": "None", "enabled": true, "position": [0.0, -0.36, -0.16], "rotation": [90.0, 0.0, 0.0] },
+          { "class": "Charge Coupled Device", "name": "Charge Coupled Device", "mesh": "None", "enabled": true, "position": [0.0, -0.36, -0.16], "rotation": [90.0, 0.0, 0.0], "data": { "Resolution": 64, "Exposure Time": 0.05, "Field Of View": 5.0, "Spectral Wavelength": 550, "Capture On Tick": false } },
+          { "class": "Radar", "name": "Radar", "mesh": "None", "enabled": true, "position": [0.0, 0.36, -0.16], "rotation": [-90.0, 0.0, 0.0], "data": { "Field Of View": 20.0, "Power": 5000.0, "Gain": 40.0, "Detection Threshold": 10.0, "Mass": 6.0 } }
+        ]
+      },
+      {
+        "id": "SC_GEO",
+        "name": "Alpha-Sentinel-GEO",
+        "orbit": { "planet": "Earth", "values": [42164.0, 0.0002, 0.1, 0.0, 0.0, 100.0], "offset": [0.0, 0.0, 0.0, 0.0, 0.0, 0.01] },
+        "physics": { "override_mass": true, "mass": 350.0, "center_of_mass": [0.0, 0.0, 0.0], "inertia_tensor": [[55.0, 0.0, 0.0], [0.0, 55.0, 0.0], [0.0, 0.0, 55.0]] },
+        "visualization": { "mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/ZenSat/BP_Z_SC_ZenSat_Chassis", "scale": 1.0, "offset": [0.0, 0.0, 0.12], "reflectivity": 0.5 },
+        "controller": { "safe_fraction": 0.1, "capture_tax": 0.001, "downlink_tax": 0.01, "ping_interval": 20.0, "reset_interval": 60.0, "jamming_multiplier": 100.0, "enable_rpo_software": false },
+        "power": { "bus": [ { "source_component": "Solar Panel +X", "source_terminal": "out", "target_component": "Battery", "target_terminal": "out" }, { "source_component": "Solar Panel -X", "source_terminal": "out", "target_component": "Battery", "target_terminal": "out" } ] },
+        "components": [
+          { "class": "Solar Panel", "name": "Solar Panel +X", "mesh": "None", "enabled": true, "position": [0.8, 0.276313, -0.2], "rotation": [35.0, 0.0, 0.0], "data": { "Area": 0.6, "Efficiency": 0.4, "Mass": 14.0 } },
+          { "class": "Solar Panel", "name": "Solar Panel -X", "mesh": "None", "enabled": true, "position": [-0.8, 0.276313, -0.2], "rotation": [-35.0, 0.0, 0.0], "data": { "Area": 0.6, "Efficiency": 0.4, "Mass": 14.0 } },
+          { "class": "Battery", "name": "Battery", "mesh": "None", "enabled": true, "position": [0.0, 0.0, 0.2], "data": { "Nominal Capacity": 200.0, "Charge Fraction": 1.0, "Mass": 10.0 } },
+          { "class": "Computer", "name": "Computer", "mesh": "None", "enabled": true, "position": [0.0, 0.0, 0.2], "data": { "Mass": 2.0 } },
+          { "class": "Reaction Wheels", "name": "Reaction Wheels", "mesh": "None", "enabled": true, "position": [0.0, 0.0, 0.2], "data": { "Mass": 9.0 } },
+          { "class": "GPS Sensor", "name": "GPS Sensor", "mesh": "None", "enabled": true, "position": [0.0, 0.0, 0.2], "data": { "Mass": 2.0 } },
+          { "class": "Receiver", "name": "Receiver", "mesh": "None", "enabled": true, "position": [0.0, -0.36, -0.16], "rotation": [90.0, 0.0, 0.0], "data": { "Antenna Gain": 5.0, "Mass": 2.0 } },
+          { "class": "Transmitter", "name": "Transmitter", "mesh": "None", "enabled": true, "position": [0.0, -0.36, -0.16], "rotation": [90.0, 0.0, 0.0], "data": { "Antenna Gain": 5.0, "Bit Rate": 40000.0, "Mass": 1.0 } },
+          { "class": "Storage", "name": "Storage", "mesh": "None", "enabled": true, "position": [0.0, 0.0, -0.2], "data": { "Mass": 4.0 } },
+          { "class": "Camera", "name": "Optical Camera", "mesh": "None", "enabled": true, "position": [0.0, -0.36, -0.16], "rotation": [90.0, 0.0, 0.0] },
+          { "class": "Charge Coupled Device", "name": "Charge Coupled Device", "mesh": "None", "enabled": true, "position": [0.0, -0.36, -0.16], "rotation": [90.0, 0.0, 0.0], "data": { "Resolution": 64, "Exposure Time": 0.3, "Field Of View": 2.0, "Spectral Wavelength": 550, "Capture On Tick": false } },
+          { "class": "Radar", "name": "Radar", "mesh": "None", "enabled": true, "position": [0.0, 0.36, -0.16], "rotation": [-90.0, 0.0, 0.0], "data": { "Field Of View": 15.0, "Power": 8000.0, "Gain": 42.0, "Detection Threshold": 9.0, "Mass": 7.0 } }
+        ]
+      }
+    ],
+    "neutral": [],
+    "collections": [
+      { "id": "Alpha", "space_assets": ["SC_LEO", "SC_GEO"] }
+    ]
+  },
+  "objects": {
+    "space": [
+      {
+        "name": "Helios-1",
+        "orbit": [9000.0, 0.001, 51.6, 0.0, 0.0, 5.0],
+        "planet": "Earth",
+        "dynamic_type": "Orbit",
+        "mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/MRO/BP_Z_SC_MRO_Chassis",
+        "scale": 3.0,
+        "reflectivity": 0.1,
+        "truth": { "group": "G1", "class": "Constellation (baseline)", "reflectivity": 0.1, "tell": "baseline reflectivity 0.1 - genuine constellation member" }
+      },
+      {
+        "name": "Helios-2",
+        "orbit": [9000.0, 0.001, 51.6, 0.0, 0.0, 10.0],
+        "planet": "Earth",
+        "dynamic_type": "Orbit",
+        "mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/MRO/BP_Z_SC_MRO_Chassis",
+        "scale": 3.0,
+        "reflectivity": 0.1,
+        "truth": { "group": "G1", "class": "Constellation (baseline)", "reflectivity": 0.1, "tell": "baseline reflectivity 0.1 - genuine constellation member" }
+      },
+      {
+        "name": "Helios-3",
+        "orbit": [9000.0, 0.001, 51.6, 0.0, 0.0, 15.0],
+        "planet": "Earth",
+        "dynamic_type": "Orbit",
+        "mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/MRO/BP_Z_SC_MRO_Chassis",
+        "scale": 3.0,
+        "reflectivity": 0.9,
+        "truth": { "group": "G2", "class": "ROGUE (anomalous reflectivity)", "reflectivity": 0.9, "tell": "reflectivity 0.9 - visibly brighter than the 0.1 baseline members; rogue" }
+      },
+      {
+        "name": "Helios-4",
+        "orbit": [9000.0, 0.001, 51.6, 0.0, 0.0, 20.0],
+        "planet": "Earth",
+        "dynamic_type": "Orbit",
+        "mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/MRO/BP_Z_SC_MRO_Chassis",
+        "scale": 3.0,
+        "reflectivity": 0.1,
+        "truth": { "group": "G1", "class": "Constellation (baseline)", "reflectivity": 0.1, "tell": "baseline reflectivity 0.1 - genuine constellation member" }
+      },
+      {
+        "name": "Helios-5",
+        "orbit": [9000.0, 0.001, 51.6, 0.0, 0.0, 25.0],
+        "planet": "Earth",
+        "dynamic_type": "Orbit",
+        "mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/MRO/BP_Z_SC_MRO_Chassis",
+        "scale": 3.0,
+        "reflectivity": 0.9,
+        "truth": { "group": "G2", "class": "ROGUE (anomalous reflectivity)", "reflectivity": 0.9, "tell": "reflectivity 0.9 - visibly brighter than the 0.1 baseline members; rogue" }
+      },
+      {
+        "name": "Helios-6",
+        "orbit": [9000.0, 0.001, 51.6, 0.0, 0.0, 30.0],
+        "planet": "Earth",
+        "dynamic_type": "Orbit",
+        "mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/MRO/BP_Z_SC_MRO_Chassis",
+        "scale": 3.0,
+        "reflectivity": 0.1,
+        "truth": { "group": "G1", "class": "Constellation (baseline)", "reflectivity": 0.1, "tell": "baseline reflectivity 0.1 - genuine constellation member" }
+      },
+      {
+        "name": "R/B Titan",
+        "orbit": [42164.0, 0.0003, 1.438, 0.0, 0.0, 100.47],
+        "planet": "Earth",
+        "dynamic_type": "Integration",
+        "attitude_rate": [0.4, 3.0, 0.6],
+        "mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/SecondStage/BP_Z_SC_SecondStage_Chassis",
+        "scale": 1000.0,
+        "reflectivity": 0.25,
+        "truth": { "group": "G3", "class": "Tumbling rocket body (debris)", "roll_rate_dominant_dps": 3.0, "collection_class": "CAUTION - despin before capture", "tell": "dominant ~3 deg/s spin -> ~120 s CCD brightness period; mid roll rate" }
+      },
+      {
+        "name": "R/B Atlas",
+        "orbit": [42250.0, 0.0004, 0.6, 0.0, 0.0, 98.16],
+        "planet": "Earth",
+        "dynamic_type": "Integration",
+        "attitude_rate": [0.8, 2.0, 0.5],
+        "mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/SecondStage/BP_Z_SC_SecondStage_Chassis",
+        "scale": 1000.0,
+        "reflectivity": 0.22,
+        "truth": { "group": "G3", "class": "Tumbling rocket body (debris)", "roll_rate_dominant_dps": 2.0, "collection_class": "SAFE for collection", "tell": "dominant ~2 deg/s spin -> ~180 s CCD brightness period; slowest roll rate" }
+      },
+      {
+        "name": "R/B Delta",
+        "orbit": [8057.105, 0.0003, 39.28, 0.0, 360, 8.64],
+        "planet": "Earth",
+        "dynamic_type": "Integration",
+        "attitude_rate": [0.3, 4.5, 0.4],
+        "mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/SecondStage/BP_Z_SC_SecondStage_Chassis",
+        "scale": 1000.0,
+        "reflectivity": 0.20,
+        "truth": { "group": "G3", "class": "Tumbling rocket body (debris)", "roll_rate_dominant_dps": 4.5, "collection_class": "UNSAFE - do not capture", "tell": "dominant ~4.5 deg/s spin -> ~80 s CCD brightness period; fastest roll rate" }
+      },
+      {
+        "name": "GEO-Companion",
+        "orbit": [42164.0, 0.0006, 0.5, 3.0, 0.0, 98.0],
+        "planet": "Earth",
+        "dynamic_type": "Orbit",
+        "mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/MRO/BP_Z_SC_MRO_Chassis",
+        "scale": 3.0,
+        "color": "#FFDD66",
+        "truth": { "group": "G4", "class": "Co-orbital GEO companion", "view_window": "persistent near the GEO node", "tell": "near-identical GEO orbit (same SMA/period) with small inclination/RAAN/eccentricity offsets -> stays in a bounded relative orbit; radar range stays roughly constant" }
+      },
+      {
+        "name": "GEO-Interloper",
+        "orbit": [42464.0, 0.0002, 0.1, 0.0, 0.0, 104.0],
+        "planet": "Earth",
+        "dynamic_type": "Orbit",
+        "mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/SecondStage/BP_Z_SC_SecondStage_Chassis",
+        "scale": 3.0,
+        "color": "#FF3333",
+        "truth": { "group": "G5", "class": "Prograde super-synchronous interloper (drifts in from ahead)", "view_window": "slow closing approach; closest approach ~T+45 min (tune in a dry run)", "tell": "prograde, ~300 km above GEO (SMA 42464 km) so period slightly longer; started ~4 deg ahead in true anomaly and slowly falls back toward the node -> radar range decreases over time" }
+      }
+    ]
+  },
+  "events": [
+    {
+      "Enabled": true,
+      "Name": "GEO GPS Supply-Chain Fault",
+      "Time": 180.0,
+      "Repeat": false,
+      "Interval": 1.0,
+      "Type": "Spacecraft",
+      "Target": "GPS Sensor",
+      "Assets": ["SC_GEO"],
+      "Data": { "Fault State": 4 }
+    }
+  ],
+  "questions": [
+    {
+      "section": "1. Constellation Analysis",
+      "title": "How many of the Helios constellation satellites are rogue?",
+      "description": "Use the LEO Overwatch imaging sensors to survey the six-satellite Helios cluster. Four members share the same brightness; the rogue spacecraft render with an anomalous reflectivity. How many are rogue?",
+      "type": "number",
+      "answer": { "value": 2, "tolerance": 0, "unit": "", "reason": "Four Helios members render at the 0.1 baseline reflectivity; two (Helios-3 and Helios-5) render anomalously bright at 0.9, so two are rogue.", "score": 10 }
+    },
+    {
+      "section": "1. Constellation Analysis",
+      "title": "Which onboard sensor did you use to identify the rogue spacecraft?",
+      "description": "The rogue members share the same orbit, size and mesh as the rest of the constellation. Which sensor reveals the difference in their surface brightness?",
+      "type": "select",
+      "answer": {
+        "options": ["Radar", "Charge Coupled Device (CCD) / optical imager", "GPS Sensor", "Magnetometer"],
+        "value": 1,
+        "reason": "The tell is surface reflectivity (brightness), which is a photometric measurement from the CCD / optical imager, not radar range, GPS, or magnetics.",
+        "score": 8
+      }
+    },
+    {
+      "section": "1. Constellation Analysis",
+      "title": "Which specific Helios satellites are rogue?",
+      "description": "Compare the imaged brightness of all six members and select the two that stand out from the baseline.",
+      "type": "checkbox",
+      "answer": {
+        "options": ["Helios-1", "Helios-2", "Helios-3", "Helios-4", "Helios-5", "Helios-6"],
+        "value": [2, 4],
+        "reason": "Helios-3 and Helios-5 render at reflectivity 0.9, visibly brighter than the four baseline members at 0.1.",
+        "score": 12
+      }
+    },
+    {
+      "section": "1. Constellation Analysis",
+      "title": "Compared to the baseline members, the rogue spacecraft appear:",
+      "description": "Judge the rogue members against the four baseline Helios satellites in your imagery.",
+      "type": "select",
+      "answer": {
+        "options": ["Brighter", "Darker", "Identical", "Flickering on and off"],
+        "value": 0,
+        "reason": "The rogue members carry reflectivity 0.9 against a 0.1 baseline, so they image brighter than the rest of the constellation.",
+        "score": 6
+      }
+    },
+    {
+      "section": "2. Debris Analysis",
+      "title": "How many rocket bodies (debris) are present near the GEO belt?",
+      "description": "Identify the large objects whose CCD brightness varies periodically (a light curve), indicating they are tumbling.",
+      "type": "number",
+      "answer": { "value": 3, "tolerance": 0, "unit": "", "reason": "R/B Titan, R/B Atlas and R/B Delta each tumble, producing a periodic light curve.", "score": 6 }
+    },
+    {
+      "section": "2. Debris Analysis",
+      "title": "Estimate the roll rate of R/B Atlas.",
+      "description": "Measure the period between repeating peaks in the CCD light curve and convert to a dominant spin rate (roll rate in degrees per second).",
+      "type": "number",
+      "answer": { "value": 2.0, "tolerance": 1.0, "unit": "deg/s", "reason": "R/B Atlas has a dominant ~2 deg/s spin, giving a brightness period of roughly 180 s.", "score": 8 }
+    },
+    {
+      "section": "2. Debris Analysis",
+      "title": "Estimate the roll rate of R/B Titan.",
+      "description": "Measure the period between repeating peaks in the CCD light curve and convert to a dominant spin rate (roll rate in degrees per second).",
+      "type": "number",
+      "answer": { "value": 3.0, "tolerance": 1.0, "unit": "deg/s", "reason": "R/B Titan has a dominant ~3 deg/s spin, giving a brightness period of roughly 120 s.", "score": 8 }
+    },
+    {
+      "section": "2. Debris Analysis",
+      "title": "Estimate the roll rate of R/B Delta.",
+      "description": "Measure the period between repeating peaks in the CCD light curve and convert to a dominant spin rate (roll rate in degrees per second).",
+      "type": "number",
+      "answer": { "value": 4.5, "tolerance": 1.0, "unit": "deg/s", "reason": "R/B Delta has a dominant ~4.5 deg/s spin, giving a brightness period of roughly 80 s.", "score": 8 }
+    },
+    {
+      "section": "2. Debris Analysis",
+      "title": "Using the capture-safety table in the brief, classify R/B Atlas.",
+      "description": "Apply your measured roll rate to the collection-safety thresholds provided in the mission brief.",
+      "type": "select",
+      "answer": {
+        "options": ["Safe for collection", "Caution - despin required before capture", "Unsafe - do not attempt capture"],
+        "value": 0,
+        "reason": "R/B Atlas rolls at ~2 deg/s, within the safe limit (2.5 deg/s or less), so it is safe for collection.",
+        "score": 8
+      }
+    },
+    {
+      "section": "2. Debris Analysis",
+      "title": "Using the capture-safety table in the brief, classify R/B Titan.",
+      "description": "Apply your measured roll rate to the collection-safety thresholds provided in the mission brief.",
+      "type": "select",
+      "answer": {
+        "options": ["Safe for collection", "Caution - despin required before capture", "Unsafe - do not attempt capture"],
+        "value": 1,
+        "reason": "R/B Titan rolls at ~3 deg/s, in the caution band (2.5 to 4.0 deg/s), so it requires despin before capture.",
+        "score": 8
+      }
+    },
+    {
+      "section": "2. Debris Analysis",
+      "title": "Using the capture-safety table in the brief, classify R/B Delta.",
+      "description": "Apply your measured roll rate to the collection-safety thresholds provided in the mission brief.",
+      "type": "select",
+      "answer": {
+        "options": ["Safe for collection", "Caution - despin required before capture", "Unsafe - do not attempt capture"],
+        "value": 2,
+        "reason": "R/B Delta rolls at ~4.5 deg/s, above the maximum safe roll rate (4.0 deg/s), so it is unsafe to capture.",
+        "score": 8
+      }
+    },
+    {
+      "section": "3. Friendly Approach",
+      "title": "Which GEO-region object is holding its own stable orbit near your GEO spacecraft?",
+      "description": "Track both GEO-region objects with your radar over several minutes. One keeps a roughly constant range; the other does not.",
+      "type": "select",
+      "answer": {
+        "options": ["GEO-Companion", "GEO-Interloper"],
+        "value": 0,
+        "reason": "The GEO-Companion shares a near-identical orbit and stays in a bounded relative orbit, so its radar range stays roughly constant.",
+        "score": 8
+      }
+    },
+    {
+      "section": "3. Friendly Approach",
+      "title": "Which GEO-region object is on an approach toward your GEO spacecraft?",
+      "description": "Compare the radar range trend of the two objects. The approaching object closes range over time.",
+      "type": "select",
+      "answer": {
+        "options": ["GEO-Companion", "GEO-Interloper"],
+        "value": 1,
+        "reason": "The GEO-Interloper is on a slightly higher, prograde orbit phased ahead of the node and drifts back toward it, so its radar range decreases over time.",
+        "score": 8
+      }
+    },
+    {
+      "section": "3. Friendly Approach",
+      "title": "Over the run, the radar range to the interloper is best described as:",
+      "description": "Read the range measurement from your GEO radar at several times and describe the trend.",
+      "type": "select",
+      "answer": {
+        "options": ["Increasing steadily", "Roughly constant", "Decreasing toward a closest approach", "Always zero"],
+        "value": 2,
+        "reason": "The interloper closes on the node, so radar range decreases toward a closest approach before opening again.",
+        "score": 8
+      }
+    },
+    {
+      "section": "3. Friendly Approach",
+      "title": "Roughly how long after start does the interloper reach closest approach to your GEO spacecraft?",
+      "description": "Use the radar range measurements to find when the range is minimised.",
+      "type": "number",
+      "answer": { "value": 45.0, "tolerance": 15.0, "unit": "min", "reason": "The interloper is phased so its slow along-track drift brings it to closest approach about 45 minutes into the run.", "score": 8 }
+    },
+    {
+      "section": "4. Sensor Error",
+      "title": "Intel reports the GEO spacecraft's altitude telemetry is untrustworthy. Which subsystem is compromised?",
+      "description": "A supply-chain compromise has degraded one sensor on your GEO node, corrupting its reported position. Identify the affected subsystem from the telemetry.",
+      "type": "select",
+      "answer": {
+        "options": ["Battery", "GPS Sensor", "Reaction Wheels", "Transmitter"],
+        "value": 1,
+        "reason": "The GPS Sensor on the GEO node is driven into a fault state, so its position and altitude readings are unreliable until reset.",
+        "score": 6
+      }
+    },
+    {
+      "section": "4. Sensor Error",
+      "title": "Using the LEO spacecraft's radar, determine the GEO spacecraft's altitude above Earth's surface.",
+      "description": "Do not trust the GEO node's own GPS. The GEO spacecraft is geostationary and held over Singapore. Range it with the LEO Overwatch radar and use the geometry to determine its altitude above the surface, in km.",
+      "type": "number",
+      "answer": { "value": 35786.0, "tolerance": 2000.0, "unit": "km", "reason": "A geostationary spacecraft sits about 35786 km above the surface (orbital radius 42164 km minus Earth's ~6378 km radius).", "score": 12 }
+    },
+    {
+      "section": "4. Sensor Error",
+      "title": "What is the corresponding orbital radius (semi-major axis) of the GEO spacecraft?",
+      "description": "Add Earth's radius to the altitude you determined to report the orbital radius, in km.",
+      "type": "number",
+      "answer": { "value": 42164.0, "tolerance": 2000.0, "unit": "km", "reason": "Geostationary orbital radius is about 42164 km (35786 km altitude plus 6378 km Earth radius).", "score": 8 }
+    },
+    {
+      "section": "4. Sensor Error",
+      "title": "What corrective action restores trustworthy GEO position data?",
+      "description": "Once you have independently determined the altitude, choose the action that clears the fault.",
+      "type": "select",
+      "answer": {
+        "options": ["Component reset of the GPS Sensor", "Frequency hopping", "Battery swap", "Take no action"],
+        "value": 0,
+        "reason": "The fault sits on the GPS Sensor, so a component reset of that sensor restores healthy position and altitude telemetry.",
+        "score": 6
+      }
+    },
+    {
+      "section": "5. Orbit Determination",
+      "title": "What is the semi-major axis (SMA) of your LEO Overwatch orbit?",
+      "description": "Use the healthy GPS telemetry on the LEO Overwatch node to determine its orbit. Report the semi-major axis in km.",
+      "type": "number",
+      "answer": { "value": 9000.0, "tolerance": 150.0, "unit": "km", "reason": "The LEO Overwatch node is on a 9000 km semi-major-axis orbit.", "score": 8 }
+    },
+    {
+      "section": "5. Orbit Determination",
+      "title": "What is the eccentricity of your LEO Overwatch orbit?",
+      "description": "From the GPS-derived orbit of the LEO Overwatch node, report the eccentricity.",
+      "type": "number",
+      "answer": { "value": 0.001, "tolerance": 0.005, "unit": "", "reason": "The LEO Overwatch orbit is very nearly circular, with an eccentricity of about 0.001.", "score": 6 }
+    },
+    {
+      "section": "5. Orbit Determination",
+      "title": "What is the inclination of your LEO Overwatch orbit?",
+      "description": "Read the maximum latitude reached by the LEO Overwatch node from its GPS telemetry to determine inclination, in degrees.",
+      "type": "number",
+      "answer": { "value": 51.6, "tolerance": 1.0, "unit": "deg", "reason": "The LEO Overwatch node is inclined at 51.6 degrees.", "score": 8 }
+    },
+    {
+      "section": "5. Orbit Determination",
+      "title": "What is the altitude of your LEO Overwatch node above Earth's surface?",
+      "description": "Subtract Earth's radius from the orbital radius you determined to report altitude, in km.",
+      "type": "number",
+      "answer": { "value": 2622.0, "tolerance": 200.0, "unit": "km", "reason": "A 9000 km semi-major axis is about 2622 km above the surface (9000 km minus Earth's ~6378 km radius).", "score": 6 }
+    }
+  ]
+}
