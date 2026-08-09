@@ -1,7 +1,7 @@
 {
   "metadata": {
     "name": "CCD (space-objects variant)",
-    "description": "Space Domain Awareness (SDA) classification exercise. Each operator team flies a shared TWO-spacecraft observation network: one LEO 'Overwatch' node (SMA 9000 km, inc 51.6 deg, RAAN 180 deg, wide-field survey) and one GEO node (geostationary, held over Singapore). Teams must detect, track, image and CLASSIFY a curated field of passive space objects using photometry (CCD / optical) and radar. The target field is modelled entirely as objects.space[] (passive, no controller, no components). REAL engine fields on those objects: 'reflectivity' (rendered surface brightness) and 'attitude_rate' (body tumble). IMPORTANT: for a body to actually keep tumbling, its 'dynamic_type' must be 'Integration' (a fixed 'Orbit' body sets the initial rate but never rotates), so the three rocket bodies use 'Integration' while the non-spinning objects stay on 'Orbit'. GROUPS: (G1) a 6-satellite LEO constellation ('Helios') co-orbital and leading the LEO Overwatch node so all six sit in the velocity field of view - four baseline members render dull (reflectivity 0.1) and (G2) TWO rogue members, Helios-3 and Helios-5, render bright (reflectivity 0.9) so teams pick them out photometrically with the CCD/optical imager. (G3) three slowly-tumbling rocket bodies near the GEO belt, each given a real attitude_rate (dominant spin 2.0 / 3.0 / 4.5 deg/s for Atlas / Titan / Delta) and enlarged scale, so their CCD light curves vary periodically and teams can measure roll rate and rate them safe / caution / unsafe for capture. (G4) a co-orbital GEO companion on a near-identical bounded relative orbit to the GEO node, and (G5) a prograde super-synchronous 'interloper' ~300 km above GEO, phased ahead in true anomaly, that slowly drifts back toward the GEO node (perception of a closing approach; closest approach ~T+45 min - verify/tune in a dry run). A scripted Spacecraft event injects a GPS Sensor 'Fault State' on the GEO node (supply-chain narrative) so its own altitude telemetry is untrustworthy until reset; teams range it with the LEO radar instead. 'truth' blocks are instructor ground-truth only and are ignored by the loader. FULL-SUN DESIGN: the epoch is set near the June solstice (max solar declination ~+23.4 deg) and every inclined orbit carries RAAN 180 deg so its orbit plane sits at a high beta angle (~75 deg for the 51.6 deg LEO plane, ~63 deg for R/B Delta), well above the eclipse-onset beta, keeping the spacecraft and targets in sunlight for the whole run; the near-equatorial GEO objects stay lit off the solstice declination alone. The run is 10800 s of simulated time (180 min) at 3.0x speed = about 60 min real time. Verify full-sun/eclipse geometry, view windows, GEO sub-longitude over Singapore, and radar detectability with a dry run and tune accordingly."
+    "description": "Space Domain Awareness (SDA) classification exercise. Each operator team flies a shared TWO-spacecraft observation network: one LEO 'Overwatch' node (SMA 9000 km, inc 51.6 deg) for wide-field survey and one GEO node (geostationary, near Singapore). Teams detect, track, image and CLASSIFY a field of passive space objects using photometry (CCD / optical) and radar. Targets are modelled as objects.space[] (passive, no controller, no telemetry). REAL engine fields used on those objects: 'reflectivity' (rendered surface brightness) and 'attitude_rate' (body tumble). IMPORTANT: for a body to actually keep tumbling its 'dynamic_type' must integrate rotation (the three rocket bodies use 'Integration'; a fixed 'Orbit' body sets the initial rate but never rotates). GROUPS: (G1) a 6-satellite LEO constellation ('Helios') co-orbital and leading the LEO Overwatch node so all six sit in the velocity field of view - four baseline members render dull (reflectivity 0.1) and (G2) TWO rogue members, Helios-3 and Helios-5, render bright (reflectivity 0.9) so teams pick them out photometrically with the CCD/optical imager. (G3) three tumbling rocket bodies, each with a real attitude_rate (dominant spin 2.0 / 3.0 / 4.5 deg/s for Atlas / Titan / Delta) and enlarged scale, so their CCD light curves vary periodically and teams can estimate roll rate and rate them safe / caution / unsafe for capture. (G4) a co-orbital GEO station-keeper (neutral callsign 'GEO-Sierra') sharing the GEO node's SMA/period so it holds a bounded relative orbit (radar range roughly constant), and (G5) a drifting GEO intruder (neutral callsign 'GEO-Tango') on a slightly different orbit/period (SMA 42300 km) so it drifts relative to the node and its radar range changes over the pass - the two callsigns are deliberately neutral so they do NOT reveal which track is the station-keeper and which is the intruder. (G6) a HIGH-PRIORITY object (catalog designation 'PHANTOM') thrown up by a scripted on-orbit event onto a highly elliptical TRANSFER orbit reaching up toward the GEO belt (SMA 26745 km, e 0.732, inc 46 deg) that rises over the LEO Overwatch horizon between ~T+18 and ~T+32 min of simulated time; teams must image it and identify it against a provided catalog. 'truth' blocks are instructor ground-truth only and are ignored by the loader. NOTE: passive objects.space[] ignore any 'components' block, so the intercept carries no rendered text label - it is identified from its orbital/optical signature via the catalog, not a painted callsign. The run is 10800 s of simulated time (180 min) at 3.0x speed = about 60 min real time. Verify eclipse/lighting geometry, view windows (especially the T+18-32 intercept pass and the interloper's range trend), GEO sub-longitude, and radar detectability with a dry run and tune accordingly."
   },
   "simulation": {
     "epoch": "2026/06/21 04:00:00",
@@ -20,12 +20,9 @@
   },
   "ground_stations": {
     "locations": [
-      "Casablanca",
       "Dubai",
       "Singapore",
-      "Sydney",
-      "Miami",
-      "Salvador",
+      "Lima",
       "Tokyo",
       "Honolulu",
       "Moscow"
@@ -78,7 +75,7 @@
           { "class": "Storage", "name": "Storage", "mesh": "None", "enabled": true, "position": [0.0, 0.0, -0.2], "data": { "Mass": 4.0 } },
           { "class": "Camera", "name": "Optical Camera", "mesh": "None", "enabled": true, "position": [0.0, -0.36, -0.16], "rotation": [90.0, 0.0, 0.0] },
           { "class": "Charge Coupled Device", "name": "Charge Coupled Device", "mesh": "None", "enabled": true, "position": [0.0, -0.36, -0.16], "rotation": [90.0, 0.0, 0.0], "data": { "Resolution": 64, "Exposure Time": 0.05, "Field Of View": 5.0, "Spectral Wavelength": 550, "Capture On Tick": false } },
-          { "class": "Radar", "name": "Radar", "mesh": "None", "enabled": true, "position": [0.0, 0.36, -0.16], "rotation": [-90.0, 0.0, 0.0], "data": { "Field Of View": 20.0, "Power": 5000.0, "Gain": 40.0, "Detection Threshold": 10.0, "Mass": 6.0 } }
+          { "class": "Radar", "name": "Radar", "mesh": "None", "enabled": true, "position": [0.0, 0.36, -0.16], "rotation": [-90.0, 0.0, 0.0], "data": { "Field Of View": 20.0, "Power": 2000.0, "Gain": 40.0, "Detection Threshold": 10.0, "Mass": 6.0 } }
         ]
       },
       {
@@ -101,7 +98,7 @@
           { "class": "Storage", "name": "Storage", "mesh": "None", "enabled": true, "position": [0.0, 0.0, -0.2], "data": { "Mass": 4.0 } },
           { "class": "Camera", "name": "Optical Camera", "mesh": "None", "enabled": true, "position": [0.0, -0.36, -0.16], "rotation": [90.0, 0.0, 0.0] },
           { "class": "Charge Coupled Device", "name": "Charge Coupled Device", "mesh": "None", "enabled": true, "position": [0.0, -0.36, -0.16], "rotation": [90.0, 0.0, 0.0], "data": { "Resolution": 64, "Exposure Time": 0.3, "Field Of View": 2.0, "Spectral Wavelength": 550, "Capture On Tick": false } },
-          { "class": "Radar", "name": "Radar", "mesh": "None", "enabled": true, "position": [0.0, 0.36, -0.16], "rotation": [-90.0, 0.0, 0.0], "data": { "Field Of View": 15.0, "Power": 8000.0, "Gain": 42.0, "Detection Threshold": 9.0, "Mass": 7.0 } }
+          { "class": "Radar", "name": "Radar", "mesh": "None", "enabled": true, "position": [0.0, 0.36, -0.16], "rotation": [-90.0, 0.0, 0.0], "data": { "Field Of View": 15.0, "Power": 2000.0, "Gain": 42.0, "Detection Threshold": 9.0, "Mass": 7.0 } }
         ]
       }
     ],
@@ -118,7 +115,7 @@
         "planet": "Earth",
         "dynamic_type": "Orbit",
         "mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/MRO/BP_Z_SC_MRO_Chassis",
-        "scale": 3.0,
+        "scale": 1.0,
         "reflectivity": 0.1,
         "truth": { "group": "G1", "class": "Constellation (baseline)", "reflectivity": 0.1, "tell": "baseline reflectivity 0.1 - genuine constellation member" }
       },
@@ -128,7 +125,7 @@
         "planet": "Earth",
         "dynamic_type": "Orbit",
         "mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/MRO/BP_Z_SC_MRO_Chassis",
-        "scale": 3.0,
+        "scale": 1.0,
         "reflectivity": 0.1,
         "truth": { "group": "G1", "class": "Constellation (baseline)", "reflectivity": 0.1, "tell": "baseline reflectivity 0.1 - genuine constellation member" }
       },
@@ -138,7 +135,7 @@
         "planet": "Earth",
         "dynamic_type": "Orbit",
         "mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/MRO/BP_Z_SC_MRO_Chassis",
-        "scale": 3.0,
+        "scale": 5.0,
         "reflectivity": 0.9,
         "truth": { "group": "G2", "class": "ROGUE (anomalous reflectivity)", "reflectivity": 0.9, "tell": "reflectivity 0.9 - visibly brighter than the 0.1 baseline members; rogue" }
       },
@@ -148,7 +145,7 @@
         "planet": "Earth",
         "dynamic_type": "Orbit",
         "mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/MRO/BP_Z_SC_MRO_Chassis",
-        "scale": 3.0,
+        "scale": 1.0,
         "reflectivity": 0.1,
         "truth": { "group": "G1", "class": "Constellation (baseline)", "reflectivity": 0.1, "tell": "baseline reflectivity 0.1 - genuine constellation member" }
       },
@@ -158,7 +155,7 @@
         "planet": "Earth",
         "dynamic_type": "Orbit",
         "mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/MRO/BP_Z_SC_MRO_Chassis",
-        "scale": 3.0,
+        "scale": 5.0,
         "reflectivity": 0.9,
         "truth": { "group": "G2", "class": "ROGUE (anomalous reflectivity)", "reflectivity": 0.9, "tell": "reflectivity 0.9 - visibly brighter than the 0.1 baseline members; rogue" }
       },
@@ -168,7 +165,7 @@
         "planet": "Earth",
         "dynamic_type": "Orbit",
         "mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/MRO/BP_Z_SC_MRO_Chassis",
-        "scale": 3.0,
+        "scale": 1.0,
         "reflectivity": 0.1,
         "truth": { "group": "G1", "class": "Constellation (baseline)", "reflectivity": 0.1, "tell": "baseline reflectivity 0.1 - genuine constellation member" }
       },
@@ -206,52 +203,71 @@
         "truth": { "group": "G3", "class": "Tumbling rocket body (debris)", "roll_rate_dominant_dps": 4.5, "collection_class": "UNSAFE - do not capture", "tell": "dominant ~4.5 deg/s spin -> ~80 s CCD brightness period; fastest roll rate" }
       },
       {
-        "name": "GEO-Companion",
-        "orbit": [42164.0, 0.0006, 0.5, 3.0, 0.0, 98.0],
+        "name": "GEO-Sierra",
+        "orbit": [42164.0, 0.0006, 0.12, 3.0, 0.0, 97.0],
         "planet": "Earth",
-        "dynamic_type": "Orbit",
+        "dynamic_type": "Dynamic",
         "mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/MRO/BP_Z_SC_MRO_Chassis",
         "scale": 3.0,
         "color": "#FFDD66",
-        "truth": { "group": "G4", "class": "Co-orbital GEO companion", "view_window": "persistent near the GEO node", "tell": "near-identical GEO orbit (same SMA/period) with small inclination/RAAN/eccentricity offsets -> stays in a bounded relative orbit; radar range stays roughly constant" }
+        "truth": { "group": "G4", "class": "Co-orbital GEO companion (station-keeper) - neutral callsign so it does not reveal its behaviour", "view_window": "persistent near the GEO node", "tell": "near-identical GEO orbit (same SMA/period) with small inclination/RAAN/eccentricity offsets -> stays in a bounded relative orbit; radar range stays roughly constant. This is the STABLE object." }
       },
       {
-        "name": "GEO-Interloper",
-        "orbit": [42464.0, 0.0002, 0.1, 0.0, 0.0, 104.0],
+        "name": "GEO-Tango",
+        "orbit": [42300.0, 0.0029, 1.4401, 99.15, 0.0, 0.75],
         "planet": "Earth",
-        "dynamic_type": "Orbit",
+        "dynamic_type": "Dynamic",
         "mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/SecondStage/BP_Z_SC_SecondStage_Chassis",
         "scale": 3.0,
         "color": "#FF3333",
-        "truth": { "group": "G5", "class": "Prograde super-synchronous interloper (drifts in from ahead)", "view_window": "slow closing approach; closest approach ~T+45 min (tune in a dry run)", "tell": "prograde, ~300 km above GEO (SMA 42464 km) so period slightly longer; started ~4 deg ahead in true anomaly and slowly falls back toward the node -> radar range decreases over time" }
+        "truth": { "group": "G5", "class": "GEO interloper (drifting, not station-keeping) - neutral callsign so it does not reveal its behaviour", "view_window": "radar range changes over the pass; confirm any closest-approach timing in a dry run", "tell": "SMA 42300 km (~136 km above the GEO node) with a small relative inclination/RAAN offset, so its period differs slightly from the node and its radar range changes over time - unlike the station-keeper. This is the DRIFTING intruder." }
+      },
+      {
+        "name": "Intercept",
+        "orbit": [26745.0, 0.732, 46.08, 180, 129.6, 279.36],
+        "planet": "Earth",
+        "dynamic_type": "Dynamic",
+        "mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/MRO/BP_Z_SC_MRO_Chassis",
+        "scale": 10000.0,
+        "color": "#FF3333",
+        "attitude":[3.6,11.52,79.919],
+        "truth": { "group": "G6", "class": "HIGH-PRIORITY intercept (catalog designation PHANTOM)", "view_window": "rises over the LEO Overwatch horizon ~T+18 to ~T+32 min (simulated)", "tell": "highly elliptical orbit (SMA 26745 km, e 0.732, inc 46 deg) - the only HEO object in the field; large scale / high radar cross-section. Identify via the provided catalog by its HEO signature. NOTE: the 'components' Physical Text 'PHANTOM' does NOT render on a passive space object; identification is signature/catalog based." },
+        "components": [{
+          "class": "Physical Text",
+          "name": "Text Back",
+          "enabled": true,
+          "position": [
+            12.061,
+            40.155,
+            -8.36
+          ],
+          "rotation": [
+            178.6,
+            -77.7,
+            -82.6
+          ],
+          "data": {
+            "Text": "PHANTOM",
+            "Font Color": "#FF1744",
+            "Font Size": 5000.0
+          }
+        }]
       }
     ]
   },
-  "events": [
-    {
-      "Enabled": true,
-      "Name": "GEO GPS Supply-Chain Fault",
-      "Time": 180.0,
-      "Repeat": false,
-      "Interval": 1.0,
-      "Type": "Spacecraft",
-      "Target": "GPS Sensor",
-      "Assets": ["SC_GEO"],
-      "Data": { "Fault State": 4 }
-    }
-  ],
+  "events": [],
   "questions": [
     {
       "section": "1. Constellation Analysis",
       "title": "How many of the Helios constellation satellites are rogue?",
-      "description": "Use the LEO Overwatch imaging sensors to survey the six-satellite Helios cluster. Four members share the same brightness; the rogue spacecraft render with an anomalous reflectivity. How many are rogue?",
+      "description": "Use the LEO Overwatch imaging sensors to survey the six-satellite Helios cluster. How many are rogue?",
       "type": "number",
       "answer": { "value": 2, "tolerance": 0, "unit": "", "reason": "Four Helios members render at the 0.1 baseline reflectivity; two (Helios-3 and Helios-5) render anomalously bright at 0.9, so two are rogue.", "score": 10 }
     },
     {
       "section": "1. Constellation Analysis",
       "title": "Which onboard sensor did you use to identify the rogue spacecraft?",
-      "description": "The rogue members share the same orbit, size and mesh as the rest of the constellation. Which sensor reveals the difference in their surface brightness?",
+      "description": "The rogue members share the same orbit as the rest of the constellation. Which sensor reveals the anomally?",
       "type": "select",
       "answer": {
         "options": ["Radar", "Charge Coupled Device (CCD) / optical imager", "GPS Sensor", "Magnetometer"],
@@ -263,7 +279,7 @@
     {
       "section": "1. Constellation Analysis",
       "title": "Which specific Helios satellites are rogue?",
-      "description": "Compare the imaged brightness of all six members and select the two that stand out from the baseline.",
+      "description": "Compare the readings of all six members and select the two that stand out from the baseline.",
       "type": "checkbox",
       "answer": {
         "options": ["Helios-1", "Helios-2", "Helios-3", "Helios-4", "Helios-5", "Helios-6"],
@@ -273,49 +289,30 @@
       }
     },
     {
-      "section": "1. Constellation Analysis",
-      "title": "Compared to the baseline members, the rogue spacecraft appear:",
-      "description": "Judge the rogue members against the four baseline Helios satellites in your imagery.",
-      "type": "select",
-      "answer": {
-        "options": ["Brighter", "Darker", "Identical", "Flickering on and off"],
-        "value": 0,
-        "reason": "The rogue members carry reflectivity 0.9 against a 0.1 baseline, so they image brighter than the rest of the constellation.",
-        "score": 6
-      }
-    },
-    {
-      "section": "2. Debris Analysis",
-      "title": "How many rocket bodies (debris) are present near the GEO belt?",
-      "description": "Identify the large objects whose CCD brightness varies periodically (a light curve), indicating they are tumbling.",
-      "type": "number",
-      "answer": { "value": 3, "tolerance": 0, "unit": "", "reason": "R/B Titan, R/B Atlas and R/B Delta each tumble, producing a periodic light curve.", "score": 6 }
-    },
-    {
       "section": "2. Debris Analysis",
       "title": "Estimate the roll rate of R/B Atlas.",
-      "description": "Measure the period between repeating peaks in the CCD light curve and convert to a dominant spin rate (roll rate in degrees per second).",
+      "description": "TASKING: Orbit Recovery Services (ORS), a commercial debris-removal company, has contracted your team to triage spent rocket bodies ahead of a capture mission. Use the sensors onboard to build a CCD light curve for this body and estimate its dominant spin (roll rate in degrees per second).",
       "type": "number",
       "answer": { "value": 2.0, "tolerance": 1.0, "unit": "deg/s", "reason": "R/B Atlas has a dominant ~2 deg/s spin, giving a brightness period of roughly 180 s.", "score": 8 }
     },
     {
       "section": "2. Debris Analysis",
       "title": "Estimate the roll rate of R/B Titan.",
-      "description": "Measure the period between repeating peaks in the CCD light curve and convert to a dominant spin rate (roll rate in degrees per second).",
+      "description": "TASKING: Orbit Recovery Services (ORS), a commercial debris-removal company, has contracted your team to triage spent rocket bodies ahead of a capture mission. Use the sensors onboard to build a CCD light curve for this body and estimate its dominant spin (roll rate in degrees per second).",
       "type": "number",
       "answer": { "value": 3.0, "tolerance": 1.0, "unit": "deg/s", "reason": "R/B Titan has a dominant ~3 deg/s spin, giving a brightness period of roughly 120 s.", "score": 8 }
     },
     {
       "section": "2. Debris Analysis",
       "title": "Estimate the roll rate of R/B Delta.",
-      "description": "Measure the period between repeating peaks in the CCD light curve and convert to a dominant spin rate (roll rate in degrees per second).",
+      "description": "TASKING: Orbit Recovery Services (ORS), a commercial debris-removal company, has contracted your team to triage spent rocket bodies ahead of a capture mission. Use the sensors onboard to build a CCD light curve for this body and estimate its dominant spin (roll rate in degrees per second).",
       "type": "number",
       "answer": { "value": 4.5, "tolerance": 1.0, "unit": "deg/s", "reason": "R/B Delta has a dominant ~4.5 deg/s spin, giving a brightness period of roughly 80 s.", "score": 8 }
     },
     {
       "section": "2. Debris Analysis",
       "title": "Using the capture-safety table in the brief, classify R/B Atlas.",
-      "description": "Apply your measured roll rate to the collection-safety thresholds provided in the mission brief.",
+      "description": "For the ORS debris-triage contract, apply your measured roll rate to the capture-safety thresholds in the mission brief and advise the company whether a servicing tug can safely capture this body.",
       "type": "select",
       "answer": {
         "options": ["Safe for collection", "Caution - despin required before capture", "Unsafe - do not attempt capture"],
@@ -327,7 +324,7 @@
     {
       "section": "2. Debris Analysis",
       "title": "Using the capture-safety table in the brief, classify R/B Titan.",
-      "description": "Apply your measured roll rate to the collection-safety thresholds provided in the mission brief.",
+      "description": "For the ORS debris-triage contract, apply your measured roll rate to the capture-safety thresholds in the mission brief and advise the company whether a servicing tug can safely capture this body.",
       "type": "select",
       "answer": {
         "options": ["Safe for collection", "Caution - despin required before capture", "Unsafe - do not attempt capture"],
@@ -339,7 +336,7 @@
     {
       "section": "2. Debris Analysis",
       "title": "Using the capture-safety table in the brief, classify R/B Delta.",
-      "description": "Apply your measured roll rate to the collection-safety thresholds provided in the mission brief.",
+      "description": "For the ORS debris-triage contract, apply your measured roll rate to the capture-safety thresholds in the mission brief and advise the company whether a servicing tug can safely capture this body.",
       "type": "select",
       "answer": {
         "options": ["Safe for collection", "Caution - despin required before capture", "Unsafe - do not attempt capture"],
@@ -350,83 +347,62 @@
     },
     {
       "section": "3. Friendly Approach",
-      "title": "Which GEO-region object is holding its own stable orbit near your GEO spacecraft?",
-      "description": "Track both GEO-region objects with your radar over several minutes. One keeps a roughly constant range; the other does not.",
+      "title": "Two uncorrelated tracks, GEO-Sierra and GEO-Tango, are near your GEO spacecraft. Which one is a co-orbital neighbour holding station?",
+      "description": "Ground has handed you two unidentified GEO-region tracks and cannot tell you which is friendly. Track both with your GEO radar over several minutes and compare how their range to you behaves. One neighbour keeps a roughly constant range; the other does not.",
       "type": "select",
       "answer": {
-        "options": ["GEO-Companion", "GEO-Interloper"],
+        "options": ["GEO-Sierra", "GEO-Tango"],
         "value": 0,
-        "reason": "The GEO-Companion shares a near-identical orbit and stays in a bounded relative orbit, so its radar range stays roughly constant.",
-        "score": 8
+        "reason": "GEO-Sierra shares the GEO node's semi-major axis (and therefore its orbital period), so it stays in a bounded relative orbit and its radar range stays roughly constant - the station-keeper.",
+        "score": 10
       }
     },
     {
       "section": "3. Friendly Approach",
-      "title": "Which GEO-region object is on an approach toward your GEO spacecraft?",
-      "description": "Compare the radar range trend of the two objects. The approaching object closes range over time.",
+      "title": "Which of the two tracks is the intruder that is NOT station-keeping?",
+      "description": "Compare the radar range trend of GEO-Sierra and GEO-Tango over the pass. The intruder is the one whose range to you changes as it drifts relative to your node.",
       "type": "select",
       "answer": {
-        "options": ["GEO-Companion", "GEO-Interloper"],
+        "options": ["GEO-Sierra", "GEO-Tango"],
         "value": 1,
-        "reason": "The GEO-Interloper is on a slightly higher, prograde orbit phased ahead of the node and drifts back toward it, so its radar range decreases over time.",
-        "score": 8
+        "reason": "GEO-Tango is on a slightly different orbit and period (SMA ~42300 km vs the node's 42164 km), so it drifts relative to your node and its radar range changes over the pass, unlike the station-keeping GEO-Sierra.",
+        "score": 10
       }
     },
     {
       "section": "3. Friendly Approach",
-      "title": "Over the run, the radar range to the interloper is best described as:",
-      "description": "Read the range measurement from your GEO radar at several times and describe the trend.",
+      "title": "What best describes GEO-Tango's motion relative to your GEO node?",
+      "description": "Use your radar range measurements to reason about why one track stays put relative to you and the other drifts.",
       "type": "select",
       "answer": {
-        "options": ["Increasing steadily", "Roughly constant", "Decreasing toward a closest approach", "Always zero"],
-        "value": 2,
-        "reason": "The interloper closes on the node, so radar range decreases toward a closest approach before opening again.",
-        "score": 8
-      }
-    },
-    {
-      "section": "3. Friendly Approach",
-      "title": "Roughly how long after start does the interloper reach closest approach to your GEO spacecraft?",
-      "description": "Use the radar range measurements to find when the range is minimised.",
-      "type": "number",
-      "answer": { "value": 45.0, "tolerance": 15.0, "unit": "min", "reason": "The interloper is phased so its slow along-track drift brings it to closest approach about 45 minutes into the run.", "score": 8 }
-    },
-    {
-      "section": "4. Sensor Error",
-      "title": "Intel reports the GEO spacecraft's altitude telemetry is untrustworthy. Which subsystem is compromised?",
-      "description": "A supply-chain compromise has degraded one sensor on your GEO node, corrupting its reported position. Identify the affected subsystem from the telemetry.",
-      "type": "select",
-      "answer": {
-        "options": ["Battery", "GPS Sensor", "Reaction Wheels", "Transmitter"],
+        "options": ["It shares your exact orbital period and holds station", "It is on a slightly different orbit and period, so it drifts relative to you", "It is on the ground, not in orbit", "It is a tumbling rocket body"],
         "value": 1,
-        "reason": "The GPS Sensor on the GEO node is driven into a fault state, so its position and altitude readings are unreliable until reset.",
-        "score": 6
+        "reason": "GEO-Tango's semi-major axis differs from the node's, so its period differs and it drifts relative to you - whereas GEO-Sierra shares the node's period and holds a bounded, roughly constant range.",
+        "score": 8
       }
     },
     {
-      "section": "4. Sensor Error",
-      "title": "Using the LEO spacecraft's radar, determine the GEO spacecraft's altitude above Earth's surface.",
-      "description": "Do not trust the GEO node's own GPS. The GEO spacecraft is geostationary and held over Singapore. Range it with the LEO Overwatch radar and use the geometry to determine its altitude above the surface, in km.",
-      "type": "number",
-      "answer": { "value": 35786.0, "tolerance": 2000.0, "unit": "km", "reason": "A geostationary spacecraft sits about 35786 km above the surface (orbital radius 42164 km minus Earth's ~6378 km radius).", "score": 12 }
-    },
-    {
-      "section": "4. Sensor Error",
-      "title": "What is the corresponding orbital radius (semi-major axis) of the GEO spacecraft?",
-      "description": "Add Earth's radius to the altitude you determined to report the orbital radius, in km.",
-      "type": "number",
-      "answer": { "value": 42164.0, "tolerance": 2000.0, "unit": "km", "reason": "Geostationary orbital radius is about 42164 km (35786 km altitude plus 6378 km Earth radius).", "score": 8 }
-    },
-    {
-      "section": "4. Sensor Error",
-      "title": "What corrective action restores trustworthy GEO position data?",
-      "description": "Once you have independently determined the altitude, choose the action that clears the fault.",
+      "section": "4. High-Priority Intercept",
+      "title": "PRIORITY TASKING: an on-orbit event has been detected - image the resulting object and identify it from the provided catalog.",
+      "description": "An on-orbit event has just been detected. Analysts assess that the object thrown up by the event is on a TRANSFER ORBIT that will carry it up into the GEO belt, and it rises over the LEO Overwatch horizon between roughly T+18 and T+32 minutes of simulated time. This is your top collection priority: slew the LEO Overwatch imager to acquire it, capture an optical image, and match it against the Threat Catalog in the mission brief. Select its catalog designation.",
       "type": "select",
       "answer": {
-        "options": ["Component reset of the GPS Sensor", "Frequency hopping", "Battery swap", "Take no action"],
+        "options": ["PHANTOM", "HALCYON", "DRAKE", "MERIDIAN"],
         "value": 0,
-        "reason": "The fault sits on the GPS Sensor, so a component reset of that sensor restores healthy position and altitude telemetry.",
-        "score": 6
+        "reason": "The intercept is the only object on a highly elliptical orbit (SMA 26745 km, e 0.732, inc 46 deg). In the Threat Catalog that signature matches PHANTOM; HALCYON is GEO, DRAKE is a low near-circular LEO, and MERIDIAN is a circular MEO.",
+        "score": 25
+      }
+    },
+    {
+      "section": "4. High-Priority Intercept",
+      "title": "The analysts' call was a transfer orbit toward GEO. What orbit class is the object actually on?",
+      "description": "From your image acquisition and radar range/motion, confirm the analysts' assessment and classify the object's orbit type. It swings from a low perigee up into the GEO belt and beyond on each revolution.",
+      "type": "select",
+      "answer": {
+        "options": ["Low Earth Orbit (near-circular)", "Medium Earth Orbit (circular)", "Geostationary", "Highly elliptical transfer orbit (GEO-transfer / GTO-type)"],
+        "value": 3,
+        "reason": "The object has eccentricity 0.732 (perigee ~790 km altitude, apogee reaching up into and beyond the GEO belt), a highly elliptical transfer orbit - consistent with the analysts' assessment that it is transferring toward GEO.",
+        "score": 12
       }
     },
     {
