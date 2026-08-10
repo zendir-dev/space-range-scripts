@@ -68,11 +68,11 @@ Use this catalog whenever you image an unknown object (it is required for **Phas
 
 | Category | What to look for | Example image |
 | --- | --- | --- |
-| **Space Station** | Very large, built-up modular structure; multiple large solar arrays spread along a long truss; irregular, asymmetric outline | ![Space Station example](https://zendir-public-media-bucket.s3.ap-southeast-2.amazonaws.com/space_range/scenarios/orbital_detective/schematic.png) |
-| **Earth-Observation Satellite** | Medium boxy bus with one or two solar panels; a nadir-pointing telescope or sensor aperture; compact and fairly symmetric | ![Earth-Observation Satellite example](https://zendir-public-media-bucket.s3.ap-southeast-2.amazonaws.com/space_range/scenarios/orbital_detective/schematic.png) |
-| **CubeSat / Small Satellite** | Small, compact cube or box; body-mounted or small deployable panels; very little external structure | ![CubeSat example](https://zendir-public-media-bucket.s3.ap-southeast-2.amazonaws.com/space_range/scenarios/orbital_detective/schematic.png) |
-| **Large Satellite with High-Gain Dish** | A large central bus dominated by a prominent parabolic (high-gain) dish antenna, flanked by large solar wings | ![Large Dish Satellite example](https://zendir-public-media-bucket.s3.ap-southeast-2.amazonaws.com/space_range/scenarios/orbital_detective/schematic.png) |
-| **Rocket Body** | An elongated cylindrical tube with no solar panels; an engine nozzle at one end; frequently seen tumbling | ![Rocket Body example](https://zendir-public-media-bucket.s3.ap-southeast-2.amazonaws.com/space_range/scenarios/orbital_detective/schematic.png) |
+| **Space Station** | Very large, built-up modular structure; multiple large solar arrays spread along a long truss; irregular, asymmetric outline | ![Space Station example](https://zendir-public-media-bucket.s3.ap-southeast-2.amazonaws.com/space_range/scenarios/orbital_detective/catalog_iss.png) |
+| **Earth-Observation Satellite** | Medium boxy bus with one or two solar panels; a nadir-pointing telescope or sensor aperture; compact and fairly symmetric | ![Earth-Observation Satellite example](https://zendir-public-media-bucket.s3.ap-southeast-2.amazonaws.com/space_range/scenarios/orbital_detective/catalog_landsat.png) |
+| **CubeSat / Small Satellite** | Small, compact cube or box; body-mounted or small deployable panels; very little external structure | ![CubeSat example](https://zendir-public-media-bucket.s3.ap-southeast-2.amazonaws.com/space_range/scenarios/orbital_detective/catalog_maxar.png) |
+| **Large Satellite with High-Gain Dish** | A large central bus dominated by a prominent parabolic (high-gain) dish antenna, flanked by large solar wings | ![Large Dish Satellite example](https://zendir-public-media-bucket.s3.ap-southeast-2.amazonaws.com/space_range/scenarios/orbital_detective/catalog_mro.png) |
+| **Rocket Body** | An elongated cylindrical tube with no solar panels; an engine nozzle at one end; frequently seen tumbling | ![Rocket Body example](https://zendir-public-media-bucket.s3.ap-southeast-2.amazonaws.com/space_range/scenarios/orbital_detective/catalog_rocket.png) |
 
 > Placeholder example images use the spacecraft schematic for now; swap in the reference photos (ISS, Landsat, CubeSat/Maxar, MRO, rocket second stage) when they are ready.
 
