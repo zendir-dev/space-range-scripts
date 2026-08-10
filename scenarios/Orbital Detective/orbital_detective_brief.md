@@ -1,7 +1,7 @@
 **Scenario:** Orbital Detective  
 **Epoch:** 2026-06-21 04:00:00 UTC  
 **Duration:** 180 minutes simulated (about 60 minutes real time at 3x speed)  
-**Ground Segment:** Dubai, Singapore, Lima, Tokyo, Honolulu, Moscow
+**Ground Segment:** Buenos Aires, Cairo, Cape Town, Delhi, Easter Island, Honolulu, Singapore, Tokyo
 
 ---
 
@@ -13,7 +13,7 @@ The target field has four problems in it. A six-satellite constellation is flyin
 
 The scenario epoch is set near the June solstice to keep your spacecraft and the targets well illuminated for photometry. Remember that a target's brightness tells you about its surface and its spin, not its identity - you distinguish objects photometrically (brightness), by RADAR range behaviour, and by orbit shape, never by any radio identifier.
 
-> Questions and scoring are delivered in the **Tasks** section of the operator terminal. Use this brief for mission context, spacecraft configuration, sensor limits, the debris capture-safety data, and the Threat Catalog. It is not an answer key.
+> Questions and scoring are delivered in the **Tasks** section of the operator terminal. Use this brief for mission context, spacecraft configuration, sensor limits, the debris capture-safety data, and the Spacecraft Identification Catalog. It is not an answer key.
 
 ---
 
@@ -46,11 +46,12 @@ Two unidentified tracks share your GEO node's neighbourhood: **GEO-Sierra** and 
 
 An **on-orbit event** has just been detected. Analysts assess that the object thrown up by the event is on a **transfer orbit climbing toward the GEO belt**, and it rises over your **LEO Overwatch** horizon between roughly **T+18 and T+32 minutes** of simulated time. **This is your top collection priority and carries the most marks.**
 
-1. **Acquire:** Slew the LEO Overwatch imager to catch the object during its horizon pass - the window is short.
+1. **Acquire:** Slew the LEO imager to catch the object during its horizon pass - the window is short.
 2. **Image:** Capture an optical image of the object.
-3. **Identify:** Match its orbit and appearance against the **Threat Catalog** below and report its catalog designation.
+3. **Classify:** Match its appearance against the **Spacecraft Identification Catalog** below and report which *category* of spacecraft it is.
+4. **Confirm the orbit:** Separately, use your RADAR range and its motion to confirm the analysts' transfer-orbit call.
 
-> The object is on a highly elliptical transfer orbit - it swings from a low perigee up into and beyond the GEO belt on each revolution - which is unlike anything else in the field. Use that transfer-orbit signature to confirm the analysts' call and pick it out of the catalog.
+> Two independent reads: the **image** tells you what *kind* of spacecraft it is (match its shape to a catalog category), while the **orbit** (a highly elliptical transfer that swings from a low perigee up into and beyond the GEO belt) confirms the analysts' assessment. Keep the two separate.
 
 ### Phase 5 - Orbit Determination
 
@@ -61,16 +62,19 @@ Your LEO Overwatch node's own navigation is healthy.
 
 ---
 
-## Threat Catalog
+## Spacecraft Identification Catalog
 
-Use this catalog for **Phase 4**. Capture an image of the high-priority object, read its orbit from your RADAR and imagery, and match it to the entry that fits. Each entry has a distinct orbit signature, so orbit class alone will identify it.
+Use this catalog whenever you image an unknown object (it is required for **Phase 4**). Capture an optical image of the target and match what you see against the categories below - each row lists the visual features to look for. Report the **category**, not a specific mission name: for example a spent upper stage is a *Rocket Body*, and a small boxy satellite is a *CubeSat*.
 
-| Designation | Orbit class | Size / RADAR return | Distinguishing signature |
-| --- | --- | --- | --- |
-| **PHANTOM** | Highly elliptical transfer orbit (GEO-transfer / GTO-type), inclined ~46 deg | Large / strong | Swings from a low perigee up into and beyond the GEO belt on every revolution; appears low and rises quickly over the LEO horizon; the only object on a transfer orbit in the field |
-| **HALCYON** | Geostationary (GEO) | Medium | Holds a fixed sub-longitude with near-zero relative motion in the GEO belt |
-| **DRAKE** | Low Earth Orbit, near-circular (sun-synchronous) | Small / weak | Low altitude, fast ground track, small RADAR cross-section |
-| **MERIDIAN** | Medium Earth Orbit, circular | Medium | Steady circular orbit at roughly constant medium altitude |
+| Category | What to look for | Example image |
+| --- | --- | --- |
+| **Space Station** | Very large, built-up modular structure; multiple large solar arrays spread along a long truss; irregular, asymmetric outline | ![Space Station example](https://zendir-public-media-bucket.s3.ap-southeast-2.amazonaws.com/space_range/scenarios/orbital_detective/schematic.png) |
+| **Earth-Observation Satellite** | Medium boxy bus with one or two solar panels; a nadir-pointing telescope or sensor aperture; compact and fairly symmetric | ![Earth-Observation Satellite example](https://zendir-public-media-bucket.s3.ap-southeast-2.amazonaws.com/space_range/scenarios/orbital_detective/schematic.png) |
+| **CubeSat / Small Satellite** | Small, compact cube or box; body-mounted or small deployable panels; very little external structure | ![CubeSat example](https://zendir-public-media-bucket.s3.ap-southeast-2.amazonaws.com/space_range/scenarios/orbital_detective/schematic.png) |
+| **Large Satellite with High-Gain Dish** | A large central bus dominated by a prominent parabolic (high-gain) dish antenna, flanked by large solar wings | ![Large Dish Satellite example](https://zendir-public-media-bucket.s3.ap-southeast-2.amazonaws.com/space_range/scenarios/orbital_detective/schematic.png) |
+| **Rocket Body** | An elongated cylindrical tube with no solar panels; an engine nozzle at one end; frequently seen tumbling | ![Rocket Body example](https://zendir-public-media-bucket.s3.ap-southeast-2.amazonaws.com/space_range/scenarios/orbital_detective/schematic.png) |
+
+> Placeholder example images use the spacecraft schematic for now; swap in the reference photos (ISS, Landsat, CubeSat/Maxar, MRO, rocket second stage) when they are ready.
 
 ---
 
@@ -176,7 +180,7 @@ A servicing tug can only capture a rocket body if it is not spinning too fast. U
 
 | Station | Role |
 | --- | --- |
-| Dubai, Singapore, Lima, Tokyo, Honolulu, Moscow | Distributed ground network for uplink and downlink |
+| Buenos Aires, Cairo, Cape Town, Delhi, Easter Island, Honolulu, Singapore, Tokyo | Distributed ground network for uplink and downlink |
 
 The station set is spread in longitude to keep your spacecraft in contact as they move. Use the **Link Budget** panels in the operator terminal for predicted contact intervals and signal quality.
 
@@ -222,7 +226,7 @@ Use RADAR range trends to tell a stable co-orbital neighbour from a drifting obj
 
 ### Time-Critical Tasking and Cataloguing
 
-Acquire and image a high-priority object inside a short horizon window, then classify it by matching its orbit signature against a reference catalog.
+Acquire and image a high-priority object inside a short horizon window, then classify what type of spacecraft it is by matching its appearance against a reference catalog.
 
 ### Orbit Determination
 

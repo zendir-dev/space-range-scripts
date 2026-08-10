@@ -20,12 +20,14 @@
   },
   "ground_stations": {
     "locations": [
-      "Dubai",
-      "Singapore",
-      "Lima",
-      "Tokyo",
+      "Buenos Aires",
+      "Cairo",
+      "Cape Town",
+      "Delhi",
+      "Easter Island",
       "Honolulu",
-      "Moscow"
+      "Singapore",
+      "Tokyo"
     ],
     "min_elevation": 5,
     "max_range": 0,
@@ -231,7 +233,7 @@
         "scale": 10000.0,
         "color": "#FF3333",
         "attitude":[3.6,11.52,79.919],
-        "truth": { "group": "G6", "class": "HIGH-PRIORITY intercept (catalog designation PHANTOM)", "view_window": "rises over the LEO Overwatch horizon ~T+18 to ~T+32 min (simulated)", "tell": "highly elliptical orbit (SMA 26745 km, e 0.732, inc 46 deg) - the only HEO object in the field; large scale / high radar cross-section. Identify via the provided catalog by its HEO signature. NOTE: the 'components' Physical Text 'PHANTOM' does NOT render on a passive space object; identification is signature/catalog based." },
+        "truth": { "group": "G6", "class": "HIGH-PRIORITY intercept (internal name PHANTOM)", "view_window": "rises over the LEO horizon ~T+18 to ~T+32 min (simulated)", "tell": "highly elliptical transfer orbit (SMA 26745 km, e 0.732, inc 46 deg); renders with the MRO-class bus (large high-gain dish + solar wings). Teams image it and match its appearance to the 'Large Satellite with High-Gain Dish' category in the Spacecraft Identification Catalog; the separate orbit-class question is answered from its transfer-orbit motion. NOTE: the 'components' Physical Text 'PHANTOM' does NOT render on a passive space object, so identification is by mesh appearance, not a painted label." },
         "components": [{
           "class": "Physical Text",
           "name": "Text Back",
@@ -383,13 +385,13 @@
     },
     {
       "section": "4. High-Priority Intercept",
-      "title": "PRIORITY TASKING: an on-orbit event has been detected - image the resulting object and identify it from the provided catalog.",
-      "description": "An on-orbit event has just been detected. Analysts assess that the object thrown up by the event is on a TRANSFER ORBIT that will carry it up into the GEO belt, and it rises over the LEO Overwatch horizon between roughly T+18 and T+32 minutes of simulated time. This is your top collection priority: slew the LEO Overwatch imager to acquire it, capture an optical image, and match it against the Threat Catalog in the mission brief. Select its catalog designation.",
+      "title": "PRIORITY TASKING: an on-orbit event has been detected - image the resulting object and classify what type of spacecraft it is.",
+      "description": "An on-orbit event has just been detected. Analysts assess the object thrown up by the event is on a transfer orbit climbing toward the GEO belt, and it rises over the LEO horizon between roughly T+18 and T+32 minutes of simulated time. This is your top collection priority: slew the LEO imager to acquire it, capture an optical image, and match its appearance against the Spacecraft Identification Catalog in the mission brief. What category of spacecraft is it?",
       "type": "select",
       "answer": {
-        "options": ["PHANTOM", "HALCYON", "DRAKE", "MERIDIAN"],
-        "value": 0,
-        "reason": "The intercept is the only object on a highly elliptical orbit (SMA 26745 km, e 0.732, inc 46 deg). In the Threat Catalog that signature matches PHANTOM; HALCYON is GEO, DRAKE is a low near-circular LEO, and MERIDIAN is a circular MEO.",
+        "options": ["Space Station", "Earth-Observation Satellite", "CubeSat / Small Satellite", "Large Satellite with High-Gain Dish", "Rocket Body"],
+        "value": 3,
+        "reason": "In the optical image the object shows a large central bus with a prominent high-gain dish antenna and large solar wings, which matches the 'Large Satellite with High-Gain Dish' category - not a compact CubeSat, an elongated rocket body, a modular space station, or a small Earth-observation bus.",
         "score": 25
       }
     },
