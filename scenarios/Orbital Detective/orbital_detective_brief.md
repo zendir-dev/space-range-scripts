@@ -21,10 +21,10 @@ The scenario epoch is set near the June solstice to keep your spacecraft and the
 
 ### Phase 1 - Constellation Analysis
 
-The **Helios** constellation is a cluster of six identical satellites leading your LEO Overwatch node in the same orbit plane. Hold velocity pointing so the cluster stays in your field of view, then image the members.
+The **Helios** constellation is a cluster of six satellites that should all look alike, leading your LEO node in the same orbit plane. Hold velocity pointing so the cluster stays in your field of view, then image the members.
 
-1. **Survey the cluster:** Use the LEO Overwatch imaging sensors to capture all six Helios members.
-2. **Find the rogues:** Some members carry an anomalous surface reflectivity and image differently from the rest. Determine how many are rogue and which specific satellites they are.
+1. **Survey the cluster:** Use the LEO imaging sensors to capture all six Helios members.
+2. **Find the rogues:** Some members carry an anomalous surface reflectivity and render noticeably brighter (and larger) than the rest. Determine how many are rogue and which specific satellites they are.
 3. **Justify your method:** Be ready to state which sensor gave you the classification.
 
 ### Phase 2 - Debris Analysis (commercial tasking)
