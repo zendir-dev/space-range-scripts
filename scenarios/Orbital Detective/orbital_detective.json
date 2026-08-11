@@ -313,8 +313,8 @@
 						],
 						"data": {
 							"Field Of View": 15.0,
-							"Min Field of View": 3.0,
-							"Max Field of View": 15.0,
+							"Min Field of View": 1.0,
+							"Max Field of View": 30.0,
 							"Aperture": 15.0,
 							"Focusing Distance": 10000,
 							"Resolution": [
@@ -649,7 +649,7 @@
 						"data": {
 							"Field Of View": 5.0,
 							"Min Field of View": 0.1,
-							"Max Field of View": 5.0,
+							"Max Field of View": 10.0,
 							"Aperture": 30.0,
 							"Focusing Distance": 100000,
 							"Resolution": [
@@ -852,9 +852,9 @@
 				"planet": "Earth",
 				"dynamic_type": "Integration",
 				"attitude_rate": [
+					1.8,
 					3.0,
-					5.0,
-					0.6
+					0.36
 				],
 				"mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/SecondStage/BP_Z_SC_SecondStage_Chassis",
 				"scale": 300.0,
@@ -1056,13 +1056,13 @@
 		{
 			"section": "Debris Analysis",
 			"title": "Estimate the roll rate of R/B Atlas.",
-			"description": "Orbit Recovery Services, a commercial debris-removal company, has contracted your team to triage spent rocket bodies ahead of a capture mission. Use the onboard sensors to determine the roll rate of R/B Atlas.",
+			"description": "Orbit Recovery Services (ORS), a commercial debris-removal company, has contracted your team to triage spent rocket bodies ahead of a capture mission. R/B Atlas sits close to your GEO spacecraft. Aim the Laser Range Finder at it (the LRF shares the RADAR boresight) and time its range oscillation to determine the roll rate.",
 			"type": "number",
 			"answer": {
 				"value": 2.0,
 				"tolerance": 1.0,
 				"unit": "deg/s",
-				"reason": "R/B Atlas has a dominant ~2 deg/s spin, giving a brightness period of roughly 180 s.",
+				"reason": "R/B Atlas sits within Laser Range Finder range of the GEO node; its range oscillates with a period near 180 s, giving a dominant spin of about 2 deg/s.",
 				"score": 7
 			}
 		},
@@ -1085,13 +1085,13 @@
 		{
 			"section": "Debris Analysis",
 			"title": "Estimate the roll rate of R/B Titan.",
-			"description": "Orbit Recovery Services, a commercial debris-removal company, has contracted your team to triage spent rocket bodies ahead of a capture mission. Use the onboard sensors to determine the roll rate of R/B Titan.",
+			"description": "Orbit Recovery Services (ORS), a commercial debris-removal company, has contracted your team to triage spent rocket bodies ahead of a capture mission. R/B Titan sits close to your GEO spacecraft. Aim the Laser Range Finder at it (the LRF shares the RADAR boresight) and time its range oscillation to determine the roll rate.",
 			"type": "number",
 			"answer": {
 				"value": 3.0,
 				"tolerance": 1.0,
 				"unit": "deg/s",
-				"reason": "R/B Titan has a dominant ~3 deg/s spin, giving a brightness period of roughly 120 s.",
+				"reason": "R/B Titan sits within Laser Range Finder range of the GEO node; its range oscillates with a period near 120 s, giving a dominant spin of about 3 deg/s.",
 				"score": 7
 			}
 		},   
@@ -1107,21 +1107,21 @@
 					"Unsafe"
 				],
 				"value": 1,
-				"reason": "R/B Titan rolls at a moderate rate, in the caution band (2.5 to 4.0 deg/s), so it requires despin before capture.",
+				"reason": "R/B Titan rolls at about 3 deg/s, inside the caution band (2.5 to 4.0 deg/s), so it requires despin before a capture attempt.",
 				"score": 3
 			}
 		},
 		{
 			"section": "Debris Analysis",
 			"title": "Estimate the roll rate of R/B Delta.",
-			"description": "Orbit Recovery Services has contracted your team to triage spent rocket bodies ahead of a capture mission. Use the onboard sensors to determine the roll rate of R/B Delta.",
+			"description": "Orbit Recovery Services (ORS) has contracted your team to triage spent rocket bodies ahead of a capture mission. R/B Delta is far from BOTH of your spacecraft - well beyond Laser Range Finder range - so the LRF cannot resolve its rotation. Be resourceful: use the optical camera to image the body repeatedly and watch it rotate, timing a full revolution to determine the roll rate. This is the hardest debris task and is worth the most marks.",
 			"type": "number",
 			"answer": {
 				"value": 4.5,
 				"tolerance": 1.0,
 				"unit": "deg/s",
-				"reason": "R/B Delta has a dominant ~4.5 deg/s spin, giving a brightness period of roughly 80 s.",
-				"score": 7
+				"reason": "R/B Delta is out of Laser Range Finder range, so its rotation is read from the optical camera; it completes a revolution about every 80 s, a dominant spin of about 4.5 deg/s.",
+				"score": 15
 			}
 		},
 		{
@@ -1136,8 +1136,8 @@
 					"Unsafe"
 				],
 				"value": 2,
-				"reason": "R/B Delta rolls at a fast rotation rate, well above the maximum safe roll rate (4.0 deg/s), so it is unsafe to capture.",
-				"score": 3
+				"reason": "R/B Delta rolls at about 4.5 deg/s, above the maximum safe roll rate (4.0 deg/s), so it is unsafe to capture.",
+				"score": 5
 			}
 		},
 		{

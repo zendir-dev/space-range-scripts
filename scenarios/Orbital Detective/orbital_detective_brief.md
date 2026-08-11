@@ -31,9 +31,11 @@ The **Helios** constellation is a cluster of six satellites that should all look
 
 **Orbit Recovery Services (ORS)**, a commercial debris-removal company, has contracted your team to **triage** three spent rocket bodies (**R/B Titan**, **R/B Atlas**, **R/B Delta**) ahead of a servicing-tug capture mission. ORS needs to know how fast each body is spinning and whether it is safe to grab.
 
-1. **Detect the tumble:** Aim the **Laser Range Finder** at each rocket body (it shares the RADAR boresight). If the body is tumbling, its `MeasuredRange` rises and falls periodically as it rotates.
-2. **Measure roll rate:** Time the period of that range oscillation and convert it to a dominant spin rate in degrees per second (see the conversion note under the capture-safety table).
-3. **Advise the client:** Apply the roll rate to the capture-safety table below and classify each rocket body as safe, caution, or unsafe for ORS to capture.
+Two of the bodies - **R/B Titan** and **R/B Atlas** - sit close to your **GEO** spacecraft, within Laser Range Finder reach. The third - **R/B Delta** - is in a low orbit far from *both* of your spacecraft and **out of Laser Range Finder range**, so it needs a different, more resourceful approach.
+
+1. **Near-GEO bodies (Titan, Atlas):** Aim the **Laser Range Finder** at each from your GEO spacecraft (the LRF shares the RADAR boresight). If the body is tumbling, its `MeasuredRange` rises and falls periodically as it rotates; time that period.
+2. **The far body (Delta) - highest marks:** The LRF cannot reach Delta. Be resourceful - use the **optical camera** to image the body repeatedly and watch it rotate, timing a full revolution. This is the hardest debris task and carries the most marks.
+3. **Convert and advise:** Convert each period to a roll rate in degrees per second (see the conversion note under the capture-safety table), then classify each body as safe, caution, or unsafe for ORS to capture.
 
 ### Phase 3 - Friendly Approach
 
@@ -119,7 +121,7 @@ Both spacecraft carry the same sensor suite. Point the boresight with guidance c
 
 ### Optical Camera
 
-Each spacecraft is equipped with an optical imager (Optical Camera). These provide color-images of the various spacecraft in orbit and useful for detecting motion in the objects and rocket-bodies.
+Each spacecraft is equipped with an optical imager (Optical Camera). These provide colour images of the various spacecraft in orbit and are useful for detecting motion. In particular, you can image a rocket body repeatedly and watch it rotate to measure its spin rate - the only way to characterise a tumbling body that is too far away for the Laser Range Finder.
 
 | Specification | LEO | GEO |
 | --- | --- | --- |
@@ -160,10 +162,12 @@ A body-fixed laser range finder is mounted **alongside the RADAR, sharing its ex
 
 | Specification | LEO | GEO |
 | --- | --- | --- |
-| Operating Range | 10,000 km | 10,000 km |
+| Operating Range | 100 km | 100 km |
 | Boresight | Co-aligned with the RADAR | Co-aligned with the RADAR |
 
-> Because the LRF shares the RADAR boresight, aim with the same rear-facing rotation you use for the RADAR (target the RADAR component in the ADCS guidance controller). Hold the beam on a **tumbling rocket body** and its `MeasuredRange` rises and falls as the elongated body rotates - the period of that range oscillation gives the roll/tumble rate. This is the primary way to measure how fast a body is spinning.
+> Because the LRF shares the RADAR boresight, aim with the same rear-facing rotation you use for the RADAR (target the RADAR component in the ADCS guidance controller). Hold the beam on a **tumbling rocket body** and its `MeasuredRange` rises and falls as the elongated body rotates - the period of that range oscillation gives the roll/tumble rate.
+>
+> **Range limit:** the LRF only reaches a target within **100 km**. That covers the two rocket bodies parked near your GEO spacecraft (Titan and Atlas), but *not* R/B Delta, which sits far from both nodes - measure Delta's rotation with the optical camera instead.
 
 ### Other sensors
 
@@ -181,7 +185,7 @@ A servicing tug can only capture a rocket body if it is not spinning too fast. U
 | 2.5 to 4.0 deg/s | **Caution** | Despin required before capture |
 | Greater than 4.0 deg/s | **Unsafe** | Do not attempt capture |
 
-> **Converting a range oscillation to a roll rate:** measure the dominant period of the Laser Range Finder range oscillation, then take roll rate (deg/s) ≈ 360 / (period in seconds). As a guide, a ~180 s period is about 2 deg/s (safe), ~120 s is about 3 deg/s (caution), and ~80 s is about 4.5 deg/s (unsafe). A shorter period means a faster roll.
+> **Converting a rotation period to a roll rate:** measure the dominant rotation period - from the Laser Range Finder range oscillation (nearby bodies) or by watching the body rotate in the optical camera (distant bodies) - then take roll rate (deg/s) ≈ 360 / (period in seconds). As a guide, a ~180 s period is about 2 deg/s (safe), a ~120 s period is about 3 deg/s (caution), and an ~80 s period is about 4.5 deg/s (unsafe); a shorter period means a faster roll.
 
 ---
 
@@ -207,7 +211,7 @@ Split responsibilities early. The Mission Lead should assign these roles at the 
 
 - **Mission Lead:** Assigns roles, answers questions, monitors key information, and makes go/no-go calls - including prioritising the Phase 4 intercept when it appears.
 - **Satellite Operator:** Manages telemetry, guidance pointing, and spacecraft health across both nodes.
-- **Payload Operator:** Captures CCD and optical imagery and RADAR / Laser Range Finder ranges, reads reflectivity, and measures roll rate from the range oscillation.
+- **Payload Operator:** Captures CCD and optical imagery and RADAR / Laser Range Finder ranges, reads reflectivity, and measures roll rate from the LRF range oscillation (nearby bodies) or the optical camera (distant bodies).
 - **Communications Specialist:** Monitors link budgets, GPS telemetry, and contact windows.
 
 ---
@@ -229,7 +233,7 @@ Compare reflectivity across identical-looking satellites with the CCD to pick ou
 
 ### Tumble / Roll-Rate Analysis
 
-Range a tumbling body with the Laser Range Finder, measure the period of its range oscillation, convert it to a roll rate, and apply operational thresholds to make a capture decision.
+Measure a tumbling body's rotation period - with the Laser Range Finder for nearby bodies, or the optical camera for bodies beyond LRF range - convert it to a roll rate, and apply operational thresholds to make a capture decision.
 
 ### RADAR Custody
 
