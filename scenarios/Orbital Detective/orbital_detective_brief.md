@@ -11,7 +11,7 @@ You are a Space Domain Awareness (SDA) operator team. Your job is to watch, trac
 
 The target field has four problems in it. A six-satellite constellation is flying in front of your LEO node, and not every member is what it claims to be. A commercial debris-removal company has contracted you to triage a set of tumbling rocket bodies for capture, and each spins at a different rate. Two unidentified tracks sit in your GEO node's neighbourhood, and ground cannot tell you which one is the friendly station-keeper and which is the intruder. And an on-orbit event throws up a single high-priority object that analysts assess is transferring toward the GEO belt - it rises over your LEO horizon early in the pass and is your top collection priority.
 
-The scenario epoch is set near the June solstice to keep your spacecraft and the targets well illuminated for photometry. Remember that a target's brightness tells you about its surface and its spin, not its identity - you distinguish objects photometrically (brightness), by RADAR range behaviour, and by orbit shape, never by any radio identifier.
+The scenario epoch is set near the June solstice to keep your spacecraft and the targets well illuminated for imaging and photometry. Remember that a target's brightness tells you about its surface, not its identity - you distinguish objects photometrically (reflectivity) with the CCD, by RADAR and Laser Range Finder ranging, and by orbit shape, never by any radio identifier.
 
 > Questions and scoring are delivered in the **Tasks** section of the operator terminal. Use this brief for mission context, spacecraft configuration, sensor limits, the debris capture-safety data, and the Spacecraft Identification Catalog. It is not an answer key.
 
@@ -31,8 +31,8 @@ The **Helios** constellation is a cluster of six satellites that should all look
 
 **Orbit Recovery Services (ORS)**, a commercial debris-removal company, has contracted your team to **triage** three spent rocket bodies (**R/B Titan**, **R/B Atlas**, **R/B Delta**) ahead of a servicing-tug capture mission. ORS needs to know how fast each body is spinning and whether it is safe to grab.
 
-1. **Detect the tumble:** Use the CCD to build a light curve for each rocket body. A repeating rise and fall in brightness means the object is rotating.
-2. **Measure roll rate:** Read the period between brightness peaks and convert it to a dominant spin rate in degrees per second (see the conversion note under the capture-safety table).
+1. **Detect the tumble:** Aim the **Laser Range Finder** at each rocket body (it shares the RADAR boresight). If the body is tumbling, its `MeasuredRange` rises and falls periodically as it rotates.
+2. **Measure roll rate:** Time the period of that range oscillation and convert it to a dominant spin rate in degrees per second (see the conversion note under the capture-safety table).
 3. **Advise the client:** Apply the roll rate to the capture-safety table below and classify each rocket body as safe, caution, or unsafe for ORS to capture.
 
 ### Phase 3 - Friendly Approach
@@ -130,7 +130,7 @@ Each spacecraft is equipped with an optical imager (Optical Camera). These provi
 
 ### Charge Coupled Device (CCD)
 
-Your primary tool for photometry: measuring how bright a target is and how its brightness changes over time. Use it to compare and identify reflectivity across the Helios members and to spot the tumbling rocket bodies.
+Your primary tool for photometry: measuring how bright a target is (its reflectivity). Use it to compare and identify reflectivity across the Helios members and pick out the ones that do not match.
 
 | Specification | LEO | GEO |
 | --- | --- | --- |
@@ -154,6 +154,17 @@ Active ranging. Use it to measure distance to a target and to watch how that dis
 
 > Unlike the Optical Camera and the CCD that are oriented in the same direction on the spacecraft, the RADAR is located 180 degrees away from the camera at the back. To target the RADAR sensor towards the same target spacecraft, a full rotation of the spacecraft must be made. This can be done by switching which component is the target component in the ADCS guidance controller mode.
 
+### Laser Range Finder (LRF)
+
+A body-fixed laser range finder is mounted **alongside the RADAR, sharing its exact position and orientation (boresight)**. Any pointing that puts the RADAR on a target puts the LRF on it too. It fires a single line-of-sight beam and reports a precise range (`MeasuredRange`) to whatever that beam strikes.
+
+| Specification | LEO | GEO |
+| --- | --- | --- |
+| Operating Range | 10,000 km | 10,000 km |
+| Boresight | Co-aligned with the RADAR | Co-aligned with the RADAR |
+
+> Because the LRF shares the RADAR boresight, aim with the same rear-facing rotation you use for the RADAR (target the RADAR component in the ADCS guidance controller). Hold the beam on a **tumbling rocket body** and its `MeasuredRange` rises and falls as the elongated body rotates - the period of that range oscillation gives the roll/tumble rate. This is the primary way to measure how fast a body is spinning.
+
 ### Other sensors
 
 - **GPS Sensor:** Position and velocity for your own spacecraft, as well as accurate latitude, longitude and altitude readings. Both spacecraft should report healthy navigation across the mission.
@@ -170,7 +181,7 @@ A servicing tug can only capture a rocket body if it is not spinning too fast. U
 | 2.5 to 4.0 deg/s | **Caution** | Despin required before capture |
 | Greater than 4.0 deg/s | **Unsafe** | Do not attempt capture |
 
-> **Converting a light curve to a roll rate:** measure the dominant period between repeating brightness maxima, then take roll rate (deg/s) ≈ 360 / (period in seconds). As a guide, a ~180 s period is about 2 deg/s (safe), ~120 s is about 3 deg/s (caution), and ~80 s is about 4.5 deg/s (unsafe). A shorter period means a faster roll.
+> **Converting a range oscillation to a roll rate:** measure the dominant period of the Laser Range Finder range oscillation, then take roll rate (deg/s) ≈ 360 / (period in seconds). As a guide, a ~180 s period is about 2 deg/s (safe), ~120 s is about 3 deg/s (caution), and ~80 s is about 4.5 deg/s (unsafe). A shorter period means a faster roll.
 
 ---
 
@@ -196,7 +207,7 @@ Split responsibilities early. The Mission Lead should assign these roles at the 
 
 - **Mission Lead:** Assigns roles, answers questions, monitors key information, and makes go/no-go calls - including prioritising the Phase 4 intercept when it appears.
 - **Satellite Operator:** Manages telemetry, guidance pointing, and spacecraft health across both nodes.
-- **Payload Operator:** Captures CCD and optical imagery and RADAR ranges, builds light curves, and reads reflectivity and roll rate.
+- **Payload Operator:** Captures CCD and optical imagery and RADAR / Laser Range Finder ranges, reads reflectivity, and measures roll rate from the range oscillation.
 - **Communications Specialist:** Monitors link budgets, GPS telemetry, and contact windows.
 
 ---
@@ -216,9 +227,9 @@ Split responsibilities early. The Mission Lead should assign these roles at the 
 
 Compare reflectivity across identical-looking satellites with the CCD to pick out members whose surface brightness does not match the rest of the group.
 
-### Light-Curve Analysis
+### Tumble / Roll-Rate Analysis
 
-Build brightness-versus-time curves for tumbling debris, measure the rotation period, convert it to a roll rate, and apply operational thresholds to make a capture decision.
+Range a tumbling body with the Laser Range Finder, measure the period of its range oscillation, convert it to a roll rate, and apply operational thresholds to make a capture decision.
 
 ### RADAR Custody
 
