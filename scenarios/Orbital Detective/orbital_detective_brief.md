@@ -33,7 +33,7 @@ The **Helios** constellation is a cluster of six satellites that should all look
 
 Two of the bodies - **R/B Titan** and **R/B Atlas** - sit close to your **GEO** spacecraft, within Laser Range Finder reach. The third - **R/B Delta** - is in a low orbit far from *both* of your spacecraft and **out of Laser Range Finder range**, so it needs a different, more resourceful approach.
 
-1. **Near-GEO bodies (Titan, Atlas):** Aim the **Laser Range Finder** at each from your GEO spacecraft (the LRF shares the RADAR boresight). If the body is tumbling, its `MeasuredRange` rises and falls periodically as it rotates; time that period.
+1. **Near-GEO bodies (Titan, Atlas):** Aim the **Laser Range Finder** at each from your GEO spacecraft (the LRF shares the RADAR boresight). If the body is tumbling, its `MeasuredRange` rises and falls periodically as it rotates; time that period. The operator terminal only shows a new LRF range every ~20 s, so hold the beam and log readings over several minutes - both bodies turn slowly enough (120-180 s periods) that this cadence captures 6-9 points per rotation.
 2. **The far body (Delta) - highest marks:** The LRF cannot reach Delta. Be resourceful - use the **optical camera** to image the body repeatedly and watch it rotate, timing a full revolution. This is the hardest debris task and carries the most marks.
 3. **Convert and advise:** Convert each period to a roll rate in degrees per second (see the conversion note under the capture-safety table), then classify each body as safe, caution, or unsafe for ORS to capture.
 
@@ -164,8 +164,11 @@ A body-fixed laser range finder is mounted **alongside the RADAR, sharing its ex
 | --- | --- | --- |
 | Operating Range | 100 km | 100 km |
 | Boresight | Co-aligned with the RADAR | Co-aligned with the RADAR |
+| Data cadence (operator terminal) | 1 range reading every ~20 s | 1 range reading every ~20 s |
 
 > Because the LRF shares the RADAR boresight, aim with the same rear-facing rotation you use for the RADAR (target the RADAR component in the ADCS guidance controller). Hold the beam on a **tumbling rocket body** and its `MeasuredRange` rises and falls as the elongated body rotates - the period of that range oscillation gives the roll/tumble rate.
+>
+> **Data cadence:** the operator terminal surfaces a new LRF range value only about **once every 20 seconds**. To recover a rotation period you must keep the beam on the body and log readings for several minutes so the rise-and-fall pattern is sampled many times over - the nearby bodies (Titan and Atlas) turn slowly enough that a 20 s cadence captures 6-9 points per rotation. A fast tumbler would alias at this cadence, so do not trust a period shorter than roughly a minute from the LRF alone.
 >
 > **Range limit:** the LRF only reaches a target within **100 km**. That covers the two rocket bodies parked near your GEO spacecraft (Titan and Atlas), but *not* R/B Delta, which sits far from both nodes - measure Delta's rotation with the optical camera instead.
 
@@ -186,6 +189,8 @@ A servicing tug can only capture a rocket body if it is not spinning too fast. U
 | Greater than 4.0 deg/s | **Unsafe** | Do not attempt capture |
 
 > **Converting a rotation period to a roll rate:** measure the dominant rotation period - from the Laser Range Finder range oscillation (nearby bodies) or by watching the body rotate in the optical camera (distant bodies) - then take roll rate (deg/s) ≈ 360 / (period in seconds). As a guide, a ~180 s period is about 2 deg/s (safe), a ~120 s period is about 3 deg/s (caution), and an ~80 s period is about 4.5 deg/s (unsafe); a shorter period means a faster roll.
+>
+> **Mind the sampling limit:** the operator terminal only delivers one LRF range point every ~20 seconds, so collect readings over several rotations. Titan and Atlas turn slowly (120-180 s periods, 6-9 samples per rotation) and are readable on the LRF; Delta spins too fast for that cadence and must be timed on the optical camera.
 
 ---
 

@@ -387,7 +387,8 @@
 						],
 						"data": {
 							"Mass": 1.0,
-							"Operating Range": 100000.0
+							"Operating Range": 100000.0,
+							"Sample Rate": 0.2
 						}
 					}
 				]
@@ -722,7 +723,8 @@
 						],
 						"data": {
 							"Mass": 1.0,
-							"Operating Range": 100000.0
+							"Operating Range": 100000.0,
+							"Sample Rate": 0.2
 						}
 					}
 				]
@@ -923,10 +925,10 @@
 				"orbit": [
 					42300.0,
 					0.0029,
-					1.4401,
-					99.15,
+					1.0,
+					112.212,
 					0.0,
-					0.75
+					347.9
 				],
 				"planet": "Earth",
 				"dynamic_type": "Orbit",
@@ -1056,7 +1058,7 @@
 		{
 			"section": "Debris Analysis",
 			"title": "Estimate the roll rate of R/B Atlas.",
-			"description": "Orbit Recovery Services (ORS), a commercial debris-removal company, has contracted your team to triage spent rocket bodies ahead of a capture mission. R/B Atlas sits close to your GEO spacecraft. Aim the Laser Range Finder at it (the LRF shares the RADAR boresight) and time its range oscillation to determine the roll rate.",
+			"description": "Orbit Recovery Services (ORS), a commercial debris-removal company, has contracted your team to triage spent rocket bodies ahead of a capture mission. R/B Atlas sits close to your GEO spacecraft. Aim the Laser Range Finder at it (the LRF shares the RADAR boresight) and time its range oscillation to determine the roll rate. Note: the operator terminal only surfaces one LRF range point every ~20 s, so hold the beam on the body and log readings over several minutes to capture the full rise-and-fall pattern.",
 			"type": "number",
 			"answer": {
 				"value": 2.0,
@@ -1085,7 +1087,7 @@
 		{
 			"section": "Debris Analysis",
 			"title": "Estimate the roll rate of R/B Titan.",
-			"description": "Orbit Recovery Services (ORS), a commercial debris-removal company, has contracted your team to triage spent rocket bodies ahead of a capture mission. R/B Titan sits close to your GEO spacecraft. Aim the Laser Range Finder at it (the LRF shares the RADAR boresight) and time its range oscillation to determine the roll rate.",
+			"description": "Orbit Recovery Services (ORS), a commercial debris-removal company, has contracted your team to triage spent rocket bodies ahead of a capture mission. R/B Titan sits close to your GEO spacecraft. Aim the Laser Range Finder at it (the LRF shares the RADAR boresight) and time its range oscillation to determine the roll rate. Note: the operator terminal only surfaces one LRF range point every ~20 s, so hold the beam on the body and log readings over several minutes to capture the full rise-and-fall pattern.",
 			"type": "number",
 			"answer": {
 				"value": 3.0,
@@ -1114,7 +1116,7 @@
 		{
 			"section": "Debris Analysis",
 			"title": "Estimate the roll rate of R/B Delta.",
-			"description": "Orbit Recovery Services (ORS) has contracted your team to triage spent rocket bodies ahead of a capture mission. R/B Delta is far from BOTH of your spacecraft - well beyond Laser Range Finder range - so the LRF cannot resolve its rotation. Be resourceful: use the optical camera to image the body repeatedly and watch it rotate, timing a full revolution to determine the roll rate. This is the hardest debris task and is worth the most marks.",
+			"description": "Orbit Recovery Services (ORS) has contracted your team to triage spent rocket bodies ahead of a capture mission. R/B Delta is far from BOTH of your spacecraft - well beyond Laser Range Finder range - so the LRF cannot resolve its rotation. Be resourceful",
 			"type": "number",
 			"answer": {
 				"value": 4.5,
