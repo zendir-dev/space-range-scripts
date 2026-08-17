@@ -424,7 +424,7 @@ Engages a perch-mode hold relative to another spacecraft. The chaser holds a fix
 ### Notes
 
 - The spacecraft must have RPO flight software enabled in the scenario. If `rpo_software_enabled` is `false` in [`list_assets`](ground-requests.md#list_assets), the command is silently ignored.
-- The maneuver uses the spacecraft's existing thrusters/control authority — bring fuel.
+- If the spacecraft has thrusters, force commands are allocated onto a `Thruster Array` (propellant is consumed; `Dispersed Factor` failures are honoured). Otherwise SpaceRange uses a dedicated `External Force Torque`. Bring fuel when thrusters are present.
 
 ---
 
