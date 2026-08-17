@@ -1044,6 +1044,24 @@
 		},
 		{
 			"Enabled": true,
+			"Name": "Servicer Dock Target Refresh",
+			"Time": 2.0,
+			"Repeat": false,
+			"Interval": 1.0,
+			"Type": "Spacecraft",
+			"Target": "Guidance",
+			"Assets": [
+				"SC_SERVICER"
+			],
+			"Data": {
+				"Pointing": "Dock",
+				"Mapping": "thrusters",
+				"Spacecraft": "SC_CLIENT",
+				"Clocking": 0.0
+			}
+		},
+		{
+			"Enabled": true,
 			"Name": "Port-Relative Standoff",
 			"Time": 10.0,
 			"Repeat": false,

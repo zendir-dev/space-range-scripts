@@ -9,7 +9,7 @@ This document provides a talk-track for instructors running the ELSA-d Thruster 
 1. Load `elsa_d_thruster_failures.json` in Studio.
 2. Verify both spacecraft spawn correctly (Servicer and Client visible, approximately 10 m apart).
 3. Confirm the Servicer shows 24 thrusters in telemetry.
-4. Check that events are loaded (Admin > Events should show Client Inertial Attitude Hold and Servicer Dock Pointing at T+1 s, Port-Relative Standoff at T+10 s, and Alignment-Gated Closure at T+180 s). Thruster-fault events should be disabled.
+4. Check that events are loaded (Admin > Events should show Client Inertial Attitude Hold and Servicer Dock Pointing at T+1 s, the one-shot Dock Target Refresh at T+2 s, Port-Relative Standoff at T+10 s, and Alignment-Gated Closure at T+180 s). Thruster-fault events should be disabled.
 5. Set simulation speed to 2x unless the audience prefers real-time.
 
 Translation uses the Servicer's 24 × 0.25 N cold-gas thrusters (four per face, not an unbounded External Force Torque). A full face is 1 N on a 180 kg vehicle. The Client holds its pre-aligned inertial attitude with reaction wheels while only the Servicer uses Dock pointing and combined 6-DOF thruster allocation. This stable target/chaser split avoids the mutual pointing loop. This reference run has the anomaly events disabled so the pair can complete a clean dock from 10 m along a port-relative corridor.
@@ -22,6 +22,7 @@ Translation uses the Servicer's 24 × 0.25 N cold-gas thrusters (four per face, 
 | --- | --- | --- | --- |
 | 0:00 | 0:00 | Session start | Introduce scenario, distribute credentials |
 | 0:01 (1s) | 0:00 | **Stable attitude split** | Confirm Client inertial hold and Servicer Dock pointing are active; range is ~10 m |
+| 0:02 (2s) | 0:01 | **Dock target refresh** | Compatibility refresh ensures the active Dock chain is bound to the Client adapter |
 | 0:10 (10s) | 0:05 | **Port-relative standoff** | Confirm the Servicer starts closing along the Client port axis toward 5 m |
 | 3:00 (180s) | 1:30 | **Alignment-gated closure** | Confirm the Servicer starts the final 1 cm/s close once ports are inside the 8° corridor-entry gates |
 | 3:00–12:00 | 1:30–6:00 | Capture | Watch port range, axial/lateral rates, and requested versus achieved force/torque; capture requires 0.05 m and 5° |

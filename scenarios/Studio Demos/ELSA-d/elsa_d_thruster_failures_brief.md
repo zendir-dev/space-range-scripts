@@ -133,6 +133,6 @@ Re-enable the anomaly events when you want the unplanned ΔV and thruster-loss s
 2. Confirm you can see both Servicer and Client on the Map.
 3. Verify the Servicer has telemetry (check Ping in Telemetry view).
 4. Confirm the starting range is approximately 10 m using the Laser Range Finder.
-5. Familiarise yourself with the Thruster, Rendezvous, and Docking panels in Control. Client inertial hold and Servicer Dock pointing start at T+1 s; the port-relative standoff starts at T+10 s; alignment-gated closure starts at T+180 s.
+5. Familiarise yourself with the Thruster, Rendezvous, and Docking panels in Control. Client inertial hold and Servicer Dock pointing start at T+1 s, followed by a one-shot Dock target-binding refresh at T+2 s; the port-relative standoff starts at T+10 s; alignment-gated closure starts at T+180 s.
 
 Good luck. Remember: when in doubt during RPO, abort first and investigate second.
