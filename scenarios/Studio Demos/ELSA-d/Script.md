@@ -7,24 +7,25 @@ This document provides a talk-track for instructors running the ELSA-d Thruster 
 ## Pre-Session Setup
 
 1. Load `elsa_d_thruster_failures.json` in Studio.
-2. Verify both spacecraft spawn correctly (Servicer and Client visible, approximately 30 m apart, docking adapters facing each other).
+2. Verify both spacecraft spawn correctly (Servicer and Client visible, approximately 10 m apart).
 3. Confirm the Servicer shows 24 thrusters in telemetry.
-4. Check that events are loaded (Admin > Events should show Align Docking Adapters at T+1 s and Automatic Docking Approach at T+60 s). Thruster-fault events should be disabled.
-5. Set simulation speed to 5x unless the audience prefers real-time.
+4. Check that events are loaded (Admin > Events should show Client Inertial Attitude Hold and Servicer Dock Pointing at T+1 s, Port-Relative Standoff at T+10 s, and Alignment-Gated Closure at T+180 s). Thruster-fault events should be disabled.
+5. Set simulation speed to 2x unless the audience prefers real-time.
 
-Translation uses the Servicer's 24 × 0.25 N cold-gas thrusters (four per face, not an unbounded External Force Torque). A full face is 1 N on a 180 kg vehicle. Relative pointing holds the docking port on the Client so translation does not tumble an idle ADCS. This reference run has the anomaly events disabled so the pair can complete a clean dock from 30 m.
+Translation uses the Servicer's 24 × 0.25 N cold-gas thrusters (four per face, not an unbounded External Force Torque). A full face is 1 N on a 180 kg vehicle. The Client holds its pre-aligned inertial attitude with reaction wheels while only the Servicer uses Dock pointing and combined 6-DOF thruster allocation. This stable target/chaser split avoids the mutual pointing loop. This reference run has the anomaly events disabled so the pair can complete a clean dock from 10 m along a port-relative corridor.
 
 ---
 
 ## Session Timeline
 
-| Sim Time | Wall Time (5x) | Event | Instructor Action |
+| Sim Time | Wall Time (2x) | Event | Instructor Action |
 | --- | --- | --- | --- |
 | 0:00 | 0:00 | Session start | Introduce scenario, distribute credentials |
-| 0:01 (1s) | 0:00 | **Align docking adapters** | Confirm relative pointing is active and range is ~30 m |
-| 1:00 (60s) | 0:12 | **Automatic docking approach** | Confirm the Servicer starts closing onto the Client docking adapter |
-| 1:00–5:00 | 0:12–1:00 | Capture | Watch LRF range drop; docking should complete once adapters are inside capture distance |
-| ~20:00 | ~4 min | Wrap-up | Debrief. Re-enable fault events for a later degraded-propulsion run |
+| 0:01 (1s) | 0:00 | **Stable attitude split** | Confirm Client inertial hold and Servicer Dock pointing are active; range is ~10 m |
+| 0:10 (10s) | 0:05 | **Port-relative standoff** | Confirm the Servicer starts closing along the Client port axis toward 5 m |
+| 3:00 (180s) | 1:30 | **Alignment-gated closure** | Confirm the Servicer starts the final 1 cm/s close once ports are inside the 8° corridor-entry gates |
+| 3:00–12:00 | 1:30–6:00 | Capture | Watch port range, axial/lateral rates, and requested versus achieved force/torque; capture requires 0.05 m and 5° |
+| ~30:00 | ~15 min | Wrap-up | Debrief. Re-enable fault events for a later degraded-propulsion run |
 
 ---
 

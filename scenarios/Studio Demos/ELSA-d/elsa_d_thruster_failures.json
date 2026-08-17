@@ -1,14 +1,14 @@
 {
 	"metadata": {
 		"name": "ELSA-d Thruster Failures",
-		"description": "A studio docking-reference demonstration inspired by ELSA-d. The Servicer holds 1 m along-track from the Client with docking adapters already facing each other. After ten seconds the Servicer begins a single speed-limited straight-in approach capped at 1 cm/s and captures the Client's docking adapter. Because the pair starts aligned, the approach keeps that attitude rather than slewing, and the thruster array resolves translation and attitude together through one 6-DOF allocation. Thruster-fault events are included but disabled so this run completes a clean dock as a baseline."
+		"description": "A studio docking-reference demonstration inspired by ELSA-d. The Servicer starts about 10 m along-track from the Client, with the Client attitude rotated so its docking adapter initially faces the Servicer. Dock pointing maintains the mirrored docking-adapter Up axes (with clocking), then a port-relative rendezvous flies a 5 m standoff along the Client port axis and a slower alignment-gated closure to capture. Thruster-fault events are included but disabled so this run completes a clean dock as a baseline."
 	},
 	"simulation": {
 		"epoch": "2026/01/25 09:00:00",
-		"speed": 1.0,
+		"speed": 2.0,
 		"step_size": 0.1,
 		"integrator": "Euler",
-		"end_time": 300.0
+		"end_time": 1800.0
 	},
 	"universe": {
 		"atmosphere": false,
@@ -284,6 +284,7 @@
 							"Mass": 2.0,
 							"Capture Distance": 0.05,
 							"Capture Angle": 5.0,
+							"Capture Roll Angle": 5.0,
 							"Separation Force": 10.0,
 							"Separation Duration": 1.0
 						}
@@ -823,7 +824,7 @@
 						97.6,
 						43.398888,
 						0.0,
-						324.3590363
+						324.3591107
 					],
 					"offset": [
 						0.0,
@@ -965,6 +966,7 @@
 							"Mass": 2.0,
 							"Capture Distance": 0.05,
 							"Capture Angle": 5.0,
+							"Capture Roll Angle": 5.0,
 							"Separation Force": 10.0,
 							"Separation Duration": 1.0
 						}
@@ -1005,8 +1007,77 @@
 	"events": [
 		{
 			"Enabled": true,
-			"Name": "Automatic Docking Approach",
+			"Name": "Client Inertial Attitude Hold",
+			"Time": 1.0,
+			"Repeat": false,
+			"Interval": 1.0,
+			"Type": "Spacecraft",
+			"Target": "Guidance",
+			"Assets": [
+				"SC_CLIENT"
+			],
+			"Data": {
+				"Pointing": "Inertial",
+				"Mapping": "reactionwheels",
+				"Pitch": 100.405693,
+				"Roll": 42.924797,
+				"Yaw": 137.230413
+			}
+		},
+		{
+			"Enabled": true,
+			"Name": "Servicer Dock Pointing",
+			"Time": 1.0,
+			"Repeat": false,
+			"Interval": 1.0,
+			"Type": "Spacecraft",
+			"Target": "Guidance",
+			"Assets": [
+				"SC_SERVICER"
+			],
+			"Data": {
+				"Pointing": "Dock",
+				"Mapping": "thrusters",
+				"Spacecraft": "SC_CLIENT",
+				"Clocking": 0.0
+			}
+		},
+		{
+			"Enabled": true,
+			"Name": "Port-Relative Standoff",
 			"Time": 10.0,
+			"Repeat": false,
+			"Interval": 1.0,
+			"Type": "Spacecraft",
+			"Target": "Rendezvous",
+			"Assets": [
+				"SC_SERVICER"
+			],
+			"Data": {
+				"Target": "SC_CLIENT",
+				"Active": true,
+				"Component": "Docking Adapter",
+				"Dock": true,
+				"AutoPoint": false,
+				"Mapping": "thrusters",
+				"OffsetX": 0.0,
+				"OffsetY": 0.0,
+				"OffsetZ": 0.0,
+				"MaxSpeed": 0.05,
+				"ApproachAcceleration": 0.002,
+				"ForceDeadband": 0.002,
+				"DockAfterPerch": false,
+				"PortRelative": true,
+				"PortStandoff": 5.0,
+				"CorridorRadius": 0.5,
+				"AlignmentGate": 5.0,
+				"RollGate": 5.0
+			}
+		},
+		{
+			"Enabled": true,
+			"Name": "Alignment-Gated Closure",
+			"Time": 180.0,
 			"Repeat": false,
 			"Interval": 1.0,
 			"Type": "Spacecraft",
@@ -1027,7 +1098,13 @@
 				"MaxSpeed": 0.01,
 				"ApproachAcceleration": 0.002,
 				"ForceDeadband": 0.002,
-				"DockAfterPerch": false
+				"DockAfterPerch": true,
+				"PerchHoldDwell": 5.0,
+				"PortRelative": true,
+				"PortStandoff": 5.0,
+				"CorridorRadius": 0.5,
+				"AlignmentGate": 8.0,
+				"RollGate": 8.0
 			}
 		},
 		{
