@@ -20,9 +20,14 @@
 	},
 	"ground_stations": {
 		"locations": [
-			"Madrid",
-			"Singapore",
-			"Canberra"
+			"Canberra",
+			"Hobart",
+			"Cairns",
+			"Darwin",
+			"Davao",
+			"Osaka",
+			"Seoul",
+			"Ulaanbaatar"
 		],
 		"min_elevation": 5,
 		"max_range": 0,
@@ -53,7 +58,7 @@
 						97.6,
 						43.398888,
 						0.0,
-						324.359028
+						311.359028
 					],
 					"offset": [
 						0.0,
@@ -502,7 +507,7 @@
 						97.6,
 						43.398888,
 						0.0,
-						324.3591107
+						311.3591107
 					],
 					"offset": [
 						0.0,

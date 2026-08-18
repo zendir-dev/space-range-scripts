@@ -2,7 +2,7 @@
 **Epoch:** 2026-01-25 09:00:00 UTC
 **Simulation speed:** 2x real time
 **Session length:** 30 minutes simulation time
-**Ground stations:** Madrid, Singapore, Canberra
+**Ground stations:** Canberra, Hobart, Cairns, Darwin, Davao, Osaka, Seoul, Ulaanbaatar
 
 ---
 
