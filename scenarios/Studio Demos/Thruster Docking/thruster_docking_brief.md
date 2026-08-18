@@ -37,7 +37,7 @@ This is a clean, general docking demonstration. It contains no injected propulsi
 | Docking | Docking Adapter |
 | RPO software | Enabled |
 
-The layout provides thrust in all six body directions. Every nozzle is mounted on a body axis so its line of action passes through the centre of mass, which means translation commands induce no attitude torque. Reaction wheels handle attitude, so the reduced thruster set is used purely for translation.
+The layout provides thrust in all six body directions. The docking axis uses symmetric lateral pairs and the remaining axes use single on-axis nozzles, so a translation command produces no net attitude torque. Reaction wheels handle attitude, so the reduced thruster set is used purely for translation.
 
 ### Client
 
@@ -58,14 +58,19 @@ Thrusters are named for the direction of thrust they produce, not the face they 
 | --- | --- | --- |
 | -X | 1 | (0.40, 0, 0) |
 | +X | 2 | (-0.40, 0, 0) |
-| -Y | 3, 4 | (0, 0.36, 0) and (0, 0.24, 0) |
-| +Y | 5, 6 | (0, -0.36, 0) and (0, -0.24, 0) |
+| -Y | 3, 4 | (±0.16, 0.36, 0), either side of the docking adapter |
+| +Y | 5, 6 | (±0.16, -0.36, 0), aft face |
 | -Z | 7 | (0, 0, 0.36) |
 | +Z | 8 | (0, 0, -0.36) |
 
-Each thruster has a maximum thrust of 1 N and a 0.25 s spool-up time. The docking axis (±Y) carries a redundant pair, giving 2 N for approach and braking against 1 N for lateral corrections.
+Each thruster has a maximum thrust of 1 N and a 0.25 s spool-up time. The docking axis (±Y) carries a lateral pair at each end, giving 2 N for approach and braking against 1 N for lateral corrections, and keeping the docking adapter, camera, and laser range finder mounting line clear.
 
-All mount positions are relative to the centre of mass. The Servicer's mesh offset is zero so that authored component positions are also the physical moment arms; a non-zero mesh offset shifts every component off the centre of mass and breaks the force allocation.
+Two geometry rules keep the force allocation solvable, and breaking either one makes the mapping matrix singular so the solver commands zero thrust on every thruster:
+
+1. Directions served by a **single** thruster (±X and ±Z here) must sit exactly on their own thrust axis, so the thrust line passes through the centre of mass. Offsetting one of these makes its torque row a multiple of its force row.
+2. Directions served by a **pair** may be offset laterally, but the pair must be symmetric about the axis so that firing both together produces no net couple.
+
+All mount positions are relative to the centre of mass. The Servicer's mesh offset is zero so authored component positions are also the physical moment arms; a non-zero mesh offset shifts every component off the centre of mass and breaks the allocation.
 
 ---
 
@@ -74,9 +79,9 @@ All mount positions are relative to the centre of mass. The Servicer's mesh offs
 1. **T+1 s — Stable attitude split:** The Client starts inertial hold and the Servicer starts Dock pointing.
 2. **T+2 s — Dock target refresh:** The active Dock chain binds to the Client adapter.
 3. **T+10 s — Port-relative standoff:** The Servicer closes along the Client port axis toward a 5 m standoff at up to 5 cm/s.
-4. **T+11 s — Attitude actuator restored:** Dock pointing is re-asserted on reaction wheels, because a rendezvous command switches the attitude mapping to thrusters.
+4. **T+10.1 s — Attitude actuator restored:** Dock pointing is re-asserted on reaction wheels, because a rendezvous command switches the attitude mapping to thrusters.
 5. **T+180 s — Alignment-gated closure:** The Servicer closes at up to 1 cm/s once the docking gates are satisfied.
-6. **T+181 s — Attitude actuator restored:** Reaction-wheel attitude control is re-asserted after the closure command.
+6. **T+180.1 s — Attitude actuator restored:** Reaction-wheel attitude control is re-asserted after the closure command.
 7. **Capture:** The adapters capture at 0.05 m when axis, roll, and corridor conditions are met.
 
 ## Before You Begin

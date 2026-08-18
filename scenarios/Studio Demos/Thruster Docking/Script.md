@@ -7,7 +7,7 @@ This talk-track supports a general eight-thruster docking demonstration.
 1. Load `thruster_docking.json` in Studio.
 2. Verify the Servicer and Client spawn approximately 10 m apart.
 3. Confirm the Servicer exposes eight cold-gas thrusters and reaction-wheel telemetry.
-4. Confirm seven enabled events are loaded: two attitude events at T+1 s, the target refresh at T+2 s, standoff at T+10 s, the attitude restore at T+11 s, final closure at T+180 s, and the second attitude restore at T+181 s.
+4. Confirm seven enabled events are loaded: two attitude events at T+1 s, the target refresh at T+2 s, standoff at T+10 s, the attitude restore at T+10.1 s, final closure at T+180 s, and the second attitude restore at T+180.1 s.
 5. Set simulation speed to 2x.
 
 The Servicer uses reaction wheels for Dock pointing and eight 1 N cold-gas thrusters for translation. Separating attitude and translation control keeps the reduced thruster layout suitable for a stable reference docking run.
@@ -22,9 +22,9 @@ A rendezvous command sets the guidance mapping to thrusters, which routes the at
 | 0:01 | Stable attitude split | Confirm Client inertial hold and Servicer Dock pointing |
 | 0:02 | Dock target refresh | Confirm the active Dock chain is bound to the Client adapter |
 | 0:10 | Port-relative standoff | Watch the Servicer close along the Client port axis toward 5 m |
-| 0:11 | Attitude actuator restored | Confirm reaction-wheel motor torque is non-zero again |
+| 0:10.1 | Attitude actuator restored | Confirm reaction-wheel motor torque is non-zero again |
 | 3:00 | Alignment-gated closure | Confirm final closure begins only after the docking gates are met |
-| 3:01 | Attitude actuator restored | Confirm reaction-wheel motor torque is non-zero again |
+| 3:00.1 | Attitude actuator restored | Confirm reaction-wheel motor torque is non-zero again |
 | 3:00 onward | Capture | Monitor port range, rates, alignment, thruster commands, and fuel |
 
 ## Teaching Points
@@ -32,8 +32,8 @@ A rendezvous command sets the guidance mapping to thrusters, which routes the at
 ### Reduced thruster architecture
 
 - Thrusters are named for the thrust direction they produce: 1 gives -X, 2 gives +X, 3 and 4 give -Y, 5 and 6 give +Y, 7 gives -Z, 8 gives +Z.
-- The docking axis carries a redundant pair, so approach and braking have 2 N against 1 N for lateral corrections.
-- Every nozzle sits on a body axis, so its line of action passes through the centre of mass and translation induces no torque.
+- The docking axis carries a symmetric lateral pair at each end, so approach and braking have 2 N against 1 N for lateral corrections, and nothing is mounted on the docking adapter centre line.
+- The pairs are symmetric about the docking axis and the single nozzles sit on their own thrust axes, so a translation command produces no net torque.
 - Reaction wheels provide all attitude control; the thrusters provide only translation.
 - Eight unidirectional thrusters cannot provide balanced authority in all six force directions and all three torque axes at once. Twelve would be the minimum for that, which is why attitude is delegated to the wheels here.
 
