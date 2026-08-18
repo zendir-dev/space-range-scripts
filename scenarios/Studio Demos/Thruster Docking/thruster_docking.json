@@ -1,7 +1,7 @@
 {
 	"metadata": {
-		"name": "ELSA-d Thruster Failures",
-		"description": "A studio docking-reference demonstration inspired by ELSA-d. The Servicer starts about 10 m along-track from the Client, with the Client attitude rotated so its docking adapter initially faces the Servicer. Dock pointing maintains the mirrored docking-adapter Up axes (with clocking), then a port-relative rendezvous flies a 5 m standoff along the Client port axis and a slower alignment-gated closure to capture. Thruster-fault events are included but disabled so this run completes a clean dock as a baseline."
+		"name": "Thruster-Based Docking",
+		"description": "A general thruster-based docking demonstration. The Servicer starts about 10 m along-track from the Client, with the Client attitude rotated so its docking adapter initially faces the Servicer. Reaction-wheel pointing maintains docking alignment while an eight-thruster translation system flies a port-relative rendezvous to a 5 m standoff and then performs a slower alignment-gated closure to capture."
 	},
 	"simulation": {
 		"epoch": "2026/01/25 09:00:00",
@@ -106,7 +106,7 @@
 					"offset": [
 						0.0,
 						0.0,
-						0.12
+						0.0
 					]
 				},
 				"controller": {
@@ -309,12 +309,12 @@
 					},
 					{
 						"class": "Cold Gas Thruster",
-						"name": "Thruster 1 (+X)",
+						"name": "Thruster 1 (-X)",
 						"enabled": true,
 						"position": [
 							0.4,
-							0.16,
-							0.12
+							0.0,
+							0.0
 						],
 						"rotation": [
 							0.0,
@@ -322,7 +322,7 @@
 							0.0
 						],
 						"data": {
-							"Max Thrust": 0.25,
+							"Max Thrust": 1.0,
 							"Time To Max Thrust": 0.25,
 							"Specific Impulse": 250.0,
 							"Mass": 0.4
@@ -333,72 +333,9 @@
 						"name": "Thruster 2 (+X)",
 						"enabled": true,
 						"position": [
-							0.4,
-							0.16,
-							-0.12
-						],
-						"rotation": [
-							0.0,
-							90.0,
-							0.0
-						],
-						"data": {
-							"Max Thrust": 0.25,
-							"Time To Max Thrust": 0.25,
-							"Specific Impulse": 250.0,
-							"Mass": 0.4
-						}
-					},
-					{
-						"class": "Cold Gas Thruster",
-						"name": "Thruster 3 (+X)",
-						"enabled": true,
-						"position": [
-							0.4,
-							-0.16,
-							0.12
-						],
-						"rotation": [
-							0.0,
-							90.0,
-							0.0
-						],
-						"data": {
-							"Max Thrust": 0.25,
-							"Time To Max Thrust": 0.25,
-							"Specific Impulse": 250.0,
-							"Mass": 0.4
-						}
-					},
-					{
-						"class": "Cold Gas Thruster",
-						"name": "Thruster 4 (+X)",
-						"enabled": true,
-						"position": [
-							0.4,
-							-0.16,
-							-0.12
-						],
-						"rotation": [
-							0.0,
-							90.0,
-							0.0
-						],
-						"data": {
-							"Max Thrust": 0.25,
-							"Time To Max Thrust": 0.25,
-							"Specific Impulse": 250.0,
-							"Mass": 0.4
-						}
-					},
-					{
-						"class": "Cold Gas Thruster",
-						"name": "Thruster 5 (-X)",
-						"enabled": true,
-						"position": [
 							-0.4,
-							0.16,
-							0.12
+							0.0,
+							0.0
 						],
 						"rotation": [
 							0.0,
@@ -406,7 +343,7 @@
 							0.0
 						],
 						"data": {
-							"Max Thrust": 0.25,
+							"Max Thrust": 1.0,
 							"Time To Max Thrust": 0.25,
 							"Specific Impulse": 250.0,
 							"Mass": 0.4
@@ -414,75 +351,12 @@
 					},
 					{
 						"class": "Cold Gas Thruster",
-						"name": "Thruster 6 (-X)",
+						"name": "Thruster 3 (-Y)",
 						"enabled": true,
 						"position": [
-							-0.4,
-							0.16,
-							-0.12
-						],
-						"rotation": [
 							0.0,
-							-90.0,
-							0.0
-						],
-						"data": {
-							"Max Thrust": 0.25,
-							"Time To Max Thrust": 0.25,
-							"Specific Impulse": 250.0,
-							"Mass": 0.4
-						}
-					},
-					{
-						"class": "Cold Gas Thruster",
-						"name": "Thruster 7 (-X)",
-						"enabled": true,
-						"position": [
-							-0.4,
-							-0.16,
-							0.12
-						],
-						"rotation": [
-							0.0,
-							-90.0,
-							0.0
-						],
-						"data": {
-							"Max Thrust": 0.25,
-							"Time To Max Thrust": 0.25,
-							"Specific Impulse": 250.0,
-							"Mass": 0.4
-						}
-					},
-					{
-						"class": "Cold Gas Thruster",
-						"name": "Thruster 8 (-X)",
-						"enabled": true,
-						"position": [
-							-0.4,
-							-0.16,
-							-0.12
-						],
-						"rotation": [
-							0.0,
-							-90.0,
-							0.0
-						],
-						"data": {
-							"Max Thrust": 0.25,
-							"Time To Max Thrust": 0.25,
-							"Specific Impulse": 250.0,
-							"Mass": 0.4
-						}
-					},
-					{
-						"class": "Cold Gas Thruster",
-						"name": "Thruster 9 (+Y)",
-						"enabled": true,
-						"position": [
-							0.16,
 							0.36,
-							0.12
+							0.0
 						],
 						"rotation": [
 							-90.0,
@@ -490,7 +364,7 @@
 							0.0
 						],
 						"data": {
-							"Max Thrust": 0.25,
+							"Max Thrust": 1.0,
 							"Time To Max Thrust": 0.25,
 							"Specific Impulse": 250.0,
 							"Mass": 0.4
@@ -498,12 +372,12 @@
 					},
 					{
 						"class": "Cold Gas Thruster",
-						"name": "Thruster 10 (+Y)",
+						"name": "Thruster 4 (-Y)",
 						"enabled": true,
 						"position": [
-							0.16,
-							0.36,
-							-0.12
+							0.0,
+							0.24,
+							0.0
 						],
 						"rotation": [
 							-90.0,
@@ -511,7 +385,7 @@
 							0.0
 						],
 						"data": {
-							"Max Thrust": 0.25,
+							"Max Thrust": 1.0,
 							"Time To Max Thrust": 0.25,
 							"Specific Impulse": 250.0,
 							"Mass": 0.4
@@ -519,54 +393,12 @@
 					},
 					{
 						"class": "Cold Gas Thruster",
-						"name": "Thruster 11 (+Y)",
+						"name": "Thruster 5 (+Y)",
 						"enabled": true,
 						"position": [
-							-0.16,
-							0.36,
-							0.12
-						],
-						"rotation": [
-							-90.0,
 							0.0,
-							0.0
-						],
-						"data": {
-							"Max Thrust": 0.25,
-							"Time To Max Thrust": 0.25,
-							"Specific Impulse": 250.0,
-							"Mass": 0.4
-						}
-					},
-					{
-						"class": "Cold Gas Thruster",
-						"name": "Thruster 12 (+Y)",
-						"enabled": true,
-						"position": [
-							-0.16,
-							0.36,
-							-0.12
-						],
-						"rotation": [
-							-90.0,
-							0.0,
-							0.0
-						],
-						"data": {
-							"Max Thrust": 0.25,
-							"Time To Max Thrust": 0.25,
-							"Specific Impulse": 250.0,
-							"Mass": 0.4
-						}
-					},
-					{
-						"class": "Cold Gas Thruster",
-						"name": "Thruster 13 (-Y)",
-						"enabled": true,
-						"position": [
-							0.16,
 							-0.36,
-							0.12
+							0.0
 						],
 						"rotation": [
 							90.0,
@@ -574,7 +406,7 @@
 							0.0
 						],
 						"data": {
-							"Max Thrust": 0.25,
+							"Max Thrust": 1.0,
 							"Time To Max Thrust": 0.25,
 							"Specific Impulse": 250.0,
 							"Mass": 0.4
@@ -582,12 +414,12 @@
 					},
 					{
 						"class": "Cold Gas Thruster",
-						"name": "Thruster 14 (-Y)",
+						"name": "Thruster 6 (+Y)",
 						"enabled": true,
 						"position": [
-							0.16,
-							-0.36,
-							-0.12
+							0.0,
+							-0.24,
+							0.0
 						],
 						"rotation": [
 							90.0,
@@ -595,7 +427,7 @@
 							0.0
 						],
 						"data": {
-							"Max Thrust": 0.25,
+							"Max Thrust": 1.0,
 							"Time To Max Thrust": 0.25,
 							"Specific Impulse": 250.0,
 							"Mass": 0.4
@@ -603,53 +435,11 @@
 					},
 					{
 						"class": "Cold Gas Thruster",
-						"name": "Thruster 15 (-Y)",
+						"name": "Thruster 7 (-Z)",
 						"enabled": true,
 						"position": [
-							-0.16,
-							-0.36,
-							0.12
-						],
-						"rotation": [
-							90.0,
 							0.0,
-							0.0
-						],
-						"data": {
-							"Max Thrust": 0.25,
-							"Time To Max Thrust": 0.25,
-							"Specific Impulse": 250.0,
-							"Mass": 0.4
-						}
-					},
-					{
-						"class": "Cold Gas Thruster",
-						"name": "Thruster 16 (-Y)",
-						"enabled": true,
-						"position": [
-							-0.16,
-							-0.36,
-							-0.12
-						],
-						"rotation": [
-							90.0,
 							0.0,
-							0.0
-						],
-						"data": {
-							"Max Thrust": 0.25,
-							"Time To Max Thrust": 0.25,
-							"Specific Impulse": 250.0,
-							"Mass": 0.4
-						}
-					},
-					{
-						"class": "Cold Gas Thruster",
-						"name": "Thruster 17 (+Z)",
-						"enabled": true,
-						"position": [
-							0.16,
-							0.16,
 							0.36
 						],
 						"rotation": [
@@ -658,7 +448,7 @@
 							0.0
 						],
 						"data": {
-							"Max Thrust": 0.25,
+							"Max Thrust": 1.0,
 							"Time To Max Thrust": 0.25,
 							"Specific Impulse": 250.0,
 							"Mass": 0.4
@@ -666,74 +456,11 @@
 					},
 					{
 						"class": "Cold Gas Thruster",
-						"name": "Thruster 18 (+Z)",
+						"name": "Thruster 8 (+Z)",
 						"enabled": true,
 						"position": [
-							0.16,
-							-0.16,
-							0.36
-						],
-						"rotation": [
 							0.0,
 							0.0,
-							0.0
-						],
-						"data": {
-							"Max Thrust": 0.25,
-							"Time To Max Thrust": 0.25,
-							"Specific Impulse": 250.0,
-							"Mass": 0.4
-						}
-					},
-					{
-						"class": "Cold Gas Thruster",
-						"name": "Thruster 19 (+Z)",
-						"enabled": true,
-						"position": [
-							-0.16,
-							0.16,
-							0.36
-						],
-						"rotation": [
-							0.0,
-							0.0,
-							0.0
-						],
-						"data": {
-							"Max Thrust": 0.25,
-							"Time To Max Thrust": 0.25,
-							"Specific Impulse": 250.0,
-							"Mass": 0.4
-						}
-					},
-					{
-						"class": "Cold Gas Thruster",
-						"name": "Thruster 20 (+Z)",
-						"enabled": true,
-						"position": [
-							-0.16,
-							-0.16,
-							0.36
-						],
-						"rotation": [
-							0.0,
-							0.0,
-							0.0
-						],
-						"data": {
-							"Max Thrust": 0.25,
-							"Time To Max Thrust": 0.25,
-							"Specific Impulse": 250.0,
-							"Mass": 0.4
-						}
-					},
-					{
-						"class": "Cold Gas Thruster",
-						"name": "Thruster 21 (-Z)",
-						"enabled": true,
-						"position": [
-							0.16,
-							0.16,
 							-0.36
 						],
 						"rotation": [
@@ -742,70 +469,7 @@
 							0.0
 						],
 						"data": {
-							"Max Thrust": 0.25,
-							"Time To Max Thrust": 0.25,
-							"Specific Impulse": 250.0,
-							"Mass": 0.4
-						}
-					},
-					{
-						"class": "Cold Gas Thruster",
-						"name": "Thruster 22 (-Z)",
-						"enabled": true,
-						"position": [
-							0.16,
-							-0.16,
-							-0.36
-						],
-						"rotation": [
-							180.0,
-							0.0,
-							0.0
-						],
-						"data": {
-							"Max Thrust": 0.25,
-							"Time To Max Thrust": 0.25,
-							"Specific Impulse": 250.0,
-							"Mass": 0.4
-						}
-					},
-					{
-						"class": "Cold Gas Thruster",
-						"name": "Thruster 23 (-Z)",
-						"enabled": true,
-						"position": [
-							-0.16,
-							0.16,
-							-0.36
-						],
-						"rotation": [
-							180.0,
-							0.0,
-							0.0
-						],
-						"data": {
-							"Max Thrust": 0.25,
-							"Time To Max Thrust": 0.25,
-							"Specific Impulse": 250.0,
-							"Mass": 0.4
-						}
-					},
-					{
-						"class": "Cold Gas Thruster",
-						"name": "Thruster 24 (-Z)",
-						"enabled": true,
-						"position": [
-							-0.16,
-							-0.16,
-							-0.36
-						],
-						"rotation": [
-							180.0,
-							0.0,
-							0.0
-						],
-						"data": {
-							"Max Thrust": 0.25,
+							"Max Thrust": 1.0,
 							"Time To Max Thrust": 0.25,
 							"Specific Impulse": 250.0,
 							"Mass": 0.4
@@ -1037,7 +701,7 @@
 			],
 			"Data": {
 				"Pointing": "Dock",
-				"Mapping": "thrusters",
+				"Mapping": "reactionwheels",
 				"Spacecraft": "SC_CLIENT",
 				"Clocking": 0.0
 			}
@@ -1055,7 +719,7 @@
 			],
 			"Data": {
 				"Pointing": "Dock",
-				"Mapping": "thrusters",
+				"Mapping": "reactionwheels",
 				"Spacecraft": "SC_CLIENT",
 				"Clocking": 0.0
 			}
@@ -1094,6 +758,24 @@
 		},
 		{
 			"Enabled": true,
+			"Name": "Restore Reaction Wheel Attitude Control",
+			"Time": 11.0,
+			"Repeat": false,
+			"Interval": 1.0,
+			"Type": "Spacecraft",
+			"Target": "Guidance",
+			"Assets": [
+				"SC_SERVICER"
+			],
+			"Data": {
+				"Pointing": "Dock",
+				"Mapping": "reactionwheels",
+				"Spacecraft": "SC_CLIENT",
+				"Clocking": 0.0
+			}
+		},
+		{
+			"Enabled": true,
 			"Name": "Alignment-Gated Closure",
 			"Time": 180.0,
 			"Repeat": false,
@@ -1126,149 +808,21 @@
 			}
 		},
 		{
-			"Enabled": false,
-			"Name": "Unplanned Delta-V",
-			"Time": 180.0,
+			"Enabled": true,
+			"Name": "Restore Reaction Wheel Attitude Control (Closure)",
+			"Time": 181.0,
 			"Repeat": false,
 			"Interval": 1.0,
 			"Type": "Spacecraft",
-			"Target": "Thruster 1 (+X)",
+			"Target": "Guidance",
 			"Assets": [
 				"SC_SERVICER"
 			],
 			"Data": {
-				"Active": true,
-				"Duration": 15.0
-			}
-		},
-		{
-			"Enabled": false,
-			"Name": "System Issue - Thruster 1 Failed",
-			"Time": 210.0,
-			"Repeat": false,
-			"Interval": 1.0,
-			"Type": "Spacecraft",
-			"Target": "Thruster 1 (+X)",
-			"Assets": [
-				"SC_SERVICER"
-			],
-			"Data": {
-				"Dispersed Factor": 1.0
-			}
-		},
-		{
-			"Enabled": false,
-			"Name": "System Issue - Thruster 2 Failed",
-			"Time": 211.0,
-			"Repeat": false,
-			"Interval": 1.0,
-			"Type": "Spacecraft",
-			"Target": "Thruster 2 (+X)",
-			"Assets": [
-				"SC_SERVICER"
-			],
-			"Data": {
-				"Dispersed Factor": 1.0
-			}
-		},
-		{
-			"Enabled": false,
-			"Name": "System Issue - Thruster 3 Failed",
-			"Time": 212.0,
-			"Repeat": false,
-			"Interval": 1.0,
-			"Type": "Spacecraft",
-			"Target": "Thruster 3 (+X)",
-			"Assets": [
-				"SC_SERVICER"
-			],
-			"Data": {
-				"Dispersed Factor": 1.0
-			}
-		},
-		{
-			"Enabled": false,
-			"Name": "Fourth Thruster Lost",
-			"Time": 300.0,
-			"Repeat": false,
-			"Interval": 1.0,
-			"Type": "Spacecraft",
-			"Target": "Thruster 4 (+X)",
-			"Assets": [
-				"SC_SERVICER"
-			],
-			"Data": {
-				"Dispersed Factor": 1.0
-			}
-		}
-	],
-	"questions": [
-		{
-			"section": "Anomaly Response",
-			"title": "What should you do FIRST when you detect an unexpected thruster firing during RPO?",
-			"description": "During close proximity operations, an anomalous thruster fire has been detected. What is the correct immediate response?",
-			"type": "select",
-			"answer": {
-				"options": [
-					"Continue the capture attempt to complete the mission",
-					"Abort: stop the thruster fire and cancel the rendezvous",
-					"Reset the onboard computer",
-					"Increase thrust on another thruster to compensate"
-				],
-				"value": 1,
-				"reason": [
-					"Continuing a capture attempt while propulsion behaviour is uncertain can turn a recoverable component anomaly into a collision.",
-					"",
-					"A computer reset does not address the propulsion anomaly and leaves the spacecraft uncommanded while it reboots.",
-					"Adding more thrust while the fault is undiagnosed increases the unplanned delta-V and the collision risk."
-				],
-				"score": 15
-			}
-		},
-		{
-			"section": "Anomaly Response",
-			"title": "How many servicer thrusters remain usable after the full anomaly sequence?",
-			"description": "After the system issue and the subsequent fourth thruster failure, count how many thrusters on the Servicer still produce thrust when commanded.",
-			"type": "number",
-			"answer": {
-				"value": 20,
-				"tolerance": 0,
-				"reason": "Twenty-four thrusters minus three from the system issue minus one independent failure equals twenty operational thrusters. The four losses are all on the +X face.",
-				"score": 10
-			}
-		},
-		{
-			"section": "Recovery Operations",
-			"title": "Approximate the closest approach distance (in metres) you achieved during the recovery phase.",
-			"description": "After the anomaly sequence, use the remaining twenty thrusters to re-approach the Client. Report the minimum range measured by the Laser Range Finder.",
-			"type": "number",
-			"answer": {
-				"value": 150,
-				"tolerance": 100,
-				"reason": "The target recovery perch is approximately 150 m. Answers in the range of 50-250 m demonstrate successful degraded-mode approach.",
-				"score": 15
-			}
-		},
-		{
-			"section": "Lessons Learned",
-			"title": "Why did the loss of four thrusters have a disproportionate impact on spacecraft control?",
-			"description": "The Servicer lost four of twenty-four thrusters but lost all +X-face authority. Select the best explanation.",
-			"type": "select",
-			"answer": {
-				"options": [
-					"Thruster count equals redundancy - losing four means only a small drop in control",
-					"The lost thrusters were on one side, creating asymmetric thrust capability and coupling between translation and attitude",
-					"The propellant tank was damaged in the anomaly",
-					"The remaining thrusters were lower thrust models"
-				],
-				"value": 1,
-				"reason": [
-					"Component count is not a measure of control authority. Redundancy must be assessed against the manoeuvres each mission phase requires.",
-					"",
-					"The propellant tank and its feed remained intact. Check the fuel telemetry.",
-					"All twenty-four thrusters are the same 0.25 N unit. The surviving thrusters produce full rated thrust."
-				],
-				"score": 10
+				"Pointing": "Dock",
+				"Mapping": "reactionwheels",
+				"Spacecraft": "SC_CLIENT",
+				"Clocking": 0.0
 			}
 		}
 	]
