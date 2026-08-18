@@ -122,14 +122,15 @@
 					{
 						"class": "Solar Panel",
 						"name": "Solar Panel +X",
+						"mesh": "None",
 						"enabled": true,
 						"position": [
 							0.8,
-							0.0,
-							0.0
+							0.276313,
+							-0.2
 						],
 						"rotation": [
-							0.0,
+							35.0,
 							0.0,
 							0.0
 						],
@@ -142,16 +143,17 @@
 					{
 						"class": "Solar Panel",
 						"name": "Solar Panel -X",
+						"mesh": "None",
 						"enabled": true,
 						"position": [
 							-0.8,
-							0.0,
-							0.0
+							0.276313,
+							-0.2
 						],
 						"rotation": [
+							35.0,
 							0.0,
-							0.0,
-							180.0
+							0.0
 						],
 						"data": {
 							"Area": 0.5,
@@ -163,6 +165,7 @@
 						"class": "Battery",
 						"name": "Battery",
 						"enabled": true,
+						"mesh": "None",
 						"data": {
 							"Nominal Capacity": 60.0,
 							"Charge Fraction": 0.9,
@@ -172,6 +175,7 @@
 					{
 						"class": "Computer",
 						"name": "Computer",
+						"mesh": "None",
 						"enabled": true,
 						"data": {
 							"Mass": 3.0
@@ -180,6 +184,7 @@
 					{
 						"class": "Thruster Array",
 						"name": "Thruster Array",
+						"mesh": "None",
 						"enabled": true,
 						"data": {
 							"Mass": 0.0
@@ -188,6 +193,7 @@
 					{
 						"class": "Reaction Wheels",
 						"name": "Reaction Wheels",
+						"mesh": "None",
 						"enabled": true,
 						"data": {
 							"Mass": 8.0
@@ -196,6 +202,7 @@
 					{
 						"class": "Receiver",
 						"name": "Receiver",
+						"mesh": "None",
 						"enabled": true,
 						"data": {
 							"Antenna Gain": 5.0,
@@ -205,6 +212,7 @@
 					{
 						"class": "Transmitter",
 						"name": "Transmitter",
+						"mesh": "None",
 						"enabled": true,
 						"data": {
 							"Mass": 2.0
@@ -213,6 +221,7 @@
 					{
 						"class": "Storage",
 						"name": "Storage",
+						"mesh": "None",
 						"enabled": true,
 						"data": {
 							"Mass": 2.0
@@ -221,6 +230,7 @@
 					{
 						"class": "GPS Sensor",
 						"name": "GPS Sensor",
+						"mesh": "None",
 						"enabled": true,
 						"data": {
 							"Mass": 0.5
@@ -230,6 +240,7 @@
 						"class": "Camera",
 						"name": "Camera",
 						"enabled": true,
+						"mesh": "None",
 						"position": [
 							0.0,
 							0.36,
@@ -250,6 +261,7 @@
 						"class": "Laser Range Finder",
 						"name": "Laser Range Finder",
 						"enabled": true,
+						"mesh": "None",
 						"position": [
 							0.0,
 							0.36,
@@ -270,9 +282,10 @@
 						"class": "Docking Adapter",
 						"name": "Docking Adapter",
 						"enabled": true,
+						"mesh": "None",
 						"position": [
 							0.0,
-							0.42,
+							0.35,
 							0.0
 						],
 						"rotation": [
@@ -293,6 +306,7 @@
 						"class": "Fuel Source",
 						"name": "Propellant Tank",
 						"enabled": true,
+						"mesh": "None",
 						"position": [
 							0.0,
 							0.0,
@@ -312,7 +326,7 @@
 						"name": "Thruster 1 (-X)",
 						"enabled": true,
 						"position": [
-							0.4,
+							0.2,
 							0.0,
 							0.0
 						],
@@ -333,7 +347,7 @@
 						"name": "Thruster 2 (+X)",
 						"enabled": true,
 						"position": [
-							-0.4,
+							-0.2,
 							0.0,
 							0.0
 						],
@@ -440,7 +454,7 @@
 						"position": [
 							0.0,
 							0.0,
-							0.36
+							0.18
 						],
 						"rotation": [
 							0.0,
@@ -461,7 +475,7 @@
 						"position": [
 							0.0,
 							0.0,
-							-0.36
+							-0.18
 						],
 						"rotation": [
 							180.0,
@@ -558,6 +572,7 @@
 					{
 						"class": "Solar Panel",
 						"name": "Solar Panel",
+						"mesh": "None",
 						"enabled": true,
 						"position": [
 							0.3,
@@ -573,6 +588,7 @@
 					{
 						"class": "Battery",
 						"name": "Battery",
+						"mesh": "None",
 						"enabled": true,
 						"data": {
 							"Nominal Capacity": 10.0,
@@ -583,6 +599,7 @@
 					{
 						"class": "Computer",
 						"name": "Computer",
+						"mesh": "None",
 						"enabled": true,
 						"data": {
 							"Mass": 1.0
@@ -591,6 +608,7 @@
 					{
 						"class": "GPS Sensor",
 						"name": "GPS Sensor",
+						"mesh": "None",
 						"enabled": true,
 						"data": {
 							"Mass": 0.3
@@ -599,6 +617,7 @@
 					{
 						"class": "Transmitter",
 						"name": "Transmitter",
+						"mesh": "None",
 						"enabled": true,
 						"data": {
 							"Mass": 0.5
@@ -607,6 +626,7 @@
 					{
 						"class": "Reaction Wheels",
 						"name": "Reaction Wheels",
+						"mesh": "None",
 						"enabled": true,
 						"data": {
 							"Mass": 2.0
@@ -616,9 +636,10 @@
 						"class": "Docking Adapter",
 						"name": "Docking Adapter",
 						"enabled": true,
+						"mesh": "None",
 						"position": [
 							0.0,
-							0.22,
+							0.17,
 							0.0
 						],
 						"rotation": [
@@ -642,7 +663,7 @@
 						"position": [
 							0.0,
 							0.18,
-							0.03
+							0.06
 						],
 						"rotation": [
 							-90.0,

@@ -56,12 +56,12 @@ Thrusters are named for the direction of thrust they produce, not the face they 
 
 | Thrust direction | Thrusters | Mount position |
 | --- | --- | --- |
-| -X | 1 | (0.40, 0, 0) |
-| +X | 2 | (-0.40, 0, 0) |
+| -X | 1 | (0.20, 0, 0) |
+| +X | 2 | (-0.20, 0, 0) |
 | -Y | 3, 4 | (±0.16, 0.36, 0), either side of the docking adapter |
 | +Y | 5, 6 | (±0.16, -0.36, 0), aft face |
-| -Z | 7 | (0, 0, 0.36) |
-| +Z | 8 | (0, 0, -0.36) |
+| -Z | 7 | (0, 0, 0.18) |
+| +Z | 8 | (0, 0, -0.18) |
 
 Each thruster has a maximum thrust of 1 N and a 0.25 s spool-up time. The docking axis (±Y) carries a lateral pair at each end, giving 2 N for approach and braking against 1 N for lateral corrections, and keeping the docking adapter, camera, and laser range finder mounting line clear.
 
