@@ -11,7 +11,7 @@ This talk-track supports a general eight-thruster docking demonstration flown fr
 5. Set simulation speed to 2x.
 6. Open Operator Commands: Guidance, Rendezvous, Docking, and Telemetry. Select the Servicer.
 
-The Servicer uses reaction wheels for Dock pointing and eight 1 N cold-gas thrusters for translation. Separating attitude and translation control keeps the reduced thruster layout suitable for a stable reference docking run.
+The Servicer uses reaction wheels for Dock pointing and eight 1 N cold-gas thrusters for translation. The thrusters sit in two squares of four, one at each Y-end, each nozzle canted 45° outward so X, Y, and Z force can be synthesised from the same eight units.
 
 ## Session Timeline
 
@@ -28,11 +28,11 @@ Keep the simulation **Running** when sending commands. Pause between steps to ta
 
 ### Reduced thruster architecture
 
-- Thrusters are named for the thrust direction they produce: 1 gives -X, 2 gives +X, 3 and 4 give -Y, 5 and 6 give +Y, 7 gives -Z, 8 gives +Z.
-- The docking axis carries a symmetric lateral pair at each end, so approach and braking have 2 N against 1 N for lateral corrections, and nothing is mounted on the docking adapter centre line.
-- The pairs are symmetric about the docking axis and the single nozzles sit on their own thrust axes, so a translation command produces no net torque.
-- Reaction wheels provide all attitude control; the thrusters provide only translation.
-- Eight unidirectional thrusters cannot provide balanced authority in all six force directions and all three torque axes at once. Twelve would be the minimum for that, which is why attitude is delegated to the wheels here.
+- Thrusters 1–4 sit at the four corners of the +Y (docking) end; 5–8 sit at the matching −Y (aft) square.
+- Each nozzle is canted 45° outward toward its XZ corner, so it contributes a Y component plus X and Z.
+- A pure ±Y burn fires all four nozzles on one end (~2.8 N). A pure ±X or ±Z burn fires the four nozzles that share that sign (~2.0 N).
+- Matched sets are symmetric about the centre of mass, so those burns produce no residual couple.
+- Reaction wheels provide all attitude control. This layout has no torque authority about Y, so pointing must stay on the wheels.
 
 ### Port-relative approach
 

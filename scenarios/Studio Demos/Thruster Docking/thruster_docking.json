@@ -323,58 +323,16 @@
 					},
 					{
 						"class": "Cold Gas Thruster",
-						"name": "Thruster 1 (-X)",
-						"enabled": true,
-						"position": [
-							0.2,
-							0.0,
-							0.0
-						],
-						"rotation": [
-							0.0,
-							90.0,
-							0.0
-						],
-						"data": {
-							"Max Thrust": 1.0,
-							"Time To Max Thrust": 0.25,
-							"Specific Impulse": 250.0,
-							"Mass": 0.4
-						}
-					},
-					{
-						"class": "Cold Gas Thruster",
-						"name": "Thruster 2 (+X)",
-						"enabled": true,
-						"position": [
-							-0.2,
-							0.0,
-							0.0
-						],
-						"rotation": [
-							0.0,
-							-90.0,
-							0.0
-						],
-						"data": {
-							"Max Thrust": 1.0,
-							"Time To Max Thrust": 0.25,
-							"Specific Impulse": 250.0,
-							"Mass": 0.4
-						}
-					},
-					{
-						"class": "Cold Gas Thruster",
-						"name": "Thruster 3 (-Y)",
+						"name": "Thruster 1 (+Y +X +Z)",
 						"enabled": true,
 						"position": [
 							0.16,
 							0.36,
-							0.0
+							0.16
 						],
 						"rotation": [
-							-90.0,
-							0.0,
+							-54.7356,
+							30.0,
 							0.0
 						],
 						"data": {
@@ -386,16 +344,37 @@
 					},
 					{
 						"class": "Cold Gas Thruster",
-						"name": "Thruster 4 (-Y)",
+						"name": "Thruster 2 (+Y +X -Z)",
+						"enabled": true,
+						"position": [
+							0.16,
+							0.36,
+							-0.16
+						],
+						"rotation": [
+							-125.2644,
+							30.0,
+							0.0
+						],
+						"data": {
+							"Max Thrust": 1.0,
+							"Time To Max Thrust": 0.25,
+							"Specific Impulse": 250.0,
+							"Mass": 0.4
+						}
+					},
+					{
+						"class": "Cold Gas Thruster",
+						"name": "Thruster 3 (+Y -X +Z)",
 						"enabled": true,
 						"position": [
 							-0.16,
 							0.36,
-							0.0
+							0.16
 						],
 						"rotation": [
-							-90.0,
-							0.0,
+							-54.7356,
+							-30.0,
 							0.0
 						],
 						"data": {
@@ -407,16 +386,37 @@
 					},
 					{
 						"class": "Cold Gas Thruster",
-						"name": "Thruster 5 (+Y)",
+						"name": "Thruster 4 (+Y -X -Z)",
+						"enabled": true,
+						"position": [
+							-0.16,
+							0.36,
+							-0.16
+						],
+						"rotation": [
+							-125.2644,
+							-30.0,
+							0.0
+						],
+						"data": {
+							"Max Thrust": 1.0,
+							"Time To Max Thrust": 0.25,
+							"Specific Impulse": 250.0,
+							"Mass": 0.4
+						}
+					},
+					{
+						"class": "Cold Gas Thruster",
+						"name": "Thruster 5 (-Y +X +Z)",
 						"enabled": true,
 						"position": [
 							0.16,
 							-0.36,
-							0.0
+							0.16
 						],
 						"rotation": [
-							90.0,
-							0.0,
+							54.7356,
+							30.0,
 							0.0
 						],
 						"data": {
@@ -428,37 +428,37 @@
 					},
 					{
 						"class": "Cold Gas Thruster",
-						"name": "Thruster 6 (+Y)",
+						"name": "Thruster 6 (-Y +X -Z)",
+						"enabled": true,
+						"position": [
+							0.16,
+							-0.36,
+							-0.16
+						],
+						"rotation": [
+							125.2644,
+							30.0,
+							0.0
+						],
+						"data": {
+							"Max Thrust": 1.0,
+							"Time To Max Thrust": 0.25,
+							"Specific Impulse": 250.0,
+							"Mass": 0.4
+						}
+					},
+					{
+						"class": "Cold Gas Thruster",
+						"name": "Thruster 7 (-Y -X +Z)",
 						"enabled": true,
 						"position": [
 							-0.16,
 							-0.36,
-							0.0
+							0.16
 						],
 						"rotation": [
-							90.0,
-							0.0,
-							0.0
-						],
-						"data": {
-							"Max Thrust": 1.0,
-							"Time To Max Thrust": 0.25,
-							"Specific Impulse": 250.0,
-							"Mass": 0.4
-						}
-					},
-					{
-						"class": "Cold Gas Thruster",
-						"name": "Thruster 7 (-Z)",
-						"enabled": true,
-						"position": [
-							0.0,
-							0.0,
-							0.18
-						],
-						"rotation": [
-							0.0,
-							0.0,
+							54.7356,
+							-30.0,
 							0.0
 						],
 						"data": {
@@ -470,16 +470,16 @@
 					},
 					{
 						"class": "Cold Gas Thruster",
-						"name": "Thruster 8 (+Z)",
+						"name": "Thruster 8 (-Y -X -Z)",
 						"enabled": true,
 						"position": [
-							0.0,
-							0.0,
-							-0.18
+							-0.16,
+							-0.36,
+							-0.16
 						],
 						"rotation": [
-							180.0,
-							0.0,
+							125.2644,
+							-30.0,
 							0.0
 						],
 						"data": {

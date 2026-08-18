@@ -38,7 +38,7 @@ This is a clean, general docking demonstration. It contains no injected propulsi
 | Docking | Docking Adapter |
 | RPO software | Enabled |
 
-The layout provides thrust in all six body directions. The docking axis uses symmetric lateral pairs and the remaining axes use single on-axis nozzles, so a translation command produces no net attitude torque. Reaction wheels handle attitude, so the reduced thruster set is used purely for translation.
+The layout is two squares of four thrusters, one at each Y-end of the Servicer. Each nozzle is canted 45° outward toward its corner, so a single firing produces a Y component plus X and Z. Opposite ends reverse the Y component. Firing a matched set of four produces pure ±X, ±Y, or ±Z with no residual couple. Reaction wheels handle attitude.
 
 ### Client
 
@@ -53,25 +53,24 @@ The layout provides thrust in all six body directions. The docking axis uses sym
 
 ## Thruster Layout
 
-Thrusters are named for the direction of thrust they produce, not the face they sit on.
+Thrusters are named for the Y-end and XZ corner they sit on. Each is canted 45° outward from that end, so it contributes to Y translation and to the X/Z axes of its corner.
 
-| Thrust direction | Thrusters | Mount position |
-| --- | --- | --- |
-| -X | 1 | (0.20, 0, 0) |
-| +X | 2 | (-0.20, 0, 0) |
-| -Y | 3, 4 | (±0.16, 0.36, 0), either side of the docking adapter |
-| +Y | 5, 6 | (±0.16, -0.36, 0), aft face |
-| -Z | 7 | (0, 0, 0.18) |
-| +Z | 8 | (0, 0, -0.18) |
+| Thruster | End | Corner | Mount position |
+| --- | --- | --- | --- |
+| 1 | +Y | +X +Z | (0.16, 0.36, 0.16) |
+| 2 | +Y | +X −Z | (0.16, 0.36, −0.16) |
+| 3 | +Y | −X +Z | (−0.16, 0.36, 0.16) |
+| 4 | +Y | −X −Z | (−0.16, 0.36, −0.16) |
+| 5 | −Y | +X +Z | (0.16, −0.36, 0.16) |
+| 6 | −Y | +X −Z | (0.16, −0.36, −0.16) |
+| 7 | −Y | −X +Z | (−0.16, −0.36, 0.16) |
+| 8 | −Y | −X −Z | (−0.16, −0.36, −0.16) |
 
-Each thruster has a maximum thrust of 1 N and a 0.25 s spool-up time. The docking axis (±Y) carries a lateral pair at each end, giving 2 N for approach and braking against 1 N for lateral corrections, and keeping the docking adapter, camera, and laser range finder mounting line clear.
+Each thruster has a maximum thrust of 1 N and a 0.25 s spool-up time. The docking-adapter, camera, and laser-range-finder centre line stays clear. A pure docking-axis burn uses all four nozzles on one Y-end (~2.8 N). A pure ±X or ±Z burn uses the four nozzles that share that sign (~2.0 N).
 
-Two geometry rules keep the force allocation solvable, and breaking either one makes the mapping matrix singular so the solver commands zero thrust on every thruster:
+The squares are symmetric about the centre of mass, so equal firing of a matched set produces translation without a residual couple. Reaction wheels still provide attitude. This layout cannot produce torque about Y; that is intentional and is why pointing stays on the wheels.
 
-1. Directions served by a **single** thruster (±X and ±Z here) must sit exactly on their own thrust axis, so the thrust line passes through the centre of mass. Offsetting one of these makes its torque row a multiple of its force row.
-2. Directions served by a **pair** may be offset laterally, but the pair must be symmetric about the axis so that firing both together produces no net couple.
-
-All mount positions are relative to the centre of mass. The Servicer's mesh offset is zero so authored component positions are also the physical moment arms; a non-zero mesh offset shifts every component off the centre of mass and breaks the allocation.
+All mount positions are relative to the centre of mass. The Servicer's mesh offset is zero so authored component positions are also the physical moment arms.
 
 ---
 
