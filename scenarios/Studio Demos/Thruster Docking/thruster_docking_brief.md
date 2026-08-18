@@ -19,7 +19,9 @@ This is a clean, general docking demonstration. It contains no injected propulsi
 3. Command a 5 m port-relative perch on the Client docking adapter and hold.
 4. Command Dock to close after the axis, roll, and corridor gates are satisfied.
 5. Confirm capture at a separation of 0.05 m and an alignment error below 5°.
-6. Monitor APID 403 and propellant telemetry to verify that translation is produced by the cold-gas thrusters.
+6. **Undock** when you want to separate: Docking → **Undock**. Confirm. The adapters release with a 10 N / 1 s push along the docking axis.
+7. Optional: fire individual cold-gas nozzles from **Thruster** (select a named thruster, set duration, Start Firing). Use this after undock, or to abort a hold.
+8. Monitor APID 403 and propellant telemetry to verify that translation is produced by the cold-gas thrusters.
 
 ---
 
@@ -82,7 +84,11 @@ Select the **Servicer**. The simulation must be running to uplink.
 2. **Perch — hold off the docking adapter.** Rendezvous → Active **on** → Target **Client** → Aim Component **Docking Adapter** → Standoff **5** m → Apply. Done when LRF settles near 5 m and closing rate is ~0. Hold as long as you want.
 3. **Dock — approach and capture.** Docking → Target **Client** → Component **Docking Adapter** → **Dock**. Done when range decreases toward 0 (after gates) and the adapters latch at ≤ 0.05 m / ≤ 5° / ≤ 5°.
 
-To abort translation: Rendezvous Active **off**, Apply, and confirm closing speed falls.
+4. **Undock — separate.** Docking → **Undock** → confirm. Done when the Docking panel shows undocked and range starts increasing.
+
+5. **Optional manual thrust.** Thruster → pick a named nozzle → duration → Thruster On → **Start Firing**. Do not select a Thruster Array. Done when APID 403 shows force on that nozzle.
+
+To abort translation: Rendezvous Active **off**, Apply, and confirm closing speed falls. You can also fire a selected nozzle from **Thruster**.
 
 ## Before You Begin
 
@@ -90,4 +96,4 @@ To abort translation: Rendezvous Active **off**, Apply, and confirm closing spee
 2. Confirm both spacecraft are visible on the Map.
 3. Verify Servicer telemetry and an initial range near 10 m.
 4. Confirm eight thrusters are available.
-5. Open the Guidance, Rendezvous, Docking, and Telemetry panels.
+5. Open the Guidance, Rendezvous, Docking, Thruster, and Telemetry panels.

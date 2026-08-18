@@ -398,6 +398,8 @@ Fires a thruster at its rated force for a fixed duration. Direction is determine
 
 - Thrust consumes fuel from the spacecraft's tank model. Out of fuel = no thrust regardless of command.
 - For larger maneuvers, plan a sequence of `thrust` commands at different sim times rather than one long burn — the dynamics may evolve mid-burn.
+- When the spacecraft has a `Thruster Array` (RPO translation), idle array on-time commands do **not** cancel an in-progress operator fire. Target a named nozzle (`Cold Gas Thruster`, `Ion Thruster`), not the array itself.
+- Manual firing still works after capture and after [`docking`](#docking) `dock: false`. Disable an active [`rendezvous`](#rendezvous) hold if you do not want the perch to resume after the burn.
 
 ---
 
@@ -474,8 +476,8 @@ Initiates or releases a docking with another spacecraft (a team craft or a neutr
 
 - Plan your approach with [`rendezvous`](#rendezvous) first (typically a port-relative perch on the target docking adapter). The Operator UI disables **Dock** until an active rendezvous has been applied. The docking command then arms capture and starts the slow close from that perch. Physics completes the latch once range ≤ 0.05 m and axis/roll errors are within the adapter capture limits.
 - Once docked, both spacecraft become rigidly attached until an explicit `dock = false` is issued.
-- Undocking applies a separation impulse along the docking axis. The push is governed by the `Separation Force` (N) and `Separation Duration` (s) values on the **chaser's Docking Adapter** component (set in the scenario `data`; default 100 N over 0.5 s — the RPO scenario uses 1.0 s). See [components](../scenarios/components.md).
-- The live docked/undocked state, and which target/port a craft is docked to, is reported via [`get_configuration`](#get_configuration) (`docking` section) and pushed automatically whenever it changes. The Operator UI uses this to pre-fill and lock the docking controls.
+- Undocking (`dock: false`) does **not** require `target` / `component` to still resolve. After capture the peer hull may be parented under the chaser; the chaser adapter already knows its mate. The command applies a separation impulse along the docking axis and stops the formation perch. The push is governed by the `Separation Force` (N) and `Separation Duration` (s) values on the **chaser's Docking Adapter** component (set in the scenario `data`; default 100 N over 0.5 s). See [components](../scenarios/components.md).
+- The live docked/undocked state, and which target/port a craft is docked to, is reported via [`get_configuration`](#get_configuration) (`docking` section) and pushed automatically whenever it changes. The Operator UI uses this to pre-fill and lock the docking controls; **Undock** is enabled while `docked` is true.
 - Spacecraft can also **start the scenario already docked** — see the scenario [`docking`](../scenarios/spacecraft.md#docking-start-the-scenario-already-docked) block.
 
 ---

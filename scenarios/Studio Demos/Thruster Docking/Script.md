@@ -9,7 +9,7 @@ This talk-track supports a general eight-thruster docking demonstration flown fr
 3. Confirm the Servicer exposes eight cold-gas thrusters and reaction-wheel telemetry.
 4. Confirm the scenario has **no events at all** — every action in this demo is an operator command. The Client spawns pre-aligned with zero body rates and its guidance controller idle, so it keeps that attitude; it has no receiver, so the team cannot command it either.
 5. Set simulation speed to 2x.
-6. Open Operator Commands: Guidance, Rendezvous, Docking, and Telemetry. Select the Servicer.
+6. Open Operator Commands: Guidance, Rendezvous, Docking, Thruster, and Telemetry. Select the Servicer.
 
 The Servicer uses reaction wheels for Dock pointing and eight 1 N cold-gas thrusters for translation. The thrusters sit in two squares of four, one at each Y-end, each nozzle canted 45° outward so X, Y, and Z force can be synthesised from the same eight units.
 
@@ -21,6 +21,8 @@ The Servicer uses reaction wheels for Dock pointing and eight 1 N cold-gas thrus
 | 1. Pointing | Guidance → **Dock** → Client → clocking 0 → Apply | Confirm the Servicer docking axis tracks the Client adapter. Wheel torque is non-zero. |
 | 2. Perch | Rendezvous → Active on → Client → Docking Adapter → standoff 5 m → Apply | Watch the Servicer close along the Client port axis and hold at 5 m. |
 | 3. Dock | Docking → Client → Docking Adapter → **Dock** | Closure starts only after the alignment and corridor gates are met. Then capture. |
+| 4. Undock | Docking → **Undock** → confirm | Adapters release with a 10 N / 1 s push. Range increases. |
+| 5. Optional | Thruster → named nozzle → Start Firing | Manual translation after undock, or an abort burn. APID 403 should show force. |
 
 Keep the simulation **Running** when sending commands. Pause between steps to talk.
 
@@ -104,6 +106,26 @@ This arms capture and starts the slow close from the perch.
 **Done when (approach):** After a short hold, range decreases toward 0 at about 1 cm/s. If range does not drop, the alignment/corridor gate is holding — improve Dock pointing, stay perched, press Dock again.
 
 **Done when (capture):** Adapters latch at ≤ **0.05 m**, axis ≤ **5°**, roll ≤ **5°**. Docking panel shows docked to Client.
+
+**Next:** Undock, or stop here.
+
+### 4. Undock — separate
+
+**When:** Docked. Docking panel shows **Undock** enabled.
+
+**Do:** Docking → **Undock** → confirm.
+
+**Done when:** Range increases. Panel shows undocked. Rendezvous perch is stopped.
+
+**Next:** Optional manual thrust, or reload to repeat.
+
+### 5. Optional — manual thruster firing
+
+**When:** After undock, or to abort a hold without using Rendezvous Active off.
+
+**Do:** Thruster → select a named nozzle (not **Thruster Array**) → Duration → Thruster On → **Start Firing**.
+
+**Done when:** APID 403 shows force on that nozzle. Propellant mass decreases.
 
 ## Debrief
 

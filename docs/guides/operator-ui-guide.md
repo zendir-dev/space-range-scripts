@@ -205,7 +205,11 @@ Apply with **Active** on to start the perch. **Active** off releases it.
 
 ### Docking
 
-The **Docking** panel **Dock** button arms the adapters and, when a rendezvous perch is already active, starts the gated close from that standoff (`dock_after_perch`). The button is disabled until an active rendezvous has been applied. **Undock** applies a separation impulse and stops the perch.
+The **Docking** panel **Dock** button arms the adapters and, when a rendezvous perch is already active, starts the gated close from that standoff (`dock_after_perch`). The button is disabled until an active rendezvous has been applied. After capture the panel shows the live docked target and enables **Undock**, which applies a separation impulse and stops the perch. **Undock** does not require the rendezvous hold to still be active.
+
+### Thruster
+
+The **Thruster** panel lists fireable nozzles (`Cold Gas Thruster`, `Ion Thruster`) and sends [`thrust`](../api-reference/spacecraft-commands.md#thrust). A **Thruster Array** is omitted from the dropdown — it allocates RPO burns, it is not a nozzle. Manual fires are honoured even while an array is connected for rendezvous.
 
 ---
 
