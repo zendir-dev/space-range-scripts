@@ -100,7 +100,7 @@ Sets the spacecraft's pointing mode through the on-board ADCS. Each `pointing` v
 
 | Argument | Default | Range / Values | Unit | Description |
 | --- | --- | --- | --- | --- |
-| `pointing` | `inertial` | `inertial`, `velocity`, `sun`, `nadir`, `ground`, `location`, `relative`, `idle` | — | Pointing law to engage. `idle` disables the controller and stops drawing reaction-wheel torque. Any unrecognised value also falls through to `idle`. |
+| `pointing` | `inertial` | `inertial`, `velocity`, `sun`, `nadir`, `ground`, `location`, `relative`, `dock`, `idle` | — | Pointing law to engage. `idle` disables the controller and stops drawing reaction-wheel torque. Any unrecognised value also falls through to `idle`. |
 | `target` | _(spacecraft body)_ | component name | — | Component on the spacecraft whose face should align with the pointing direction. Case-insensitive match against the spacecraft's component list (see [`list_entity`](ground-requests.md#list_entity)). If omitted, the alignment is interpreted in the spacecraft body frame. The Operator UI limits eligible `target` values by `pointing` mode (see below); the on-board controller accepts any valid component name. |
 | `alignment` | `+z` | `+x`, `-x`, `+y`, `-y`, `+z`, `-z` | — | Which axis of the `target` to point along the pointing direction. Most components (cameras, panels, antennas) have their working face on `+z`. |
 
@@ -144,6 +144,13 @@ Sets the spacecraft's pointing mode through the on-board ADCS. Each `pointing` v
 | `spacecraft` | _(none)_ | Asset ID of another spacecraft in the simulation. If the ID does not resolve, the controller engages but holds its current target. |
 | `component` | _(none)_ | Optional **name** of a hardware component on the **target** spacecraft (`spacecraft`). Same naming as [`list_entity`](ground-requests.md#list_entity) / local `target`. Omit, leave empty, or set to `none` to aim at the target spacecraft origin. When set to a valid component on the target hull, the controller applies that component's body-frame position (`GetPosition_LB_B()`, metres) as a target offset before slewing. If the name does not resolve, the offset is treated as `(0, 0, 0)`. In the Operator UI, **Aim Component** lists all components on the target spacecraft (no type filter). |
 
+**`dock`** — align this spacecraft's docking adapter with the target spacecraft's adapter (anti-parallel port axes plus optional clocking). This is the pointing law for a docking approach. The Operator UI does not send `target` / `alignment` in this mode.
+
+| Argument | Default | Range | Unit | Description |
+| --- | --- | --- | --- | --- |
+| `spacecraft` | _(none)_ | — | — | Asset ID of the spacecraft to dock with. The Dock chain binds to that craft's docking adapter. |
+| `clocking` | `0.0` | `-180 … 180` | deg | Roll about the docking axis. Zero aligns the adapters without extra clock offset. |
+
 ### Eligible `target` components (Operator UI)
 
 The **Guidance Controller** panel filters the **Target Component** dropdown by pointing mode. Custom clients may use the same rules with [`list_entity`](ground-requests.md#list_entity) flags:
@@ -154,6 +161,7 @@ The **Guidance Controller** panel filters the **Target Component** dropdown by p
 | `sun` | `class` is **`Solar Panel`** |
 | `velocity`, `nadir`, `ground`, `location` | `is_sensor` **or** `is_antenna` is `true` |
 | `relative` | `is_sensor` **or** `is_antenna` is `true`, **or** `class` is **`Docking Adapter`** |
+| `dock` | `class` is **`Docking Adapter`** (shown only if a local target component is offered; the Dock law uses the on-board adapter automatically) |
 
 In **`relative`** mode, **Aim Component** on the target spacecraft is **not** filtered — any component from [`list_entity`](ground-requests.md#list_entity) may be chosen.
 
@@ -419,7 +427,18 @@ Engages a perch-mode hold relative to another spacecraft. The chaser holds a fix
 | `target` | _(none)_ | asset ID | — | The spacecraft to perch relative to. The LVLH frame is anchored on this target. |
 | `active` | `false` | `true`, `false` | — | `true` engages the controller; `false` releases it. |
 | `offset` | `[0, 0, 0]` | `[-10000, 10000]` per axis | m | Desired `[X, Y, Z]` offset in the target's LVLH frame. |
-| `component` | _(none)_ | component name | — | Optional **name** of a hardware component on the **target** spacecraft (`target`). Same naming as [`list_entity`](ground-requests.md#list_entity). Omit, leave empty, or set to `none` to hold relative to the target spacecraft origin. When set to a valid component on the target hull, the controller applies that component's body-frame position (`GetPosition_LB_B()`, metres) as the LVLH anchor offset before applying `offset`. If the name does not resolve, the anchor offset is treated as `(0, 0, 0)`. Each chaser spacecraft owns its own target ephemeris translator, so multiple chasers can hold on the same target with different component anchors. |
+| `component` | _(none)_ | component name | — | Optional **name** of a hardware component on the **target** spacecraft (`target`). Same naming as [`list_entity`](ground-requests.md#list_entity). Omit, leave empty, or set to `none` to hold relative to the target spacecraft origin. When set to a docking adapter, the Operator UI sends a port-relative perch instead of LVLH `offset` (see below). For a non-adapter component, the controller applies that component's body-frame position (`GetPosition_LB_B()`, metres) as the LVLH anchor offset before applying `offset`. If the name does not resolve, the anchor offset is treated as `(0, 0, 0)`. Each chaser spacecraft owns its own target ephemeris translator, so multiple chasers can hold on the same target with different component anchors. |
+| `port_relative` | `false` | `true`, `false` | — | When `true`, the perch is along the target docking adapter axis rather than a static LVLH `offset`. |
+| `port_standoff` | `5.0` | `> 0` | m | Distance to hold along the target port axis when `port_relative` is `true`. |
+| `max_speed` | `0.0` | `≥ 0` | m/s | Maximum approach speed. When positive, a trapezoidal velocity profile is used. |
+| `approach_acceleration` | `0.01` | `> 0` | m/s² | Acceleration for the trapezoidal profile when `max_speed` is positive. |
+| `force_deadband` | `0.0` | `≥ 0` | N | Force requests below this magnitude are zeroed (quiets thrusters in hold). |
+| `corridor_radius` | `0.5` | `≥ 0` | m | Maximum lateral offset from the port axis allowed before final closure. |
+| `alignment_gate` | `5.0` | `≥ 0` | deg | Mating-axis alignment that must be met before final closure. |
+| `roll_gate` | `180.0` | `≥ 0` | deg | Clocking alignment that must be met before final closure. `180` accepts any roll. |
+| `dock_after_perch` | `false` | `true`, `false` | — | When `true`, start a second approach from the perch to capture after the hold and gates are satisfied. The Operator **Dock** command sets this when a perch is already active. |
+
+When the Operator UI **Aim Component** is a docking adapter, it sends `port_relative: true` with `port_standoff` (default 5 m) and hold defaults (`max_speed` 0.05 m/s, `dock_after_perch: false`). LVLH `offset` is omitted.
 
 ### Notes
 
@@ -430,7 +449,7 @@ Engages a perch-mode hold relative to another spacecraft. The chaser holds a fix
 
 ## `docking`
 
-Initiates or releases a docking with another spacecraft (a team craft or a neutral hub). The current spacecraft must have at least one Docking Adapter component. Docking only completes once the two spacecraft are physically close enough — the command sets the target; the simulation does the connection. Undocking (`dock: false`) releases with a **separation impulse** so the two craft gently push apart.
+Initiates or releases a docking with another spacecraft (a team craft or a neutral hub). The current spacecraft must have at least one Docking Adapter component. When `dock: true`, the command arms both adapters **and**, if a rendezvous perch is already active, enables `dock_after_perch` so the chaser closes from that standoff and captures. Capture still requires the vehicles to meet the adapter distance and angle limits. Undocking (`dock: false`) releases with a **separation impulse** and stops the formation perch.
 
 ```json
 {
@@ -453,7 +472,7 @@ Initiates or releases a docking with another spacecraft (a team craft or a neutr
 
 ### Notes
 
-- Plan your approach with [`rendezvous`](#rendezvous) first. The docking command sets intent; physics handles capture.
+- Plan your approach with [`rendezvous`](#rendezvous) first (typically a port-relative perch on the target docking adapter). The Operator UI disables **Dock** until an active rendezvous has been applied. The docking command then arms capture and starts the slow close from that perch. Physics completes the latch once range ≤ 0.05 m and axis/roll errors are within the adapter capture limits.
 - Once docked, both spacecraft become rigidly attached until an explicit `dock = false` is issued.
 - Undocking applies a separation impulse along the docking axis. The push is governed by the `Separation Force` (N) and `Separation Duration` (s) values on the **chaser's Docking Adapter** component (set in the scenario `data`; default 100 N over 0.5 s — the RPO scenario uses 1.0 s). See [components](../scenarios/components.md).
 - The live docked/undocked state, and which target/port a craft is docked to, is reported via [`get_configuration`](#get_configuration) (`docking` section) and pushed automatically whenever it changes. The Operator UI uses this to pre-fill and lock the docking controls.
@@ -719,7 +738,7 @@ Asks the spacecraft to report **session-mutable operator configuration** — val
 - **`power_bus`** — array of per-component power entries (see table below).
 - **`fuel_bus`** — array of per-component fuel entries (valves and pumps).
 - **`computer`** — guidance computer operator state (stored from successful [`guidance`](#guidance) command Args, not from simulation internals):
-  - **`pointing`** — active mode (`idle`, `inertial`, `velocity`, `sun`, `nadir`, `ground`, `location`, `relative`).
+  - **`pointing`** — active mode (`idle`, `inertial`, `velocity`, `sun`, `nadir`, `ground`, `location`, `relative`, `dock`).
   - **`configs`** — last-applied settings **per mode** (only modes that have been configured at least once). Keys match [`guidance`](#guidance) Args for that mode (without repeating `pointing`). Includes `target` component names and normalised `alignment` strings (`+z`, `-x`, …). Switching modes in the UI can restore these saved values.
   - Cleared to `{ "pointing": "idle", "configs": {} }` when the scenario instance resets.
 - **`camera`** — array of per-imager entries (same shape as `power[]`). Stored from successful [`camera`](#camera) / [`capture`](#capture) command Args:

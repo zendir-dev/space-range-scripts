@@ -8,17 +8,18 @@
 
 ## Overview
 
-The Servicer begins approximately 10 metres along-track from an uncooperative Client spacecraft. The Client holds its pre-aligned inertial attitude while the Servicer maintains Dock pointing with reaction wheels. An eight-thruster cold-gas system provides translation throughout a port-relative approach, 5 m standoff, alignment-gated closure, and capture.
+The Servicer begins approximately 10 metres along-track from an uncooperative Client spacecraft. The Client cannot be commanded and simply keeps the pre-aligned attitude it spawns with; the scenario contains no automatic events. The operator flies the Servicer from Commands: Dock pointing, a 5 m port-relative perch, then Dock to close and capture. An eight-thruster cold-gas system provides translation.
 
 This is a clean, general docking demonstration. It contains no injected propulsion failures or participant questions.
 
 ## Mission Goals
 
 1. Confirm the initial range is approximately 10 m with the Laser Range Finder.
-2. At T+10 s, observe the Servicer approach the Client's docking-port axis and hold at 5 m.
-3. At T+180 s, observe the slower final closure after the axis, roll, and corridor gates are satisfied.
-4. Confirm capture at a separation of 0.05 m and an alignment error below 5°.
-5. Monitor APID 403 and propellant telemetry to verify that translation is produced by the cold-gas thrusters.
+2. Command Dock pointing so the Servicer adapters face the Client.
+3. Command a 5 m port-relative perch on the Client docking adapter and hold.
+4. Command Dock to close after the axis, roll, and corridor gates are satisfied.
+5. Confirm capture at a separation of 0.05 m and an alignment error below 5°.
+6. Monitor APID 403 and propellant telemetry to verify that translation is produced by the cold-gas thrusters.
 
 ---
 
@@ -32,7 +33,7 @@ This is a clean, general docking demonstration. It contains no injected propulsi
 | Mass | 180 kg |
 | Translation | 8 x 1 N cold-gas thrusters |
 | Propellant | Single tank, 25 kg initial load |
-| Attitude | Dock pointing with reaction wheels |
+| Attitude | Dock pointing with reaction wheels (operator-commanded) |
 | Sensors | Camera, Laser Range Finder, GPS |
 | Docking | Docking Adapter |
 | RPO software | Enabled |
@@ -44,7 +45,7 @@ The layout provides thrust in all six body directions. The docking axis uses sym
 | Item | Configuration |
 | --- | --- |
 | Mass | 20 kg |
-| Attitude | Pre-aligned inertial hold with reaction wheels |
+| Attitude | Pre-aligned inertial hold with reaction wheels (automatic at T+1) |
 | Docking | Docking Adapter |
 | Commandable | No receiver; cannot be commanded |
 
@@ -74,15 +75,15 @@ All mount positions are relative to the centre of mass. The Servicer's mesh offs
 
 ---
 
-## Timeline
+## Operator sequence
 
-1. **T+1 s — Stable attitude split:** The Client starts inertial hold and the Servicer starts Dock pointing.
-2. **T+2 s — Dock target refresh:** The active Dock chain binds to the Client adapter.
-3. **T+10 s — Port-relative standoff:** The Servicer closes along the Client port axis toward a 5 m standoff at up to 5 cm/s.
-4. **T+10.1 s — Attitude actuator restored:** Dock pointing is re-asserted on reaction wheels, because a rendezvous command switches the attitude mapping to thrusters.
-5. **T+180 s — Alignment-gated closure:** The Servicer closes at up to 1 cm/s once the docking gates are satisfied.
-6. **T+180.1 s — Attitude actuator restored:** Reaction-wheel attitude control is re-asserted after the closure command.
-7. **Capture:** The adapters capture at 0.05 m when axis, roll, and corridor conditions are met.
+Select the **Servicer**. The simulation must be running to uplink.
+
+1. **Pointing — align the adapters.** Guidance → Pointing Mode **Dock** → spacecraft **Client** → clocking **0** → Apply. Done when the Servicer docking axis tracks the Client adapter and range is still ~10 m.
+2. **Perch — hold off the docking adapter.** Rendezvous → Active **on** → Target **Client** → Aim Component **Docking Adapter** → Standoff **5** m → Apply. Done when LRF settles near 5 m and closing rate is ~0. Hold as long as you want.
+3. **Dock — approach and capture.** Docking → Target **Client** → Component **Docking Adapter** → **Dock**. Done when range decreases toward 0 (after gates) and the adapters latch at ≤ 0.05 m / ≤ 5° / ≤ 5°.
+
+To abort translation: Rendezvous Active **off**, Apply, and confirm closing speed falls.
 
 ## Before You Begin
 
