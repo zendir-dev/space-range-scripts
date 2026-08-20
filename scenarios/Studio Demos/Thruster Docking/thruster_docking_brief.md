@@ -8,9 +8,7 @@
 
 ## Overview
 
-The Servicer begins approximately 10 metres along-track from an uncooperative Client spacecraft. The Client cannot be commanded and simply keeps the pre-aligned attitude it spawns with; the scenario contains no automatic events. The operator flies the Servicer from Commands: Dock pointing, a 5 m port-relative perch, then Dock to close and capture. An eight-thruster cold-gas system provides translation.
-
-This is a clean, general docking demonstration. It contains no injected propulsion failures or participant questions.
+The Servicer begins approximately 10 metres along-track from the Client. The **Servicer** team flies the servicing vehicle. The **Client** team owns the target; if nobody joins the Client team, the Client stays uncooperative (no receiver, no thrusters) and holds its spawn attitude. The Servicer team flies Dock pointing, a 5 m port-relative perch, then Dock to close and capture. An eight-thruster cold-gas system provides translation.
 
 ## Mission Goals
 
@@ -20,7 +18,7 @@ This is a clean, general docking demonstration. It contains no injected propulsi
 4. Command Dock to close after the axis, roll, and corridor gates are satisfied.
 5. Confirm capture at a separation of 0.05 m and an alignment error below 5°.
 6. **Undock** when you want to separate: Docking → **Undock**. Confirm. The adapters release with a 10 N / 1 s push along the docking axis.
-7. Optional: fire individual cold-gas nozzles from **Thruster** (select a named thruster, set duration, Start Firing). Use this after undock, or to abort a hold.
+7. Optional: fire one or several cold-gas nozzles from **Thruster** (One thruster or Multiple, set duration, Start Firing, or schedule with the clock). Use this after undock, or to abort a hold.
 8. Monitor APID 403 and propellant telemetry to verify that translation is produced by the cold-gas thrusters.
 
 ---
@@ -49,7 +47,7 @@ The layout is two squares of four thrusters, one at each Y-end of the Servicer. 
 | Mass | 20 kg |
 | Attitude | Pre-aligned inertial hold with reaction wheels (automatic at T+1) |
 | Docking | Docking Adapter |
-| Commandable | No receiver; cannot be commanded |
+| Commandable | The Client team can uplink if logged in; no receiver/thrusters. Idle if the Client team is empty |
 
 ---
 
@@ -78,7 +76,7 @@ All mount positions are relative to the centre of mass. The Servicer's mesh offs
 
 ## Operator sequence
 
-Select the **Servicer**. The simulation must be running to uplink.
+Log in as the **Servicer** team and select the Servicer. The simulation must be running to uplink.
 
 1. **Pointing — align the adapters.** Guidance → Pointing Mode **Dock** → spacecraft **Client** → clocking **0** → Apply. Done when the Servicer docking axis tracks the Client adapter and range is still ~10 m.
 2. **Perch — hold off the docking adapter.** Rendezvous → Active **on** → Target **Client** → Aim Component **Docking Adapter** → Standoff **5** m → Apply. Done when LRF settles near 5 m and closing rate is ~0. Hold as long as you want.
@@ -86,13 +84,13 @@ Select the **Servicer**. The simulation must be running to uplink.
 
 4. **Undock — separate.** Docking → **Undock** → confirm. Done when the Docking panel shows undocked and range starts increasing.
 
-5. **Optional manual thrust.** Thruster → pick a named nozzle → duration → Thruster On → **Start Firing**. Do not select a Thruster Array. Done when APID 403 shows force on that nozzle.
+5. **Optional manual thrust.** Thruster → One thruster or Multiple → pick nozzle(s) → duration → Thruster On → **Start Firing** (or schedule). Do not select a Thruster Array. Done when APID 403 shows force on the selected nozzle(s).
 
 To abort translation: Rendezvous Active **off**, Apply, and confirm closing speed falls. You can also fire a selected nozzle from **Thruster**.
 
 ## Before You Begin
 
-1. Log in with the team credentials.
+1. Log in as the **Servicer** team. Client team credentials are optional.
 2. Confirm both spacecraft are visible on the Map.
 3. Verify Servicer telemetry and an initial range near 10 m.
 4. Confirm eight thrusters are available.

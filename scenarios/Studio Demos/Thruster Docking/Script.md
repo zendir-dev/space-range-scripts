@@ -1,15 +1,16 @@
 # Thruster-Based Docking — Instructor Script
 
-This talk-track supports a general eight-thruster docking demonstration flown from Operator Commands.
+This talk-track supports a two-team eight-thruster docking demonstration. The **Servicer** team flies the servicing vehicle; the **Client** team owns the target. If nobody logs in as Client, the Client stays the same uncooperative target.
 
 ## Pre-Session Setup
 
 1. Load `thruster_docking.json` in Studio.
 2. Verify the Servicer and Client spawn approximately 10 m apart.
 3. Confirm the Servicer exposes eight cold-gas thrusters and reaction-wheel telemetry.
-4. Confirm the scenario has **no events at all** — every action in this demo is an operator command. The Client spawns pre-aligned with zero body rates and its guidance controller idle, so it keeps that attitude; it has no receiver, so the team cannot command it either.
-5. Set simulation speed to 2x.
-6. Open Operator Commands: Guidance, Rendezvous, Docking, Thruster, and Telemetry. Select the Servicer.
+4. Confirm the **Servicer** team owns the servicing vehicle and the **Client** team owns the target. If nobody is on the Client team, the Client keeps its current uncooperative config (no receiver, no thrusters, RPO off) and simply holds the spawn attitude.
+5. Confirm the scenario has **no events** — every action in this demo is an operator command.
+6. Set simulation speed to 2x.
+7. Open Operator Commands: Guidance, Rendezvous, Docking, Thruster, and Telemetry. The Servicer team selects the Servicer.
 
 The Servicer uses reaction wheels for Dock pointing and eight 1 N cold-gas thrusters for translation. The thrusters sit in two squares of four, one at each Y-end, each nozzle canted 45° outward so X, Y, and Z force can be synthesised from the same eight units.
 
@@ -17,12 +18,12 @@ The Servicer uses reaction wheels for Dock pointing and eight 1 N cold-gas thrus
 
 | Step | Action | Instructor talk |
 | --- | --- | --- |
-| Setup | Play. Nothing happens on its own. | Introduce the two spacecraft and the docking objective. Range should stay ~10 m and the Client should sit still. |
+| Setup | Play. Range stays ~10 m until the Servicer team commands. | Introduce the Servicer and Client teams. If the Client team is empty, the Client sits still. |
 | 1. Pointing | Guidance → **Dock** → Client → clocking 0 → Apply | Confirm the Servicer docking axis tracks the Client adapter. Wheel torque is non-zero. |
 | 2. Perch | Rendezvous → Active on → Client → Docking Adapter → standoff 5 m → Apply | Watch the Servicer close along the Client port axis and hold at 5 m. |
 | 3. Dock | Docking → Client → Docking Adapter → **Dock** | Closure starts only after the alignment and corridor gates are met. Then capture. |
 | 4. Undock | Docking → **Undock** → confirm | Adapters release with a 10 N / 1 s push. Range increases. |
-| 5. Optional | Thruster → named nozzle → Start Firing | Manual translation after undock, or an abort burn. APID 403 should show force. |
+| 5. Optional | Thruster → one or multiple nozzles → Start Firing (or schedule) | Manual translation after undock, or an abort burn. APID 403 should show force. |
 
 Keep the simulation **Running** when sending commands. Pause between steps to talk.
 
@@ -69,7 +70,7 @@ If the approach becomes unstable:
 
 ## Operator procedure
 
-Team Blue, **Servicer** selected.
+Log in as the **Servicer** team with the Servicer selected. Client team credentials are available if a second operator will fly the Client.
 
 ### 1. Pointing — align the adapters
 
@@ -123,9 +124,9 @@ This arms capture and starts the slow close from the perch.
 
 **When:** After undock, or to abort a hold without using Rendezvous Active off.
 
-**Do:** Thruster → select a named nozzle (not **Thruster Array**) → Duration → Thruster On → **Start Firing**.
+**Do:** Thruster → **One thruster** or **Multiple** → select nozzle(s) (not **Thruster Array**) → Duration → Thruster On → **Start Firing**. Use the clock to schedule the same command.
 
-**Done when:** APID 403 shows force on that nozzle. Propellant mass decreases.
+**Done when:** APID 403 shows force on the selected nozzle(s). Propellant mass decreases.
 
 ## Debrief
 

@@ -1,7 +1,7 @@
 {
 	"metadata": {
 		"name": "Thruster-Based Docking",
-		"description": "A general thruster-based docking demonstration flown from Operator Commands. The Servicer starts about 10 m along-track from an uncooperative Client. The operator sets Dock pointing, perches at 5 m along the Client docking-port axis, then commands Dock to close and capture."
+		"description": "A two-team thruster-based docking demonstration. The Servicer team flies the servicing vehicle; the Client team owns the target. If nobody joins the Client team, the Client stays uncooperative. The operator sets Dock pointing, perches at 5 m along the Client docking-port axis, then commands Dock to close and capture."
 	},
 	"simulation": {
 		"epoch": "2026/01/25 09:00:00",
@@ -38,11 +38,21 @@
 			"enabled": true,
 			"id": 111111,
 			"password": "SVCRPO",
-			"name": "Team Blue",
+			"name": "Servicer",
 			"key": 42,
 			"frequency": 612,
-			"collection": "Main",
+			"collection": "Servicer",
 			"color": "#0050FF"
+		},
+		{
+			"enabled": true,
+			"id": 222222,
+			"password": "CLNTB1",
+			"name": "Client",
+			"key": 238,
+			"frequency": 847,
+			"collection": "Client",
+			"color": "#FF366A"
 		}
 	],
 	"assets": {
@@ -686,9 +696,14 @@
 		],
 		"collections": [
 			{
-				"id": "Main",
+				"id": "Servicer",
 				"space_assets": [
-					"SC_SERVICER",
+					"SC_SERVICER"
+				]
+			},
+			{
+				"id": "Client",
+				"space_assets": [
 					"SC_CLIENT"
 				]
 			}

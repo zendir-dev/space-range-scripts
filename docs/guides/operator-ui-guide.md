@@ -201,11 +201,11 @@ The **Rendezvous Maneuver** panel uses **Aim Component** on the **target** space
 
 Adapter lists come from cached [`list_entity`](../api-reference/ground-requests.md#list_entity) data and refresh on their own as each asset's components arrive, so a target with no adapters (or one whose entity list has not yet been received) offers **None** only.
 
-Apply with **Active** on to start the perch. **Active** off releases it.
+Apply with **Active** on to start the perch. **Active** off releases it. The clock on **Apply Rendezvous** schedules the same command for a future simulation time.
 
 ### Docking
 
-The **Docking** panel **Dock** button arms the adapters and, when a rendezvous perch is already active, starts the gated close from that standoff (`dock_after_perch`). The button is disabled until an active rendezvous has been applied. After capture the panel shows the live docked target and enables **Undock**, which applies a separation impulse and stops the perch. **Undock** does not require the rendezvous hold to still be active.
+The **Docking** panel **Dock** button arms the adapters and, when a rendezvous perch is already active, starts the gated close from that standoff (`dock_after_perch`). The button is disabled until an active rendezvous has been applied. After capture the panel shows the live docked target and enables **Undock**, which applies a separation impulse and stops the perch. **Undock** does not require the rendezvous hold to still be active. Both **Dock** and **Undock** can be scheduled with the clock; **Undock** still asks for confirmation before the command is queued.
 
 ### Thruster
 

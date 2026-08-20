@@ -388,9 +388,25 @@ Fires a thruster at its rated force for a fixed duration. Direction is determine
 }
 ```
 
+Fire several nozzles in one command with `targets` (a string array). `target` is still accepted and is merged with `targets` when both are present.
+
+```json
+{
+  "Asset": "A3F2C014",
+  "Command": "thrust",
+  "Time": 0,
+  "Args": {
+    "targets": ["Thruster 1 (+Y +X +Z)", "Thruster 2 (+Y +X -Z)", "Thruster 3 (+Y -X +Z)"],
+    "active": true,
+    "duration": 10.0
+  }
+}
+```
+
 | Argument | Default | Unit | Description |
 | --- | --- | --- | --- |
-| `target` | _(none)_ | — | Thruster component name. Required if the spacecraft has more than one. |
+| `target` | _(none)_ | — | Thruster component name. Required if the spacecraft has more than one and `targets` is omitted. |
+| `targets` | _(none)_ | — | Array of thruster component names to fire together. |
 | `active` | `false` | — | `true` to start firing, `false` to stop early (overrides `duration`). |
 | `duration` | `0` | s | Time to fire, in simulation seconds. After this elapses the thruster shuts off automatically. |
 
@@ -398,6 +414,7 @@ Fires a thruster at its rated force for a fixed duration. Direction is determine
 
 - Thrust consumes fuel from the spacecraft's tank model. Out of fuel = no thrust regardless of command.
 - For larger maneuvers, plan a sequence of `thrust` commands at different sim times rather than one long burn — the dynamics may evolve mid-burn.
+- Fire several named nozzles at once with `targets` instead of a sequence of identical-time commands.
 - When the spacecraft has a `Thruster Array` (RPO translation), idle array on-time commands do **not** cancel an in-progress operator fire. Target a named nozzle (`Cold Gas Thruster`, `Ion Thruster`), not the array itself.
 - Manual firing still works after capture and after [`docking`](#docking) `dock: false`. Disable an active [`rendezvous`](#rendezvous) hold if you do not want the perch to resume after the burn.
 
