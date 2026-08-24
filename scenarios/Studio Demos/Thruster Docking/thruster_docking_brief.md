@@ -8,7 +8,7 @@
 
 ## Overview
 
-The Servicer begins approximately 10 metres along-track from the Client. The **Servicer** team flies the servicing vehicle. The **Client** team owns the target; if nobody joins the Client team, the Client stays uncooperative (no receiver, no thrusters) and holds its spawn attitude. The Servicer team flies Dock pointing, a 5 m port-relative perch, then Dock to close and capture. An eight-thruster cold-gas system provides translation.
+The Servicer begins approximately 10 metres along-track from the Client. The **Gold** team owns both spacecraft. Fly the Servicer: Dock pointing, a 5 m port-relative perch, then Dock to close and capture. An eight-thruster cold-gas system provides translation.
 
 ## Mission Goals
 
@@ -47,7 +47,7 @@ The layout is two squares of four thrusters, one at each Y-end of the Servicer. 
 | Mass | 20 kg |
 | Attitude | Pre-aligned inertial hold with reaction wheels (automatic at T+1) |
 | Docking | Docking Adapter |
-| Commandable | The Client team can uplink if logged in; no receiver/thrusters. Idle if the Client team is empty |
+| Commandable | On the Gold team with the Servicer. Holds spawn attitude as the docking target |
 
 ---
 
@@ -76,7 +76,7 @@ All mount positions are relative to the centre of mass. The Servicer's mesh offs
 
 ## Operator sequence
 
-Log in as the **Servicer** team and select the Servicer. The simulation must be running to uplink.
+Log in as the **Gold** team and select the Servicer. The simulation must be running to uplink.
 
 1. **Pointing — align the adapters.** Guidance → Pointing Mode **Dock** → spacecraft **Client** → clocking **0** → Apply. Done when the Servicer docking axis tracks the Client adapter and range is still ~10 m.
 2. **Perch — hold off the docking adapter.** Rendezvous → Active **on** → Target **Client** → Aim Component **Docking Adapter** → Standoff **5** m → Apply. Done when LRF settles near 5 m and closing rate is ~0. Hold as long as you want.
@@ -90,7 +90,7 @@ To abort translation: Rendezvous Active **off**, Apply, and confirm closing spee
 
 ## Before You Begin
 
-1. Log in as the **Servicer** team. Client team credentials are optional.
+1. Log in as the **Gold** team and select the Servicer.
 2. Confirm both spacecraft are visible on the Map.
 3. Verify Servicer telemetry and an initial range near 10 m.
 4. Confirm eight thrusters are available.

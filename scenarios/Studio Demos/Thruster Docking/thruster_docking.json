@@ -1,7 +1,7 @@
 {
 	"metadata": {
 		"name": "Thruster-Based Docking",
-		"description": "A two-team thruster-based docking demonstration. The Servicer team flies the servicing vehicle; the Client team owns the target. If nobody joins the Client team, the Client stays uncooperative. The operator sets Dock pointing, perches at 5 m along the Client docking-port axis, then commands Dock to close and capture."
+		"description": "A single-team thruster-based docking demonstration. Gold owns both the servicing vehicle and the Client target. The operator sets Dock pointing, perches at 5 m along the Client docking-port axis, then commands Dock to close and capture."
 	},
 	"simulation": {
 		"epoch": "2026/01/25 09:00:00",
@@ -36,23 +36,13 @@
 	"teams": [
 		{
 			"enabled": true,
-			"id": 111111,
-			"password": "SVCRPO",
-			"name": "Servicer",
+			"id": 1,
+			"password": "AAAAAA",
+			"name": "Gold",
 			"key": 42,
 			"frequency": 612,
-			"collection": "Servicer",
-			"color": "#0050FF"
-		},
-		{
-			"enabled": true,
-			"id": 222222,
-			"password": "CLNTB1",
-			"name": "Client",
-			"key": 238,
-			"frequency": 847,
-			"collection": "Client",
-			"color": "#FF366A"
+			"collection": "Main",
+			"color": "#FFD700"
 		}
 	],
 	"assets": {
@@ -696,14 +686,9 @@
 		],
 		"collections": [
 			{
-				"id": "Servicer",
+				"id": "Main",
 				"space_assets": [
-					"SC_SERVICER"
-				]
-			},
-			{
-				"id": "Client",
-				"space_assets": [
+					"SC_SERVICER",
 					"SC_CLIENT"
 				]
 			}

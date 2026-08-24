@@ -1,16 +1,16 @@
 # Thruster-Based Docking — Instructor Script
 
-This talk-track supports a two-team eight-thruster docking demonstration. The **Servicer** team flies the servicing vehicle; the **Client** team owns the target. If nobody logs in as Client, the Client stays the same uncooperative target.
+This talk-track supports a single-team eight-thruster docking demonstration. The **Gold** team owns both the servicing vehicle and the Client target.
 
 ## Pre-Session Setup
 
 1. Load `thruster_docking.json` in Studio.
 2. Verify the Servicer and Client spawn approximately 10 m apart.
 3. Confirm the Servicer exposes eight cold-gas thrusters and reaction-wheel telemetry.
-4. Confirm the **Servicer** team owns the servicing vehicle and the **Client** team owns the target. If nobody is on the Client team, the Client keeps its current uncooperative config (no receiver, no thrusters, RPO off) and simply holds the spawn attitude.
+4. Confirm the **Gold** team owns both spacecraft. Select the Servicer to fly the approach.
 5. Confirm the scenario has **no events** — every action in this demo is an operator command.
 6. Set simulation speed to 2x.
-7. Open Operator Commands: Guidance, Rendezvous, Docking, Thruster, and Telemetry. The Servicer team selects the Servicer.
+7. Open Operator Commands: Guidance, Rendezvous, Docking, Thruster, and Telemetry. Log in as **Gold** and select the Servicer.
 
 The Servicer uses reaction wheels for Dock pointing and eight 1 N cold-gas thrusters for translation. The thrusters sit in two squares of four, one at each Y-end, each nozzle canted 45° outward so X, Y, and Z force can be synthesised from the same eight units.
 
@@ -18,7 +18,7 @@ The Servicer uses reaction wheels for Dock pointing and eight 1 N cold-gas thrus
 
 | Step | Action | Instructor talk |
 | --- | --- | --- |
-| Setup | Play. Range stays ~10 m until the Servicer team commands. | Introduce the Servicer and Client teams. If the Client team is empty, the Client sits still. |
+| Setup | Play. Range stays ~10 m until Gold commands. | Introduce Gold's two spacecraft: Servicer (active) and Client (target). |
 | 1. Pointing | Guidance → **Dock** → Client → clocking 0 → Apply | Confirm the Servicer docking axis tracks the Client adapter. Wheel torque is non-zero. |
 | 2. Perch | Rendezvous → Active on → Client → Docking Adapter → standoff 5 m → Apply | Watch the Servicer close along the Client port axis and hold at 5 m. |
 | 3. Dock | Docking → Client → Docking Adapter → **Dock** | Closure starts only after the alignment and corridor gates are met. Then capture. |
@@ -70,7 +70,7 @@ If the approach becomes unstable:
 
 ## Operator procedure
 
-Log in as the **Servicer** team with the Servicer selected. Client team credentials are available if a second operator will fly the Client.
+Log in as the **Gold** team with the Servicer selected. Both spacecraft are on this team.
 
 ### 1. Pointing — align the adapters
 

@@ -148,7 +148,7 @@ Sets the spacecraft's pointing mode through the on-board ADCS. Each `pointing` v
 
 | Argument | Default | Range | Unit | Description |
 | --- | --- | --- | --- | --- |
-| `spacecraft` | _(none)_ | — | — | Asset ID of the spacecraft to dock with. The Dock chain binds to that craft's docking adapter. |
+| `spacecraft` | _(none)_ | — | — | Asset ID of the spacecraft to dock with. SpaceRange resolves that craft's docking adapter and binds Dock `TargetID` to the **adapter** GUID (not the spacecraft GUID). Optional `component` names a specific adapter on the target; otherwise the first docking adapter is used. |
 | `clocking` | `0.0` | `-180 … 180` | deg | Roll about the docking axis. Zero aligns the adapters without extra clock offset. |
 
 ### Eligible `target` components (Operator UI)
