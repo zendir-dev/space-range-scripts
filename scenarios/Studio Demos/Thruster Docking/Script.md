@@ -1,6 +1,6 @@
 # Thruster-Based Docking — Instructor Script
 
-This talk-track supports a single-team eight-thruster docking demonstration. The **Gold** team owns both the servicing vehicle and the Client target.
+This talk-track supports a single-team eight-thruster docking demonstration inspired by the thruster failures on Astroscale's ELSA-d mission. The **Gold** team owns both the servicing vehicle and the Client target.
 
 ## Pre-Session Setup
 
@@ -8,7 +8,7 @@ This talk-track supports a single-team eight-thruster docking demonstration. The
 2. Verify the Servicer and Client spawn approximately 10 m apart.
 3. Confirm the Servicer exposes eight cold-gas thrusters and reaction-wheel telemetry.
 4. Confirm the **Gold** team owns both spacecraft. Select the Servicer to fly the approach.
-5. Confirm the scenario has **no events** — every action in this demo is an operator command.
+5. Confirm the timed studio events: T+300 s unexpected fire on thrusters 2, 5, and 8 for 30 s; T+600 s fail-off on thrusters 1, 4, and 6. Servicer ping interval is 2 s.
 6. Set simulation speed to 2x.
 7. Open Operator Commands: Guidance, Rendezvous, Docking, Thruster, and Telemetry. Log in as **Gold** and select the Servicer.
 
@@ -24,6 +24,8 @@ The Servicer uses reaction wheels for Dock pointing and eight 1 N cold-gas thrus
 | 3. Dock | Docking → Client → Docking Adapter → **Dock** | Closure starts only after the alignment and corridor gates are met. Then capture. |
 | 4. Undock | Docking → **Undock** → confirm | Adapters release with a 10 N / 1 s push. Range increases. |
 | 5. Optional | Thruster → one or multiple nozzles → Start Firing (or schedule) | Manual translation after undock, or an abort burn. APID 403 should show force. |
+| T+5 min | Studio fires thrusters 2, 5, and 8 for 30 s | Uncommanded burn, ELSA-d style. Watch APID 403, residual couple, and RPO recovery. |
+| T+10 min | Studio fails off thrusters 1, 4, and 6 | Permanent loss of three nozzles. Allocator should drop them; finish dock with the remaining five. |
 
 Keep the simulation **Running** when sending commands. Pause between steps to talk.
 

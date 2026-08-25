@@ -1,7 +1,7 @@
 {
 	"metadata": {
 		"name": "Thruster-Based Docking",
-		"description": "A single-team thruster-based docking demonstration. Gold owns both the servicing vehicle and the Client target. The operator sets Dock pointing, perches at 5 m along the Client docking-port axis, then commands Dock to close and capture."
+		"description": "A single-team thruster-based docking demonstration inspired by the thruster failures on Astroscale's ELSA-d mission. Gold owns both the servicing vehicle and the Client target. The operator sets Dock pointing, perches at 5 m along the Client docking-port axis, then commands Dock to close and capture. Timed studio events inject an unexpected three-thruster fire at T+5 min and fail off three thrusters at T+10 min."
 	},
 	"simulation": {
 		"epoch": "2026/01/25 09:00:00",
@@ -118,7 +118,7 @@
 					"safe_fraction": 0.1,
 					"capture_tax": 0.001,
 					"downlink_tax": 0.01,
-					"ping_interval": 20.0,
+					"ping_interval": 2.0,
 					"reset_interval": 60.0,
 					"jamming_multiplier": 1.0,
 					"enable_rpo_software": true
@@ -694,5 +694,87 @@
 			}
 		]
 	},
-	"events": []
+	"events": [
+		{
+			"Enabled": true,
+			"Name": "Unexpected Thruster Fire 2",
+			"Time": 300.0,
+			"Repeat": false,
+			"Interval": 1.0,
+			"Type": "Spacecraft",
+			"Target": "Thruster 2 (+Y +X -Z)",
+			"Assets": ["SC_SERVICER"],
+			"Data": {
+				"Active": true,
+				"Duration": 30.0
+			}
+		},
+		{
+			"Enabled": true,
+			"Name": "Unexpected Thruster Fire 5",
+			"Time": 300.0,
+			"Repeat": false,
+			"Interval": 1.0,
+			"Type": "Spacecraft",
+			"Target": "Thruster 5 (-Y +X +Z)",
+			"Assets": ["SC_SERVICER"],
+			"Data": {
+				"Active": true,
+				"Duration": 30.0
+			}
+		},
+		{
+			"Enabled": true,
+			"Name": "Unexpected Thruster Fire 8",
+			"Time": 300.0,
+			"Repeat": false,
+			"Interval": 1.0,
+			"Type": "Spacecraft",
+			"Target": "Thruster 8 (-Y -X -Z)",
+			"Assets": ["SC_SERVICER"],
+			"Data": {
+				"Active": true,
+				"Duration": 30.0
+			}
+		},
+		{
+			"Enabled": true,
+			"Name": "Thruster 1 Failed Off",
+			"Time": 600.0,
+			"Repeat": false,
+			"Interval": 1.0,
+			"Type": "Spacecraft",
+			"Target": "Thruster 1 (+Y +X +Z)",
+			"Assets": ["SC_SERVICER"],
+			"Data": {
+				"Dispersed Factor": 1.0
+			}
+		},
+		{
+			"Enabled": true,
+			"Name": "Thruster 4 Failed Off",
+			"Time": 600.0,
+			"Repeat": false,
+			"Interval": 1.0,
+			"Type": "Spacecraft",
+			"Target": "Thruster 4 (+Y -X -Z)",
+			"Assets": ["SC_SERVICER"],
+			"Data": {
+				"Dispersed Factor": 1.0
+			}
+		},
+		{
+			"Enabled": true,
+			"Name": "Thruster 6 Failed Off",
+			"Time": 600.0,
+			"Repeat": false,
+			"Interval": 1.0,
+			"Type": "Spacecraft",
+			"Target": "Thruster 6 (-Y +X -Z)",
+			"Assets": ["SC_SERVICER"],
+			"Data": {
+				"Dispersed Factor": 1.0
+			}
+		}
+	]
 }

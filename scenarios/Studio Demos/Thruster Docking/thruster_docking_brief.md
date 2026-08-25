@@ -10,6 +10,8 @@
 
 The Servicer begins approximately 10 metres along-track from the Client. The **Gold** team owns both spacecraft. Fly the Servicer: Dock pointing, a 5 m port-relative perch, then Dock to close and capture. An eight-thruster cold-gas system provides translation.
 
+This scenario is inspired by the thruster failures on Astroscale's ELSA-d (End-of-Life Services by Astroscale-demonstration) mission, which showed how unexpected firings and lost nozzles complicate proximity operations. At **T+5 min**, three unmatched Servicer thrusters fire for 30 s without a command. At **T+10 min**, three other thrusters fail off permanently (`Dispersed Factor` = 1). Continue the approach with the remaining authority.
+
 ## Mission Goals
 
 1. Confirm the initial range is approximately 10 m with the Laser Range Finder.
@@ -19,7 +21,7 @@ The Servicer begins approximately 10 metres along-track from the Client. The **G
 5. Confirm capture at a separation of 0.05 m and an alignment error below 5°.
 6. **Undock** when you want to separate: Docking → **Undock**. Confirm. The adapters release with a 10 N / 1 s push along the docking axis.
 7. Optional: fire one or several cold-gas nozzles from **Thruster** (One thruster or Multiple, set duration, Start Firing, or schedule with the clock). Use this after undock, or to abort a hold.
-8. Monitor APID 403 and propellant telemetry to verify that translation is produced by the cold-gas thrusters.
+8. Monitor APID 403 and propellant telemetry to verify that translation is produced by the cold-gas thrusters. Expect an uncommanded three-nozzle fire at T+5 min (30 s) and three failed-off nozzles from T+10 min.
 
 ---
 
