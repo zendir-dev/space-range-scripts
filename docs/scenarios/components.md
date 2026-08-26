@@ -26,6 +26,7 @@ The `class` field is matched case-insensitive after spaces are stripped. The shi
 | `Reaction Wheels` | `RW` | Attitude actuator. |
 | `External Force Torque` | `External Force` | Generic force/torque actuator (stand-in for thrusters or RWs). |
 | `Cold Gas Thruster` | `Thruster` | Discrete-pulse thruster. |
+| `Thruster Array` | — | Collects sibling/child thrusters so RPO (and RCS) software can command them as a set. |
 | `Ion Thruster` | — | Continuous low-thrust electric propulsion. |
 | `Receiver` | — | RF downlink/uplink receiver. |
 | `Transmitter` | — | RF transmitter. |
@@ -387,6 +388,29 @@ The `Reaction Wheels` failure event accepts `Stuck Index` to lock one wheel; see
 
 Useful as an idealised actuator on tutorial / instructor spacecraft (the `Recon` rogue in `Orbital Intel` and the `Microsat` in `Docking_Procedure` use it instead of reaction wheels for simpler dynamics).
 
+When `enable_rpo_software` is true and the spacecraft has **no** thrusters, SpaceRange wires rendezvous force commands to a dedicated `External Force Torque` (never the docking adapter's dock effector). If the spacecraft has cold-gas or ion thrusters, RPO uses a `Thruster Array` instead — do not also add an RPO `External Force Torque` or both actuators can fight.
+
+---
+
+## Thruster Array
+
+```json
+{
+  "class": "Thruster Array",
+  "name":  "Thruster Array"
+}
+```
+
+The array has no authoring-time `data` keys. It discovers `Cold Gas Thruster` / `Ion Thruster` components that are **children of the array**. Scenario JSON can still list thrusters as flat `components[]` entries; SpaceRange parents them onto the `Thruster Array` at spawn (the array must be present in `components[]`). `position` / `rotation` stay in the spacecraft body frame.
+
+SpaceRange also constructs a `Thruster Array` automatically when `enable_rpo_software` is true and the spacecraft has thrusters, but that happens after `OnBegin` so those nozzles are not collected. List the array explicitly when RPO should fire thrusters.
+
+Rendezvous translation then runs:
+
+`ROE formation controller → thruster force mapping → remainder mapping → Thruster Array → per-thruster fire requests`
+
+Failed-off thrusters (`Dispersed Factor` = 1) drop out of the allocator on the next step. Attitude pointing stays on reaction wheels unless you wire a separate RCS chain.
+
 ---
 
 ## Cold Gas Thruster / Ion Thruster
@@ -398,12 +422,24 @@ Useful as an idealised actuator on tutorial / instructor spacecraft (the `Recon`
   "position": [0.0, 0.0, -0.5],
   "rotation": [0.0, 0.0, 0.0],
   "data":  { 
+    "Max Thrust": 1.0,
+    "Specific Impulse": 250.0,
     "Mass": 1.5 
   }
 }
 ```
 
-Authoring-time keys are limited to `Mass`. Thrust magnitude and Isp are class defaults. For more nuanced thruster behaviour, use multiple thruster components placed around the spacecraft.
+| `data` key | Type | Default | Description |
+| --- | --- | --- | --- |
+| `Max Thrust` | `number` (N) | class-dependent | Maximum thrust force. Lower values reduce both translational acceleration and the torque from any residual couple. |
+| `Time To Max Thrust` | `number` (s) | `0.1` | Spool-up ramp. Larger values make pulses build more slowly, which damps attitude transients. |
+| `Specific Impulse` | `number` (s) | class-dependent | Propellant efficiency (Isp). Higher values mean less propellant consumed per unit impulse. |
+| `Dispersed Factor` | `number` (0–1) | `0.0` | Fraction of thrust lost. `0` = full performance, `1` = no thrust. Set via scenario events to model thruster failures. |
+| `Mass` | `number` (kg) | class-dependent | Component dry mass. |
+
+The `rotation` determines the thrust direction in the body frame. The thruster fires along its local +Y axis (the direction the nozzle points).
+
+For scenarios requiring thruster failures, use the `Dispersed Factor` property via events (see [`events.md`](events.md#thruster--failed-off-dispersed-factor)). A failed thruster still accepts fire commands but produces no force.
 
 ---
 
@@ -726,8 +762,8 @@ Static topology is authored in each spacecraft's `fuel.bus[]` (see [spacecraft.m
 | `data` key | Type | Default | Description |
 | --- | --- | --- | --- |
 | `Capacity` | `number` (kg) | `1.0` | Maximum propellant the tank can hold. **Always set this** — the `1.0` default is tiny and will cap fill/transfer immediately. |
-| `Amount` | `number` (kg) | `0.0` | Propellant loaded at scenario start. **Defaults to empty (`0.0`)**, so a supply/source tank must set it; a receiving tank typically starts at `0.0` (or partial). |
-| `Initial Fuel Mass` | `number` (kg) | `0.0` | Alias for `Amount` (either key works). |
+| `Amount` | `number` (kg) | `0.0` | Propellant loaded at scenario start. **This is the fill that thrusters actually consume.** Defaults to empty (`0.0`), so a supply/source tank must set it; a receiving tank typically starts at `0.0` (or partial). |
+| `Initial Fuel Mass` | `number` (kg) | `0.0` | Dynamics-model reference mass (constant-volume density / tank radius). **Not** an alias for `Amount`. Set both to the same loaded mass on a supply tank. |
 | `Dry Mass` | `number` (kg) | `0.0` | Tank hardware mass without propellant. |
 | `Maximum Outgoing Flow Rate` | `number` (kg/s) | `2.0` | Outflow limit **from** the tank (how fast it can supply downstream). |
 | `Desired Ingoing Flow Rate` | `number` (kg/s) | `0.0` | Rate at which the tank actively **draws fuel in**. **Defaults to `0.0`, meaning the tank pulls nothing** — a receiving tank (e.g. the client end of a fuel interconnect) must set this **positive** or no fuel transfers in, even with valves open. |

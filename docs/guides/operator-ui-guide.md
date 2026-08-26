@@ -170,6 +170,7 @@ The **Target Component** dropdown is filtered by **Pointing Mode**, using flags 
 | **Sun** | **`Solar Panel`** class only |
 | **Velocity**, **Nadir**, **Ground**, **Location** | Components with **`is_sensor`** or **`is_antenna`** (sensors, cameras, LRFs, receivers, transmitters, etc.) |
 | **Relative** | Components with **`is_sensor`** or **`is_antenna`**, **or** **`Docking Adapter`** class |
+| **Dock** | **`Docking Adapter`** class (the Dock law uses the on-board adapter; this mode's extra fields are the target spacecraft and clocking) |
 
 If no components match the filter, the dropdown shows *No eligible components*. Switching mode re-selects the first valid entry when the current choice is no longer allowed. When a mode has no saved target in the Configuration Report, **Nadir**, **Ground**, **Location**, and **Relative** default to the first **`is_imager`** component in the filtered list (then name match on “camera”, then the first eligible component).
 
@@ -180,11 +181,35 @@ When **Pointing Mode** is **Relative**, the panel adds:
 - **Spacecraft** — asset ID of another team spacecraft to point toward (same value as the `spacecraft` guidance argument).
 - **Aim Component** — optional dropdown of **all** components on the selected target spacecraft (from [`list_entity`](../api-reference/ground-requests.md#list_entity); no type filter). **None** omits `component` and aims at the target spacecraft origin. Choosing a component sends its name as `component`; the on-board controller offsets the aim point by that component's body-frame position on the target hull.
 
-The target component list is populated from cached `list_entity` data for the selected spacecraft. If the dropdown is empty, ensure entity lists have been received for that asset (they load when you join or when components are refreshed).
+The target component list is populated from cached `list_entity` data for the selected spacecraft, which is requested for every asset on join and refreshes the dropdown as it arrives.
+
+### Dock mode
+
+When **Pointing Mode** is **Dock**, the panel adds:
+
+- **Spacecraft** — asset ID of the craft whose docking adapter this spacecraft should align with (`spacecraft` argument).
+- **Clocking** — roll about the docking axis in degrees (`clocking`, default 0).
+
+Dock pointing anti-parallels the two adapter axes. Use it before a port-relative perch and a **Dock** command.
 
 ### Rendezvous
 
-The **Rendezvous Maneuver** panel uses the same optional **Aim Component** pattern as relative guidance: it names a component on the **target** spacecraft so the LVLH hold is anchored on that hardware instead of the target origin. The LVLH `offset` values are applied on top of that anchor. **None** omits `component`.
+The **Rendezvous Maneuver** panel uses **Aim Component** on the **target** spacecraft. The dropdown lists the docking adapters on that target plus **None**, and defaults to the first adapter when the target has one:
+
+- A **Docking Adapter** sends a **port-relative** perch: `port_relative: true` and **Standoff** (`port_standoff`, default 5 m) along that adapter axis. LVLH XYZ is hidden.
+- **None** keeps the LVLH `offset` hold from the target centre.
+
+Adapter lists come from cached [`list_entity`](../api-reference/ground-requests.md#list_entity) data and refresh on their own as each asset's components arrive, so a target with no adapters (or one whose entity list has not yet been received) offers **None** only.
+
+Apply with **Active** on to start the perch. **Active** off releases it. The clock on **Apply Rendezvous** schedules the same command for a future simulation time.
+
+### Docking
+
+The **Docking** panel **Dock** button arms the adapters and, when a rendezvous perch is already active, starts the gated close from that standoff (`dock_after_perch`). The button is disabled until an active rendezvous has been applied. After capture the panel shows the live docked target and enables **Undock**, which applies a separation impulse and stops the perch. **Undock** does not require the rendezvous hold to still be active. Both **Dock** and **Undock** can be scheduled with the clock; **Undock** still asks for confirmation before the command is queued.
+
+### Thruster
+
+The **Thruster** panel lists fireable nozzles (`Cold Gas Thruster`, `Ion Thruster`) and sends [`thrust`](../api-reference/spacecraft-commands.md#thrust). A **Thruster Array** is omitted from the dropdown — it allocates RPO burns, it is not a nozzle. Manual fires are honoured even while an array is connected for rendezvous.
 
 ---
 

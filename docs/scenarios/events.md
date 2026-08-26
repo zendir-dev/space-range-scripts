@@ -38,10 +38,10 @@ A `Spacecraft` event injects state into one or more components on the spacecraft
 
 When a `Spacecraft` event fires:
 
-1. Studio splits `Target` on the first `-` into **component** and optional **error model**.
-2. It resolves the component on each affected spacecraft by **name** (`components[].name`) or by **class alias** (`Battery`, `Solar Panel`, `Reaction Wheels`, …). See [`components.md`](./components.md) for aliases.
+1. Studio first tries `Target` as a full **component name** (`components[].name`). Names that contain a hyphen — `"Thruster 4 (-X)"`, `"Solar Panel -X"` — match that one component and are not split.
+2. If the full string does not resolve, Studio splits `Target` on the first `-` into **component** and optional **error model**, then resolves the left side by name or **class alias** (`Battery`, `Solar Panel`, `Reaction Wheels`, …). See [`components.md`](./components.md) for aliases.
 3. Spaces are stripped from each `Data` key before matching (`"Bit Rate"` → `BitRate`).
-4. Values are applied to every matching component on every spacecraft listed in `Assets` (or all spacecraft if `Assets` is empty).
+4. Values are applied to every matching component on every spacecraft listed in `Assets` (or all spacecraft if `Assets` is empty). Unknown `Target` strings do not fall through to every component.
 
 If there is **no** error-model suffix, `Data` keys set **direct properties** on the component (e.g. `Capacity`, `Bit Rate`, `Stuck Index`, `Fault State`).
 
@@ -62,6 +62,7 @@ Examples:
 | `"Solar Panel-SolarPanelDegradationErrorModel"` | Spaces in the class alias are fine — they are matched in `GetPhysicalObjectClass`. |
 | `"GPS Sensor"` | The GPS sensor component (matched on its class alias). |
 | `"chassis_panel_a"` | The component whose `name` is `chassis_panel_a` (whatever class it happens to be). |
+| `"Thruster 4 (-X)"` | The thruster whose `name` is `Thruster 4 (-X)`. The hyphen is part of the name, not an error-model separator. |
 
 Restrict the impact to specific spacecraft via `Assets`:
 
@@ -234,6 +235,105 @@ These match the Studio **Add Event → Spacecraft** templates. Use them as-is or
 ```
 
 `Stuck Index` is `0`, `1`, `2`, or `3` (which wheel jams).
+
+#### Thruster — unexpected fire
+
+Triggers a thruster to fire without an operator command. Useful for simulating propulsion anomalies during proximity operations.
+
+```json
+{
+  "Enabled": true, "Name": "Unexpected Thruster Fire", "Time": 100.0,
+  "Repeat": false, "Interval": 1.0,
+  "Type": "Spacecraft", "Target": "Thruster 1 (+X)", "Assets": [],
+  "Data": { "Active": true, "Duration": 30.0 }
+}
+```
+
+| `Data` key | Type | Description |
+| --- | --- | --- |
+| `Active` | `boolean` | `true` starts the fire, `false` stops it. Default `true` if `Duration` > 0. |
+| `Duration` | `number` (s) | How long the thruster should fire. |
+
+To stop an unexpected fire early, use a follow-up event with `Active: false` or `Duration: 0`.
+
+#### Thruster — failed off (dispersed factor)
+
+Sets a thruster's `Dispersed Factor` to 1.0, causing it to produce no thrust when commanded. The command is accepted but the delivered force is zero.
+
+```json
+{
+  "Enabled": true, "Name": "Thruster Failed Off", "Time": 100.0,
+  "Repeat": false, "Interval": 1.0,
+  "Type": "Spacecraft", "Target": "Thruster 1 (+X)", "Assets": [],
+  "Data": { "Dispersed Factor": 1.0 }
+}
+```
+
+| `Data` key | Type | Description |
+| --- | --- | --- |
+| `Dispersed Factor` | `number` (0–1) | Fraction of thrust lost. `1.0` = complete loss. `0.5` = half thrust. |
+
+This models permanent thruster failure. The `reset` command does not restore thruster performance.
+
+#### Rendezvous — automatic approach
+
+Routes a timed spacecraft event through the same RPO rendezvous handler used by operator commands. This is useful for automatically beginning a proximity or docking approach after the simulation starts.
+
+```json
+{
+  "Enabled": true, "Name": "Automatic Docking Approach", "Time": 5.0,
+  "Repeat": false, "Interval": 1.0,
+  "Type": "Spacecraft", "Target": "Rendezvous",
+  "Assets": ["SC_SERVICER"],
+  "Data": {
+    "Target": "SC_CLIENT",
+    "Active": true,
+    "Component": "Docking Adapter",
+    "Dock": true,
+    "Offset X": 0.0,
+    "Offset Y": 0.0,
+    "Offset Z": 0.0
+  }
+}
+```
+
+| `Data` key | Type | Description |
+| --- | --- | --- |
+| `Target` | `string` | Scenario asset id of the target spacecraft. It is resolved to the matching runtime asset within each team. |
+| `Active` | `boolean` | `true` starts the perch manoeuvre; `false` cancels it. |
+| `Component` | `string` | Optional component name on both spacecraft, normally `Docking Adapter`. Anchors the perch so those components close, not the spacecraft origins. |
+| `Dock` | `boolean` | When present, routes through the docking handler too. `true` calls `SetDockingTarget` and arms both adapters bidirectionally, and points the chaser docking port at the target (`relative` guidance) so capture-angle checks can succeed. `false` undocks. |
+| `Offset X/Y/Z` | `number` (m) | Desired LVLH perch offset relative to the target. |
+
+The chaser must have `enable_rpo_software: true`. If that spacecraft also has thrusters, the perch is flown through a `Thruster Array`; otherwise SpaceRange uses a dedicated `External Force Torque`. Use `Assets` to target only the chaser definition; otherwise every RPO-enabled spacecraft will attempt the manoeuvre.
+
+#### Guidance — automatic pointing
+
+Routes a timed spacecraft event through the same guidance handler used by operator commands. Use this to slew a chaser onto a docking port before translation starts, so reaction wheels are already holding alignment.
+
+```json
+{
+  "Enabled": true, "Name": "Align Docking Adapters", "Time": 1.0,
+  "Repeat": false, "Interval": 1.0,
+  "Type": "Spacecraft", "Target": "Guidance",
+  "Assets": ["SC_SERVICER"],
+  "Data": {
+    "Pointing": "relative",
+    "Target": "Docking Adapter",
+    "Alignment": "+z",
+    "Spacecraft": "SC_CLIENT",
+    "Component": "Docking Adapter"
+  }
+}
+```
+
+| `Data` key | Type | Description |
+| --- | --- | --- |
+| `Pointing` | `string` | Same values as the [`guidance`](../api-reference/spacecraft-commands.md#guidance) command (`relative`, `nadir`, `velocity`, …). |
+| `Target` | `string` | Component on **this** spacecraft whose axis should align (normally `Docking Adapter`). |
+| `Alignment` | `string` | Axis of that component (`+z` is the docking-adapter capture axis). |
+| `Spacecraft` | `string` | For `relative` pointing: scenario asset id of the other spacecraft, resolved per team. |
+| `Component` | `string` | Optional aim point on the other spacecraft (normally `Docking Adapter`). |
 
 > For error-model events, each `Data` key must match a property that error model exposes (spaces stripped). If a key is wrong, the event may no-op for that component — test in Studio with a low `Time` first.
 

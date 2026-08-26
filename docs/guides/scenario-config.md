@@ -207,7 +207,7 @@ Each spacecraft is the most complex object in the scenario. The shape:
 | `ping_interval` | Sim seconds between auto-Pings. Affects how quickly teams see command acks. |
 | `reset_interval` | Sim seconds the spacecraft is offline after a `reset` (or after [`encryption`](../api-reference/spacecraft-commands.md#encryption) which causes a reboot). |
 | `jamming_multiplier` | Scales the per-watt RF interference produced by the spacecraft's jammer payload. |
-| `enable_rpo_software` | `true` installs RPO flight software so [`rendezvous`](../api-reference/spacecraft-commands.md#rendezvous) can run. [`docking`](../api-reference/spacecraft-commands.md#docking) depends on `Docking Adapter` components, not this flag. |
+| `enable_rpo_software` | `true` installs RPO flight software so [`rendezvous`](../api-reference/spacecraft-commands.md#rendezvous) can run. If the spacecraft has thrusters, force commands are allocated onto a `Thruster Array`; otherwise SpaceRange uses a dedicated `External Force Torque`. [`docking`](../api-reference/spacecraft-commands.md#docking) depends on `Docking Adapter` components, not this flag. |
 
 #### `power`
 
@@ -238,7 +238,7 @@ Each entry instantiates one piece of on-board hardware. The `class` decides whic
 
 | Field | Type | Description |
 | --- | --- | --- |
-| `class` | `string` | Simulation class. Common values: `Solar Panel`, `Battery`, `Reaction Wheels`, `Computer`, `Camera`, `Receiver`, `Transmitter`, `Storage`, `GPS Sensor`, `EM Sensor`, `Jammer`, `Magnetometer`, `Gyroscope`, `External Force Torque`, `Thruster`, `Docking Adapter`, `Text`. |
+| `class` | `string` | Simulation class. Common values: `Solar Panel`, `Battery`, `Reaction Wheels`, `Computer`, `Camera`, `Receiver`, `Transmitter`, `Storage`, `GPS Sensor`, `EM Sensor`, `Jammer`, `Magnetometer`, `Gyroscope`, `External Force Torque`, `Thruster`, `Thruster Array`, `Docking Adapter`, `Text`. |
 | `name` | `string` | Friendly name. **Must be unique** within a spacecraft. Teams reference it via `target` in commands. Case-insensitive at runtime. |
 | `mesh` | `string` | Unreal mesh path, or `"None"` to use the class default. |
 | `enabled` | `bool` | If `false`, the component is loaded but inactive (good for failure events that flip it on later). |
@@ -378,7 +378,7 @@ Studio fires these on the simulation timeline. They're how an instructor injects
 | `Repeat` | `bool` | If `true`, fires every `Interval` seconds after the first trigger. |
 | `Interval` | `number` (sim s) | Repeat period. Ignored when `Repeat` is `false`. |
 | `Type` | `string` | `Spacecraft`, `GPS`, or `Cyber` (case-insensitive; `failure` is accepted as an alias for `Spacecraft`). Selects the action handler. |
-| `Target` | `string` | `Spacecraft`: component / error-model target (`"<ComponentName>-<ErrorModel>"` or `"<ComponentName>"`). `Cyber`: currently `Spacecraft`. `GPS`: ignored. |
+| `Target` | `string` | `Spacecraft`: component name, class alias, or `"<Component>-<ErrorModel>"`. Hyphenated names such as `"Thruster 4 (-X)"` match as a whole before any error-model split. `Cyber`: currently `Spacecraft`. `GPS`: ignored. |
 | `Assets` | `string[]` | Spacecraft IDs to target (`Spacecraft`/`Cyber`). Empty array = "every spacecraft". Ignored by `GPS`. |
 | `Data` | `object` | Type/target-specific parameters. `Spacecraft`: component/error-model properties. `GPS`: `Data.Type`=`Spoofing`/`Jamming`, with `Action` for jamming. `Cyber`: telemetry tamper schema (`APID`, optional `SubType`, `Offset Bytes`, `Payload`, `Encoding`, `Expiry Seconds`, `Clear On Reset`). |
 

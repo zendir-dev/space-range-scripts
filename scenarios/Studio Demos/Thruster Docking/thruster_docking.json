@@ -1,0 +1,746 @@
+{
+	"metadata": {
+		"name": "Thruster-Based Docking",
+		"description": "A single-team thruster-based docking demonstration inspired by the thruster failures on Astroscale's ELSA-d mission. Gold owns both the servicing vehicle and the Client target (Landsat-8 bus). The operator sets Dock pointing, perches at 5 m along the Client docking-port axis, then commands Dock to close and capture. Timed studio events inject an uncommanded +Y-corner fire on thrusters 1 and 4 at T+5 min (30 min duration) and permanently fail off thrusters 1, 4, and 6 at T+350 s."
+	},
+	"simulation": {
+		"epoch": "2026/01/25 09:00:00",
+		"speed": 2.0,
+		"step_size": 0.1,
+		"integrator": "Euler",
+		"end_time": 1800.0
+	},
+	"universe": {
+		"atmosphere": false,
+		"magnetosphere": false,
+		"gps": true,
+		"cloud_opacity": 0.7,
+		"cloud_contrast": 2.5,
+		"ambient_light": 0.25
+	},
+	"ground_stations": {
+		"locations": [
+			"Canberra",
+			"Hobart",
+			"Cairns",
+			"Darwin",
+			"Davao",
+			"Osaka",
+			"Seoul",
+			"Ulaanbaatar"
+		],
+		"min_elevation": 5,
+		"max_range": 0,
+		"scale": 100
+	},
+	"teams": [
+		{
+			"enabled": true,
+			"id": 1,
+			"password": "AAAAAA",
+			"name": "Gold",
+			"key": 42,
+			"frequency": 612,
+			"collection": "Main",
+			"color": "#FFD700"
+		}
+	],
+	"assets": {
+		"space": [
+			{
+				"id": "SC_SERVICER",
+				"name": "Servicer",
+				"orbit": {
+					"planet": "Earth",
+					"values": [
+						6928.0,
+						0.0,
+						97.6,
+						43.398888,
+						0.0,
+						311.359028
+					],
+					"offset": [
+						0.0,
+						0.0,
+						0.0,
+						0.0,
+						0.0,
+						0.0
+					]
+				},
+				"physics": {
+					"override_mass": true,
+					"mass": 180.0,
+					"center_of_mass": [
+						0.0,
+						0.0,
+						0.0
+					],
+					"inertia_tensor": [
+						[
+							20.0,
+							0.0,
+							0.0
+						],
+						[
+							0.0,
+							20.0,
+							0.0
+						],
+						[
+							0.0,
+							0.0,
+							20.0
+						]
+					],
+					"attitude": [
+						100.405693,
+						42.924797,
+						-42.769587
+					],
+					"attitude_rate": [
+						0.0,
+						0.0,
+						0.0
+					]
+				},
+				"visualization": {
+					"mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/ZenSat/BP_Z_SC_ZenSat_Chassis",
+					"scale": 1.0,
+					"offset": [
+						0.0,
+						0.0,
+						0.0
+					]
+				},
+				"controller": {
+					"safe_fraction": 0.1,
+					"capture_tax": 0.001,
+					"downlink_tax": 0.01,
+					"ping_interval": 2.0,
+					"reset_interval": 60.0,
+					"jamming_multiplier": 1.0,
+					"enable_rpo_software": true
+				},
+				"components": [
+					{
+						"class": "Solar Panel",
+						"name": "Solar Panel +X",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.8,
+							0.276313,
+							-0.2
+						],
+						"rotation": [
+							35.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Area": 0.5,
+							"Efficiency": 0.3,
+							"Mass": 8.0
+						}
+					},
+					{
+						"class": "Solar Panel",
+						"name": "Solar Panel -X",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							-0.8,
+							0.276313,
+							-0.2
+						],
+						"rotation": [
+							35.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Area": 0.5,
+							"Efficiency": 0.3,
+							"Mass": 8.0
+						}
+					},
+					{
+						"class": "Battery",
+						"name": "Battery",
+						"enabled": true,
+						"mesh": "None",
+						"data": {
+							"Nominal Capacity": 60.0,
+							"Charge Fraction": 0.9,
+							"Mass": 6.0
+						}
+					},
+					{
+						"class": "Computer",
+						"name": "Computer",
+						"mesh": "None",
+						"enabled": true,
+						"data": {
+							"Mass": 3.0
+						}
+					},
+					{
+						"class": "Thruster Array",
+						"name": "Thruster Array",
+						"mesh": "None",
+						"enabled": true,
+						"data": {
+							"Mass": 0.0
+						}
+					},
+					{
+						"class": "Reaction Wheels",
+						"name": "Reaction Wheels",
+						"mesh": "None",
+						"enabled": true,
+						"data": {
+							"Mass": 8.0
+						}
+					},
+					{
+						"class": "Receiver",
+						"name": "Receiver",
+						"mesh": "None",
+						"enabled": true,
+						"data": {
+							"Antenna Gain": 5.0,
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Transmitter",
+						"name": "Transmitter",
+						"mesh": "None",
+						"enabled": true,
+						"data": {
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Storage",
+						"name": "Storage",
+						"mesh": "None",
+						"enabled": true,
+						"data": {
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "GPS Sensor",
+						"name": "GPS Sensor",
+						"mesh": "None",
+						"enabled": true,
+						"data": {
+							"Mass": 0.5
+						}
+					},
+					{
+						"class": "Camera",
+						"name": "Camera",
+						"enabled": true,
+						"mesh": "None",
+						"position": [
+							0.0,
+							0.36,
+							0.0
+						],
+						"rotation": [
+							-90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Resolution": 1024,
+							"Field of View": 20.0,
+							"Mass": 3.0
+						}
+					},
+					{
+						"class": "Laser Range Finder",
+						"name": "Laser Range Finder",
+						"enabled": true,
+						"mesh": "None",
+						"position": [
+							0.0,
+							0.36,
+							0.0
+						],
+						"rotation": [
+							-90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Operating Range": 5000.0,
+							"Range Accuracy Constant": 0.1,
+							"Mass": 1.5
+						}
+					},
+					{
+						"class": "Docking Adapter",
+						"name": "Docking Adapter",
+						"enabled": true,
+						"mesh": "None",
+						"position": [
+							0.0,
+							0.35,
+							0.0
+						],
+						"rotation": [
+							-90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Mass": 2.0,
+							"Capture Distance": 0.05,
+							"Capture Angle": 5.0,
+							"Capture Roll Angle": 5.0,
+							"Separation Force": 10.0,
+							"Separation Duration": 1.0
+						}
+					},
+					{
+						"class": "Fuel Source",
+						"name": "Propellant Tank",
+						"enabled": true,
+						"mesh": "None",
+						"position": [
+							0.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Capacity": 30.0,
+							"Amount": 25.0,
+							"Initial Fuel Mass": 25.0,
+							"Dry Mass": 5.0,
+							"Maximum Outgoing Flow Rate": 1.0,
+							"Mass": 5.0
+						}
+					},
+					{
+						"class": "Cold Gas Thruster",
+						"name": "Thruster 1 (+Y +X +Z)",
+						"enabled": true,
+						"position": [
+							0.16,
+							0.36,
+							0.16
+						],
+						"rotation": [
+							-54.7356,
+							30.0,
+							0.0
+						],
+						"data": {
+							"Max Thrust": 1.0,
+							"Time To Max Thrust": 0.25,
+							"Specific Impulse": 250.0,
+							"Mass": 0.4
+						}
+					},
+					{
+						"class": "Cold Gas Thruster",
+						"name": "Thruster 2 (+Y +X -Z)",
+						"enabled": true,
+						"position": [
+							0.16,
+							0.36,
+							-0.16
+						],
+						"rotation": [
+							-125.2644,
+							30.0,
+							0.0
+						],
+						"data": {
+							"Max Thrust": 1.0,
+							"Time To Max Thrust": 0.25,
+							"Specific Impulse": 250.0,
+							"Mass": 0.4
+						}
+					},
+					{
+						"class": "Cold Gas Thruster",
+						"name": "Thruster 3 (+Y -X +Z)",
+						"enabled": true,
+						"position": [
+							-0.16,
+							0.36,
+							0.16
+						],
+						"rotation": [
+							-54.7356,
+							-30.0,
+							0.0
+						],
+						"data": {
+							"Max Thrust": 1.0,
+							"Time To Max Thrust": 0.25,
+							"Specific Impulse": 250.0,
+							"Mass": 0.4
+						}
+					},
+					{
+						"class": "Cold Gas Thruster",
+						"name": "Thruster 4 (+Y -X -Z)",
+						"enabled": true,
+						"position": [
+							-0.16,
+							0.36,
+							-0.16
+						],
+						"rotation": [
+							-125.2644,
+							-30.0,
+							0.0
+						],
+						"data": {
+							"Max Thrust": 1.0,
+							"Time To Max Thrust": 0.25,
+							"Specific Impulse": 250.0,
+							"Mass": 0.4
+						}
+					},
+					{
+						"class": "Cold Gas Thruster",
+						"name": "Thruster 5 (-Y +X +Z)",
+						"enabled": true,
+						"position": [
+							0.16,
+							-0.36,
+							0.16
+						],
+						"rotation": [
+							54.7356,
+							30.0,
+							0.0
+						],
+						"data": {
+							"Max Thrust": 1.0,
+							"Time To Max Thrust": 0.25,
+							"Specific Impulse": 250.0,
+							"Mass": 0.4
+						}
+					},
+					{
+						"class": "Cold Gas Thruster",
+						"name": "Thruster 6 (-Y +X -Z)",
+						"enabled": true,
+						"position": [
+							0.16,
+							-0.36,
+							-0.16
+						],
+						"rotation": [
+							125.2644,
+							30.0,
+							0.0
+						],
+						"data": {
+							"Max Thrust": 1.0,
+							"Time To Max Thrust": 0.25,
+							"Specific Impulse": 250.0,
+							"Mass": 0.4
+						}
+					},
+					{
+						"class": "Cold Gas Thruster",
+						"name": "Thruster 7 (-Y -X +Z)",
+						"enabled": true,
+						"position": [
+							-0.16,
+							-0.36,
+							0.16
+						],
+						"rotation": [
+							54.7356,
+							-30.0,
+							0.0
+						],
+						"data": {
+							"Max Thrust": 1.0,
+							"Time To Max Thrust": 0.25,
+							"Specific Impulse": 250.0,
+							"Mass": 0.4
+						}
+					},
+					{
+						"class": "Cold Gas Thruster",
+						"name": "Thruster 8 (-Y -X -Z)",
+						"enabled": true,
+						"position": [
+							-0.16,
+							-0.36,
+							-0.16
+						],
+						"rotation": [
+							125.2644,
+							-30.0,
+							0.0
+						],
+						"data": {
+							"Max Thrust": 1.0,
+							"Time To Max Thrust": 0.25,
+							"Specific Impulse": 250.0,
+							"Mass": 0.4
+						}
+					}
+				]
+			},
+			{
+				"id": "SC_CLIENT",
+				"name": "Client",
+				"orbit": {
+					"planet": "Earth",
+					"values": [
+						6928.0,
+						0.0,
+						97.6,
+						43.398888,
+						0.0,
+						311.3591107
+					],
+					"offset": [
+						0.0,
+						0.0,
+						0.0,
+						0.0,
+						0.0,
+						0.0
+					]
+				},
+				"physics": {
+					"override_mass": true,
+					"mass": 20.0,
+					"center_of_mass": [
+						0.0,
+						0.0,
+						0.0
+					],
+					"inertia_tensor": [
+						[
+							2.0,
+							0.0,
+							0.0
+						],
+						[
+							0.0,
+							2.0,
+							0.0
+						],
+						[
+							0.0,
+							0.0,
+							2.0
+						]
+					],
+					"attitude": [
+						100.405693,
+						42.924797,
+						-42.769587
+					],
+					"attitude_rate": [
+						0.0,
+						0.0,
+						0.0
+					]
+				},
+				"visualization": {
+					"mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/Landsat8/BP_Z_SC_Landsat8_Chassis",
+					"scale": 0.2,
+					"offset": [
+						0.0,
+						0.0,
+						0.0
+					],
+					"reflectivity": 0.3
+				},
+				"controller": {
+					"safe_fraction": 0.1,
+					"capture_tax": 0.0,
+					"downlink_tax": 0.0,
+					"ping_interval": 60.0,
+					"reset_interval": 60.0,
+					"jamming_multiplier": 1.0,
+					"enable_rpo_software": false
+				},
+				"components": [
+					{
+						"class": "Solar Panel",
+						"name": "Solar Panel",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.3,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Area": 0.2,
+							"Efficiency": 0.25,
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Battery",
+						"name": "Battery",
+						"mesh": "None",
+						"enabled": true,
+						"data": {
+							"Nominal Capacity": 10.0,
+							"Charge Fraction": 0.5,
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Computer",
+						"name": "Computer",
+						"mesh": "None",
+						"enabled": true,
+						"data": {
+							"Mass": 1.0
+						}
+					},
+					{
+						"class": "GPS Sensor",
+						"name": "GPS Sensor",
+						"mesh": "None",
+						"enabled": true,
+						"data": {
+							"Mass": 0.3
+						}
+					},
+					{
+						"class": "Transmitter",
+						"name": "Transmitter",
+						"mesh": "None",
+						"enabled": true,
+						"data": {
+							"Mass": 0.5
+						}
+					},
+					{
+						"class": "Reaction Wheels",
+						"name": "Reaction Wheels",
+						"mesh": "None",
+						"enabled": true,
+						"data": {
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Docking Adapter",
+						"name": "Docking Adapter",
+						"enabled": true,
+						"mesh": "None",
+						"position": [
+							0.0,
+							-0.42,
+							0.0
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Mass": 2.0,
+							"Capture Distance": 0.05,
+							"Capture Angle": 5.0,
+							"Capture Roll Angle": 5.0,
+							"Separation Force": 10.0,
+							"Separation Duration": 1.0
+						}
+					}
+				]
+			}
+		],
+		"collections": [
+			{
+				"id": "Main",
+				"space_assets": [
+					"SC_SERVICER",
+					"SC_CLIENT"
+				]
+			}
+		]
+	},
+	"events": [
+		{
+			"Enabled": true,
+			"Name": "+Y fire thruster 1",
+			"Time": 300.0,
+			"Repeat": false,
+			"Interval": 1.0,
+			"Type": "Spacecraft",
+			"Target": "Thruster 1 (+Y +X +Z)",
+			"Assets": ["SC_SERVICER"],
+			"Data": {
+				"Active": true,
+				"Duration": 1800.0
+			}
+		},
+		{
+			"Enabled": true,
+			"Name": "+Y fire thruster 4",
+			"Time": 300.0,
+			"Repeat": false,
+			"Interval": 1.0,
+			"Type": "Spacecraft",
+			"Target": "Thruster 4 (+Y -X -Z)",
+			"Assets": ["SC_SERVICER"],
+			"Data": {
+				"Active": true,
+				"Duration": 1800.0
+			}
+		},
+		{
+			"Enabled": true,
+			"Name": "Thruster 1 failed off",
+			"Time": 350.0,
+			"Repeat": false,
+			"Interval": 1.0,
+			"Type": "Spacecraft",
+			"Target": "Thruster 1 (+Y +X +Z)",
+			"Assets": ["SC_SERVICER"],
+			"Data": {
+				"Dispersed Factor": 1.0
+			}
+		},
+		{
+			"Enabled": true,
+			"Name": "Thruster 4 failed off",
+			"Time": 350.0,
+			"Repeat": false,
+			"Interval": 1.0,
+			"Type": "Spacecraft",
+			"Target": "Thruster 4 (+Y -X -Z)",
+			"Assets": ["SC_SERVICER"],
+			"Data": {
+				"Dispersed Factor": 1.0
+			}
+		},
+		{
+			"Enabled": true,
+			"Name": "Thruster 6 failed off",
+			"Time": 350.0,
+			"Repeat": false,
+			"Interval": 1.0,
+			"Type": "Spacecraft",
+			"Target": "Thruster 6 (-Y +X -Z)",
+			"Assets": ["SC_SERVICER"],
+			"Data": {
+				"Dispersed Factor": 1.0
+			}
+		}
+	]
+}

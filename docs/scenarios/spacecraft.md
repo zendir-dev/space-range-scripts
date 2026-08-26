@@ -154,7 +154,7 @@ The `physics` block is **optional** — omit it and Studio falls back to a sensi
 | `ping_interval` | `number` (sim s) | `20.0` | Sim seconds between auto-Pings. Affects how quickly teams see command acks. |
 | `reset_interval` | `number` (sim s) | `300.0` | Sim seconds the spacecraft is offline after a `reset` (or after [`encryption`](../api-reference/spacecraft-commands.md#encryption), which causes a reboot). Lower this for shorter exercises. |
 | `jamming_multiplier` | `number` | `1.0` | Scales the per-watt RF interference produced by the spacecraft's `Jammer` payload. Shipped scenarios commonly use `100.0`. |
-| `enable_rpo_software` | `bool` | `false` | `true` installs RPO flight software so the [`rendezvous`](../api-reference/spacecraft-commands.md#rendezvous) command can run. Docking adapters, fuel/power interconnects, and the [`docking`](../api-reference/spacecraft-commands.md#docking) command are independent of this flag — they depend on the relevant components being present on the spacecraft. |
+| `enable_rpo_software` | `bool` | `false` | `true` installs RPO flight software so the [`rendezvous`](../api-reference/spacecraft-commands.md#rendezvous) command can run. When the spacecraft has thrusters, rendezvous force is allocated onto those thrusters via a `Thruster Array`; otherwise SpaceRange installs a dedicated `External Force Torque`. Docking adapters, fuel/power interconnects, and the [`docking`](../api-reference/spacecraft-commands.md#docking) command are independent of this flag — they depend on the relevant components being present on the spacecraft. |
 | `enable_intercept` | `bool` | `true` | If `true`, the spacecraft records uplink packets it overhears for SIGINT-style replay (downlinked as [Uplink Intercept](../reference/packet-formats.md#uplink-intercept) records). Set `false` to save memory in scenarios that do not exercise this feature. |
 
 Studio reads **`enable_intercept`** first; when it is omitted, loading falls back to the legacy key **`record_uplink_intercept`** so older scenario JSON keeps working.
@@ -484,7 +484,7 @@ This is the largest part of a scenario. Each entry instantiates one piece of har
 
 | Key | JSON type | Required? | Description |
 | --- | --- | --- | --- |
-| `class` | `string` | yes | Component class. See [components.md#class-table](components.md#class-table) for the full set. Common values: `Solar Panel`, `Battery`, `Reaction Wheels`, `Computer`, `Camera`, `Receiver`, `Transmitter`, `Storage`, `GPS Sensor`, `EM Sensor`, `Jammer`, `Magnetometer`, `Gyroscope`, `Laser Range Finder`, `External Force Torque`, `Thruster`, `Docking Adapter`, `Text`. |
+| `class` | `string` | yes | Component class. See [components.md#class-table](components.md#class-table) for the full set. Common values: `Solar Panel`, `Battery`, `Reaction Wheels`, `Computer`, `Camera`, `Receiver`, `Transmitter`, `Storage`, `GPS Sensor`, `EM Sensor`, `Jammer`, `Magnetometer`, `Gyroscope`, `Laser Range Finder`, `External Force Torque`, `Thruster`, `Thruster Array`, `Docking Adapter`, `Text`. |
 | `name` | `string` | recommended | Friendly name. **Must be unique** within a spacecraft. Teams reference it via `target` in commands. Case-insensitive at runtime. If omitted, defaults to `class`. |
 | `mesh` | `string` | no | Unreal mesh path, or `"None"` to use the class default. |
 | `enabled` | `bool` | no (default `true`) | If `false`, the component is loaded but inactive (good for failure events that flip it on later). |
