@@ -312,7 +312,9 @@
 							"Resolution": [
 								1024,
 								1024
-							]
+							],
+							"Min Field Of View": 3.0,
+							"Max Field Of View": 60.0
 						}
 					},
 					{

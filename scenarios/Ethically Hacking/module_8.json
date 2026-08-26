@@ -313,7 +313,9 @@
 							"Resolution": [
 								1024,
 								1024
-							]
+							],
+							"Min Field Of View": 3.0,
+							"Max Field Of View": 60.0
 						}
 					},
 					{
@@ -606,9 +608,9 @@
 			"type": "number",
 			"answer": {
 				"unit": "s",
-				"value": 3.0,
+				"value": 12.0,
 				"tolerance": 0.5,
-				"reason": "The spacecraft controller is configured with a 3.0 s ping interval.",
+				"reason": "The spacecraft controller is configured with a 12.0 s ping interval.",
 				"score": 10
 			}
 		},
