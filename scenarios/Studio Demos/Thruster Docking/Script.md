@@ -8,7 +8,7 @@ This talk-track supports a single-team eight-thruster docking demonstration insp
 2. Verify the Servicer and Client spawn approximately 10 m apart.
 3. Confirm the Servicer exposes eight cold-gas thrusters and reaction-wheel telemetry.
 4. Confirm the **Gold** team owns both spacecraft. Select the Servicer to fly the approach.
-5. Confirm the timed studio events: T+300 s unexpected fire on thrusters 2, 5, and 8 for 30 s; T+600 s fail-off on thrusters 1, 4, and 6. Servicer ping interval is 2 s.
+5. Confirm the timed studio events: T+300 s uncommanded +Y fire on thrusters 1 and 4 (`Duration` 1800 s; runs until sim end at T+1800); T+350 s fail-off on thrusters 1, 4, and 6. Servicer ping interval is 2 s. Client uses the Landsat-8 chassis mesh with the docking adapter on the −Y face.
 6. Set simulation speed to 2x.
 7. Open Operator Commands: Guidance, Rendezvous, Docking, Thruster, and Telemetry. Log in as **Gold** and select the Servicer.
 
@@ -23,13 +23,19 @@ The Servicer uses reaction wheels for Dock pointing and eight 1 N cold-gas thrus
 | 2. Perch | Rendezvous → Active on → Client → Docking Adapter → standoff 5 m → Apply | Watch the Servicer close along the Client port axis and hold at 5 m. |
 | 3. Dock | Docking → Client → Docking Adapter → **Dock** | Closure starts only after the alignment and corridor gates are met. Then capture. |
 | 4. Undock | Docking → **Undock** → confirm | Adapters release with a 10 N / 1 s push. Range increases. |
-| 5. Optional | Thruster → one or multiple nozzles → Start Firing (or schedule) | Manual translation after undock, or an abort burn. APID 403 should show force. |
-| T+5 min | Studio fires thrusters 2, 5, and 8 for 30 s | Uncommanded burn, ELSA-d style. Watch APID 403, residual couple, and RPO recovery. |
-| T+10 min | Studio fails off thrusters 1, 4, and 6 | Permanent loss of three nozzles. Allocator should drop them; finish dock with the remaining five. |
+| 5. Optional | Thruster → select nozzles (or Select all) → Start Firing (or schedule) | Manual translation after undock, or an abort burn. APID 403 should show force. |
+| T+300 s | Studio fires +Y thrusters 1 and 4 (`Duration` 1800 s) | Diagonal +Y pair — asymmetric burn with couple. Runs until sim end (~25 min left). Call out APID 403 and propellant drop. Pause approach if needed. |
+| T+350 s | Studio fails off thrusters 1, 4, and 6 | 1 and 4 stop mid-burn; 6 dead on next command. Five nozzles remain (2, 3, 5, 7, 8). RPO reallocates automatically — operator re-perches or re-points. |
 
 Keep the simulation **Running** when sending commands. Pause between steps to talk.
 
 ## Teaching Points
+
+### Thruster failures (T+350 s)
+
+- **Detection:** APID 403 thrust on thrusters 1, 4, or 6 drops to zero while a fire request may still be present. Configuration Report (APID 102) lists each thruster's `Dispersed Factor` — failed units read `1.0`.
+- **Automatic accommodation:** The Thruster Array allocator removes failed nozzles on the next simulation step. Rendezvous and manual thrust commands reroute to the five surviving thrusters (2, 3, 5, 7, 8).
+- **Operator accommodation:** After the T+350 s event, cancel any active perch, re-command Dock pointing, and re-perch before pressing **Dock** again. Pure +Y authority is halved; do not assume symmetric ±Y burns.
 
 ### Reduced thruster architecture
 
@@ -76,7 +82,7 @@ Log in as the **Gold** team with the Servicer selected. Both spacecraft are on t
 
 ### 1. Pointing — align the adapters
 
-**When:** After T+1 (Client is holding). Range still ~10 m. Do this before perching.
+**When:** Simulation is Running. Client holds spawn attitude (no scripted hold event). Range still ~10 m. Do this before perching.
 
 **Do:** Guidance → Pointing Mode **Dock** → spacecraft **Client** → clocking **0** → **Apply Guidance**.
 
@@ -126,7 +132,7 @@ This arms capture and starts the slow close from the perch.
 
 **When:** After undock, or to abort a hold without using Rendezvous Active off.
 
-**Do:** Thruster → **One thruster** or **Multiple** → select nozzle(s) (not **Thruster Array**) → Duration → Thruster On → **Start Firing**. Use the clock to schedule the same command.
+**Do:** Thruster → check nozzle(s) or **Select all** → Duration → Thruster On → **Start Firing**. Thruster Array components are omitted from the list. Use the clock to schedule the same command.
 
 **Done when:** APID 403 shows force on the selected nozzle(s). Propellant mass decreases.
 
@@ -137,3 +143,4 @@ This arms capture and starts the slow close from the perch.
 3. Port-relative guidance produced a controlled standoff before final closure.
 4. Alignment and corridor gates prevented closure until the adapters were ready to capture.
 5. APID 403 and propellant telemetry provide direct evidence of the commanded control effort.
+6. At T+350 s, three failed-off thrusters left five effective nozzles; RPO reallocated and the operator recovered before capture.

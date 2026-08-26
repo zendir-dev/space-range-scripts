@@ -1,7 +1,7 @@
 {
 	"metadata": {
 		"name": "Thruster-Based Docking",
-		"description": "A single-team thruster-based docking demonstration inspired by the thruster failures on Astroscale's ELSA-d mission. Gold owns both the servicing vehicle and the Client target. The operator sets Dock pointing, perches at 5 m along the Client docking-port axis, then commands Dock to close and capture. Timed studio events inject an unexpected three-thruster fire at T+5 min and fail off three thrusters at T+10 min."
+		"description": "A single-team thruster-based docking demonstration inspired by the thruster failures on Astroscale's ELSA-d mission. Gold owns both the servicing vehicle and the Client target (Landsat-8 bus). The operator sets Dock pointing, perches at 5 m along the Client docking-port axis, then commands Dock to close and capture. Timed studio events inject an uncommanded +Y-corner fire on thrusters 1 and 4 at T+5 min (30 min duration) and permanently fail off thrusters 1, 4, and 6 at T+350 s."
 	},
 	"simulation": {
 		"epoch": "2026/01/25 09:00:00",
@@ -546,7 +546,7 @@
 					"attitude": [
 						100.405693,
 						42.924797,
-						137.230413
+						-42.769587
 					],
 					"attitude_rate": [
 						0.0,
@@ -555,12 +555,12 @@
 					]
 				},
 				"visualization": {
-					"mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/ZenSat/BP_Z_SC_ZenSat_Chassis",
-					"scale": 0.5,
+					"mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/Landsat8/BP_Z_SC_Landsat8_Chassis",
+					"scale": 0.2,
 					"offset": [
 						0.0,
 						0.0,
-						0.06
+						0.0
 					],
 					"reflectivity": 0.3
 				},
@@ -644,11 +644,11 @@
 						"mesh": "None",
 						"position": [
 							0.0,
-							0.17,
+							-0.42,
 							0.0
 						],
 						"rotation": [
-							-90.0,
+							90.0,
 							0.0,
 							0.0
 						],
@@ -659,26 +659,6 @@
 							"Capture Roll Angle": 5.0,
 							"Separation Force": 10.0,
 							"Separation Duration": 1.0
-						}
-					},
-					{
-						"class": "Physical Text",
-						"name": "Client Label",
-						"enabled": true,
-						"position": [
-							0.0,
-							0.18,
-							0.06
-						],
-						"rotation": [
-							-90.0,
-							0.0,
-							0.0
-						],
-						"data": {
-							"Text": "CLIENT",
-							"Font Color": "#FFAA00",
-							"Font Size": 20
 						}
 					}
 				]
@@ -697,50 +677,36 @@
 	"events": [
 		{
 			"Enabled": true,
-			"Name": "Unexpected Thruster Fire 2",
+			"Name": "+Y fire thruster 1",
 			"Time": 300.0,
 			"Repeat": false,
 			"Interval": 1.0,
 			"Type": "Spacecraft",
-			"Target": "Thruster 2 (+Y +X -Z)",
+			"Target": "Thruster 1 (+Y +X +Z)",
 			"Assets": ["SC_SERVICER"],
 			"Data": {
 				"Active": true,
-				"Duration": 30.0
+				"Duration": 1800.0
 			}
 		},
 		{
 			"Enabled": true,
-			"Name": "Unexpected Thruster Fire 5",
+			"Name": "+Y fire thruster 4",
 			"Time": 300.0,
 			"Repeat": false,
 			"Interval": 1.0,
 			"Type": "Spacecraft",
-			"Target": "Thruster 5 (-Y +X +Z)",
+			"Target": "Thruster 4 (+Y -X -Z)",
 			"Assets": ["SC_SERVICER"],
 			"Data": {
 				"Active": true,
-				"Duration": 30.0
+				"Duration": 1800.0
 			}
 		},
 		{
 			"Enabled": true,
-			"Name": "Unexpected Thruster Fire 8",
-			"Time": 300.0,
-			"Repeat": false,
-			"Interval": 1.0,
-			"Type": "Spacecraft",
-			"Target": "Thruster 8 (-Y -X -Z)",
-			"Assets": ["SC_SERVICER"],
-			"Data": {
-				"Active": true,
-				"Duration": 30.0
-			}
-		},
-		{
-			"Enabled": true,
-			"Name": "Thruster 1 Failed Off",
-			"Time": 600.0,
+			"Name": "Thruster 1 failed off",
+			"Time": 350.0,
 			"Repeat": false,
 			"Interval": 1.0,
 			"Type": "Spacecraft",
@@ -752,8 +718,8 @@
 		},
 		{
 			"Enabled": true,
-			"Name": "Thruster 4 Failed Off",
-			"Time": 600.0,
+			"Name": "Thruster 4 failed off",
+			"Time": 350.0,
 			"Repeat": false,
 			"Interval": 1.0,
 			"Type": "Spacecraft",
@@ -765,8 +731,8 @@
 		},
 		{
 			"Enabled": true,
-			"Name": "Thruster 6 Failed Off",
-			"Time": 600.0,
+			"Name": "Thruster 6 failed off",
+			"Time": 350.0,
 			"Repeat": false,
 			"Interval": 1.0,
 			"Type": "Spacecraft",

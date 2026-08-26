@@ -10,7 +10,18 @@
 
 The Servicer begins approximately 10 metres along-track from the Client. The **Gold** team owns both spacecraft. Fly the Servicer: Dock pointing, a 5 m port-relative perch, then Dock to close and capture. An eight-thruster cold-gas system provides translation.
 
-This scenario is inspired by the thruster failures on Astroscale's ELSA-d (End-of-Life Services by Astroscale-demonstration) mission, which showed how unexpected firings and lost nozzles complicate proximity operations. At **T+5 min**, three unmatched Servicer thrusters fire for 30 s without a command. At **T+10 min**, three other thrusters fail off permanently (`Dispersed Factor` = 1). Continue the approach with the remaining authority.
+This scenario is inspired by the thruster failures on Astroscale's ELSA-d (End-of-Life Services by Astroscale-demonstration) mission, which showed how unexpected firings and lost nozzles complicate proximity operations.
+
+## Scheduled anomalies
+
+Studio injects two timed events on the Servicer. Watch **APID 403** (Thruster) and propellant mass — with a 2 s ping interval you should see each event within a couple of seconds of sim time.
+
+| Sim time | Event | What you should see | How to accommodate |
+| --- | --- | --- | --- |
+| **T+300 s** (5 min) | **+Y** thrusters **1** and **4** fire without a command (`Duration` 1800 s) | APID 403 shows thrust on the diagonal +Y pair only. Asymmetric burn (~1.4 N) with X/Z couple — not a matched quad. Propellant mass falls steadily. The burn runs until sim end (session ends at T+1800 s, so ~25 min of remaining sim time). | Cancel Rendezvous if active (Active **off**, Apply). Re-command Dock pointing if attitude drifts. Do not press **Dock** until range and rate are stable again. |
+| **T+350 s** | Thrusters **1**, **4**, and **6** fail off permanently (`Dispersed Factor` = 1) | Both firing nozzles (1 and 4) stop delivering force even though APID 403 may still show a fire request. Thruster 6 never produces thrust when commanded. Only thrusters **2**, **3**, **5**, **7**, and **8** remain effective. | RPO software drops failed nozzles from the Thruster Array on the next step — no operator action required for allocation. Pure +Y translation uses 2 and 3 only. Pure −Y loses one corner (6 gone; 5, 7, 8 remain). Re-perch or re-point before resuming closure. |
+
+Failed thrusters still accept fire commands but deliver zero force. A `reset` does **not** restore them.
 
 ## Mission Goals
 
@@ -20,8 +31,8 @@ This scenario is inspired by the thruster failures on Astroscale's ELSA-d (End-o
 4. Command Dock to close after the axis, roll, and corridor gates are satisfied.
 5. Confirm capture at a separation of 0.05 m and an alignment error below 5°.
 6. **Undock** when you want to separate: Docking → **Undock**. Confirm. The adapters release with a 10 N / 1 s push along the docking axis.
-7. Optional: fire one or several cold-gas nozzles from **Thruster** (One thruster or Multiple, set duration, Start Firing, or schedule with the clock). Use this after undock, or to abort a hold.
-8. Monitor APID 403 and propellant telemetry to verify that translation is produced by the cold-gas thrusters. Expect an uncommanded three-nozzle fire at T+5 min (30 s) and three failed-off nozzles from T+10 min.
+7. Optional: fire one or several cold-gas nozzles from **Thruster** (check nozzles or **Select all**, set duration, Start Firing, or schedule with the clock). Use this after undock, or to abort a hold.
+8. Monitor APID 403 and propellant telemetry. Use the **Scheduled anomalies** table above to confirm each event fired and to recover before continuing the approach.
 
 ---
 
@@ -37,7 +48,7 @@ This scenario is inspired by the thruster failures on Astroscale's ELSA-d (End-o
 | Propellant | Single tank, 25 kg initial load |
 | Attitude | Dock pointing with reaction wheels (operator-commanded) |
 | Sensors | Camera, Laser Range Finder, GPS |
-| Docking | Docking Adapter |
+| Docking | Docking Adapter on the **+Y** end at `(0, 0.35, 0)`, rotation `(−90, 0, 0)` |
 | RPO software | Enabled |
 
 The layout is two squares of four thrusters, one at each Y-end of the Servicer. Each nozzle is canted 45° outward toward its corner, so a single firing produces a Y component plus X and Z. Opposite ends reverse the Y component. Firing a matched set of four produces pure ±X, ±Y, or ±Z with no residual couple. Reaction wheels handle attitude.
@@ -47,8 +58,9 @@ The layout is two squares of four thrusters, one at each Y-end of the Servicer. 
 | Item | Configuration |
 | --- | --- |
 | Mass | 20 kg |
-| Attitude | Pre-aligned inertial hold with reaction wheels (automatic at T+1) |
-| Docking | Docking Adapter |
+| Mesh | Landsat-8 bus (`BP_Z_SC_Landsat8_Chassis`, scale 0.2) |
+| Attitude | Same Euler attitude as the Servicer at spawn; reaction wheels present; rate zero. No scripted guidance event |
+| Docking | Docking Adapter on the **−Y** end at `(0, −0.42, 0)`, rotation `(90, 0, 0)` so the port faces outward along −Y (toward the Servicer after spawn attitude) |
 | Commandable | On the Gold team with the Servicer. Holds spawn attitude as the docking target |
 
 ---
@@ -86,7 +98,7 @@ Log in as the **Gold** team and select the Servicer. The simulation must be runn
 
 4. **Undock — separate.** Docking → **Undock** → confirm. Done when the Docking panel shows undocked and range starts increasing.
 
-5. **Optional manual thrust.** Thruster → One thruster or Multiple → pick nozzle(s) → duration → Thruster On → **Start Firing** (or schedule). Do not select a Thruster Array. Done when APID 403 shows force on the selected nozzle(s).
+5. **Optional manual thrust.** Thruster → check nozzle(s) or **Select all** → duration → Thruster On → **Start Firing** (or schedule). Thruster Array components are omitted from the list. Done when APID 403 shows force on the selected nozzle(s).
 
 To abort translation: Rendezvous Active **off**, Apply, and confirm closing speed falls. You can also fire a selected nozzle from **Thruster**.
 
