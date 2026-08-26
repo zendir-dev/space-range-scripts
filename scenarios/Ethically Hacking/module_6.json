@@ -398,7 +398,7 @@
 	"questions": [
 		{
 			"section": "Satellite Operations",
-			"title": "Where can you find and plot the spacecraft's GPS position data?",
+			"title": "Where can you find and/or plot the spacecraft's GPS position data?",
 			"description": "Select all areas of the operator terminal where GPS position data can be viewed or plotted. There may be more than one correct answer.",
 			"type": "checkbox",
 			"answer": {
@@ -414,9 +414,10 @@
 				],
 				"value": [
 					2,
+					3,
 					4
 				],
-				"reason": "GPS position can be plotted in the Plots tab and displayed on the Map. Selecting any incorrect tab scores zero.",
+				"reason": "GPS position can be plotted in the Plots tab, displayed in the Messages tab and shown on the Map. Selecting any incorrect tab scores zero.",
 				"score": 10
 			}
 		},
