@@ -1,4 +1,4 @@
-**Scenario:** Module 9  
+**Scenario:** FSSCP Module 9  
 **Epoch:** 2025-11-01 17:00:00 UTC  
 **Duration:** 80 minutes simulated (about 40 minutes real time at 2x speed)  
 **Ground Segment:** Tokyo, Anchorage, Houston, Lima, Santiago
@@ -7,11 +7,9 @@
 
 ## Overview
 
-You are the duty crew for a single **Microsat** in low Earth orbit, running imagery tasking while holding watch on spacecraft health. The theme of this session is **detect and confirm**: an alert is not an incident. Something firing an alarm on your console only becomes an incident once you have looked at the evidence and can say what caused it.
+You are the duty crew for a single **Microsat** in Earth orbit, running imagery tasking while holding watch on spacecraft health. The theme of this session is **detect and confirm**: an alert is not an incident. Something firing an alarm on your console only becomes an incident once you have looked at the evidence and can say what caused it.
 
 Three areas will raise alerts during the session: **navigation (GPS)**, **telemetry integrity**, and **attitude control**. Each one needs the same discipline. Notice it, characterise it inside sixty seconds, collect the telemetry or imagery that proves what you saw, then classify the cause. Confirmed cyber-physical activity gets escalated to command leadership as a detection report. A fault that your evidence says is natural gets logged and handled as maintenance, not escalated as an attack. Getting that split right is the point of the exercise.
-
-Every team flies its own copy of the same spacecraft on its own radio link, so what one crew sees is not automatically what another crew sees.
 
 > Questions and scoring are delivered in the **Tasks** section of the operator terminal. Use this brief for mission context, spacecraft configuration, and the triage procedure. It is not an answer key.
 
@@ -19,7 +17,7 @@ Every team flies its own copy of the same spacecraft on its own radio link, so w
 
 ## Mission Goals
 
-1. **Establish operations:** Log in, confirm your spacecraft on the **Map**, and take a baseline of navigation, power, and link health while conditions are nominal. You cannot call something anomalous without a baseline.
+1. **Establish operations:** Confirm your spacecraft on the **Map**, and record the initial navigation, power, and link state. Validate that baseline against independent evidence before treating it as nominal.
 2. **Hold navigation integrity:** Treat the GPS solution as evidence, not truth. Check the reported fix against your predicted ground track and the map before you act on it or report it.
 3. **Watch telemetry integrity:** Inspect downlinked packet contents, not just plotted values. Content that does not belong in a packet is a finding in its own right.
 4. **Monitor attitude control:** Read per-wheel reaction wheel telemetry through the session. If the platform stops responding to a pointing command as expected, work out which axis is involved and when the behaviour started.
@@ -44,8 +42,6 @@ Run the same loop on every alert, regardless of which subsystem raised it.
 
 > A detection report should say what was observed, when it started, which subsystem it affected, the evidence behind the call, your assessed cause, and how confident you are. Keep non-cyber faults in your maintenance log with the same rigour, then keep them out of the cyber report.
 
-> Resetting the flight computer is available from your console and can clear some conditions. If you use it, log the time you did so, because a reset changes what later telemetry can tell you.
-
 ---
 
 ## Operational Constraints
@@ -63,7 +59,7 @@ Run the same loop on every alert, regardless of which subsystem raised it.
 
 ## Spacecraft Configuration
 
-Each team commands an identical 100 kg **Microsat** in a low Earth orbit inclined at 70 degrees, with a near-circular orbit of about 8600 km semi-major axis. The ground track crosses both tasking regions and the five ground stations during the session.
+You command a 100 kg **Microsat** in an Earth orbit inclined at 70 degrees, with a near-circular orbit of about 8600 km semi-major axis. The ground track crosses both tasking regions and the five ground stations during the session.
 
 ### Schematic
 
@@ -74,7 +70,7 @@ Each team commands an identical 100 kg **Microsat** in a low Earth orbit incline
 | Item | Configuration |
 | --- | --- |
 | Mass | 100 kg |
-| Orbit | Earth, low Earth orbit, about 8600 km semi-major axis, 70 degrees inclination |
+| Orbit | Earth, near-circular, about 8600 km semi-major axis, 70 degrees inclination |
 | Power generation | Two body-mounted solar panels (Solar Panel +X, Solar Panel -X) |
 | Power storage | Battery, 80 Ah nominal capacity, starting at 50% charge |
 | Payload | Optical camera, 1024 x 1024 |
@@ -97,7 +93,7 @@ Both solar panels feed the single battery, which starts the session half charged
 | **Camera** | 1024 x 1024 optical imager for vessel tasking in the Caribbean and off Peru. |
 | **GPS Sensor** | Position source for navigation telemetry, and the subsystem you will need to validate rather than trust. |
 | **Reaction Wheels** | Three-axis pointing. Per-wheel telemetry is what tells you whether the platform is doing what you commanded. |
-| **Receiver and Transmitter** | Uplink and downlink on your team frequency. |
+| **Receiver and Transmitter** | Spacecraft uplink and downlink. |
 | **Storage and Computer** | Onboard image storage and command handling, including the reset path. |
 
 > With no magnetometer and no second navigation source, geometry is your cross-check. Your predicted ground track, your ground station visibility, and what your camera actually sees are all independent of the GPS solution.
@@ -123,10 +119,6 @@ The station set is spread in latitude and longitude, so contact comes in discret
 - Plan tasking and downlink around passes, not around wall-clock convenience.
 - Note which station you are working through when an alert appears, and record it. Station and pass context is part of your evidence.
 - Expect to work alerts and tasking inside the same pass. Decide in advance who owns which.
-
-### Team Frequencies
-
-Nine teams are configured for this session: Blue, Green, Yellow, Orange, Pink, White, Purple, Cyan, and Red. Each team is assigned a unique frequency and key at session start, pre-configured on the operator terminal and identical on the uplink and downlink. Because each crew operates its own spacecraft, compare notes across teams carefully before assuming an effect is shared.
 
 ---
 
@@ -154,20 +146,20 @@ Split responsibilities early. The Mission Lead should assign these roles at the 
 - **Payload Operator:** Plans and executes camera tasking over both vessel regions and reports what the imagery supports.
 - **Communications Specialist:** Monitors link budgets, ground station passes, GPS telemetry, and packet content, and flags anything in the data that does not belong.
 
-> **Working method:** Log every alert with its onset time, the evidence, and the call you made. Log every action you take, including resets and frequency changes, and what happened after. When two operators see different symptoms, compare notes before deciding whether you are looking at one problem or two.
+> **Working method:** Log every alert with its onset time, the evidence, and the call you made. Log every action you take, including resets and configuration changes, and what happened after. When two operators see different symptoms, compare notes before deciding whether you are looking at one problem or two.
 
 ---
 
 ## Before You Begin
 
-1. Log in to the operator terminal with your team credentials and read the **Tasks** section.
+1. Read the **Tasks** section.
 2. Confirm your spacecraft appears on the **Map** and that telemetry and the Link Budget are updating.
-3. Take a baseline of navigation, power, attitude, and link health while conditions are nominal, and write it down.
+3. Record the initial navigation, power, attitude, and link state, validate it against independent evidence, and write it down.
 4. Split roles, agree who runs the alert log and the sixty-second clock, and agree who keeps working the payload while an alert is live.
 
 ---
 
-## Learning focuses
+## Learning Focuses
 
 ### Alert Triage Under Time Pressure
 

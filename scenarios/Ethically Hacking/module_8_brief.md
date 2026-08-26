@@ -1,4 +1,4 @@
-**Scenario:** Module 8  
+**Scenario:** FSSCP Module 8  
 **Epoch:** 2025-10-15 05:00:00 UTC  
 **Duration:** 160 minutes simulated (about 40 minutes real time at 4x speed)  
 **Ground Segment:** Ankara, Auckland, Bangkok, Santiago
@@ -7,9 +7,9 @@
 
 ## Overview
 
-You are an Earth observation crew running a single **Microsat** imaging spacecraft in a mid-inclination low Earth orbit. Two areas of interest are on tasking this session: surface vessel traffic in the **Aegean Sea**, and surface vessel traffic in the **Tasman Sea** between Australia and New Zealand. Four ground stations spread around the globe give you regular passes, with natural gaps between them.
+You are an Earth observation crew running a single **Microsat** imaging spacecraft in a mid-inclination Earth orbit. Two areas of interest are on tasking this session: surface vessel traffic in the **Aegean Sea**, and surface vessel traffic in the **Tasman Sea** between Australia and New Zealand. Four ground stations spread around the globe give you regular passes, with natural gaps between them.
 
-Nine teams fly the same spacecraft design in the shared **Main** collection, each on its own communications link. The work is split three ways: satellite operations reporting on link and platform health, payload operations reporting on what was collected, and the Mission Lead merging both into a single mission SITREP for command.
+The work is split three ways: satellite operations reporting on link and platform health, payload operations reporting on what was collected, and the Mission Lead merging both into a single mission SITREP for command.
 
 > Questions and scoring are delivered in the **Tasks** section of the operator terminal. Use this brief for mission context, spacecraft configuration, and the operating areas. It is not an answer key.
 
@@ -19,7 +19,7 @@ Nine teams fly the same spacecraft design in the shared **Main** collection, eac
 
 ### Phase 1 - Satellite Operations
 
-1. **Establish operations:** Log in, confirm your spacecraft on the **Map**, and check that telemetry is updating before you command anything.
+1. **Establish operations:** Confirm your spacecraft on the **Map**, and check that telemetry is updating before you command anything.
 2. **Baseline the link:** Work out which telemetry on the operator terminal actually evidences link quality for a pass, and record that evidence while conditions are nominal. A SITREP claim is only as good as the source behind it.
 3. **Track command health:** Watch the automatic pings and command acknowledgements in the **Messages** and **Telemetry** views, and note the timing you observe.
 4. **Set a status call:** Decide what your platform status is for the pass and be ready to justify which signatures would move it up or down a level.
@@ -58,7 +58,7 @@ Nine teams fly the same spacecraft design in the shared **Main** collection, eac
 
 ## Spacecraft Configuration
 
-Every team commands the same 100 kg **Microsat**, an imaging platform in a circular mid-inclination Earth orbit.
+You command a 100 kg **Microsat**, an imaging platform in a circular mid-inclination Earth orbit.
 
 ### Schematic
 
@@ -74,7 +74,7 @@ Every team commands the same 100 kg **Microsat**, an imaging platform in a circu
 | Power storage | Battery, 80 Ah nominal capacity, fully charged at session start |
 | Payload | Optical camera, 1024 x 1024 |
 | Sensors | GPS sensor |
-| Comms | Receiver and transmitter on your team frequency |
+| Comms | Receiver and transmitter |
 | Data | Onboard storage |
 | Propulsion | None |
 | ADCS | Reaction wheels |
@@ -91,7 +91,7 @@ Both solar panels feed the single battery, which supplies the bus. Each panel is
 | --- | --- |
 | **Camera** | 1024 x 1024 optical imager. Your only collection sensor for both operating areas. |
 | **GPS Sensor** | Position and velocity for your own spacecraft, and the reference for where a capture was actually taken. |
-| **Receiver / Transmitter** | Uplink and downlink on your assigned frequency. The receiver has an antenna gain of 3. |
+| **Receiver / Transmitter** | Spacecraft uplink and downlink. The receiver has an antenna gain of 3. |
 | **Storage** | Onboard storage holding captured products until they are downlinked. |
 
 > Capture metadata matters as much as the picture. Log what you commanded, when you commanded it, and what came back, so you can compare the two later.
@@ -110,24 +110,6 @@ Both solar panels feed the single battery, which supplies the bus. Each panel is
 | Santiago | South American pass, widest separation from the others |
 
 The four stations are spread in longitude, but they do not give continuous coverage. Expect contact windows separated by gaps where you have no link, and plan uplinks and downlinks around them. Use the **Link Budget** panel for contact intervals and signal quality on the current pass.
-
-### Team Frequencies
-
-Each of the nine teams is assigned a unique frequency at session start, pre-configured on the operator terminal and identical on the uplink and downlink. Because every crew has its own link, an effect on one team's frequency does not necessarily show up for the others. Comparing notes across teams is a fast way to tell a shared environmental effect from something aimed at you.
-
-### Teams
-
-| Team | Colour |
-| --- | --- |
-| Team Blue | Blue |
-| Team Green | Green |
-| Team Yellow | Yellow |
-| Team Orange | Orange |
-| Team Pink | Pink |
-| Team White | White |
-| Team Purple | Purple |
-| Team Cyan | Cyan |
-| Team Red | Red |
 
 ---
 
@@ -159,10 +141,9 @@ Split responsibilities early. The Mission Lead should assign these roles at the 
 
 ## Before You Begin
 
-1. Log in to the operator terminal with your team credentials.
-2. Confirm your spacecraft appears on the **Map** and that telemetry and the Link Budget are updating.
-3. Open **Tasks** and read the questions before you start commanding, then prioritise across your roles.
-4. Agree who writes each SITREP and what format they will use, and start logging observations from the first pass.
+1. Confirm your spacecraft appears on the **Map** and that telemetry and the Link Budget are updating.
+2. Open **Tasks** and read the questions before you start commanding, then prioritise across your roles.
+3. Agree who writes each SITREP and what format they will use, and start logging observations from the first pass.
 
 ---
 

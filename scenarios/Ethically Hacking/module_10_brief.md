@@ -1,4 +1,4 @@
-**Scenario:** Module 10 - Respond and Recover  
+**Scenario:** FSSCP Module 10  
 **Epoch:** 2025-11-01 17:00:00 UTC  
 **Duration:** 80 minutes simulated (about 40 minutes real time at 2x speed)  
 **Ground stations:** Tokyo, Anchorage, Houston, Lima, Santiago
@@ -10,8 +10,6 @@
 You are the duty crew for a single 100 kg Microsat carrying an optical imaging payload. The triage phase is over. The activity you worked in the previous module is now confirmed adversary activity, and this session is about acting on it: declare the incident, contain it, run the recovery playbook, protect the integrity of your payload products, and report progress on a fixed cadence.
 
 A separate problem runs alongside the incident. A persistent attitude-control fault is present from session start and does not clear on its own. You must diagnose it from telemetry and recover it yourselves, while keeping the cyber response moving. Deciding what belongs inside the incident and what is an unrelated fault is part of the exercise.
-
-Nine teams run the same Microsat design. Each team is assigned its own frequency and encryption key, pre-configured on the operator terminal at login.
 
 > Questions and scoring are delivered in the **Tasks** section of the operator terminal. Use this brief for mission context, spacecraft configuration, and the response framework. It is not an answer key.
 
@@ -61,7 +59,7 @@ Nine teams run the same Microsat design. Each team is assigned its own frequency
 
 ## Spacecraft Configuration
 
-Every team commands an identical Microsat: a 100 kg imaging platform in a near-circular Earth orbit inclined at 70 degrees.
+You command a 100 kg Microsat imaging platform in a near-circular Earth orbit inclined at 70 degrees.
 
 ### Schematic
 
@@ -102,8 +100,6 @@ Every team commands an identical Microsat: a 100 kg imaging platform in a near-c
 
 Two body-mounted solar panels, Solar Panel +X and Solar Panel -X, feed a single battery that supplies the bus. The battery starts at half charge, so power is a real constraint across an 80 minute session. Watch the charge trend during eclipse and while you are working the recovery.
 
-![Power network diagram](https://zendir-public-media-bucket.s3.ap-southeast-2.amazonaws.com/space_range/scenarios/module_10/power_network_diagram.png)
-
 ### Starting States
 
 | Component | Setting | Value |
@@ -129,18 +125,14 @@ Two body-mounted solar panels, Solar Panel +X and Solar Panel -X, feed a single 
 
 The minimum elevation angle is 10 degrees, so contact is limited to real passes. Use the **Link Budget** panel for contact intervals, signal-to-noise ratio, and pass geometry. Which station you command through is an operational choice during a recovery, not a detail, so track your active pass and plan the next one before you need it.
 
-### Team Frequencies
-
-Each team is assigned a unique frequency and key at session start, pre-configured on the operator terminal, and identical on the uplink and downlink.
-
 ---
 
 ## Tasking Areas
 
 Two areas hold surface vessels for imagery tasking:
 
-- **Caribbean, off Florida and the Bahamas:** four dark-hulled vessels, all stationary.
-- **Peru, off Lima:** three orange-hulled vessels, all stationary.
+- **Caribbean, off Florida and the Bahamas:** a group of dark-hulled vessels holding position.
+- **Peru, off Lima:** a group of orange-hulled vessels holding position.
 
 Plan passes using the **Map**, point the camera with **Guidance**, and capture during the window. Record the capture time and the reported geolocation for every product, because you will need both when you decide what can be released and what stays on hold.
 
@@ -161,10 +153,9 @@ Split responsibilities early. The Mission Lead should assign these roles at the 
 
 ## Before You Begin
 
-1. Log in to the operator terminal with your team credentials.
-2. Confirm your spacecraft appears on the **Map** and that telemetry and the Link Budget are updating.
-3. Read the **Tasks** section, then take a baseline reading of power, navigation, pointing, and link health before you change anything.
-4. Split roles, agree who holds the incident log, and set a timer for the first Recovery SITREP.
+1. Confirm your spacecraft appears on the **Map** and that telemetry and the Link Budget are updating.
+2. Read the **Tasks** section, then take a baseline reading of power, navigation, pointing, and link health before you change anything.
+3. Split roles, agree who holds the incident log, and set a timer for the first Recovery SITREP.
 
 ---
 

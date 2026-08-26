@@ -1,7 +1,7 @@
 {
 	"metadata": {
 		"name": "Module 8",
-		"description": "Earth observation exercise over the Aegean Sea and the Tasman Sea between Australia and New Zealand. Mid-inclination LEO pass with global ground-station coverage and natural contact gaps between passes."
+		"description": "Produce evidence-based satellite operations and payload SITREPs during a maritime Earth observation mission. Combine link, platform, imagery, and integrity findings into a concise mission-level report that distinguishes cyber-relevant observations from routine maintenance issues."
 	},
 	"simulation": {
 		"epoch": "2025/10/15 05:00:00",
@@ -543,12 +543,12 @@
 			"type": "select",
 			"answer": {
 				"options": [
-					"Receiver / Transmitter SNR in the Telemetry tab",
 					"Battery charge fraction in the Telemetry tab",
-					"The latest captured image in the Images tab",
-					"The command list in the Schedule tab"
+					"Receiver / Transmitter SNR in the Telemetry tab",
+					"The command list in the Schedule tab",
+					"The latest captured image in the Images tab"
 				],
-				"value": 0,
+				"value": 1,
 				"reason": "Link quality in a SITREP is grounded in receiver/transmitter SNR telemetry recorded during the pass.",
 				"score": 10
 			}
@@ -560,17 +560,17 @@
 			"type": "checkbox",
 			"answer": {
 				"options": [
-					"SNR drops below the mission threshold",
-					"Spacecraft enters SAFE mode unexpectedly",
 					"An uplink command is not acknowledged",
-					"Routine ping arrives on its nominal cadence",
 					"Battery charge fraction holding at nominal",
-					"Reaction-wheel speeds trending toward saturation"
+					"Reaction-wheel speeds trending toward saturation",
+					"Routine ping arrives on its nominal cadence",
+					"SNR drops below the mission threshold",
+					"Spacecraft enters SAFE mode unexpectedly"
 				],
 				"value": [
 					0,
-					1,
 					2,
+					4,
 					5
 				],
 				"reason": "Degraded SNR, unexpected safe-mode, missing command acks, and reaction-wheel saturation are all cautions. A nominal ping cadence and nominal battery charge are GREEN indicators, not YELLOW.",
@@ -584,16 +584,16 @@
 			"type": "checkbox",
 			"answer": {
 				"options": [
-					"Uplink Intercept records showing commands the team never sent",
 					"An RF noise / interference spike inconsistent with the range geometry",
-					"Command acknowledgements for commands the operator did not issue",
 					"Battery temperature drifting within normal limits",
-					"Solar panel output varying with sun angle"
+					"Command acknowledgements for commands the operator did not issue",
+					"Solar panel output varying with sun angle",
+					"Uplink Intercept records showing commands the team never sent"
 				],
 				"value": [
 					0,
-					1,
-					2
+					2,
+					4
 				],
 				"reason": "Unexpected intercepted or issued commands and unexplained interference point to possible jamming or spoofing (cyber). Normal battery temperature and sun-driven panel variation are routine maintenance telemetry.",
 				"score": 10
@@ -644,8 +644,8 @@
 			"answer": {
 				"options": [
 					"Image quality, correct target region, and tasking metadata all match the request",
-					"Only that the downlink completed without an error code",
 					"Only that on-board storage has free space for the next capture",
+					"Only that the downlink completed without an error code",
 					"Only that the next ground-station pass is scheduled"
 				],
 				"value": 0,
@@ -660,16 +660,16 @@
 			"type": "checkbox",
 			"answer": {
 				"options": [
-					"Image timestamp / metadata does not match the commanded capture time",
-					"Stored files appear that the team never commanded",
 					"Capture geolocation tags differ from the tasked target region",
 					"Gradual lens defocus consistent with thermal drift",
-					"Slow battery capacity fade over many charge cycles"
+					"Image timestamp / metadata does not match the commanded capture time",
+					"Slow battery capacity fade over many charge cycles",
+					"Stored files appear that the team never commanded"
 				],
 				"value": [
 					0,
-					1,
-					2
+					2,
+					4
 				],
 				"reason": "Mismatched capture metadata, unexpected stored files, and altered geolocation tags indicate possible tampering (cyber). Lens defocus and battery fade are maintenance / health issues.",
 				"score": 10
@@ -682,12 +682,12 @@
 			"type": "select",
 			"answer": {
 				"options": [
-					"Per-step raw telemetry samples and full command logs",
+					"Open anomalies and the decision each one requires",
 					"Overall mission status (green / yellow / red)",
-					"Whether primary tasking was completed",
-					"Open anomalies and the decision each one requires"
+					"Per-step raw telemetry samples and full command logs",
+					"Whether primary tasking was completed"
 				],
-				"value": 0,
+				"value": 2,
 				"reason": "Raw telemetry and full logs belong in an annex; the combined SITREP keeps status, tasking outcome, and decisions.",
 				"score": 10
 			}
@@ -700,8 +700,8 @@
 			"answer": {
 				"options": [
 					"Mission status, whether primary tasking was achieved, and any decision required",
-					"The exact battery charge percentage at pass end",
 					"The current encryption key and uplink frequency",
+					"The exact battery charge percentage at pass end",
 					"The full list of commands sent during the pass"
 				],
 				"value": 0,

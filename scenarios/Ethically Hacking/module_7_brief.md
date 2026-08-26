@@ -1,4 +1,4 @@
-**Scenario:** Module 7  
+**Scenario:** FSSCP Module 7  
 **Epoch:** 2025-10-15 00:00:00 UTC  
 **Duration:** 160 minutes simulated (about 40 minutes real time at 4x speed)  
 **Ground Segment:** Cape Town, Honolulu, Santiago, Singapore
@@ -17,14 +17,14 @@ The orbit is circular at a 9000 km semi-major axis and inclined 26 deg, so your 
 
 ## Mission Goals
 
-1. **Establish the link.** Bring up the operator terminal, confirm your spacecraft is reporting telemetry, and check the Link Budget so you know which station you are working and how good the signal is.
+1. **Characterize each pass.** Use the available spacecraft and communications data to record contact conditions throughout each ground-station pass.
 2. **Build a pass plan.** Use the Map to work out when your ground track crosses the Strait of Malacca and the Hawaiian area, and when each ground station comes into view. Decide what has to happen inside each contact window before the window opens.
 3. **Collect the Strait of Malacca.** Point the camera and capture imagery of the Malacca operating area. Yellow-hulled vessels are present there.
 4. **Collect the Hawaiian area.** Do the same over the waters around Hawaii, where green-hulled vessels are present.
 5. **Downlink and check your products.** Get imagery on the ground and review each product before you treat it as usable. Decide as a team what would make you hold a product as suspect.
 6. **Agree how you run a pass.** Settle who calls acquisition, who owns the link, who owns the payload, and what conditions stop routine commanding. The Tasks section will ask you to defend those calls, so make them deliberately rather than in the moment.
 
-> Contact windows are short and the link will drop at the end of a pass. Do not start work you cannot finish before loss of signal.
+> Contact windows are finite. Build the pass timeline before the window opens and track your progress against it.
 
 ---
 
@@ -44,7 +44,7 @@ The orbit is circular at a 9000 km semi-major axis and inclined 26 deg, so your 
 
 ## Spacecraft Configuration
 
-Every team operates the same **Microsat** design in the shared **Main** collection.
+You operate a **Microsat** imaging spacecraft.
 
 ### Schematic
 
@@ -61,7 +61,7 @@ Every team operates the same **Microsat** design in the shared **Main** collecti
 | Power generation | Two body-mounted solar panels, 0.3 m2 each at 40 percent efficiency |
 | Payload | Optical camera, 1024 x 1024 |
 | Navigation | GPS sensor |
-| Comms | Receiver (3 dB antenna gain) and transmitter, on a team-assigned frequency |
+| Comms | Receiver (3 dB antenna gain) and transmitter |
 | Data | Onboard storage |
 | Propulsion | None |
 | ADCS | Reaction wheels |
@@ -91,8 +91,6 @@ A single optical camera is mounted on the spacecraft body. There is no independe
 ## Power Network
 
 Both solar panels feed the single battery, which supplies the rest of the spacecraft. The battery starts full, and capture and downlink both draw on it, with downlink the more expensive of the two. Watch the charge fraction across eclipse and across a busy pass.
-
-![Microsat power network](https://zendir-public-media-bucket.s3.ap-southeast-2.amazonaws.com/space_range/scenarios/module_7/power_network_diagram.png)
 
 ### Component starting states
 
@@ -125,15 +123,11 @@ All four stations need the spacecraft at least 10 deg above their local horizon.
 
 | Period | Expectation |
 | --- | --- |
-| **At acquisition** | The link comes up as a station rises above the elevation mask. Confirm which station you are on and how the signal looks before you load a pass with work. |
+| **At acquisition** | A station rises above the elevation mask and the link conditions begin to change with the geometry. |
 | **During a pass** | Commanding, capture, and downlink all happen here. The window is short compared to the orbit. |
 | **Between passes** | Expect a contact gap. With four stations and a 26 deg inclination there are stretches of the orbit where no station is in view, so anything not finished in the window waits for the next one. |
 
 Contact times are not scripted in this scenario. They fall out of your orbit and the station geometry, so derive them from the Map and Link Budget rather than assuming a fixed schedule.
-
-### Team Frequencies
-
-Nine teams take part: Blue, Green, Yellow, Orange, Pink, White, Purple, Cyan, and Red. Each team commands its own spacecraft in the shared **Main** collection under its own operator identity. Your team is assigned a unique communications frequency at the start of the scenario. It is pre-configured, and it is the same on the uplink and the downlink.
 
 ---
 
@@ -170,27 +164,26 @@ Split responsibilities early. The Mission Lead should assign these roles at the 
 
 ## Before You Begin
 
-1. Log in to the operator terminal with your team credentials.
-2. Confirm your spacecraft appears on the **Map**, telemetry is updating, and the Link Budget is nominal.
-3. Open **Tasks** and read the scored questions before you start commanding, so you know what evidence you need to collect.
-4. Split roles and agree who calls the start and end of each pass.
+1. Confirm your spacecraft appears on the **Map**, telemetry is updating, and the Link Budget is nominal.
+2. Open **Tasks** and read the scored questions before you start commanding, so you know what evidence you need to collect.
+3. Split roles and agree who calls the start and end of each pass.
 
 ---
 
-## Learning focuses
+## Learning Focuses
 
-### Pass planning around contact gaps
+### Pass Planning Around Contact Gaps
 
 Predict when a ground station is in view and when your ground track reaches a target, then fit the work into the window instead of reacting to it.
 
-### Earth observation tasking
+### Earth Observation Tasking
 
 Point a body-fixed camera at a surface area from orbit, allow for lighting and cloud, and capture imagery good enough to answer a question about what is on the water.
 
-### Product integrity
+### Product Integrity
 
 Treat a downlinked image as evidence rather than a finished answer, and set your own criteria for when a product is good enough to deliver and when it should be held for review.
 
-### Crew coordination
+### Crew Coordination
 
 Run a contact window as a team with clear ownership of the link, the payload, and the decisions, including what conditions should stop routine commanding.

@@ -1,7 +1,7 @@
 {
 	"metadata": {
 		"name": "Module 7",
-		"description": "Earth observation exercise over the Strait of Malacca and Hawaii. LEO pass with global ground-station coverage and natural contact gaps between passes."
+		"description": "Conduct Earth observation operations across two maritime regions while planning around finite ground-station passes and contact gaps. Coordinate pass management, spacecraft health, imagery collection, downlink, and product-quality decisions."
 	},
 	"simulation": {
 		"epoch": "2025/10/15 00:00:00",

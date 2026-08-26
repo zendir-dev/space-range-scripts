@@ -1,4 +1,4 @@
-**Scenario:** Module 6  
+**Scenario:** FSSCP Module 6  
 **Epoch:** 2026-04-15 10:00:00 UTC  
 **Duration:** 40 minutes (real time)  
 **Ground stations:** London, Dubai, Singapore
@@ -7,7 +7,7 @@
 
 ## Overview
 
-This is a basic training module in the Space Range operator environment. Nine teams each operate an identical **Microsat** in Earth orbit from the shared **Main** collection. All nine spacecraft fly the same orbit design with small phase offsets, so every team sees a similar pass geometry over the same three ground stations.
+This is a basic training module in the Space Range operator environment. You operate a **Microsat** in Earth orbit with access to three ground stations.
 
 Your job in this module is to get fluent with the operator terminal: find your spacecraft, read its telemetry, work the power and imaging subsystems, and answer the scored questions as a coordinated team. There is no anomaly timeline and no adversary activity scripted into the session.
 
@@ -17,7 +17,7 @@ Your job in this module is to get fluent with the operator terminal: find your s
 
 ## Mission Goals
 
-1. **Log in and connect:** Open the operator terminal with your team credentials and confirm your Microsat is present and telemetry is updating.
+1. **Confirm your connection:** Check that your Microsat is present and telemetry is updating.
 2. **Learn the terminal layout:** Open every view in the side navigation and work out what data each one exposes. Several tasks depend on knowing where a given value lives.
 3. **Characterize your orbit:** Use GPS and position telemetry to work out the shape and size of the orbit you are flying.
 4. **Work the ground network:** Compare link performance across London, Dubai, and Singapore during the session and note how contact quality changes with pass geometry.
@@ -42,7 +42,7 @@ Your job in this module is to get fluent with the operator terminal: find your s
 
 ## Spacecraft Configuration
 
-Every team operates the same **Microsat** design. Nothing is docked and there are no neutral or third-party assets in the environment.
+You operate a **Microsat** design with no docked, neutral, or third-party assets in the environment.
 
 ### Schematic
 
@@ -77,10 +77,6 @@ The following image describes the schematic for the spacecraft, including the lo
 
 Both solar panels feed a single battery, and the battery supplies the spacecraft loads. Panel output depends on how the panel faces are oriented relative to the Sun, so attitude commanding and power management are the same problem. Capturing an image and downlinking it each cost charge, so plan payload activity around your battery state.
 
-### Power Network Diagram
-
-![Microsat power network](https://zendir-public-media-bucket.s3.ap-southeast-2.amazonaws.com/space_range/scenarios/module_6/power_network_diagram.png)
-
 ### Component starting states
 
 | Component | Start State |
@@ -109,29 +105,11 @@ Both solar panels feed a single battery, and the battery supplies the spacecraft
 
 Stations track down to the horizon, so contact is close to continuous across the session. Contact quality is not constant, however: it varies with range and elevation as your spacecraft moves through each pass. Use the **Link Budget** telemetry to compare stations rather than assuming they perform alike.
 
-### Team Frequencies
-
-Nine teams share the environment, each with its own pre-configured frequency. The same frequency is used for uplink and downlink.
-
-| Team | Frequency |
-| --- | --- |
-| Team Blue | 612 |
-| Team Green | 745 |
-| Team Yellow | 889 |
-| Team Orange | 534 |
-| Team Pink | 678 |
-| Team White | 712 |
-| Team Purple | 823 |
-| Team Cyan | 561 |
-| Team Red | 847 |
-
-Your credentials command your own Microsat only. Team colour and frequency identify your session on the operator terminal.
-
 ---
 
 ## Using the Operator Terminal
 
-The operator is a web application your whole team can use at the same time. After login, the side navigation gives you these views:
+The operator is a web application your whole team can use at the same time. The side navigation gives you these views:
 
 - **Controls**
 - **Images**
@@ -169,31 +147,30 @@ Split responsibilities early, and agree how decisions and escalations flow befor
 
 ## Before You Begin
 
-1. Log in to the operator terminal with your team credentials.
-2. Confirm your Microsat appears with live telemetry and a valid GPS solution.
-3. Open **Tasks** and read every question before you start commanding, so you know what evidence to gather.
-4. Assign the four roles and confirm who calls go or no-go.
+1. Confirm your Microsat appears with live telemetry and a valid GPS solution.
+2. Open **Tasks** and read every question before you start commanding, so you know what evidence to gather.
+3. Assign the four roles and confirm who calls go or no-go.
 
 ---
 
-## Learning focuses
+## Learning Focuses
 
-### Operator navigation
+### Operator Navigation
 
 Move confidently between the terminal views, and build a mental map of which view exposes which class of spacecraft data.
 
-### Orbit and telemetry literacy
+### Orbit and Telemetry Literacy
 
 Use GPS and position data to describe the orbit you are flying, and pull specific subsystem values out of telemetry when a task calls for them.
 
-### Power and payload operations
+### Power and Payload Operations
 
 Relate spacecraft attitude to solar panel output, manage battery charge against the cost of capture and downlink, and produce usable imagery within the session.
 
-### Ground network awareness
+### Ground Network Awareness
 
 Compare link performance across three ground stations, recognise how pass geometry drives contact quality, and time downlinks for when the link supports them.
 
-### Crew coordination
+### Crew Coordination
 
 Run the exercise as a small operations team with clear ownership, decision authority, and escalation, so commanding and answering stay organised under time pressure.
