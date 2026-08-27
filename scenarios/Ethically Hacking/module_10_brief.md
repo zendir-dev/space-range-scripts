@@ -143,9 +143,8 @@ Plan passes using the **Map**, point the camera with **Guidance**, and capture d
 Split responsibilities early. The Mission Lead should assign these roles at the start of the exercise:
 
 - **Mission Lead:** Declares the incident, owns the scope, makes go/no-go calls on containment and release, and issues the Recovery SITREPs on the 15 simulation minute cadence.
-- **Satellite Operator:** Works telemetry, guidance pointing, and subsystem health, runs the recovery playbook steps, and diagnoses the attitude-control fault.
+- **Satellite Operator:** Works telemetry, guidance pointing, and subsystem health, runs the recovery playbook steps, and diagnoses the attitude-control fault. Also monitors link budget, pass geometry, and navigation data quality, and advises which station to command the recovery through.
 - **Payload Operator:** Captures imagery, tracks which products are affected, manages the hold, and drives the payload re-baseline.
-- **Communications Specialist:** Monitors link budget, pass geometry, and navigation data quality, and advises which station to command the recovery through.
 
 > **Working method:** One person keeps the timeline, everyone else calls their actions out loud before they take them. Log every change, the time, and the telemetry response. When two operators see different symptoms, compare notes before assuming a single cause.
 

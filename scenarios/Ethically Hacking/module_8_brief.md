@@ -133,9 +133,8 @@ The vessels are stationary and each sits on its own heading, so a clean capture 
 Split responsibilities early. The Mission Lead should assign these roles at the start of the exercise:
 
 - **Mission Lead:** Assigns roles, monitors key information, merges the SatOps and payload inputs into the mission SITREP, and makes go/no-go calls.
-- **Satellite Operator:** Manages telemetry, guidance pointing, power, and platform health, and owns the platform status call.
+- **Satellite Operator:** Manages telemetry, guidance pointing, power, and platform health, and owns the platform status call. Also tracks link budget, ground-station passes, GPS, and command acknowledgements, and flags anything on the link that looks non-nominal.
 - **Payload Operator:** Plans and executes camera captures over both seas, checks product quality and metadata, and owns the collection report.
-- **Communications Specialist:** Tracks link budget, ground-station passes, GPS, and command acknowledgements, and flags anything on the link that looks non-nominal.
 
 ---
 

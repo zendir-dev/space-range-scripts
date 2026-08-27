@@ -156,9 +156,8 @@ Use the map alongside live imagery:
 Split responsibilities early. The Mission Lead should assign these roles at the start of the exercise.
 
 - **Mission Lead:** Assigns roles, runs the pass plan, monitors key information, decides what the team does with the time available in each window, and makes go/no-go calls.
-- **Satellite Operations:** Owns the link and the spacecraft during a contact window - telemetry, guidance pointing, power state, and spacecraft health.
+- **Satellite Operations:** Owns the link and the spacecraft during a contact window - telemetry, guidance pointing, power state, and spacecraft health. Also tracks link budget, GPS position, station visibility, and the timing of the gaps between passes.
 - **Payload Operations:** Owns the camera - captures imagery of the tasked areas, manages onboard storage and downlink, and reviews products once they are on the ground.
-- **Communications Specialist:** Tracks link budget, GPS position, station visibility, and the timing of the gaps between passes.
 
 ---
 

@@ -142,9 +142,8 @@ The vessels are not underway, so a single clean capture of the right area can re
 Split responsibilities early. The Mission Lead should assign these roles at the start of the exercise:
 
 - **Mission Lead:** Assigns roles, keeps the alert log, runs the sixty-second triage clock, decides what is escalated as a cyber incident and what is logged as a natural fault, and writes the detection report.
-- **Satellite Operator:** Manages telemetry, guidance pointing, power, and attitude health, and reports per-wheel behaviour to the Mission Lead.
+- **Satellite Operator:** Manages telemetry, guidance pointing, power, and attitude health, and reports per-wheel behaviour to the Mission Lead. Also monitors link budgets, ground station passes, GPS telemetry, and packet content, and flags anything in the data that does not belong.
 - **Payload Operator:** Plans and executes camera tasking over both vessel regions and reports what the imagery supports.
-- **Communications Specialist:** Monitors link budgets, ground station passes, GPS telemetry, and packet content, and flags anything in the data that does not belong.
 
 > **Working method:** Log every alert with its onset time, the evidence, and the call you made. Log every action you take, including resets and configuration changes, and what happened after. When two operators see different symptoms, compare notes before deciding whether you are looking at one problem or two.
 

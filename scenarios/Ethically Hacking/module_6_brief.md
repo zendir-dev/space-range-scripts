@@ -139,9 +139,8 @@ If you get stuck, use the in-app chat agent - it can help with how the operator 
 Split responsibilities early, and agree how decisions and escalations flow before the first command goes up. Some scored tasks depend on your team having settled its rules of engagement.
 
 - **Mission Lead:** Keeps the team on objective and on time, and tracks which tasks are complete.
-- **Satellite Operator:** Works spacecraft bus commanding and health telemetry.
+- **Satellite Operator:** Works spacecraft bus commanding and health telemetry, and tracks ground station contacts, link quality, and downlink opportunities.
 - **Payload Operator:** Works the camera, image capture, and onboard storage.
-- **Ground Network Coordinator:** Tracks ground station contacts, link quality, and downlink opportunities.
 
 ---
 
@@ -149,7 +148,7 @@ Split responsibilities early, and agree how decisions and escalations flow befor
 
 1. Confirm your Microsat appears with live telemetry and a valid GPS solution.
 2. Open **Tasks** and read every question before you start commanding, so you know what evidence to gather.
-3. Assign the four roles and confirm who calls go or no-go.
+3. Assign the three roles and confirm who calls go or no-go.
 
 ---
 

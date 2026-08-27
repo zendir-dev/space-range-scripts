@@ -539,7 +539,7 @@
 					"Satellite Operator"
 				],
 				"value": 3,
-				"reason": "The Payload Operator executes and verifies payload-related pointing, including sun-pointing for power operations.",
+				"reason": "The Satellite Operator commands and verifies guidance pointing, including the sun-pointing maneuver used for power operations.",
 				"score": 10
 			}
 		},
