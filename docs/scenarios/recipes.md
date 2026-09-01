@@ -62,11 +62,11 @@ Use when the brief is *"give a team some imagery and ask them to count things"*.
   "objects": {
     "ground": [
       { "id": "GO_001", "type": "vessel", "name": "EG01", "planet": "Earth",
-        "latitude": 12.1, "longitude": 44.2, "altitude": 1,
+        "latitude": 12.1, "longitude": 44.2, "altitude": 0.001,
         "scale": 120, "color": "#00FF00",
         "data": { "heading": 76.0, "speed": 10.0 } },
       { "id": "GO_002", "type": "vessel", "name": "EG02", "planet": "Earth",
-        "latitude": 11.5, "longitude": 44.2, "altitude": 1,
+        "latitude": 11.5, "longitude": 44.2, "altitude": 0.001,
         "scale": 120, "color": "#00FF00",
         "data": { "heading": 86.0, "speed": 0.0 } }
     ]

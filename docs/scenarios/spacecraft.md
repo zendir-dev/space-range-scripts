@@ -133,12 +133,12 @@ The `physics` block is **optional** — omit it and Studio falls back to a sensi
 "controller": {
   "safe_fraction":           0.1,
   "capture_tax":             0.001,
-  "downlink_tax":            0.01,
+  "downlink_tax":            0.001,
   "ping_interval":           20.0,
-  "reset_interval":          60.0,
-  "jamming_multiplier":      100.0,
+  "reset_interval":          300.0,
+  "jamming_multiplier":      1.0,
   "enable_rpo_software":              false,
-  "enable_intercept":                 true,
+  "enable_intercept":                 false,
   "pid_k":                   3.5,
   "pid_p":                   30.0,
   "pid_ki":                  -1.0,
@@ -155,9 +155,9 @@ The `physics` block is **optional** — omit it and Studio falls back to a sensi
 | `reset_interval` | `number` (sim s) | `300.0` | Sim seconds the spacecraft is offline after a `reset` (or after [`encryption`](../api-reference/spacecraft-commands.md#encryption), which causes a reboot). Lower this for shorter exercises. |
 | `jamming_multiplier` | `number` | `1.0` | Scales the per-watt RF interference produced by the spacecraft's `Jammer` payload. Shipped scenarios commonly use `100.0`. |
 | `enable_rpo_software` | `bool` | `false` | `true` installs RPO flight software so the [`rendezvous`](../api-reference/spacecraft-commands.md#rendezvous) command can run. When the spacecraft has thrusters, rendezvous force is allocated onto those thrusters via a `Thruster Array`; otherwise SpaceRange installs a dedicated `External Force Torque`. Docking adapters, fuel/power interconnects, and the [`docking`](../api-reference/spacecraft-commands.md#docking) command are independent of this flag — they depend on the relevant components being present on the spacecraft. |
-| `enable_intercept` | `bool` | `true` | If `true`, the spacecraft records uplink packets it overhears for SIGINT-style replay (downlinked as [Uplink Intercept](../reference/packet-formats.md#uplink-intercept) records). Set `false` to save memory in scenarios that do not exercise this feature. |
+| `enable_intercept` | `bool` | `false` | If `true`, the spacecraft records uplink packets it overhears for SIGINT-style replay (downlinked as [Uplink Intercept](../reference/packet-formats.md#uplink-intercept) records). Enable it explicitly on spacecraft used for SIGINT exercises. |
 
-Studio reads **`enable_intercept`** first; when it is omitted, loading falls back to the legacy key **`record_uplink_intercept`** so older scenario JSON keeps working.
+The scenario loader reads **`enable_intercept`** only. The similarly named `RecordUplinkIntercept` field belongs to runtime controller save data and is not a scenario-authoring alias.
 
 ### MRP attitude controller tuning (`pid_*`)
 

@@ -20,12 +20,13 @@ The `simulation` block sets the simulation time origin, how fast simulated time 
 | `speed` | `number` | `1.0` | Default `simulation_speed` (sim seconds per real second). Instructors can change this at runtime via [`admin_set_simulation`](../api-reference/admin-requests.md#admin_set_simulation). |
 | `step_size` | `number` (sim s) | `0.1` | Integrator step. Smaller = more accurate dynamics, more CPU. `0.10–0.20` is the typical band. Below `0.05` is rarely useful for the kind of orbits Space Range models. |
 | `integrator` | `string` | `"Euler"` | Numerical integrator. Accepts `"Euler"` or `"RK4"` (case-insensitive). Use `RK4` if a scenario depends on multi-orbit propagation accuracy (rendezvous, formation, long-duration manoeuvres); `Euler` is fine otherwise. |
-| `end_time` | `number` (sim s) | `0.0` | Hard stop in sim seconds. `0.0` means "run forever / until reset". A non-zero value will stop the simulation when reached. |
+| `end_time` | `number` (sim s) | `3600.0` | Hard stop in sim seconds. `0.0` explicitly means "run forever / until reset". A positive value stops the simulation when reached. |
 
 ## Notes
 
 - `epoch` accepts the `YYYY/MM/DD HH:MM:SS` format used in every shipped scenario. Other common date/time string formats may also parse.
 - `speed`, `step_size`, and `end_time` are doubles internally. Whole-number values are fine without a decimal point but the convention in shipped scenarios is to write them as floats (`5.0` rather than `5`).
+- Do not omit `end_time` when you want an open-ended exercise: the loader's omitted-key default is `3600.0`, while an explicit `0.0` disables the hard stop.
 - `integrator` is converted to lower-case before comparison; only `rk4` selects RK4. Anything else falls back to Euler.
 - `simulation` is loaded *first* during scenario load, so any clock-dependent setup elsewhere in the file (e.g. event `Time` values, sun-angle-based imagery exercises) sees this clock.
 

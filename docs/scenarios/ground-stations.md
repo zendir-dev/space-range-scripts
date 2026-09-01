@@ -21,7 +21,7 @@ The `ground_stations` block defines the pool of ground stations available to **e
 | `locations` | `string[]` | _(empty)_ | City names. Each one matches an entry in Studio's built-in city table and instantiates a ground station at that city's coordinates. Duplicates are allowed but pointless. |
 | `min_elevation` | `number` (deg) | `0` | Minimum elevation above the local horizon for a station to be considered "in view" of a spacecraft. `0` means at-the-horizon counts; `5–10` is realistic for masking effects. |
 | `max_range` | `number` (km) | `0` | Maximum slant range over which a link can close. `0` means unlimited (link budget alone gates it). Use a finite value to cut off pathologically long links explicitly. |
-| `scale` | `number` | `100` | Visual scale factor for ground-station markers in the world view. Doesn't affect simulation, only rendering. |
+| `scale` | `number` | `1000` | Visual scale factor for ground-station markers in the world view. Doesn't affect simulation, only rendering. Shipped scenarios often set `100` explicitly. |
 
 ## Notes
 

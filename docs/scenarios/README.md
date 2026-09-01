@@ -20,6 +20,11 @@ Every scenario JSON has this shape. **Every section is optional** except `teams`
 
 ```json
 {
+  "metadata": {
+    "name":        "...",
+    "description": "...",
+    "brief":       "..."
+  },
   "simulation":      { ... },
   "universe":        { ... },
   "ground_stations": { ... },
@@ -31,7 +36,8 @@ Every scenario JSON has this shape. **Every section is optional** except `teams`
   },
   "docking":         [ ... ],
   "objects": {
-    "ground":        [ ... ]
+    "ground":        [ ... ],
+    "space":         [ ... ]
   },
   "events":          [ ... ],
   "questions":       [ ... ]
@@ -40,6 +46,7 @@ Every scenario JSON has this shape. **Every section is optional** except `teams`
 
 | Section | Purpose | Page |
 | --- | --- | --- |
+| `metadata` | Scenario display name, description, and optional Markdown operator brief | This page, below |
 | `simulation` | Clock, integrator, simulation speed | [simulation.md](simulation.md) |
 | `universe` | Atmosphere, magnetosphere, GPS, lighting toggles | [universe.md](universe.md) |
 | `ground_stations` | The pool of receiving sites used by every team | [ground-stations.md](ground-stations.md) |
@@ -53,6 +60,26 @@ Every scenario JSON has this shape. **Every section is optional** except `teams`
 | `events` | Scripted failures and GPS effects on the simulation timeline | [events.md](events.md) |
 | `questions` | Q&A scoring (text, number, select, checkbox) | [questions.md](questions.md) |
 | (recipes) | End-to-end annotated patterns for common scenario shapes | [recipes.md](recipes.md) |
+
+---
+
+## `metadata` — scenario identity and operator brief
+
+```json
+"metadata": {
+  "name": "Orbital Intel",
+  "description": "Identify and assess a rogue spacecraft.",
+  "brief": "# Mission brief\nInspect the unknown spacecraft and report your findings."
+}
+```
+
+| Key | Type | Description |
+| --- | --- | --- |
+| `name` | `string` | Scenario display name. When omitted, Studio derives the name from the scenario filename. |
+| `description` | `string` | Short description used by Studio's simulation metadata and scenario UI. |
+| `brief` | `string` | Optional Markdown operator brief published to connected clients. A non-empty value replaces the currently loaded brief. |
+
+Studio writes `name` and `description` when exporting scenario JSON. Treat `brief` as load-time content and keep the source copy in your authored scenario file.
 
 ---
 

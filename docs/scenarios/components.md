@@ -53,6 +53,24 @@ If the `class` value is not recognised, Studio logs a warning and the component 
 
 ---
 
+## Common component fields
+
+These keys sit beside `data` on every `components[]` entry:
+
+| Key | Type | Default | Description |
+| --- | --- | --- | --- |
+| `class` | `string` | _(required)_ | Component class or alias from the table above. |
+| `name` | `string` | class name | Operator-facing target name. Keep it unique within the spacecraft. |
+| `mesh` | `string` | class default | Unreal mesh/class path. Use `"None"` to clear the resolved static mesh. |
+| `enabled` | `bool` | `true` | Creates the component but disables its simulation when false. |
+| `position` | `number[3]` (m) | `[0,0,0]` | Position relative to the spacecraft origin. |
+| `rotation` | `number[3]` (deg) | `[0,0,0]` | Local 1-2-3 Euler rotation. |
+| `scale` | `number` | `1.0` | Visual scale of the component. |
+| `data` | `object` | `{}` | Class-specific initial properties. |
+| `models` | `object[]` | `[]` | Optional Universe Models attached to this component; see below. |
+
+---
+
 ## Universal `data` keys
 
 Every component accepts these keys in its `data` object. Spaces in the JSON key are stripped before matching.
@@ -693,18 +711,66 @@ The laser range finder uses the following schema:
   "class": "Laser Range Finder",
   "name": "LRF",
   "data": { 
-    "Operating Range": 1000.0,
-    "Range Accuracy Constant": 0.01
+    "Operating Range": 10000.0,
+    "Range Accuracy Constant": 0.01,
+    "Range Accuracy Proportional": 0.000001,
+    "Capture On Tick": true,
+    "Sample Rate": 1.0
   }
 }
 ```
 
-| `data` key | Type | Description |
-| --- | --- | --- |
-| `Operating Range` | `number` (m) | Maximum operating range for the sensor. |
-| `Range Accuracy Constant` | The accuracy (towards 0) in which the value is correct. |
+| `data` key | Type | Default | Description |
+| --- | --- | --- | --- |
+| `Operating Range` | `number` (m) | `10000.0` | Maximum operating range for the sensor. |
+| `Range Accuracy Constant` | `number` (m) | `0.01` | Fixed part of the range error. |
+| `Range Accuracy Proportional` | `number` | `1e-6` | Range-proportional error term (ppm-style). |
+| `Capture On Tick` | `bool` | `true` | Automatically sample while the simulation runs. |
+| `Sample Rate` | `number` (s) | `1.0` | Minimum time between automatic samples. Values `<= 0` sample every simulation tick. |
 
 This also accepts a `Fault State` event to inject sensor faults at runtime (see [events.md#canonical-spacecraft-event-recipes](events.md#canonical-spacecraft-event-recipes)).
+
+---
+
+## RADAR
+
+`RADAR` detects nearby physical objects from returned signal strength and emits RADAR telemetry (APID 306).
+
+```json
+{
+  "class": "RADAR",
+  "name": "Rendezvous Radar",
+  "position": [0.0, 0.5, 0.0],
+  "rotation": [0.0, 0.0, 0.0],
+  "data": {
+    "Power": 1000.0,
+    "Aperture Diameter": 0.4,
+    "Aperture Efficiency": 0.6,
+    "Wavelength": 0.03,
+    "Bandwidth": 1000000.0,
+    "Temperature": 290.0,
+    "Detection Threshold": 13.0,
+    "Distance Noise": 0.01,
+    "Capture On Tick": true
+  }
+}
+```
+
+| `data` key | Type | Default | Description |
+| --- | --- | --- | --- |
+| `Power` | `number` (W) | `1000.0` | Transmitted radar power. |
+| `Aperture Diameter` | `number` (m) | `0.4` | Antenna aperture; contributes to gain and beam width. |
+| `Aperture Efficiency` | `number` `0–1` | `0.6` | Fraction of aperture area contributing to gain. |
+| `Wavelength` | `number` (m) | `0.03` | Radar wavelength. |
+| `Bandwidth` | `number` (Hz) | `1e6` | Receiver bandwidth used in the noise calculation. |
+| `Temperature` | `number` (K) | `290.0` | Radar system noise temperature. |
+| `Detection Threshold` | `number` (dB) | `13.0` | Minimum signal-to-noise ratio for detection. |
+| `Min Signal` / `Max Signal` | `number` (W) | `0.0` / `1e-3` | Receiver measurement floor and saturation ceiling. |
+| `Ignore Signal Outside Threshold` | `bool` | `false` | Drop out-of-range returns instead of clamping them. |
+| `Distance Noise` | `number` | `0.01` | Range error as a fraction of target distance. |
+| `Capture On Tick` | `bool` | `true` | Automatically capture radar data each simulation tick. |
+
+`Gain`, `Beamwidth`, detected-target values, and aggregate signal/noise values are calculated runtime outputs, not scenario inputs.
 
 ---
 
@@ -719,6 +785,7 @@ This also accepts a `Fault State` event to inject sensor faults at runtime (see 
   "data": {
     "Capture Distance":    0.05,
     "Capture Angle":       20.0,
+    "Capture Roll Angle":  20.0,
     "Separation Force":    100.0,
     "Separation Duration": 1.0,
     "Mass":                5.0
@@ -730,6 +797,7 @@ This also accepts a `Fault State` event to inject sensor faults at runtime (see 
 | --- | --- | --- |
 | `Capture Distance` | `number` (m) | Maximum face-to-face distance at which capture succeeds. |
 | `Capture Angle` | `number` (deg) | Maximum half-cone alignment angle for a successful capture. |
+| `Capture Roll Angle` | `number` (deg) | Maximum relative roll misalignment for capture. |
 | `Separation Force` | `number` (N) | Impulse force applied along the docking axis when undocking, to push the craft apart. Default `100`. |
 | `Separation Duration` | `number` (s) | Duration over which the separation force is applied when undocking. Default `0.5`. |
 | `Mass` | `number` (kg) | Component mass. |
@@ -892,10 +960,10 @@ Link two interconnects in the top-level [`docking`](spacecraft.md#docking-start-
   "enabled": true,
   "position": [13.418, 40.162, -8.064],
   "rotation": [-1.4, 77.7, -97.2],
+  "scale": 1.0,
   "data": {
     "Text":  "RECON",
-    "Font Color": "#FFFF0D",
-    "Font Size": 50.0
+    "Font Size": 50
   }
 }
 ```
@@ -903,12 +971,11 @@ Link two interconnects in the top-level [`docking`](spacecraft.md#docking-start-
 | `data` key | Type | Description |
 | --- | --- | --- |
 | `Text` | `string` | The text to render on the spacecraft. |
-| `Color` | `string` (hex) | Text color. Accepts `#RRGGBB`. |
-| `Scale` | `number` | Text scale factor. |
+| `Font Size` | `integer` | Font size used by the rendered text. |
 
 Pure visual / labelling — the text has no simulation effect, but teams can read it from a Camera image. This is the trick used by `Orbital Intel`'s rogue spacecraft, where the answer to one of the questions is the word painted on its solar panels.
 
-`Text` uses dedicated keys only (case-insensitive, no aliases): `Text`, `Color`, `Scale`.
+`Text` and `Font Size` are the supported scenario `data` keys. Although the underlying component has a `Font Color` property, the current generic scenario loader does not apply color-valued `data` fields; choose a mesh/material with the required text color instead. Use the component-level `scale` field (outside `data`) to resize the whole text component.
 
 ---
 

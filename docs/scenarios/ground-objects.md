@@ -12,7 +12,7 @@ Each entry is loaded when the scenario starts.
   "planet":    "Earth",
   "latitude":  12.1,
   "longitude": 44.2,
-  "altitude":  1,
+  "altitude":  0.001,
   "scale":     120,
   "color":     "#00FF00",
   "data":      { "heading": 76.0, "speed": 10.0 }
@@ -24,12 +24,12 @@ Each entry is loaded when the scenario starts.
 | Key | JSON type | Default | Description |
 | --- | --- | --- | --- |
 | `id` | `string` | _(required)_ | Unique identifier within the scenario. |
-| `type` | `string` | `"text"` | One of `vessel`, `text` (case-insensitive). Selects the actor class. |
+| `type` | `string` | `"text"` | One of `vessel`, `text` (case-insensitive). Aliases: `ship`/`boat` → `vessel`, `word` → `text`. Unknown values fall back to `text`. |
 | `name` | `string` | `""` | Display name surfaced by admin tools. |
 | `planet` | `string` | `"Earth"` | Body the object sits on. Accepts `"Earth"`, `"Moon"`, `"Mars"`. |
 | `latitude` | `number` (deg) | `0.0` | Geodetic latitude (`-90` to `+90`). |
 | `longitude` | `number` (deg) | `0.0` | Geodetic longitude (`-180` to `+180`). |
-| `altitude` | `number` (m) | `0.0` | Altitude above the surface. `1` is fine for vessels (sits on the water); larger values lift the object visibly above the ground. |
+| `altitude` | `number` (km) | `0.0` | Altitude above the surface. Studio multiplies this value by 1000 before positioning the actor. Use `0` for a surface vessel; `0.001` is one metre above the surface. |
 | `scale` | `number` | `1.0` | Visual scale factor. Vessel meshes are small at scale `1` — typical values are `60–225`. |
 | `color` | `string` (hex) | `"#FFFFFF"` | Hex RGB. For vessels this is the hull colour; for text this is the glyph colour. Accepts `#RRGGBB` or `#RGB`. |
 | `data` | `object` | `{}` | Type-specific values — see below. |
@@ -70,15 +70,15 @@ A small fleet representing a shipping lane (from `Orbital Intel`):
 
 ```json
 { "id": "GO_001", "type": "vessel", "name": "EG01", "planet": "Earth",
-  "latitude": 12.1, "longitude": 44.2, "altitude": 1,
+  "latitude": 12.1, "longitude": 44.2, "altitude": 0.001,
   "scale": 120, "color": "#00FF00",
   "data": { "heading": 76.0, "speed": 10.0 } },
 { "id": "GO_002", "type": "vessel", "name": "EG02", "planet": "Earth",
-  "latitude": 11.5, "longitude": 44.2, "altitude": 1,
+  "latitude": 11.5, "longitude": 44.2, "altitude": 0.001,
   "scale": 120, "color": "#00FF00",
   "data": { "heading": 86.0, "speed": 10.0 } },
 { "id": "GO_005", "type": "vessel", "name": "EG05", "planet": "Earth",
-  "latitude": 13.6, "longitude": 43.0, "altitude": 1,
+  "latitude": 13.6, "longitude": 43.0, "altitude": 0.001,
   "scale": 120, "color": "#00FF00",
   "data": { "heading": 178.0, "speed": 0.0 } }
 ```
@@ -87,7 +87,7 @@ A text marker for a region of interest:
 
 ```json
 { "id": "TX_01", "type": "text", "name": "tx01", "planet": "Earth",
-  "latitude": 16.2, "longitude": 112.0, "altitude": 3,
+  "latitude": 16.2, "longitude": 112.0, "altitude": 0.003,
   "scale": 160000, "color": "#011A01",
   "data": { "text": "," } }
 ```
@@ -96,7 +96,7 @@ A vessel that emits an EM signature an `EM Sensor` can detect:
 
 ```json
 { "id": "GO_BEACON", "type": "vessel", "name": "Beacon", "planet": "Earth",
-  "latitude": 0.0, "longitude": 0.0, "altitude": 1,
+  "latitude": 0.0, "longitude": 0.0, "altitude": 0.001,
   "scale": 120, "color": "#FFFFFF",
   "data": { "heading": 0.0, "speed": 0.0, "em_gain": 30.0, "em_frequency": 600.0 } }
 ```

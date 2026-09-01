@@ -16,16 +16,20 @@ The top-level shape of every scenario is:
 
 ```json
 {
+  "metadata":        { ... },
   "simulation":      { ... },
   "universe":        { ... },
   "ground_stations": { ... },
   "teams":           [ ... ],
   "assets": {
     "space":         [ ... ],
-    "collections":   [ ... ]
+    "collections":   [ ... ],
+    "neutral":       [ ... ]
   },
+  "docking":         [ ... ],
   "objects": {
-    "ground":        [ ... ]
+    "ground":        [ ... ],
+    "space":         [ ... ]
   },
   "events":          [ ... ],
   "questions":       [ ... ]
@@ -33,6 +37,8 @@ The top-level shape of every scenario is:
 ```
 
 Every section is optional except `teams` and `assets` — without those the scenario can be loaded but no team can do anything. A minimal scenario is ~50 lines; a competition-grade scenario like `orbital_intel.json` is ~1300 lines.
+
+`metadata` can provide `name`, `description`, and a Markdown `brief` for operators. `assets.neutral`, `docking`, and `objects.space` support shared craft, initial docking/interconnect links, and passive orbital targets respectively; the [deep scenario reference](../scenarios/README.md) documents those advanced sections.
 
 ---
 
@@ -57,6 +63,8 @@ Controls how the simulation clock advances and what dynamics integrator is used.
 | `step_size` | `number` | Integrator step in sim seconds. Smaller = more accurate dynamics, more CPU. `0.1–0.2` is typical. |
 | `integrator` | `string` | One of `Euler`, `RK4`. `Euler` is fine for most exercises; switch to `RK4` for long propagation accuracy. |
 | `end_time` | `number` | Hard stop in sim seconds. `0.0` means "run forever / until reset". |
+
+Set `end_time` explicitly. If the key is omitted, Studio uses a `3600.0` second hard stop; only an explicit `0.0` disables it.
 
 ---
 
@@ -84,6 +92,8 @@ Toggles for the simulated environment that the spacecraft react to.
 | `ambient_light` | `number` | Scene ambient light. Higher values brighten dark sides for visualisation; doesn't affect physics. |
 
 These values change the *experience* of the scenario — they do not change command/telemetry semantics.
+
+Both `magnetosphere` and `gps` default to `false` when omitted, so enable them explicitly when the exercise depends on either system.
 
 ---
 
@@ -191,11 +201,12 @@ Each spacecraft is the most complex object in the scenario. The shape:
 "controller": {
   "safe_fraction":      0.1,
   "capture_tax":        0.001,
-  "downlink_tax":       0.01,
+  "downlink_tax":       0.001,
   "ping_interval":      20.0,
-  "reset_interval":     60.0,
-  "jamming_multiplier": 100.0,
-  "enable_rpo_software":         false
+  "reset_interval":     300.0,
+  "jamming_multiplier": 1.0,
+  "enable_rpo_software": false,
+  "enable_intercept":    false
 }
 ```
 
@@ -208,6 +219,7 @@ Each spacecraft is the most complex object in the scenario. The shape:
 | `reset_interval` | Sim seconds the spacecraft is offline after a `reset` (or after [`encryption`](../api-reference/spacecraft-commands.md#encryption) which causes a reboot). |
 | `jamming_multiplier` | Scales the per-watt RF interference produced by the spacecraft's jammer payload. |
 | `enable_rpo_software` | `true` installs RPO flight software so [`rendezvous`](../api-reference/spacecraft-commands.md#rendezvous) can run. If the spacecraft has thrusters, force commands are allocated onto a `Thruster Array`; otherwise SpaceRange uses a dedicated `External Force Torque`. [`docking`](../api-reference/spacecraft-commands.md#docking) depends on `Docking Adapter` components, not this flag. |
+| `enable_intercept` | `true` records overheard uplinks for SIGINT/replay. It defaults to `false`; set it explicitly on spacecraft that need intercept records. |
 
 #### `power`
 
@@ -232,6 +244,7 @@ Each entry instantiates one piece of on-board hardware. The `class` decides whic
   "enabled":  true,
   "position": [0.0, -0.36, -0.16],
   "rotation": [90.0, 0.0, 0.0],
+  "scale":    1.0,
   "data":     { "Mass": 5.0 }
 }
 ```
@@ -243,6 +256,7 @@ Each entry instantiates one piece of on-board hardware. The `class` decides whic
 | `mesh` | `string` | Unreal mesh path, or `"None"` to use the class default. |
 | `enabled` | `bool` | If `false`, the component is loaded but inactive (good for failure events that flip it on later). |
 | `position`, `rotation` | `number[3]` | Local placement. `position` in metres relative to spacecraft origin; `rotation` in degrees (Yaw/Pitch/Roll). |
+| `scale` | `number` | Visual scale of the component; default `1.0`. |
 | `data` | `object` | Class-specific tuning. `Mass` is universal (kg). Class-specific keys are documented in Studio's component reference. |
 
 **Most-used component classes and what's in their `data`:**
@@ -257,9 +271,9 @@ Each entry instantiates one piece of on-board hardware. The `class` decides whic
 | `Storage` | `Mass` (capacity scales with mass in default builds) |
 | `Jammer` | `Power` (W), `Antenna Gain` (dB), `Lookup` (RF pattern CSV file) |
 | `Computer`, `GPS Sensor`, `EM Sensor`, `Magnetometer`, `Gyroscope`, `External Force Torque` | `Mass` |
-| `Laser Range Finder` | `Operating Range`, `Range Accuracy Constant` |
-| `Docking Adapter` | `Mass`, `Half Cone Angle` (deg) |
-| `Text` | `Text` (string), `Color` (hex), `Scale`. Pure visual/labelling component. |
+| `Laser Range Finder` | `Operating Range`, `Range Accuracy Constant`, `Range Accuracy Proportional`, `Sample Rate`, `Capture On Tick` |
+| `Docking Adapter` | `Mass`, `Capture Distance`, `Capture Angle`, `Capture Roll Angle`, `Separation Force`, `Separation Duration` |
+| `Text` | `Text` (string), `Font Size`; use component-level `scale` for size. Color-valued `data` is not currently applied by the scenario loader. |
 
 ### `assets.collections[]` — team-to-asset lookup
 
@@ -291,7 +305,7 @@ Visual ground objects: vessels, text labels, anything that needs to appear at a 
   "planet":    "Earth",
   "latitude":  12.1,
   "longitude": 44.2,
-  "altitude":  1,
+  "altitude":  0.001,
   "scale":     120,
   "color":     "#00FF00",
   "data":      { "heading": 76.0, "speed": 10.0 }
@@ -304,7 +318,7 @@ Visual ground objects: vessels, text labels, anything that needs to appear at a 
 | `type` | `vessel`, `text`, or any other supported ground-object class. |
 | `name` | Display name. |
 | `planet` | Body the object sits on (`Earth`, `Moon`, `Mars`). |
-| `latitude`, `longitude`, `altitude` | Position. Altitude in metres above the surface. |
+| `latitude`, `longitude`, `altitude` | Position. Altitude is authored in kilometres; `0.001` is one metre above the surface. |
 | `scale` | Visual size factor. |
 | `color` | Hex RGB. For `vessel`, this is the ship's hull colour. |
 | `data` | Type-specific values: `heading` (deg) and `speed` (m/s) for vessels; `text` (string) for `type: text`. |

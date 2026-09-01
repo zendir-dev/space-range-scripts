@@ -236,6 +236,21 @@ These match the Studio **Add Event → Spacecraft** templates. Use them as-is or
 
 `Stuck Index` is `0`, `1`, `2`, or `3` (which wheel jams).
 
+#### Reaction Wheels — restore a stuck wheel
+
+The Studio **Add Event → Spacecraft** menu also includes a recovery event. Set `Nominal Index` to the same wheel index to return that wheel to nominal operation:
+
+```json
+{
+  "Enabled": true, "Name": "Reaction Wheel Nominal", "Time": 200.0,
+  "Repeat": false, "Interval": 1.0,
+  "Type": "Spacecraft", "Target": "Reaction Wheels", "Assets": [],
+  "Data": { "Nominal Index": 0 }
+}
+```
+
+Use separate events for separate wheel indices. Pairing a stuck event with a later nominal event is useful in training scenarios where operators are expected to diagnose the fault before recovery.
+
 #### Thruster — unexpected fire
 
 Triggers a thruster to fire without an operator command. Useful for simulating propulsion anomalies during proximity operations.

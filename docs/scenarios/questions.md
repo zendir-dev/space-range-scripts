@@ -19,11 +19,11 @@ The full structure of a question depends on its `type`. All the question types f
 | `section` | `string` | `""` | Display group. Questions that share a `section` are grouped together in the operator UI. Use a short title (`"Red Sea (Counter-Piracy)"`, `"Orbital Operations"`, …). |
 | `title` | `string` | `""` | One-line question prompt. |
 | `description` | `string` | `""` | Longer body shown beneath the title. Supports plain text only — no HTML or markdown. |
-| `type` | `string` | _(required)_ | One of `text`, `number` (alias `numeric`), `select`, `checkbox`. **Lowercase**. A missing or unrecognised `type` causes the question to be skipped entirely with no error in the scenario load log. |
+| `type` | `string` | _(required)_ | One of `text`, `number` (alias `numeric`), `select`, `checkbox`. Matching is case-insensitive. A missing or unrecognised `type` causes the question to be skipped entirely with no error in the scenario load log. |
 | `answer` | `object` _or_ implicit (see below) | _(required)_ | Type-specific correctness data plus `score`. |
 | `answer.score` | `number` (int) | `0` | Points awarded for a fully correct submission. Rounded to nearest integer. Set this on every question — `0` is loadable but useless. |
 
-> The `type` string is one of the few values in the scenario JSON that is **case-sensitive in practice**: it is lower-cased before parsing, but the canonical form everywhere in the codebase is lowercase. Stick to lowercase to avoid confusion with elsewhere in the schema where casing is flexible.
+> The parser lower-cases `type` before matching, but lowercase remains the canonical authoring style used by shipped scenarios.
 
 ### Two ways to express `answer`
 
@@ -56,7 +56,7 @@ Both parse identically because of the `K()` lambda in `LoadFromScenarioDefinitio
 
 ### `type: "text"`
 
-Free-text answer. Compared to `answer.value` after **trimming whitespace and lower-casing both sides**. There is no fuzzy matching: spelling matters.
+Free-text answer. Compared to `answer.value` after **trimming, lower-casing, and removing spaces, tabs, and line breaks from both sides**. For example, `Star Inject`, `starinject`, and ` STAR  INJECT ` are equivalent. Other punctuation and spelling still matter; there is no fuzzy matching.
 
 | `answer` field | Type | Default | Description |
 | --- | --- | --- | --- |
