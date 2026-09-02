@@ -1,6 +1,6 @@
 # Connecting
 
-This page walks through the minimum steps to connect a custom client to a Space Range scenario, confirm the simulation is running, and start receiving traffic for your team. We deliberately keep it small — no commands yet, just enough to prove every layer is wired up correctly.
+This page walks through the minimum steps to connect a custom client to a Space Range scenario, confirm the simulation is running, and start receiving traffic for your team. We deliberately keep it small: no commands yet, just enough to prove every layer is wired up correctly.
 
 By the end you will have:
 
@@ -22,7 +22,7 @@ Make sure you have the items listed in [Prerequisites](prerequisites.md):
 - Team ID and team password.
 - A Space Range scenario actually running (no Studio = no traffic, no matter how correctly your client is configured).
 
-The examples below use Python with `paho-mqtt` and JavaScript with `mqtt.js`. Translate freely to your language of choice — every step is just publish/subscribe + JSON.
+The examples below use Python with `paho-mqtt` and JavaScript with `mqtt.js`. Translate freely to your language of choice: every step is just publish/subscribe + JSON.
 
 ```bash
 # Python
@@ -34,7 +34,7 @@ npm install mqtt
 
 ---
 
-## Step 1 — Connect to the broker
+## Step 1: Connect to the Broker
 
 Just open the connection. No authentication required at the broker level for hosted Space Range:
 
@@ -65,11 +65,11 @@ const client = mqtt.connect(BROKER);
 client.on("connect", () => console.log("Connected to broker."));
 ```
 
-If `connect()` raises or never fires `on("connect")`, you have a network or broker problem — see [Troubleshooting](../guides/troubleshooting.md). Until that resolves, no Space Range layer above will work.
+If `connect()` raises or never fires `on("connect")`, you have a network or broker problem: see [Troubleshooting](../guides/troubleshooting.md). Until that resolves, no Space Range layer above will work.
 
 ---
 
-## Step 2 — Subscribe to the session topic
+## Step 2: Subscribe to the Session Topic
 
 The simulation clock is published in the clear on:
 
@@ -120,13 +120,13 @@ state=running  t=14.66s  utc=2026/01/26 13:23:13  instance=10234141
 state=paused   t=14.66s  utc=2026/01/26 13:23:13  instance=10234141
 ```
 
-If ticks arrive, the broker and game name are correct. **Note the instance ID** — when it changes, the scenario has been reset; see [Concepts → Simulation clock](../concepts/simulation-clock.md#instance-id-and-resets).
+If ticks arrive, the broker and game name are correct. **Note the instance ID**: when it changes, the scenario has been reset; see [Concepts → Simulation clock](../concepts/simulation-clock.md#instance-id-and-resets).
 
-**Optional — scoreboard:** subscribe to `Zendir/SpaceRange/<GAME>/Info` for scenario title, duration, and team scores. Messages arrive only when the game or scores change; parse each team's `score` string as JSON (`correct` / `incorrect` points). See [Info stream](../api-reference/info-stream.md).
+**Optional: scoreboard:** subscribe to `Zendir/SpaceRange/<GAME>/Info` for scenario title, duration, and team scores. Messages arrive only when the game or scores change; parse each team's `score` string as JSON (`correct` / `incorrect` points). See [Info stream](../api-reference/info-stream.md).
 
 ---
 
-## Step 3 — Subscribe to your team's topics
+## Step 3: Subscribe to Your Team's Topics
 
 Your team has four topics:
 
@@ -154,13 +154,13 @@ const RESPONSE_TOPIC = `Zendir/SpaceRange/${GAME}/${TEAM_ID}/Response`;
 client.subscribe([DOWNLINK_TOPIC, RESPONSE_TOPIC]);
 ```
 
-These topics carry **XOR-encrypted bytes** — never plain JSON. If you log raw payloads at this point, expect to see binary garbage.
+These topics carry **XOR-encrypted bytes**: never plain JSON. If you log raw payloads at this point, expect to see binary garbage.
 
 ---
 
-## Step 4 — Decrypt incoming traffic with your password
+## Step 4: Decrypt Incoming Traffic With Your Password
 
-Both `Downlink` and `Response` are encrypted with your team password. The Caesar layer applies *only* inside the Downlink payload (after the 5-byte frame header) — Responses are plain JSON once XOR-decoded.
+Both `Downlink` and `Response` are encrypted with your team password. The Caesar layer applies *only* inside the Downlink payload (after the 5-byte frame header): Responses are plain JSON once XOR-decoded.
 
 A reusable XOR helper:
 
@@ -179,7 +179,7 @@ function xorCrypt(password, data) {
 }
 ```
 
-To prove your password is correct, send a single ground request — `list_assets` is a safe one because it's read-only and always responds:
+To prove your password is correct, send a single ground request: `list_assets` is a safe one because it's read-only and always responds:
 
 ```python
 REQUEST_TOPIC = f"Zendir/SpaceRange/{GAME}/{TEAM_ID}/Request"
@@ -243,7 +243,7 @@ If the response is garbled JSON, your password is wrong. If no response arrives 
 
 ---
 
-## Putting it together
+## Putting It Together
 
 Below is the smallest end-to-end client that connects, prints the session clock, and confirms the team password by listing assets. Use it as a starting point for your own integration.
 
@@ -286,17 +286,17 @@ c.loop_forever()
 
 ---
 
-## Common pitfalls
+## Common Pitfalls
 
 | Symptom | Likely cause |
 | --- | --- |
 | `on("connect")` never fires, no error | Wrong host or port; firewall blocking outbound 1883. |
 | Session topic is silent | Studio not connected; wrong game name; off by case. |
-| Session shows `state=paused` or `standby` | Broker OK — wait for instructor to set `Running` via admin. |
+| Session shows `state=paused` or `standby` | Broker OK: wait for instructor to set `Running` via admin. |
 | Garbled JSON on Response | Wrong team password. Confirm 6 chars exactly, and that you're using the team password (not the admin password). |
 | No Response after a Request | Wrong team ID; team disabled in scenario; broker dropped the publish (check `client.publish()` return). |
 | Downlink payloads decode to garbage | Caesar key or frequency mismatch. Telemetry needs both layers; see [Concepts → Telemetry](../concepts/telemetry.md). |
-| Everything works once, then stops | Scenario reset (instance ID changed) — re-list assets, re-fetch schemas, re-subscribe is fine since topics don't change across resets. |
+| Everything works once, then stops | Scenario reset (instance ID changed): re-list assets, re-fetch schemas, re-subscribe is fine since topics don't change across resets. |
 
 A more comprehensive list is in [Troubleshooting & FAQ](../guides/troubleshooting.md).
 
@@ -304,6 +304,6 @@ A more comprehensive list is in [Troubleshooting & FAQ](../guides/troubleshootin
 
 ## Next
 
-- [Your first command](first-command.md) — uplink a `guidance` command and confirm execution via Ping.
-- [Operator UI quick start](operator-ui.md) — try the bundled web client first if you'd rather see things visually before writing code.
-- [Concepts → Encryption](../concepts/encryption.md) — full algorithm reference for both layers.
+- [Your first command](first-command.md): uplink a `guidance` command and confirm execution via Ping.
+- [Operator UI quick start](operator-ui.md): try the bundled web client first if you'd rather see things visually before writing code.
+- [Concepts → Encryption](../concepts/encryption.md): full algorithm reference for both layers.

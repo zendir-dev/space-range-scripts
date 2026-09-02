@@ -1,6 +1,6 @@
 # Session Stream
 
-The session topic carries the scenario clock, simulation state, and instance ID. Every Space Range client should subscribe to it — use it to drive UI clocks, know whether the sim is advancing, and detect resets.
+The session topic carries the scenario clock, simulation state, and instance ID. Every Space Range client should subscribe to it: use it to drive UI clocks, know whether the sim is advancing, and detect resets.
 
 This is the only public topic that is **not** encrypted: it contains no team-specific information.
 
@@ -15,7 +15,7 @@ Zendir/SpaceRange/<GAME>/Session
 | Property | Value |
 | --- | --- |
 | Direction | Studio → all clients |
-| Encryption | None — plain ASCII JSON |
+| Encryption | None: plain ASCII JSON |
 | Cadence | ~3.3 Hz (one message every **~0.3 s** of real time) while Studio is connected |
 | QoS | 0, not retained |
 
@@ -37,15 +37,15 @@ Messages continue at this cadence across all simulation states; use the **`state
 
 | Field | Type | Description |
 | --- | --- | --- |
-| `timestamp` | `number` | **Real-time** UNIX epoch seconds (wall clock when the message was published). Not simulation time — use for client-side latency, staleness checks, or correlating with external logs. |
+| `timestamp` | `number` | **Real-time** UNIX epoch seconds (wall clock when the message was published). Not simulation time: use for client-side latency, staleness checks, or correlating with external logs. |
 | `time` | `number` (seconds) | **Simulation** time since `t = 0` for the current `instance`. Used for command `Time` fields and telemetry scheduling. May advance faster, slower, or backwards (on scrub) relative to real time. |
-| `utc` | `string` | **Simulation** UTC at this `time`, formatted `YYYY/MM/DD HH:MM:SS` (epoch from the scenario plus `time`). For display and orbital plots — do not treat as wall-clock UTC. |
+| `utc` | `string` | **Simulation** UTC at this `time`, formatted `YYYY/MM/DD HH:MM:SS` (epoch from the scenario plus `time`). For display and orbital plots: do not treat as wall-clock UTC. |
 | `instance` | `integer` | Unique ID for this run of the scenario. **Changes when the game resets** (new scenario load or instructor `Stopped`). Clients should clear cached assets, schemas, and telemetry when `instance` changes. |
 | `state` | `string` | High-level simulation state. One of `running`, `standby`, `paused`, `ended` (see [Simulation states](#simulation-states)). |
 
 ### Deprecated: `running`
 
-Older builds also sent a boolean `running`. **Do not use it** in new clients — it will be removed in a future release. Use **`state`** instead:
+Older builds also sent a boolean `running`. **Do not use it** in new clients: it will be removed in a future release. Use **`state`** instead:
 
 | Legacy `running` | Use `state` |
 | --- | --- |
@@ -54,7 +54,7 @@ Older builds also sent a boolean `running`. **Do not use it** in new clients —
 
 ---
 
-## Simulation states
+## Simulation States
 
 | `state` | Typical meaning |
 | --- | --- |
@@ -69,14 +69,14 @@ Admin [`admin_set_simulation`](admin-requests.md#admin_set_simulation) uses `Run
 
 ---
 
-## Detecting resets
+## Detecting Resets
 
 Cache the most recent `instance` value. On every message:
 
 - `instance` unchanged → normal tick (still check `state` for UI).
-- `instance` changed → scenario reset. Discard cached state (asset lists, telemetry, schedules) and re-query everything you need.
+- `instance` changed → scenario reset. Discard cached state (asset lists, telemetry, and schedules) and re-query required data.
 
-Without this check, your client will keep showing data from the previous run after the instructor restarts the scenario.
+Without this check, a client continues showing data from the previous run after the instructor restarts the scenario.
 
 ---
 
@@ -103,7 +103,7 @@ def on_message(client, userdata, msg):
     last_instance = s["instance"]
 
     if s.get("state") != "running":
-        print(f"[{s['state']}] t={s['time']:.2f}s — sim not advancing")
+        print(f"[{s['state']}] t={s['time']:.2f}s: sim not advancing")
         return
 
     print(
@@ -141,7 +141,7 @@ client.on("message", (_, payload) => {
   lastInstance = s.instance;
 
   if (s.state !== "running") {
-    console.log(`[${s.state}] t=${s.time.toFixed(2)}s — sim not advancing`);
+    console.log(`[${s.state}] t=${s.time.toFixed(2)}s: sim not advancing`);
     return;
   }
 
@@ -153,7 +153,7 @@ client.on("message", (_, payload) => {
 
 ---
 
-## Driving timestamps from the session clock
+## Driving Timestamps From the Session Clock
 
 Spacecraft commands carry a `Time` field which is **simulation seconds** (`time`), not `timestamp` and not wall clock. The session topic is the right source for scheduling.
 
@@ -168,24 +168,24 @@ uplink({
 })
 ```
 
-If you compute `fire_at` from `time.time()` or from `timestamp`, the command will fire at the wrong sim instant. Always anchor command times to the most recent session **`time`**.
+Computing `fire_at` from `time.time()` or `timestamp` fires the command at the wrong simulation instant. Always anchor command times to the most recent session **`time`**.
 
 ---
 
-## Common pitfalls
+## Common Pitfalls
 
-- **Subscribing to the wrong topic.** If `<GAME>` doesn't match exactly (case, spaces), you'll get nothing. Copy the value from the scenario's connection settings.
+- **Subscribing to the wrong topic.** If `<GAME>` does not match exactly in case and spacing, the client receives nothing. Copy the value from the scenario's connection settings.
 - **Using deprecated `running`.** Prefer `state`.
 - **Assuming silence means paused.** The topic keeps publishing at ~0.3 s; read `state` instead.
-- **Assuming sim time advances at 1× real time.** Watch `time` deltas between ticks when `state` is `running`, not your wall clock.
+- **Assuming sim time advances at 1× real time.** Watch `time` deltas between ticks when `state` is `running`, not the client wall clock.
 - **Confusing `timestamp` and `time`.** `timestamp` is real-time UNIX; `time` is simulation seconds.
 - **Persisting telemetry across instances.** When `instance` changes, re-query assets and XTCE schemas.
-- **Treating the topic as encrypted.** Parse plain ASCII JSON — XOR with a team password produces garbage.
+- **Treating the topic as encrypted.** Parse plain ASCII JSON: XOR with a team password produces garbage.
 
 ---
 
 ## Next
 
-- [MQTT topics](mqtt-topics.md) — the full topic map.
-- [Concepts → Simulation clock](../concepts/simulation-clock.md) — deeper background on simulation time and instances.
-- [Spacecraft commands](spacecraft-commands.md) — uses `time` for scheduling.
+- [MQTT topics](mqtt-topics.md): the full topic map.
+- [Concepts → Simulation clock](../concepts/simulation-clock.md): deeper background on simulation time and instances.
+- [Spacecraft commands](spacecraft-commands.md): uses `time` for scheduling.

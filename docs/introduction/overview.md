@@ -1,6 +1,6 @@
 # Overview
 
-Space Range is a real-time, multi-team **spacecraft operations simulator**. It models satellites, ground stations, RF links, scenarios, and a constructive-agent instructor layer, and exposes everything over **MQTT** so any client — the bundled Operator UI, the Python scripting framework, or your own application — can participate.
+Space Range is a real-time, multi-team **spacecraft operations simulator**. It models satellites, ground stations, radio-frequency (RF) links, scenarios, and a constructive-agent instructor layer. Space Range exposes these systems through Message Queuing Telemetry Transport (MQTT), allowing the bundled Operator UI, the Python scripting framework, and custom applications to participate.
 
 A typical session involves:
 
@@ -11,25 +11,25 @@ A typical session involves:
 
 ---
 
-## What Space Range provides
+## What Space Range Provides
 
 Space Range is built around four capability surfaces, each available over MQTT:
 
-1. **Spacecraft command and control** — uplink commands to a spacecraft (attitude, propulsion, payloads, telemetry configuration, scheduling, etc.) and receive RF-realistic downlinked telemetry.
-2. **Ground operations** — query asset metadata, ground-station configuration, telemetry settings, transmit raw bytes, run AI chat queries, and answer scenario questions.
-3. **Admin / scenario control** — read global simulation state, query historical events, trigger scenario events, list teams and assets, and start/stop/reset the simulation.
-4. **Session timing** — a single, unencrypted broadcast (~every 0.3 s) with simulation time, simulation UTC, real-time `timestamp`, `state` (`running` / `standby` / `paused` / `ended`), and `instance` ID.
-5. **Info** — an unencrypted, event-driven broadcast with game metadata and team score totals when the roster or scoring changes.
+1. **Spacecraft command and control**: uplink commands to a spacecraft (attitude, propulsion, payloads, telemetry configuration, scheduling, etc.) and receive RF-realistic downlinked telemetry.
+2. **Ground operations**: query asset metadata, ground-station configuration, telemetry settings, transmit raw bytes, run AI chat queries, and answer scenario questions.
+3. **Admin / scenario control**: read global simulation state, query historical events, trigger scenario events, list teams and assets, and start/stop/reset the simulation.
+4. **Session timing**: a single, unencrypted broadcast (~every 0.3 s) with simulation time, simulation UTC, real-time `timestamp`, `state` (`running` / `standby` / `paused` / `ended`), and `instance` ID.
+5. **Info**: an unencrypted, event-driven broadcast with game metadata and team score totals when the roster or scoring changes.
 
 Spacecraft and tools are organized into **teams** (red, blue, white-cell, etc.). Each team has its own credentials, its own MQTT topics, and its own visibility rules over the scenario.
 
 ---
 
-## Who this documentation is for
+## Who This Documentation Is for
 
 These docs target three audiences:
 
-### 1. Spacecraft operators
+### 1. Spacecraft Operators
 
 You drive one or more spacecraft for a team during a scenario, either through the bundled **Operator UI** or via the **Python scripting framework** under `space-range-scripts/`.
 
@@ -39,9 +39,9 @@ If that's you, start with:
 - [Concepts → Commands and scheduling](../concepts/commands-and-scheduling.md)
 - [Guides → Decoding telemetry](../guides/decoding-telemetry.md)
 
-### 2. Custom-client developers
+### 2. Custom-Client Developers
 
-You're building a bespoke application — a mission control dashboard, a training app, a scoring system, or an automated agent — that talks to Space Range over MQTT. You don't need access to the Studio (Unreal) source to do this; the entire public surface is documented in these docs.
+You're building a bespoke application: a mission control dashboard, a training app, a scoring system, or an automated agent: that talks to Space Range over MQTT. You don't need access to the Studio (Unreal) source to do this; the entire public surface is documented in these docs.
 
 If that's you, start with:
 
@@ -49,7 +49,7 @@ If that's you, start with:
 - [API Reference → MQTT topics](../api-reference/mqtt-topics.md)
 - [Concepts → Encryption](../concepts/encryption.md)
 
-### 3. Instructors and admins
+### 3. Instructors and Admins
 
 You set up scenarios, monitor multiple teams, trigger events, and control the simulation clock.
 
@@ -61,7 +61,7 @@ If that's you, start with:
 
 ---
 
-## Components at a glance
+## Components at a Glance
 
 | Component | Role | Where it lives |
 | --- | --- | --- |
@@ -74,7 +74,7 @@ If that's you, start with:
 
 ---
 
-## How a scenario flows
+## How a Scenario Flows
 
 At a high level, a session looks like this:
 
@@ -82,13 +82,13 @@ At a high level, a session looks like this:
 2. **Studio** is launched with that scenario. It connects to the MQTT broker, starts publishing on the **session topic**, and listens on the per-team **uplink** and **request** topics and on the **admin/request** topic.
 3. **Operators** connect using their team's password. They subscribe to the team's **downlink** and **response** topics, and publish on the team's **uplink** and **request** topics.
 4. The **instructor / admin** connects with the admin password and uses the **admin/request** and **admin/response** topics to monitor and steer the scenario.
-5. As time advances, the simulation publishes telemetry on the team **downlink** topic — encrypted with a Caesar cipher and a numeric **frequency**, then re-wrapped in the team's XOR password layer. The Operator UI / scripts decrypt and decode CCSDS Space Packets per the team's **XTCE schema**.
+5. As time advances, the simulation publishes telemetry on the team **downlink** topic: encrypted with a Caesar cipher and a numeric **frequency**, then re-wrapped in the team's XOR password layer. The Operator UI / scripts decrypt and decode CCSDS Space Packets per the team's **XTCE schema**.
 6. Operators send commands over **uplink**, ask questions over **request**, and receive replies over **response**. Commands can be immediate or **time-scheduled**.
 7. The instructor can trigger **scenario events** (success/failure milestones), pause or reset the simulation, query historical state, or list scenario questions and accept answers from teams.
 
 ---
 
-## What is *not* covered here
+## What Is *Not* Covered Here
 
 This documentation deliberately excludes:
 

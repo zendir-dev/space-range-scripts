@@ -11,7 +11,7 @@ For background on **why** there are two layers and what each protects, read [Con
 
 ---
 
-## Layer recap
+## Layer Recap
 
 | Layer | Cipher | Key | Where applied |
 | --- | --- | --- | --- |
@@ -26,7 +26,7 @@ Memorise this rule and you'll never get confused about which layer applies where
 
 ---
 
-## Reference implementations
+## Reference Implementations
 
 ### Python
 
@@ -75,14 +75,14 @@ function caesarDecrypt(key, data) {
 
 A few small things that catch people out:
 
-- The XOR password is **UTF-8 encoded**. In practice it's always 6 alphanumeric ASCII characters, so this rarely matters — but if you ever feed it a non-ASCII password, encode as UTF-8 (not Latin-1 or UTF-16).
+- The XOR password is **UTF-8 encoded**. In practice, it is always six alphanumeric ASCII characters, so this rarely matters. If the password contains non-ASCII characters, encode it as UTF-8 (not Latin-1 or UTF-16).
 - The Caesar key is an **integer in [0, 255]**. Negative values and values ≥ 256 are not legal; use `& 0xFF` to be defensive in case a 16-bit integer slips through.
 - Both ciphers are **length-preserving**. There is no IV, no padding, and no length prefix. If your output length differs from the input, something is wrong.
 - An **empty payload** is returned unchanged by Studio. Don't `xor_crypt("PASSWD", b"")` and expect anything other than `b""`.
 
 ---
 
-## Round-trip self-test
+## Round-Trip Self-Test
 
 Before you use these functions in anger, prove they're symmetric:
 
@@ -134,11 +134,11 @@ console.assert(plaintext.every((b, i) => b === caesarPt[i]), "Caesar self-test f
 console.log("OK");
 ```
 
-If either assertion fails, you have a bug — fix it before continuing.
+If either assertion fails, you have a bug: fix it before continuing.
 
 ---
 
-## End-to-end: decoding one downlink frame
+## End-to-End: Decoding One Downlink Frame
 
 Suppose you've subscribed to:
 
@@ -148,7 +148,7 @@ Zendir/SpaceRange/SPACE RANGE/111111/Downlink
 
 with the team password `"AB12CD"` and Caesar key `17`. You receive a 312-byte payload. Here is what the layers look like, in order, as you peel them.
 
-### Step 1 — XOR-decrypt with the team password
+### Step 1: XOR-Decrypt With the Team Password
 
 ```python
 xor_decoded = xor_crypt("AB12CD", msg.payload)
@@ -157,7 +157,7 @@ xor_decoded = xor_crypt("AB12CD", msg.payload)
 
 After this the bytes are still a black box, but they're **layered** correctly.
 
-### Step 2 — Read the 5-byte frame header
+### Step 2: Read the 5-Byte Frame Header
 
 ```python
 fmt     = xor_decoded[0]                                   # 1 = Message
@@ -167,12 +167,12 @@ body    = xor_decoded[5:]                                  # the Caesar-encoded 
 
 The format byte tells you what's inside:
 
-- `0` (None) — empty frame, ignore.
-- `1` (Message) — CCSDS Space Packet (Ping or Schedule Report).
-- `2` (Media) — file payload (image with 50-byte name header).
-- `3` (Uplink Intercept) — captured uplink (32-byte header + raw on-air bytes).
+- `0` (None): empty frame, ignore.
+- `1` (Message): CCSDS Space Packet (Ping or Schedule Report).
+- `2` (Media): file payload (image with 50-byte name header).
+- `3` (Uplink Intercept): captured uplink (32-byte header + raw on-air bytes).
 
-### Step 3 — Caesar-decrypt the body
+### Step 3: Caesar-Decrypt the Body
 
 ```python
 inner = caesar_decrypt(17, body)
@@ -180,11 +180,11 @@ inner = caesar_decrypt(17, body)
 
 `inner` is now the actual Space Packet (or media file, or intercept record).
 
-### Step 4 — Parse according to the format
+### Step 4: Parse According to the Format
 
 For `fmt = 1`, parse `inner` as a CCSDS Space Packet using your XTCE schema. See [Decoding telemetry](decoding-telemetry.md) for the full walkthrough and code.
 
-### Putting it all together
+### Putting It All Together
 
 ```python
 import json
@@ -205,7 +205,7 @@ def on_message(client, userdata, msg):
     body = caesar_decrypt(CAESAR_KEY, xor_decoded[5:])
 
     if team_id != TEAM_ID:
-        # Cross-wire — somebody else's data, ignore.
+        # Cross-wire: somebody else's data, ignore.
         return
 
     if fmt == 1:
@@ -225,9 +225,9 @@ client.loop_forever()
 
 ---
 
-## Encoding an uplink command
+## Encoding an Uplink Command
 
-Uplinks are the easy direction — there's no Caesar layer, just XOR on top of JSON:
+Uplinks are the easy direction: there's no Caesar layer, just XOR on top of JSON:
 
 ### Python
 
@@ -256,29 +256,29 @@ function sendUplink(client, password, game, teamId, command) {
 }
 ```
 
-The same pattern applies to `Request` and `Admin/Request` — XOR with the appropriate password, publish, done.
+The same pattern applies to `Request` and `Admin/Request`: XOR with the appropriate password, publish, done.
 
 ---
 
-## Rotating the Caesar key (and frequency) safely
+## Rotating the Caesar Key (and Frequency) Safely
 
 The Caesar key and frequency can be rotated at runtime via the [`encryption`](../api-reference/spacecraft-commands.md#encryption) command. Done badly, this locks you out of your own spacecraft. Done in this order, it's robust:
 
-### Phase 1 — Pre-flight check
+### Phase 1: Pre-Flight Check
 
 Confirm you're connected and seeing telemetry. Don't rotate while you're already missing Pings, or you won't be able to tell whether the rotation worked.
 
 ```python
 state = ground.request("get_telemetry", {"asset_id": ASSET})
-print(state)  # frequency, key, link budgets — both ends should agree
+print(state)  # frequency, key, link budgets: both ends should agree
 ```
 
-### Phase 2 — Pick new values
+### Phase 2: Pick New Values
 
 - **New frequency** distinct from every other team's. Check `admin_list_entities` (or compare with teammates) to avoid collisions.
 - **New key** in `[0, 255]`. Anything goes; `0` is legal but obviously the trivial cipher.
 
-### Phase 3 — Uplink the rotation command
+### Phase 3: Uplink the Rotation Command
 
 ```python
 new_freq = 478.0
@@ -296,9 +296,9 @@ send_uplink(client, PASSWORD, GAME, TEAM_ID, {
 })
 ```
 
-The `password` argument **must** be your current team password. Studio uses it to authenticate the rotation — without it the command is silently rejected (the spacecraft's view is "if you knew my password you'd already be on this channel").
+The `password` argument **must** be your current team password. Studio uses it to authenticate the rotation: without it the command is silently rejected (the spacecraft's view is "if you knew my password you'd already be on this channel").
 
-### Phase 4 — Update your client immediately
+### Phase 4: Update Your Client Immediately
 
 After the rotation has been *uplinked*, the spacecraft will (a) ack the command on the next Ping, then (b) reboot and come up on the new key/frequency.
 
@@ -317,7 +317,7 @@ CAESAR_KEY = new_key
 
 If the spacecraft never receives the rotation (jammed / out of view), the spacecraft stays on `old_key` and your client now can't decode anything. This is the failure mode you mainly need to plan for; see "Recovering from a desync" below.
 
-### Phase 5 — Tell the ground side too
+### Phase 5: Tell the Ground Side Too
 
 The spacecraft's RF transmitter is now on `(new_freq, new_key)`. Your **ground station receiver** also needs to be told. Use `set_telemetry`:
 
@@ -330,9 +330,9 @@ ground.request("set_telemetry", {
 
 After this, both spacecraft and ground are in sync, and downlinks resume.
 
-### Recovering from a desync
+### Recovering From a Desync
 
-If, after a rotation, you stop receiving Pings, the most likely causes — in order — are:
+If, after a rotation, you stop receiving Pings, the most likely causes: in order: are:
 
 1. **Spacecraft is rebooting.** Wait one reset interval (typically ~60 sim s). The next Ping should report `State: REBOOTING` and then return to nominal.
 2. **Ground side wasn't updated.** Re-run `set_telemetry` with the new values.
@@ -343,7 +343,7 @@ Always preserve your old `(key, frequency)` until you've confirmed the new ones 
 
 ---
 
-## What is *not* protected
+## What Is *Not* Protected
 
 To set expectations, the encryption layers are **operational**, not cryptographic:
 
@@ -351,12 +351,12 @@ To set expectations, the encryption layers are **operational**, not cryptographi
 - The Caesar layer offers ~8 bits of secrecy. Brute force is trivial.
 - Topic strings, message timing, and message lengths are all visible to anyone watching the broker. Even if your encryption was unbreakable, an observer could still tell that the red team just published 312 bytes on its `Uplink`.
 
-For exercises, this is by design — Space Range is a training tool, not a production C2 system. For deployments where these leaks matter, put the broker behind authenticated TLS and rely on broker-level access control as the real security boundary.
+For exercises, this is by design: Space Range is a training tool, not a production C2 system. For deployments where these leaks matter, put the broker behind authenticated TLS and rely on broker-level access control as the real security boundary.
 
 ---
 
 ## Next
 
-- [Decoding telemetry](decoding-telemetry.md) — once you've peeled the encryption layers, decode the Space Packet inside.
-- [Spacecraft commands](../api-reference/spacecraft-commands.md) — what to send up the channel you can now encrypt.
-- [Concepts → Encryption](../concepts/encryption.md) — the conceptual treatment if you want to skim before reading code.
+- [Decoding telemetry](decoding-telemetry.md): once you've peeled the encryption layers, decode the Space Packet inside.
+- [Spacecraft commands](../api-reference/spacecraft-commands.md): what to send up the channel you can now encrypt.
+- [Concepts → Encryption](../concepts/encryption.md): the conceptual treatment if you want to skim before reading code.

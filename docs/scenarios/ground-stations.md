@@ -1,6 +1,6 @@
-# `ground_stations` — receiving network
+# `ground_stations`: Receiving Network
 
-The `ground_stations` block defines the pool of ground stations available to **every** team. There is no per-team ground network — every station is shared.
+The `ground_stations` block defines the pool of ground stations available to **every** team. There is no per-team ground network: every station is shared.
 
 ```json
 "ground_stations": {
@@ -23,31 +23,35 @@ The `ground_stations` block defines the pool of ground stations available to **e
 | `max_range` | `number` (km) | `0` | Maximum slant range over which a link can close. `0` means unlimited (link budget alone gates it). Use a finite value to cut off pathologically long links explicitly. |
 | `scale` | `number` | `1000` | Visual scale factor for ground-station markers in the world view. Doesn't affect simulation, only rendering. Shipped scenarios often set `100` explicitly. |
 
+---
+
 ## Notes
 
 - The first station in `locations` is treated specially: the per-team ground controllers are attached to it and inherit its default transmitter power, antenna gain, and bandwidth. Pick the most "central" or "primary" station as the first entry.
-- Whether a spacecraft can talk to a station at runtime is gated by the link budget plus `min_elevation` and `max_range`. Teams choose which station to communicate with operationally — typically by setting [`guidance` mode](../api-reference/spacecraft-commands.md#guidance) to `"ground"` and pointing the antenna at the station of interest.
-- Ground stations are **not** owned by teams — every team can request a downlink through any station whose link budget closes. To force a team to use a particular station, control it through scenario narrative (briefing, scoring) rather than configuration.
+- Whether a spacecraft can talk to a station at runtime is gated by the link budget plus `min_elevation` and `max_range`. Teams choose which station to communicate with operationally: typically by setting [`guidance` mode](../api-reference/spacecraft-commands.md#guidance) to `"ground"` and pointing the antenna at the station of interest.
+- Ground stations are **not** owned by teams: every team can request a downlink through any station whose link budget closes. To force a team to use a particular station, control it through scenario narrative (briefing, scoring) rather than configuration.
 
-## Picking locations
+---
 
-Studio ships with a comprehensive city table — most major capitals and many secondary cities are available. The shipped scenarios use these patterns:
+## Picking Locations
+
+Studio ships with a comprehensive city table: most major capitals and many secondary cities are available. The shipped scenarios use these patterns:
 
 - **Global coverage** (`Orbital Intel`): seven well-spread stations so every spacecraft has a close contact. `Madrid`, `Dubai`, `Singapore`, `Auckland`, `Easter Island`, `Salvador`, `Miami`.
 - **Regional coverage** (`Docking_Procedure`): a hemisphere-biased cluster for an exercise focused on a particular orbit. `Paris`, `Dubai`, `Colombo`, `Singapore`, `Sydney`, `Auckland`, `Lima`, `New York`.
 - **Polar coverage** (`Telemetry_Drop`): includes `Amundsen-Scott` so that polar-orbit spacecraft are visible at most points of their orbit.
 
-If a city name is not recognised, Studio logs a warning and skips it during load. Confirm the loaded set with [`admin_list_entities`](../api-reference/admin-requests.md#admin_list_entities) after a load.
+If a city name is not recognized, Studio logs a warning and skips it during load. Confirm the loaded set with [`admin_list_entities`](../api-reference/admin-requests.md#admin_list_entities) after a load.
 
 ---
 
-## Built-in location catalog
+## Built-in Location Catalog
 
-The full table below is the built-in city list Studio recognises when a scenario loads. Names are matched **case-sensitive** — spell them exactly as listed.
+The full table below is the built-in city list Studio recognises when a scenario loads. Names are matched **case-sensitive**: spell them exactly as listed.
 
 Coordinates are geodetic `(lat°, lon°, alt m)` on each planet's WGS-84-equivalent reference ellipsoid. Altitude is `0.0 m` unless noted.
 
-### Earth — 100 cities
+### Earth: 100 Cities
 
 | City | Lat (°) | Lon (°) | Alt (m) |
 | --- | ---: | ---: | ---: |
@@ -175,9 +179,9 @@ Coordinates are geodetic `(lat°, lon°, alt m)` on each planet's WGS-84-equival
 | Zagreb | 45.8150 | 15.9819 | 0 |
 | Zurich | 47.3769 | 8.5417 | 0 |
 
-> `Amundsen-Scott` is the only Earth location with a non-zero altitude
-> (2 835 m — the South Pole research station). `La Paz` is set at 3 640 m.
-> Every other city is on the ellipsoid surface.
+`Amundsen-Scott` is the only Earth location with a non-zero altitude
+(2 835 m: the South Pole research station). `La Paz` is set at 3 640 m.
+Every other city is on the ellipsoid surface.
 
 ### Moon
 

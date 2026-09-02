@@ -1,6 +1,6 @@
-# `objects.ground[]` — ground decorations
+# `objects.ground[]`: Ground Decorations
 
-The `objects.ground[]` array defines passive ground actors — vessels, text labels, and any other object placed at a lat/lon. Ground objects do not generate telemetry, cannot be commanded, and are not part of the team configuration. They exist to give imagery and EM-sensor exercises something realistic to find.
+The `objects.ground[]` array defines passive ground actors: vessels, text labels, and any other object placed at a lat/lon. Ground objects do not generate telemetry, cannot be commanded, and are not part of the team configuration. They exist to give imagery and EM-sensor exercises something realistic to find.
 
 Each entry is loaded when the scenario starts.
 
@@ -29,12 +29,14 @@ Each entry is loaded when the scenario starts.
 | `planet` | `string` | `"Earth"` | Body the object sits on. Accepts `"Earth"`, `"Moon"`, `"Mars"`. |
 | `latitude` | `number` (deg) | `0.0` | Geodetic latitude (`-90` to `+90`). |
 | `longitude` | `number` (deg) | `0.0` | Geodetic longitude (`-180` to `+180`). |
-| `altitude` | `number` (km) | `0.0` | Altitude above the surface. Studio multiplies this value by 1000 before positioning the actor. Use `0` for a surface vessel; `0.001` is one metre above the surface. |
-| `scale` | `number` | `1.0` | Visual scale factor. Vessel meshes are small at scale `1` — typical values are `60–225`. |
-| `color` | `string` (hex) | `"#FFFFFF"` | Hex RGB. For vessels this is the hull colour; for text this is the glyph colour. Accepts `#RRGGBB` or `#RGB`. |
-| `data` | `object` | `{}` | Type-specific values — see below. |
+| `altitude` | `number` (km) | `0.0` | Altitude above the surface. Studio multiplies this value by 1000 before positioning the actor. Use `0` for a surface vessel; `0.001` is one meter above the surface. |
+| `scale` | `number` | `1.0` | Visual scale factor. Vessel meshes are small at scale `1`: typical values are `60–225`. |
+| `color` | `string` (hex) | `"#FFFFFF"` | Hex RGB. For vessels this is the hull color; for text this is the glyph color. Accepts `#RRGGBB` or `#RGB`. |
+| `data` | `object` | `{}` | Type-specific values: see below. |
 
-## Type-specific `data`
+---
+
+## Type-Specific `data`
 
 Vessel and text use different `data` keys:
 
@@ -45,9 +47,9 @@ A surface ship (or generic moving ground object) that travels on a heading.
 | `data` key | Type | Default | Description |
 | --- | --- | --- | --- |
 | `heading` | `number` (deg) | `0.0` | Compass heading (`0` = north, `90` = east, etc.). |
-| `speed` | `number` (m/s) | `0.0` | Constant speed along the heading. `0.0` makes the vessel stationary — useful for representing damaged or moored ships. |
+| `speed` | `number` (m/s) | `0.0` | Constant speed along the heading. `0.0` makes the vessel stationary: useful for representing damaged or moored ships. |
 | `em_gain` | `number` (dB) | `0.0` | EM emission strength. Set non-zero to make the vessel detectable by an `EM Sensor`. |
-| `em_frequency` | `number` (MHz) | `0.0` | EM emission centre frequency. Required if `em_gain` is non-zero. |
+| `em_frequency` | `number` (MHz) | `0.0` | EM emission center frequency. Required if `em_gain` is non-zero. |
 
 ### `type: "text"`
 
@@ -57,14 +59,18 @@ A flat text glyph rendered on the ground at the given lat/lon. Used as a label o
 | --- | --- | --- | --- |
 | `text` | `string` | `""` | The glyph string to render. Tiny strings (`","`, `"X"`) render as visual markers; longer strings act as captions. |
 
+---
+
 ## Notes
 
 - Ground objects are passive: they do not respond to commands and emit no telemetry beyond the optional EM signature on a vessel.
-- Vessels move in **constant-heading** straight lines on the planet's surface — they don't follow shipping lanes or avoid land. If you need a vessel to follow a path, place it at multiple waypoints at different `Time` events using a scripted scenario, or simply pick `speed: 0` and treat the vessel as stationary.
+- Vessels move in **constant-heading** straight lines on the planet's surface. They do not follow shipping lanes or avoid land. To make a vessel follow a path, place it at multiple waypoints at different `Time` events with a scripted scenario. For a stationary vessel, set `speed` to `0`.
 - For dense scenes (`Orbital Intel` has 22 vessels), keep `id` values monotonic (`GO_001`, `GO_002`, …) so they sort sensibly in admin tools.
-- Color choices matter for imagery exercises — choose distinct hues so teams can refer to vessels by colour in Q&A. Avoid placing two same-colored vessels close together unless this ambiguity is the exercise.
+- Color choices matter for imagery exercises: choose distinct hues so teams can refer to vessels by color in Q&A. Avoid placing two same-colored vessels close together unless this ambiguity is the exercise.
 
-## Example clusters
+---
+
+## Example Clusters
 
 A small fleet representing a shipping lane (from `Orbital Intel`):
 

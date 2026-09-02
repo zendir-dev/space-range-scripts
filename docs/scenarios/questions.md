@@ -1,6 +1,6 @@
-# `questions[]` — scenario Q&A
+# `questions[]`: Scenario Questions and Answers
 
-The `questions[]` array holds the assessment that operators submit answers against during the run. Studio loads each entry, scores submissions against the configured `answer`, and exposes the list to teams via [`list_questions`](../api-reference/ground-requests.md#list_questions). Running **correct** and **incorrect** point totals per team are also published on the MQTT [Info](../api-reference/info-stream.md) topic when scores change.
+The `questions[]` array holds the assessment that operators submit answers against during the run. Studio loads each entry, scores submissions against the configured `answer`, and exposes the list to teams via [`list_questions`](../api-reference/ground-requests.md#list_questions). Running **correct** and **incorrect** point totals per team are also published on the Message Queuing Telemetry Transport (MQTT) [Info](../api-reference/info-stream.md) topic when scores change.
 
 Question IDs are **assigned automatically** in load order (1, 2, 3, …). Authors do not write `id` into the JSON.
 
@@ -10,24 +10,24 @@ Question IDs are **assigned automatically** in load order (1, 2, 3, …). Author
 ]
 ```
 
-The full structure of a question depends on its `type`. All the question types follow the same outer shape — only the `answer` block differs.
+The full structure of a question depends on its `type`. All the question types follow the same outer shape: only the `answer` block differs.
 
-## Common fields
+## Common Fields
 
 | Key | JSON type | Default | Description |
 | --- | --- | --- | --- |
-| `section` | `string` | `""` | Display group. Questions that share a `section` are grouped together in the operator UI. Use a short title (`"Red Sea (Counter-Piracy)"`, `"Orbital Operations"`, …). |
+| `section` | `string` | `""` | Display group. Questions that share a `section` are grouped together in the **Operator UI**. Use a short title (`"Red Sea (Counter-Piracy)"`, `"Orbital Operations"`, …). |
 | `title` | `string` | `""` | One-line question prompt. |
-| `description` | `string` | `""` | Longer body shown beneath the title. Supports plain text only — no HTML or markdown. |
-| `type` | `string` | _(required)_ | One of `text`, `number` (alias `numeric`), `select`, `checkbox`. Matching is case-insensitive. A missing or unrecognised `type` causes the question to be skipped entirely with no error in the scenario load log. |
+| `description` | `string` | `""` | Longer body shown beneath the title. Supports plain text only: no HTML or markdown. |
+| `type` | `string` | _(required)_ | One of `text`, `number` (alias `numeric`), `select`, `checkbox`. Matching is case-insensitive. A missing or unrecognized `type` causes the question to be skipped entirely with no error in the scenario load log. |
 | `answer` | `object` _or_ implicit (see below) | _(required)_ | Type-specific correctness data plus `score`. |
-| `answer.score` | `number` (int) | `0` | Points awarded for a fully correct submission. Rounded to nearest integer. Set this on every question — `0` is loadable but useless. |
+| `answer.score` | `number` (int) | `0` | Points awarded for a fully correct submission. Rounded to nearest integer. Set this on every question: `0` is loadable but useless. |
 
-> The parser lower-cases `type` before matching, but lowercase remains the canonical authoring style used by shipped scenarios.
+The parser lower-cases `type` before matching, but lowercase remains the canonical authoring style used by shipped scenarios.
 
-### Two ways to express `answer`
+### Two Ways to Express `answer`
 
-The parser supports two equivalent shapes — pick one and stay consistent within a scenario file:
+The parser supports two equivalent shapes: pick one and stay consistent within a scenario file:
 
 **Embedded object (recommended, used by every shipped scenario):**
 
@@ -50,9 +50,11 @@ The parser supports two equivalent shapes — pick one and stay consistent withi
 }
 ```
 
-Both parse identically because of the `K()` lambda in `LoadFromScenarioDefinitionJson` — when `answer` is an object string starting with `{`, it is read directly; otherwise the parser falls back to dotted lookups on the outer object.
+Both parse identically because of the `K()` lambda in `LoadFromScenarioDefinitionJson`: when `answer` is an object string starting with `{`, it is read directly; otherwise the parser falls back to dotted lookups on the outer object.
 
-## Question types
+---
+
+## Question Types
 
 ### `type: "text"`
 
@@ -78,9 +80,9 @@ Free-text answer. Compared to `answer.value` after **trimming, lower-casing, and
 }
 ```
 
-> Authoring tip: keep `value` short and unambiguous. There is no support for multiple correct answers — if a question has two valid synonyms, pick the most likely answer and add the alternative to `description` (`"... answer with the call sign, not the registration code"`).
+Authoring tip: keep `value` short and unambiguous. There is no support for multiple correct answers: if a question has two valid synonyms, pick the most likely answer and add the alternative to `description` (`"... answer with the call sign, not the registration code"`).
 
-### `type: "number"` (alias `numeric`)
+### `type: "number"` (Alias `numeric`)
 
 Numeric answer with a tolerance band. Correct iff `|submitted - value| <= tolerance + epsilon`.
 
@@ -88,9 +90,9 @@ Numeric answer with a tolerance band. Correct iff `|submitted - value| <= tolera
 | --- | --- | --- | --- |
 | `value` | `number` | _(required)_ | The expected answer. **A question with no `value` key fails to load.** |
 | `tolerance` | `number` | `0.0` | Acceptable absolute deviation. `0` requires an exact match (rarely what you want for floats). |
-| `unit` | `string` | `""` | Unit label shown next to the input box (e.g. `"km"`, `"deg"`, `"MHz"`, `"dB"`). Cosmetic only — submissions are not unit-converted. |
+| `unit` | `string` | `""` | Unit label shown next to the input box (e.g. `"km"`, `"deg"`, `"MHz"`, `"dB"`). Cosmetic only: submissions are not unit-converted. |
 | `reason` | `string` | `""` | Explanation shown when the team is wrong. |
-| `score` | `number` | `0` | Points for a correct answer (binary — partial credit is not awarded for "close" numbers). |
+| `score` | `number` | `0` | Points for a correct answer (binary: partial credit is not awarded for "close" numbers). |
 
 ```json
 {
@@ -108,7 +110,7 @@ Numeric answer with a tolerance band. Correct iff `|submitted - value| <= tolera
 }
 ```
 
-> Pick `tolerance` so that the question is unambiguous but rewards real measurement, not guessing. For "to the nearest km" use `0.5`; for "to the nearest 100 km" use `50`.
+Pick `tolerance` so that the question is unambiguous but rewards real measurement, not guessing. For "to the nearest km" use `0.5`; for "to the nearest 100 km" use `50`.
 
 ### `type: "select"`
 
@@ -131,23 +133,23 @@ Single-choice from a list. The submission is the **zero-based index** of the cho
     "options": ["Blue", "Red", "White", "Yellow"],
     "value": 3,
     "reason": [
-      "It's Yellow — only ship hovering near the damaged ships.",
-      "It's Yellow — only ship hovering near the damaged ships.",
-      "It's Yellow — only ship hovering near the damaged ships.",
-      "It's Yellow — only ship hovering near the damaged ships."
+      "It's Yellow: only ship hovering near the damaged ships.",
+      "It's Yellow: only ship hovering near the damaged ships.",
+      "It's Yellow: only ship hovering near the damaged ships.",
+      "It's Yellow: only ship hovering near the damaged ships."
     ],
     "score": 8
   }
 }
 ```
 
-> The `reason` array can be shorter than `options` (e.g. a single entry covering the most likely misclick). The UI uses `reasons[index]` only if it exists and is non-empty; otherwise it defaults to `"The value is wrong."`.
+The `reason` array can be shorter than `options` (e.g. a single entry covering the most likely misclick). The UI uses `reasons[index]` only if it exists and is non-empty; otherwise it defaults to `"The value is wrong."`.
 
 ### `type: "checkbox"`
 
 Multi-select from a list. The submission is an array of zero-based indices.
 
-#### Scoring rules — read carefully
+### Scoring Rules: Read Carefully
 
 The scoring is **strict-then-partial**:
 
@@ -159,7 +161,7 @@ The scoring is **strict-then-partial**:
 | --- | --- | --- | --- |
 | `options` | `string[]` | `[]` | Choices in display order. |
 | `value` | `integer[]` | `[]` | Zero-based indices of all correct options. Order doesn't matter; duplicates are dropped. An empty array makes the question unscoreable (`"Question has no correct options defined."`). |
-| `reason` | `string[]` | `[]` | Per-option rationale. Currently used for log/UI hints — there is no per-option penalty model. One overall message is fine. |
+| `reason` | `string[]` | `[]` | Per-option rationale. Currently used for log/UI hints: there is no per-option penalty model. One overall message is fine. |
 | `score` | `number` | `0` | Maximum points (awarded only when **all** correct options are selected and **no** incorrect ones). |
 
 ```json
@@ -182,9 +184,11 @@ The scoring is **strict-then-partial**:
 }
 ```
 
-> Because partial credit collapses to zero on **any** incorrect tick, checkbox questions effectively reward conservatism. If you want to penalise wrong picks more gently, prefer `select` (single-choice) or split the checkbox into multiple binary questions.
+Because partial credit collapses to zero on **any** incorrect tick, checkbox questions effectively reward conservatism. If you want to penalize wrong picks more gently, prefer `select` (single-choice) or split the checkbox into multiple binary questions.
 
-## Putting it together
+---
+
+## Putting It Together
 
 A complete `questions` block from a real scenario:
 
@@ -211,7 +215,7 @@ A complete `questions` block from a real scenario:
       ],
       "value": 0,
       "reason": [
-        "The battery produced power spikes mid-mission — fixable with a reset."
+        "The battery produced power spikes mid-mission: fixable with a reset."
       ],
       "score": 5
     }
@@ -219,18 +223,22 @@ A complete `questions` block from a real scenario:
 ]
 ```
 
-## Authoring checklist
+---
+
+## Authoring Checklist
 
 - Group related questions with `section` so the UI groups them.
 - Always set `score`. Total scenario score is the sum across questions; aim for a round number (50, 100).
 - For `number`, set `tolerance` deliberately and include a `unit`.
 - For `select`/`checkbox`, double-check the zero-based indices in `answer.value` against `answer.options`. Off-by-one is the most common bug.
 - For `text`, trim whitespace mentally and pick a single canonical wording.
-- Avoid trick questions whose correct answer depends on UI rounding — both submission parsing and the answer field round-trip through `double`.
+- Avoid trick questions whose correct answer depends on UI rounding: both submission parsing and the answer field round-trip through `double`.
 - Re-load the scenario after every edit to confirm questions load (a missing `type` or `value` silently drops a question).
 
-## See also
+---
 
-- [`events.md`](./events.md) — design fault events that questions can probe.
-- [`README.md`](./README.md) — note about question IDs being auto-assigned.
-- [ground-requests.md — submit_answer](../api-reference/ground-requests.md#submit_answer) — how teams submit answers at runtime.
+## See Also
+
+- [`events.md`](./events.md): design fault events that questions can probe.
+- [`README.md`](./README.md): note about question IDs being auto-assigned.
+- [ground-requests.md: submit_answer](../api-reference/ground-requests.md#submit_answer): how teams submit answers at runtime.

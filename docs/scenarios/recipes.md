@@ -1,26 +1,26 @@
-# Recipes & agent checklist
+# Recipes & Agent Checklist
 
-This page is a working catalogue of complete scenario patterns derived from the shipped examples. Each recipe is annotated, so you can copy a pattern and adapt it. A short **agent checklist** at the bottom captures the rules an automated author should follow.
+This page is a working catalog of complete scenario patterns derived from the shipped examples. Each recipe is annotated, so you can copy a pattern and adapt it. A short **agent checklist** at the bottom captures the rules an automated author should follow.
 
 ---
 
-## When to copy from which scenario
+## When to Copy From Which Scenario
 
 | Goal | Start from | Why |
 | --- | --- | --- |
 | Imagery / detection exercise on Earth | `Maritime_Surveillance.json` | Many ground vessels (`objects.ground[]`), two teams sharing one collection. |
 | Telemetry-loss / packet-corruption exercise | `Telemetry_Drop.json` | Single transmitter packet-corruption event with paired recovery context. |
-| Unresponsive-spacecraft / command-rejection exercise | `Unresponsive_Satellite.json`, `Command_Rejection.json` | Show how to use `enable_rpo_software`, `enable_intercept` and computer fault models. |
-| Docking / RPO exercise | `Docking_Procedure.json` | Two spacecraft with `Docking Adapter` components; set `enable_rpo_software: true` only on craft that need autonomous rendezvous. |
+| Unresponsive-spacecraft / command-rejection exercise | `Unresponsive_Satellite.json`, `Command_Rejection.json` | Show how to use `enable_rpo_software`, `enable_intercept`, and computer fault models. |
+| Docking / rendezvous and proximity operations (RPO) exercise | `Docking_Procedure.json` | Two spacecraft with `Docking Adapter` components; set `enable_rpo_software: true` only on craft that need autonomous rendezvous. |
 | Pointing / attitude error | `Payload_Misalignment.json` | Reaction-wheel `Stuck Index` event and guidance noise model. |
-| GPS denial | (see GPS event recipes in [`events.md`](./events.md)) | No shipped scenario uses GPS jamming end-to-end yet — combine the events template with a `Maritime_Surveillance` shell. |
+| GPS denial | (see GPS event recipes in [`events.md`](./events.md)) | No shipped scenario uses GPS jamming end-to-end yet: combine the events template with a `Maritime_Surveillance` shell. |
 | Multi-section assessment with full Q&A | `Orbital Intel/orbital_intel.json` | Long `questions[]`, multiple ground objects, multiple events, multi-team. |
 
 The agent-friendly summary: **`Orbital Intel` is the most complete reference**. Anything else is a simpler variant.
 
 ---
 
-## Recipe 1 — Single-team imagery detection
+## Recipe 1: Single-Team Imagery Detection
 
 Use when the brief is *"give a team some imagery and ask them to count things"*. Spawn one team with one spacecraft carrying a `Camera`, populate `objects.ground[]` with vessels at distinct lat/lons, and ask `number` questions.
 
@@ -87,7 +87,7 @@ Use when the brief is *"give a team some imagery and ask them to count things"*.
 
 ---
 
-## Recipe 2 — Telemetry drop / packet corruption
+## Recipe 2: Telemetry Drop / Packet Corruption
 
 Use when the brief is *"the radio is degraded, can the team detect it?"*. Add a single Spacecraft event targeting a transmitter error model.
 
@@ -122,11 +122,11 @@ And a question to match:
 ]
 ```
 
-> Pair the event time with `simulation.end_time`: `Time: 7200` only fires if the simulation runs at least 7200s of sim time. With `speed: 100`, that's 72s wall-clock — usually fine.
+Pair the event time with `simulation.end_time`: `Time: 7200` only fires if the simulation runs at least 7200s of sim time. With `speed: 100`, that's 72s wall-clock: usually fine.
 
 ---
 
-## Recipe 3 — Component fault assessment
+## Recipe 3: Component Fault Assessment
 
 Use when the brief is *"a component fails partway through; the team needs to identify which one and react"*.
 
@@ -162,11 +162,11 @@ The matching `Target` strings for other components follow the table in [`events.
 
 ---
 
-## Recipe 4 — Docking / RPO exercise
+## Recipe 4: Docking / RPO Exercise
 
 Use when the brief is *"two spacecraft must rendezvous and dock"*. Both spacecraft need a `Docking Adapter`. Set `enable_rpo_software: true` on the chaser if it should run autonomous rendezvous before docking; orbits must be chosen so the two paths intersect.
 
-**Starting docked / shared power:** If the exercise should begin with **both power buses already merged** (before or in addition to the `docking` command), add a `Power Interconnect` on each hull, wire each into that spacecraft's `power.bus` (typically `Battery` `out` → `Interconnect` `in`), and add **one** power-interconnect entry to the top-level [`docking`](spacecraft.md#docking-start-the-scenario-already-docked) block linking the two. See [spacecraft.md — Power interconnects](spacecraft.md#power-interconnects).
+**Starting docked / shared power:** If the exercise should begin with **both power buses already merged** (before or in addition to the `docking` command), add a `Power Interconnect` on each hull, wire each into that spacecraft's `power.bus` (typically `Battery` `out` → `Interconnect` `in`), and add **one** power-interconnect entry to the top-level [`docking`](spacecraft.md#docking-start-the-scenario-already-docked) block linking the two. See [spacecraft.md: Power interconnects](spacecraft.md#power-interconnects).
 
 ```json
 "assets": {
@@ -229,11 +229,11 @@ Use when the brief is *"two spacecraft must rendezvous and dock"*. Both spacecra
 
 The two spacecraft share `semi_major_axis` and `inclination` so they're on the same orbital plane; the chaser has a `true_anomaly` offset to give it the rendezvous gap.
 
-The `docking` power-interconnect entry above addresses both hulls by team + asset (here both on team `111111`). If the two craft are on **different teams**, change the `from_team`/`to_team` ids accordingly, but **keep** `from_asset`/`to_asset` — a team endpoint always needs its asset id so Studio knows which of the team's craft to use. Either way the two power buses merge at t=0; use this only when the brief needs a **shared bus at start**.
+The `docking` power-interconnect entry above addresses both hulls by team + asset (here both on team `111111`). If the two craft are on **different teams**, change the `from_team`/`to_team` ids accordingly, but **keep** `from_asset`/`to_asset`: a team endpoint always needs its asset id so Studio knows which of the team's craft to use. Either way the two power buses merge at t=0; use this only when the brief needs a **shared bus at start**.
 
 ---
 
-## Recipe 5 — GPS spoofing region
+## Recipe 5: GPS Spoofing Region
 
 Use when the brief is *"GPS becomes untrustworthy near a specific city"*. Spoofing is global, so it affects every spacecraft passing through the region.
 
@@ -261,7 +261,7 @@ Pair with a `select` question asking *"What region was being spoofed?"* with the
 
 ---
 
-## Recipe 6 — Multi-team assessment with mixed Q&A
+## Recipe 6: Multi-Team Assessment With Mixed Q&A
 
 `Orbital Intel` is the canonical example. Read it end-to-end at `space-range-scripts/scenarios/Orbital Intel/orbital_intel.json`. Key features to copy:
 
@@ -278,11 +278,11 @@ Things `Orbital Intel` does **not** demonstrate:
 
 ---
 
-## Agent checklist
+## Agent Checklist
 
 When generating a scenario from a brief, follow this checklist top-to-bottom. Each step is independently testable.
 
-### 1. Plan from the brief
+### 1. Plan From the Brief
 
 - Extract: number of teams, region(s) of interest, payload required (camera, EM sensor, etc.), failure modes, scoring questions.
 - Pick the closest recipe above as the starting shell.
@@ -298,20 +298,20 @@ When generating a scenario from a brief, follow this checklist top-to-bottom. Ea
 ### 3. Components
 
 - Always include the canonical 6: `Solar Panel`, `Battery`, `Computer`, `Receiver`, `Transmitter`, `Storage`. Without these, basic ops (`ping`, `capture`, `downlink`) fail.
-- Add only the components the brief requires: `Camera` for imagery, `EM Sensor` for SIGINT, `Reaction Wheels` for pointing exercises, `Docking Adapter` for RPO, `Jammer` only if explicitly required.
-- Keep `data` minimal — set `Mass` and the one or two parameters relevant to the exercise. Defaults are reasonable for everything else.
+- Add only the components the brief requires: `Camera` for imagery, `EM Sensor` for signals intelligence (SIGINT), `Reaction Wheels` for pointing exercises, `Docking Adapter` for RPO, and `Jammer` only if explicitly required.
+- Keep `data` minimal: set `Mass` and the one or two parameters relevant to the exercise. Defaults are reasonable for everything else.
 - See [`components.md`](./components.md) for the full per-class field list.
 
-### 4. Ground objects
+### 4. Ground Objects
 
 - Place vessels with distinct `latitude` / `longitude`. Avoid stacking vessels at identical coordinates unless the ambiguity is the exercise.
-- Use distinct `color` per vessel when they're meant to be referenced by colour in questions.
+- Use distinct `color` per vessel when they're meant to be referenced by color in questions.
 - Use `text` ground objects to label regions when imagery alone isn't enough.
 
 ### 5. Events
 
 - Add **one event at a time** and test in isolation.
-- Pull the `Target`/`Data` from the canonical templates in [`events.md`](./events.md) — do not invent new keys.
+- Pull the `Target`/`Data` from the canonical templates in [`events.md`](./events.md): do not invent new keys.
 - For training scenarios, pair every fault with a recovery-prompting follow-up event (or document the recovery in `description`).
 - Sort events in the JSON in chronological `Time` order for readability.
 - Empty `Assets: []` means *every spacecraft*. Use a single-element list (`["ALPHA"]`) for per-team faults.
@@ -325,10 +325,10 @@ When generating a scenario from a brief, follow this checklist top-to-bottom. Ea
 - Avoid checkbox questions where one wrong tick collapses to zero score unless that strictness is intentional. See the scoring rules in [`questions.md`](./questions.md).
 - Question IDs are auto-assigned in load order; do not hand-write them.
 
-### 7. Validation pass
+### 7. Validation Pass
 
 - Lint the JSON (no trailing commas, no comments).
-- Load the file in Studio and watch the log for parse errors. Studio continues past failed sections — silent partial loads are common.
+- Load the file in Studio and watch the log for parse errors. Studio continues past failed sections: silent partial loads are common.
 - Check that:
   - Every team listed in `admin_list_entities`.
   - Every spacecraft listed in `list_assets` for its team.
@@ -339,12 +339,12 @@ When generating a scenario from a brief, follow this checklist top-to-bottom. Ea
 If something is missing, the most likely culprits (in order) are:
 
 1. A typo in `class`, `name`, or `Target` (case mismatch on names is fine; class aliases must spell-match exactly).
-2. A missing `value` on a `number`/`select` question — drops the question silently.
-3. An `Assets[]` referencing a spacecraft `id` that doesn't exist — event no-ops.
-4. An `events.Data.Type` mismatch (`"Spoofing"` vs `"spoof"`) — event errors out at runtime.
-5. A `team.collection` that doesn't exist in `assets.collections[]` — team has no spacecraft.
+2. A missing `value` on a `number`/`select` question: drops the question silently.
+3. An `Assets[]` referencing a spacecraft `id` that doesn't exist: event no-ops.
+4. An `events.Data.Type` mismatch (`"Spoofing"` vs `"spoof"`): event errors out at runtime.
+5. A `team.collection` that doesn't exist in `assets.collections[]`: team has no spacecraft.
 
-### 8. Iterate on the timing
+### 8. Iterate on the Timing
 
 - Lower `simulation.speed` (e.g. `100`) for fast iteration; raise for fidelity.
 - Lower `events[i].Time` while testing so faults fire early.
@@ -352,9 +352,9 @@ If something is missing, the most likely culprits (in order) are:
 
 ---
 
-## See also
+## See Also
 
-- [`README.md`](./README.md) — the index, with the loading order Studio applies.
-- [`events.md`](./events.md) — full event reference.
-- [`questions.md`](./questions.md) — full Q&A reference.
-- `space-range-scripts/scenarios/Orbital Intel/orbital_intel.json` — most complete shipped example.
+- [`README.md`](./README.md): the index, with the loading order Studio applies.
+- [`events.md`](./events.md): full event reference.
+- [`questions.md`](./questions.md): full Q&A reference.
+- `space-range-scripts/scenarios/Orbital Intel/orbital_intel.json`: most complete shipped example.
