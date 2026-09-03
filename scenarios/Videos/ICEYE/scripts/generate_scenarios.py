@@ -22,6 +22,7 @@ CONFIG_DIR = ICEYE_DIR / "config"
 OUTPUT_NAMES = [f"section_{index}.json" for index in range(1, 6)]
 
 EPOCH = "2026/05/14 00:00:00"
+SECTION_4_EPOCH = "2026/05/14 12:00:00"
 ICEYE_INCLINATION_DEG = 97.837601
 ICEYE_ARGUMENT_OF_LATITUDE_DEG = 7.059927 + 86.065415
 
@@ -126,6 +127,19 @@ ILLUSTRATIVE_ALONG_TRACK_OFFSETS_DEG = {
     "COSMOS 2614": -0.70,
 }
 
+# Section 4 opens after the Section 3 closure rather than replaying its distant
+# starting geometry. All five craft are placed on ICEYE's osculating orbit with
+# small along-track separations. At this radius one degree is about 121 km, so
+# these offsets place 2614 at ~1 km and the rest at ~4-8 km. This is illustrative
+# staging for the custody demonstration, not reconstructed historical phasing.
+SECTION_4_ALONG_TRACK_OFFSETS_DEG = {
+    "COSMOS 2610": 0.0660,   # ~8.0 km
+    "COSMOS 2611": -0.0580,  # ~7.0 km
+    "COSMOS 2612": 0.0500,   # ~6.0 km
+    "COSMOS 2613": -0.0330,  # ~4.0 km
+    "COSMOS 2614": -0.0083,  # ~1.0 km
+}
+
 # Section 3 only. The offsets above put each Cosmos 22-85 km from ICEYE; these
 # are the LVLH stations the RPO controller then closes to, so the proximity is
 # a flown manoeuvre on camera rather than a fixed initial condition. Axes are
@@ -179,6 +193,14 @@ RPO_REPEAT_SEQUENCE: list[dict[str, Any]] = [
 COSMOS_2614_OPTICAL_POINTING_TIME_S = 3000.0
 COSMOS_2614_OPTICAL_CAMERA = "OCS-410 Narrow-Field Inspection Camera"
 
+# Overwatch's three custody sensors are co-located on the same boresight so that
+# one Guidance command aims all of them at the target. Measured against the MRO
+# chassis, which is why the offsets are metres rather than centimetres.
+OVERWATCH_SENSOR_POSITION = [2.285, -0.015, 1.448]
+OVERWATCH_SENSOR_ROTATION = [-180.0, 90.0, -180.0]
+OVERWATCH_OPTICAL_CAMERA = "OTC-450 Optical Tracking Camera"
+OVERWATCH_EVENT_CAMERA = "EVS-450 Neuromorphic Event Camera"
+
 def cumulative_burns(name: str, count: int | None = None) -> list[dict[str, Any]]:
     matches = [burn for burn in BURNS if burn["spacecraft"] == name]
     return matches if count is None else matches[:count]
@@ -197,6 +219,16 @@ def scenario_orbit(name: str, stage: str) -> list[float]:
     orbit = list(SPACECRAFT_SOURCE[name]["orbit"])
     if name == "ICEYE-X36":
         return orbit
+
+    if stage == "custody":
+        # Section 4 is a clean retake point at the end-state of Section 3. Using
+        # ICEYE's elements plus a small anomaly offset makes that proximity exist
+        # at T+0; otherwise every reload returns the Cosmos craft to tens of km out.
+        orbit = list(SPACECRAFT_SOURCE["ICEYE-X36"]["orbit"])
+        orbit[5] = (
+            orbit[5] + SECTION_4_ALONG_TRACK_OFFSETS_DEG[name]
+        ) % 360.0
+        return [round(value, 9) for value in orbit]
 
     if stage == "partial":
         orbit[2] = inclination_after(name, PARTIAL_BURN_COUNT[name])
@@ -331,26 +363,27 @@ def asset(
     }
 
 
-def iceye_asset() -> dict[str, Any]:
+def iceye_asset(*, include_camera: bool = True) -> dict[str, Any]:
     components = bus_components("iceye")
-    components.append(
-        component(
-            "Camera",
-            "SAR-X36 X-Band Imaging Payload",
-            {
-                "Sample Rate": 5.0,
-                "Mass": 8.0,
-                "Aperture": 25.0,
-                "Min Field Of View": 2.0,
-                "Field Of View": 12.0,
-                "Max Field Of View": 25.0,
-                "Focusing Distance": 600000.0,
-                "Resolution": [1024, 1024],
-            },
-            position=[0.008, -0.276, -0.014],
-            rotation=[90.0, 0.0, 0.0],
+    if include_camera:
+        components.append(
+            component(
+                "Camera",
+                "SAR-X36 X-Band Imaging Payload",
+                {
+                    "Sample Rate": 5.0,
+                    "Mass": 8.0,
+                    "Aperture": 25.0,
+                    "Min Field Of View": 2.0,
+                    "Field Of View": 12.0,
+                    "Max Field Of View": 25.0,
+                    "Focusing Distance": 600000.0,
+                    "Resolution": [1024, 1024],
+                },
+                position=[0.008, -0.276, -0.014],
+                rotation=[90.0, 0.0, 0.0],
+            )
         )
-    )
     return asset(
         "SC_ICEYE_X36",
         "ICEYE-X36",
@@ -361,16 +394,25 @@ def iceye_asset() -> dict[str, Any]:
     )
 
 
-def overwatch_asset() -> dict[str, Any]:
+def overwatch_asset(stage: str) -> dict[str, Any]:
     orbit = scenario_orbit("ICEYE-X36", "initial")
-    orbit[0] += 15.0
-    orbit[5] = (orbit[5] + 0.22) % 360.0
+    if stage == "custody":
+        # Start roughly 5 km radially outside Cosmos 2614. Section 4 is about
+        # sensor tasking, so the target must already be close enough to read in
+        # the optical view without replaying another long rendezvous.
+        orbit[0] += 5.0
+        orbit[5] = (
+            orbit[5] + SECTION_4_ALONG_TRACK_OFFSETS_DEG["COSMOS 2614"]
+        ) % 360.0
+    else:
+        orbit[0] += 15.0
+        orbit[5] = (orbit[5] + 0.22) % 360.0
     components = bus_components("overwatch")
     components.extend(
         [
             component(
                 "Camera",
-                "OTC-450 Optical Tracking Camera",
+                OVERWATCH_OPTICAL_CAMERA,
                 {
                     "Sample Rate": 10.0,
                     "Mass": 6.0,
@@ -380,9 +422,27 @@ def overwatch_asset() -> dict[str, Any]:
                     "Max Field Of View": 15.0,
                     "Focusing Distance": 250000.0,
                     "Resolution": [1024, 1024],
+                    "Monochromatic": True,
                 },
-                position=[0.0, 0.35, 0.0],
-                rotation=[-90.0, 0.0, 0.0],
+                position=OVERWATCH_SENSOR_POSITION,
+                rotation=OVERWATCH_SENSOR_ROTATION,
+            ),
+            component(
+                "Event Camera",
+                OVERWATCH_EVENT_CAMERA,
+                {
+                    "Sample Rate": 10.0,
+                    "Mass": 4.0,
+                    "Aperture": 40.0,
+                    "Min Field Of View": 0.5,
+                    "Field Of View": 5.0,
+                    "Max Field Of View": 15.0,
+                    "Focusing Distance": 250000.0,
+                    "Resolution": [1024, 1024],
+                    "Monochromatic": True,
+                },
+                position=OVERWATCH_SENSOR_POSITION,
+                rotation=OVERWATCH_SENSOR_ROTATION,
             ),
             component(
                 "Radar",
@@ -394,9 +454,8 @@ def overwatch_asset() -> dict[str, Any]:
                     "Detection Threshold": 8.0,
                     "Mass": 8.0,
                 },
-                position=[0.0, 0.35, 0.0],
-                rotation=[-90.0, 0.0, 0.0],
-                mesh="SM_Radar_1U",
+                position=OVERWATCH_SENSOR_POSITION,
+                rotation=OVERWATCH_SENSOR_ROTATION,
             ),
             component(
                 "Laser Range Finder",
@@ -407,8 +466,8 @@ def overwatch_asset() -> dict[str, Any]:
                     "Sample Rate": 1.0,
                     "Mass": 2.0,
                 },
-                position=[0.0, 0.35, 0.0],
-                rotation=[-90.0, 0.0, 0.0],
+                position=OVERWATCH_SENSOR_POSITION,
+                rotation=OVERWATCH_SENSOR_ROTATION,
             ),
         ]
     )
@@ -441,8 +500,8 @@ def cosmos_asset(name: str, stage: str, *, rpo: bool = False) -> dict[str, Any]:
                     "Focusing Distance": 1000.0,
                     "Resolution": [1024, 1024],
                 },
-                position=[0.0, 0.30, 0.0],
-                rotation=[-90.0, 0.0, 0.0],
+                position=[0.0, -0.293, -0.018],
+                rotation=[90.0, 0.0, 0.0],
             )
         )
     return asset(
@@ -524,6 +583,29 @@ def rpo_approach_events(cosmos_names: list[str]) -> list[dict[str, Any]]:
     return sorted(events, key=lambda event: event["Time"])
 
 
+def iceye_nadir_event() -> dict[str, Any]:
+    """Slew ICEYE to nadir at T+0 so Section 4 does not need a manual setup command.
+
+    There is no payload camera on ICEYE in that section. The SAR camera's +z axis
+    is body -Y after the 90° X rotation, so body -Y is the equivalent nadir face.
+    """
+    return {
+        "Enabled": True,
+        "Name": "ICEYE-X36 Holds Nadir",
+        "Time": 0.0,
+        "Repeat": False,
+        "Interval": 1.0,
+        "Type": "Spacecraft",
+        "Target": "Guidance",
+        "Assets": ["SC_ICEYE_X36"],
+        "Data": {
+            "Pointing": "nadir",
+            "Alignment": "-y",
+            "Planet": "earth",
+        },
+    }
+
+
 def cosmos_2614_optical_guidance_event() -> dict[str, Any]:
     """Point COSMOS 2614's optical camera at the ICEYE spacecraft origin."""
     return {
@@ -556,6 +638,9 @@ def base_scenario(
     include_overwatch: bool,
     include_cosmos: bool = True,
     cosmos_rpo: bool = False,
+    include_iceye_camera: bool = True,
+    extra_events: list[dict[str, Any]] | None = None,
+    epoch: str = EPOCH,
 ) -> dict[str, Any]:
     if speed > MAX_SPEED:
         raise ValueError(
@@ -564,10 +649,10 @@ def base_scenario(
             "Speed the footage up in the edit instead."
         )
 
-    assets = [iceye_asset()]
+    assets = [iceye_asset(include_camera=include_iceye_camera)]
     collection_ids = ["SC_ICEYE_X36"]
     if include_overwatch:
-        assets.append(overwatch_asset())
+        assets.append(overwatch_asset(stage))
         collection_ids.append("SC_SDA_OVERWATCH")
 
     # Section 1 leaves the Cosmos out of the file entirely rather than loading
@@ -584,7 +669,9 @@ def base_scenario(
     events = rpo_approach_events(cosmos_names) if cosmos_rpo else []
     if cosmos_rpo and "COSMOS 2614" in cosmos_names:
         events.append(cosmos_2614_optical_guidance_event())
-        events.sort(key=lambda event: event["Time"])
+    if extra_events:
+        events.extend(extra_events)
+    events.sort(key=lambda event: event["Time"])
 
     return {
         "metadata": {
@@ -593,7 +680,7 @@ def base_scenario(
             "brief": brief,
         },
         "simulation": {
-            "epoch": EPOCH,
+            "epoch": epoch,
             "speed": speed,
             "step_size": STEP_SIZE,
             "integrator": INTEGRATOR,
@@ -758,18 +845,25 @@ def build_section_4() -> dict[str, Any]:
     scenario = base_scenario(
         section_number=4,
         title="Blue Tightens Custody",
-        description="Blue tasks a fictional orbital SDA asset to improve range and optical custody.",
+        description="With Cosmos 2614 holding near ICEYE, Blue tasks an orbital SDA asset to improve range and optical custody.",
         brief=(
             "# Operator shot\n"
-            "Select SDA Overwatch, point SBR-900 Space Surveillance Radar or "
-            "OTC-450 Optical Tracking Camera at a Cosmos target, "
-            "capture/range, then downlink. This fictional orbital sensor is not Spaceflux. "
+            "This section starts 12 hours later with the five Cosmos spacecraft already at illustrative close stations "
+            "around ICEYE-X36: Cosmos 2614 is about 1 km from ICEYE, the other four are about 4-8 km away, and SDA "
+            "Overwatch is staged about 5 km radially outside Cosmos 2614. ICEYE-X36 has no imaging payload here "
+            "and is slewed to nadir at T+0, so do not set it up by hand. The Cosmos craft have no cameras. "
+            "Select SDA Overwatch, point SBR-900 Space Surveillance Radar, OTC-450 Optical Tracking Camera "
+            "or EVS-450 Neuromorphic Event Camera at Cosmos 2614, capture/range, then downlink. "
+            "The proximity and orbital sensor are illustrative; this fictional orbital sensor is not Spaceflux. "
             "Spaceflux credit is limited to optical observations of Cosmos 2610, 2612, 2613, and 2614."
         ),
-        stage="close",
+        stage="custody",
         speed=5.0,
         end_time=1200.0,
         include_overwatch=True,
+        include_iceye_camera=False,
+        extra_events=[iceye_nadir_event()],
+        epoch=SECTION_4_EPOCH,
     )
     return scenario
 
@@ -806,7 +900,8 @@ def build_all() -> dict[str, dict[str, Any]]:
 def validate(scenarios: dict[str, dict[str, Any]]) -> None:
     expected_neutral = {f"SC_COSMOS_{number}" for number in range(2610, 2615)}
     for filename, scenario in scenarios.items():
-        assert scenario["simulation"]["epoch"] == EPOCH
+        expected_epoch = SECTION_4_EPOCH if filename == "section_4.json" else EPOCH
+        assert scenario["simulation"]["epoch"] == expected_epoch
         assert scenario["simulation"]["integrator"] == INTEGRATOR
         assert scenario["simulation"]["step_size"] == STEP_SIZE
         assert scenario["simulation"]["speed"] <= MAX_SPEED
@@ -868,8 +963,13 @@ def validate(scenarios: dict[str, dict[str, Any]]) -> None:
             assert any(
                 component["name"] == COSMOS_2614_OPTICAL_CAMERA
                 and component["data"]["Field Of View"] == 0.5
+                and component["position"] == [0.0, -0.293, -0.018]
+                and component["rotation"] == [90.0, 0.0, 0.0]
                 for component in cosmos_2614["components"]
             )
+        elif filename == "section_4.json":
+            assert not rpo_assets
+            assert scenario["events"] == [iceye_nadir_event()]
         else:
             assert not rpo_assets
             assert not scenario["events"]
@@ -889,6 +989,49 @@ def validate(scenarios: dict[str, dict[str, Any]]) -> None:
     assert "13 km" in section_3["metadata"]["brief"]
     section_4 = scenarios["section_4.json"]
     assert "fictional" in section_4["metadata"]["brief"].lower()
+    assert section_4["simulation"]["epoch"] == SECTION_4_EPOCH
+    section_4_assets = {
+        entry["id"]: entry for entry in section_4["assets"]["space"]
+    }
+    iceye_orbit = section_4_assets["SC_ICEYE_X36"]["orbit"]["values"]
+    for name, offset in SECTION_4_ALONG_TRACK_OFFSETS_DEG.items():
+        cosmos_orbit = section_4_assets[
+            f"SC_COSMOS_{name.split()[-1]}"
+        ]["orbit"]["values"]
+        assert cosmos_orbit[:5] == iceye_orbit[:5]
+        assert abs(cosmos_orbit[5] - ((iceye_orbit[5] + offset) % 360.0)) < 1e-8
+    overwatch_orbit = section_4_assets["SC_SDA_OVERWATCH"]["orbit"]["values"]
+    cosmos_2614_orbit = section_4_assets["SC_COSMOS_2614"]["orbit"]["values"]
+    assert abs(overwatch_orbit[0] - cosmos_2614_orbit[0] - 5.0) < 1e-8
+    assert overwatch_orbit[1:] == cosmos_2614_orbit[1:]
+
+    iceye = section_4_assets["SC_ICEYE_X36"]
+    assert not any(entry["class"] in {"Camera", "Event Camera"} for entry in iceye["components"])
+    for name in SECTION_4_ALONG_TRACK_OFFSETS_DEG:
+        cosmos = section_4_assets[f"SC_COSMOS_{name.split()[-1]}"]
+        assert not any(
+            entry["class"] in {"Camera", "Event Camera"} for entry in cosmos["components"]
+        )
+
+    # All four custody sensors must stay on one boresight, or the single
+    # Guidance command in Section 4 aims the camera somewhere the radar is not.
+    overwatch_sensors = [
+        entry
+        for entry in section_4_assets["SC_SDA_OVERWATCH"]["components"]
+        if entry["class"] in {"Camera", "Event Camera", "Radar", "Laser Range Finder"}
+    ]
+    assert len(overwatch_sensors) == 4
+    optical = next(entry for entry in overwatch_sensors if entry["name"] == OVERWATCH_OPTICAL_CAMERA)
+    event_camera = next(
+        entry for entry in overwatch_sensors if entry["name"] == OVERWATCH_EVENT_CAMERA
+    )
+    assert optical["class"] == "Camera"
+    assert optical["data"]["Monochromatic"] is True
+    assert event_camera["class"] == "Event Camera"
+    for entry in overwatch_sensors:
+        assert entry["position"] == OVERWATCH_SENSOR_POSITION
+        assert entry["rotation"] == OVERWATCH_SENSOR_ROTATION
+        assert entry["mesh"] == "None"
 
 
 def render(scenario: dict[str, Any]) -> str:

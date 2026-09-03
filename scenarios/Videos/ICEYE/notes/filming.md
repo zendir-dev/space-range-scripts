@@ -8,13 +8,15 @@ Internal filming kit for a 3–4 minute video. Load and film each section separa
 
 > If five spacecraft quietly begin converging on one of yours, when do you notice, when do you call it hostile, and what can you actually do about it by then?
 
-Target runtime: **3:20**
+Target runtime: **4:00** cutting short throughout, **4:45** cutting long.
 
-- Section 1 — 0:35
-- Section 2 — 0:40
-- Section 3 — 0:45
-- Section 4 — 0:50
-- Section 5 — 0:30
+- Section 1 — 0:41–0:49, 4 shots
+- Section 2 — 0:55–1:04, 4 shots
+- Section 3 — 0:54–1:05, 5 shots
+- Section 4 — 0:52–1:01, 4 shots
+- Section 5 — 0:38–0:46, 4 shots
+
+Every shot owns exactly one narration paragraph, and its length is set by how long that paragraph takes to speak at roughly 150 words per minute plus about two seconds of air. `narrative.md` holds the authoritative shot-by-shot narration; do not re-derive timings here. Record 2–3 seconds of clean handles around every take, and run `python scripts/check_timing.py` after changing narration or durations.
 
 ## Generate and load
 
@@ -221,15 +223,15 @@ Note the spacecraft are **not** clustered in this section; the along-track group
 **This is built and ready. You do not need to make a graphic.**
 
 ```
-python "scenarios/Videos/ICEYE/scripts/make_chart.py"           # Section 2, playhead stops 16 May
-python "scenarios/Videos/ICEYE/scripts/make_chart.py" --full    # Section 3 variant, runs to 21 May
+python "scenarios/Videos/ICEYE/scripts/make_chart.py"           # Section 2 Shot 2, playhead stops 16 May
+python "scenarios/Videos/ICEYE/scripts/make_chart.py" --full    # Section 3 Shot 1, resumes 16 -> 21 May
 ```
 
-Ready-to-use MP4s are in `videos/chart_section2.mp4` and `videos/chart_section3_full.mp4`. The numbered 1920×1080 PNG sequences are in `videos/chart_frames/` and `videos/chart_frames_full/`. Import a PNG folder as an **image sequence at 20 fps** only if you prefer the lossless source — 260 frames, 13.0 seconds. Trim it to whatever the narration needs; the last three seconds are a static hold on the final state, so it cuts anywhere in that tail.
+Ready-to-use MP4s are in `videos/media/2-chart.mp4` and `videos/media/3-chart.mp4`. The numbered 1920×1080 PNG sequences are in `videos/chart_frames/` and `videos/chart_frames_full/`. Import a PNG folder as an **image sequence at 20 fps** only if you prefer the lossless source — 260 frames, 13.0 seconds. Trim it to whatever the narration needs; the last three seconds are a static hold on the final state, so it cuts anywhere in that tail.
 
 The timing is 2 s hold on 14 May, an 8 s sweep, then a 3 s hold. Adjust `HOLD_IN_S`, `SWEEP_S` and `HOLD_OUT_S` at the top of the script and re-run if you want a different shape. Colours, fonts and the dark background are set to sit against Studio footage.
 
-The `--full` variant is for Section 3, where all five have completed. Both variants share a colour per spacecraft so the two charts cut together.
+The `--full` variant is **Section 3 Shot 1**, where the remaining two craft complete. It resumes at the 16 May stop rather than replaying from 14 May, so its first frame is pixel-identical to the Section 2 render's last frame — hold on that frame at the end of Section 2 and the cut into Section 3 is invisible. Both variants share a colour per spacecraft, so lines already converged stay put. Pass `--from-start` if you ever want the full 14 May replay instead.
 
 How it is built, for reference:
 
@@ -264,18 +266,18 @@ The dramatic beat is the shape: 2613 climbs alone, then 2610 follows on the same
 
 ### Shots
 
-Roughly 40 s of raw footage across four distinct textures. Only the last two need the simulation running.
+Roughly 55–64 s in the edit across four distinct textures. Only the last two need the simulation running. One narration paragraph per shot; see `narrative.md` for the exact wording.
 
-1. **Studio establishing shot, 10–12 s.** Short comet-tail trails, labels on all six. Open overhead at the pole where the orbits look concentric, then move to edge-on down the line of nodes until the bundle and the two strays separate. Callout `16 MAY 2026`. This is all the 3D view has to say — resist adding a second angle.
-2. **Chart, 12–15 s.** The centrepiece above. Callouts `FIRST: 2613 — AMBIGUOUS`, then `2610`, `2612`, then `THREE OF FIVE`.
+1. **Studio establishing shot, 14–16 s.** Short comet-tail trails, labels on all six. Open overhead at the pole where the orbits look concentric, then move to edge-on down the line of nodes until the bundle and the two strays separate. Callout `16 MAY 2026`. Resist adding a second angle.
+2. **Chart, 23–26 s.** The rendered source is 13.0 s, so retime it to approximately 55% or extend its final hold. This is the longest narration block in the video. Callouts `FIRST: 2613 — AMBIGUOUS`, then `2610`, `2612`, then `THREE OF FIVE`.
 3. **Operator, 8–10 s, running at 8×.** Select `ICEYE-X36` and command a nadir imaging slew. Show the command going out and attitude and reaction-wheel telemetry responding. ICEYE is carrying on with routine work while the pattern assembles around it. Callout `ICEYE-X36 — ROUTINE TASKING`.
-4. **Payload view, 6–8 s, running at 8×.** Cut to the `SAR-X36 X-Band Imaging Payload` camera. Earth through the sensor is a completely different image and is what breaks the rings-on-black monotony.
+4. **Payload view, 10–12 s, running at 8×.** Cut to the `SAR-X36 X-Band Imaging Payload` camera. Earth through the sensor is a completely different image and is what breaks the rings-on-black monotony. The section's sharpest line lands over this calm image, so do not cut it short.
 
 Do not have the Cosmos point at or track ICEYE in **Section 2**. It would destroy the ambiguity this section is built on. Reserve that explicitly illustrative escalation for Cosmos 2614 at inspection range in Section 3.
 
 ### Talk track
 
-“Five recently launched Cosmos satellites were already nearby in orbital terms, but in a different plane. Then one changed inclination. For a new spacecraft, that could be routine commissioning. The important event was not the first burn. It was the second spacecraft moving in the same direction—then the third. Intent did not arrive as one alert. It emerged as a pattern.”
+Use the exact Section 2 spoken script in `narrative.md`. It is four paragraphs, one per shot above, in order.
 
 ### On-screen callouts
 
@@ -337,12 +339,12 @@ Two honesty notes for this section. The closure's ΔV is whatever the controller
 
 ### Shots
 
-1. Wide shot before T+60 s: all five near the ICEYE inclination but still tens of km out.
-2. Overlay or title: `11 selected inclination steps`.
+1. **Shot 1 is the second chart render, not Studio footage.** Use `videos/media/3-chart.mp4`. It resumes at the 16 May stop, so its first frame is identical to the Section 2 chart's last frame and the two cut together invisibly; the sweep then runs 16 to 21 May and 2611 and 2614 finally step up to `5 of 5`. This is the shot that carries the eleven-steps and delta-V claim, because Studio cannot show either.
+2. Wide Studio shot before T+60 s: all five near the ICEYE inclination but still tens of km out. Overlay or title: `11 selected inclination steps`.
 3. Overlay or title: `~108–117 m/s per spacecraft`.
 4. Let the RPO approach run and film the five closing in. This is the section's money shot.
 5. Cover the 2614 repeat sequence: it tightens to 1 km at T+3000 s, then withdraws to 6 km at T+4800 s. Cut these together tightly so the "we can come back whenever we like" point lands.
-6. After the slew settles near the 1 km hold, show an exterior angle of 2614 tracking ICEYE and then cut to the `OCS-410 Narrow-Field Inspection Camera` feed for 8–10 s.
+6. After the slew settles near the 1 km hold, show an exterior angle of 2614 tracking ICEYE and then cut to the `OCS-410 Narrow-Field Inspection Camera` feed for **14–17 s in the edit**. Record at least 20 s so both narration sentences and the disclosure have room.
 7. Put `ILLUSTRATIVE PHASING — NOT A RECONSTRUCTED CLOSE APPROACH` on screen throughout the approach and grouping.
 8. During the optical feed, replace it with `ILLUSTRATIVE OPTICAL INSPECTION — NO ATTITUDE OR PAYLOAD DATA`.
 9. Hold a closing caption that separates the two: `INCLINATION CAMPAIGN: RECONSTRUCTED · CLOSE PHASING: ILLUSTRATIVE`. Never let the grouping shot run without one of these on screen.
@@ -375,21 +377,32 @@ Purpose: show an operator doing something realistic and useful without pretendin
 
 ### Setup
 
+Section 4 is a staged continuation, not a replay of Section 3's approach:
+
+- Epoch: `2026/05/14 12:00:00`, exactly 12 hours after the other sections so Earth and the ground track begin in a visibly different orientation.
+- Cosmos 2614 starts about **1 km from ICEYE-X36**.
+- Cosmos 2610–2613 start at separate illustrative stations roughly **4–8 km from ICEYE-X36**.
+- SDA Overwatch starts about **5 km radially outside Cosmos 2614**, close enough for optical and radar custody at T+0.
+- These positions are illustrative and do not reconstruct historical phasing.
+
 1. In Operator, select `SDA Overwatch`.
 2. Open Guidance, Camera, Radar/range telemetry, Capture, and Downlink.
-3. Choose one clear target—prefer `COSMOS 2614` for the main take.
+3. Choose `COSMOS 2614` for the main take.
 4. Keep simulation speed at 5× or lower while interacting.
-5. In Studio, use split shots: Overwatch-to-target line of sight, then the six-object geometry.
+5. In Studio, use split shots: Overwatch-to-target line of sight, then the seven-object geometry.
+6. ICEYE-X36 has no camera in this section and is already slewed to nadir at T+0. Do not open an ICEYE or Cosmos camera view.
 
 ### Operator actions to film
 
 1. Guidance → relative pointing.
-2. Target component: `SBR-900 Space Surveillance Radar` or `OTC-450 Optical Tracking Camera`.
+2. Target component: `SBR-900 Space Surveillance Radar`, `OTC-450 Optical Tracking Camera` or `EVS-450 Neuromorphic Event Camera`.
 3. Target spacecraft: `COSMOS 2614`.
 4. Apply guidance and wait for the slew.
-5. Capture with `OTC-450 Optical Tracking Camera`, name it `COSMOS_2614_Custody`.
+5. Capture with `OTC-450 Optical Tracking Camera` (monochromatic) or `EVS-450 Neuromorphic Event Camera`, name it `COSMOS_2614_Custody`.
 6. Hold `SBR-900 Space Surveillance Radar`/`LRP-1550 Laser Ranging Payload` on the target long enough to show range updates.
 7. Downlink the observation.
+
+The Guidance command rotates the selected Overwatch payload; it does not translate the spacecraft. Do not wait for an approach manoeuvre—Overwatch and Cosmos 2614 already begin approximately 5 km apart.
 
 If radar telemetry is not visually useful in the current build, film the pointing/capture command and use Studio range/track overlays for the custody result. Do not substitute a fake Spaceflux spacecraft label.
 

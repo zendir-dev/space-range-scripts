@@ -6,7 +6,10 @@ only representation in the video that renders time, and it plots the catalogue
 timing reference directly.
 
     python "scenarios/Videos/ICEYE/scripts/make_chart.py"            # Section 2, stops 16 May
-    python "scenarios/Videos/ICEYE/scripts/make_chart.py" --full      # Section 3, runs to 21 May
+    python "scenarios/Videos/ICEYE/scripts/make_chart.py" --full      # Section 3, 16 -> 21 May
+
+The Section 3 variant resumes at the 16 May stop so its first frame matches the
+Section 2 variant's last frame and the two cut together without a rewind.
 
 Import the output folder into the editor as an image sequence at 20 fps.
 """
@@ -26,6 +29,7 @@ import matplotlib.pyplot as plt
 
 ICEYE_DIR = Path(__file__).resolve().parent.parent
 VIDEOS_DIR = ICEYE_DIR / "videos"
+MEDIA_DIR = VIDEOS_DIR / "media"
 
 FPS = 20
 WIDTH_PX, HEIGHT_PX = 1920, 1080
@@ -324,7 +328,12 @@ def main() -> None:
     parser.add_argument(
         "--full",
         action="store_true",
-        help="Sweep to 21 May for Section 3 instead of stopping at 16 May.",
+        help="Sweep to 21 May for Section 3, resuming from the 16 May stop.",
+    )
+    parser.add_argument(
+        "--from-start",
+        action="store_true",
+        help="With --full, replay from 14 May instead of resuming from 16 May.",
     )
     parser.add_argument(
         "--no-video",
@@ -334,7 +343,11 @@ def main() -> None:
     parser.add_argument("--outdir", default=None)
     args = parser.parse_args()
 
+    # Section 3 cuts straight out of Section 2's closing hold, so its first frame has
+    # to be Section 2's last frame. Sweeping from 14 May again would read as a rewind.
     stop = AXIS_END if args.full else SECTION_2_STOP
+    start = SECTION_2_STOP if (args.full and not args.from_start) else AXIS_START
+
     outdir = Path(args.outdir) if args.outdir else VIDEOS_DIR / (
         "chart_frames_full" if args.full else "chart_frames"
     )
@@ -346,14 +359,14 @@ def main() -> None:
     hold_in = int(HOLD_IN_S * FPS)
     sweep = int(SWEEP_S * FPS)
     hold_out = int(HOLD_OUT_S * FPS)
-    span = (stop - AXIS_START).total_seconds()
+    span = (stop - start).total_seconds()
 
     index = 0
     for _ in range(hold_in):
-        render(AXIS_START, stop, outdir / f"frame_{index:04d}.png", steps)
+        render(start, stop, outdir / f"frame_{index:04d}.png", steps)
         index += 1
     for step in range(1, sweep + 1):
-        moment = AXIS_START + timedelta(seconds=span * step / sweep)
+        moment = start + timedelta(seconds=span * step / sweep)
         render(moment, stop, outdir / f"frame_{index:04d}.png", steps)
         index += 1
     for _ in range(hold_out):
@@ -364,8 +377,9 @@ def main() -> None:
     print(f"Import as an image sequence at {FPS} fps ({index / FPS:.1f} s).")
 
     if not args.no_video:
-        name = "chart_section3_full.mp4" if args.full else "chart_section2.mp4"
-        encode_video(outdir, VIDEOS_DIR / name, FPS)
+        MEDIA_DIR.mkdir(parents=True, exist_ok=True)
+        name = "3-chart.mp4" if args.full else "2-chart.mp4"
+        encode_video(outdir, MEDIA_DIR / name, FPS)
 
 
 if __name__ == "__main__":

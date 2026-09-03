@@ -384,23 +384,54 @@
               "Resolution": [
                 1024,
                 1024
-              ]
+              ],
+              "Monochromatic": true
             },
             "position": [
-              0.0,
-              0.35,
-              0.0
+              2.285,
+              -0.015,
+              1.448
             ],
             "rotation": [
-              -90.0,
-              0.0,
-              0.0
+              -180.0,
+              90.0,
+              -180.0
+            ]
+          },
+          {
+            "class": "Event Camera",
+            "name": "EVS-450 Neuromorphic Event Camera",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Sample Rate": 10.0,
+              "Mass": 4.0,
+              "Aperture": 40.0,
+              "Min Field Of View": 0.5,
+              "Field Of View": 5.0,
+              "Max Field Of View": 15.0,
+              "Focusing Distance": 250000.0,
+              "Resolution": [
+                1024,
+                1024
+              ],
+              "Monochromatic": true
+            },
+            "position": [
+              2.285,
+              -0.015,
+              1.448
+            ],
+            "rotation": [
+              -180.0,
+              90.0,
+              -180.0
             ]
           },
           {
             "class": "Radar",
             "name": "SBR-900 Space Surveillance Radar",
-            "mesh": "SM_Radar_1U",
+            "mesh": "None",
             "enabled": true,
             "data": {
               "Field Of View": 20.0,
@@ -410,14 +441,14 @@
               "Mass": 8.0
             },
             "position": [
-              0.0,
-              0.35,
-              0.0
+              2.285,
+              -0.015,
+              1.448
             ],
             "rotation": [
-              -90.0,
-              0.0,
-              0.0
+              -180.0,
+              90.0,
+              -180.0
             ]
           },
           {
@@ -432,14 +463,14 @@
               "Mass": 2.0
             },
             "position": [
-              0.0,
-              0.35,
-              0.0
+              2.285,
+              -0.015,
+              1.448
             ],
             "rotation": [
-              -90.0,
-              0.0,
-              0.0
+              -180.0,
+              90.0,
+              -180.0
             ]
           }
         ]

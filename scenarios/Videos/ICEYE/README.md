@@ -21,7 +21,9 @@ ICEYE/
   scripts/
     generate_scenarios.py
     make_chart.py
-  videos/          Generated chart MP4s and frame sequences (gitignored)
+    check_timing.py  Verifies each shot owns one narration beat that fits
+  videos/          Generated frames and media (gitignored)
+                   media/2-chart.mp4, media/3-chart.mp4
 ```
 
 ## Generate

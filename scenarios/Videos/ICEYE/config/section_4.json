@@ -1,11 +1,11 @@
 {
   "metadata": {
     "name": "Intent in Orbit - Stage 4",
-    "description": "Blue tasks a fictional orbital SDA asset to improve range and optical custody.",
-    "brief": "# Operator shot\nSelect SDA Overwatch, point SBR-900 Space Surveillance Radar or OTC-450 Optical Tracking Camera at a Cosmos target, capture/range, then downlink. This fictional orbital sensor is not Spaceflux. Spaceflux credit is limited to optical observations of Cosmos 2610, 2612, 2613, and 2614."
+    "description": "With Cosmos 2614 holding near ICEYE, Blue tasks an orbital SDA asset to improve range and optical custody.",
+    "brief": "# Operator shot\nThis section starts 12 hours later with the five Cosmos spacecraft already at illustrative close stations around ICEYE-X36: Cosmos 2614 is about 1 km from ICEYE, the other four are about 4-8 km away, and SDA Overwatch is staged about 5 km radially outside Cosmos 2614. ICEYE-X36 has no imaging payload here and is slewed to nadir at T+0, so do not set it up by hand. The Cosmos craft have no cameras. Select SDA Overwatch, point SBR-900 Space Surveillance Radar, OTC-450 Optical Tracking Camera or EVS-450 Neuromorphic Event Camera at Cosmos 2614, capture/range, then downlink. The proximity and orbital sensor are illustrative; this fictional orbital sensor is not Spaceflux. Spaceflux credit is limited to optical observations of Cosmos 2610, 2612, 2613, and 2614."
   },
   "simulation": {
-    "epoch": "2026/05/14 00:00:00",
+    "epoch": "2026/05/14 12:00:00",
     "speed": 5.0,
     "step_size": 0.1,
     "integrator": "Euler",
@@ -189,35 +189,6 @@
             "data": {
               "Mass": 4.0
             }
-          },
-          {
-            "class": "Camera",
-            "name": "SAR-X36 X-Band Imaging Payload",
-            "mesh": "None",
-            "enabled": true,
-            "data": {
-              "Sample Rate": 5.0,
-              "Mass": 8.0,
-              "Aperture": 25.0,
-              "Min Field Of View": 2.0,
-              "Field Of View": 12.0,
-              "Max Field Of View": 25.0,
-              "Focusing Distance": 600000.0,
-              "Resolution": [
-                1024,
-                1024
-              ]
-            },
-            "position": [
-              0.008,
-              -0.276,
-              -0.014
-            ],
-            "rotation": [
-              90.0,
-              0.0,
-              0.0
-            ]
           }
         ]
       },
@@ -227,12 +198,12 @@
         "orbit": {
           "planet": "Earth",
           "values": [
-            6927.420633,
+            6917.420633,
             0.000258196,
             97.837601,
             271.486244,
             7.059927,
-            86.285415
+            86.057115
           ],
           "offset": [
             0.0,
@@ -384,23 +355,54 @@
               "Resolution": [
                 1024,
                 1024
-              ]
+              ],
+              "Monochromatic": true
             },
             "position": [
-              0.0,
-              0.35,
-              0.0
+              2.285,
+              -0.015,
+              1.448
             ],
             "rotation": [
-              -90.0,
-              0.0,
-              0.0
+              -180.0,
+              90.0,
+              -180.0
+            ]
+          },
+          {
+            "class": "Event Camera",
+            "name": "EVS-450 Neuromorphic Event Camera",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Sample Rate": 10.0,
+              "Mass": 4.0,
+              "Aperture": 40.0,
+              "Min Field Of View": 0.5,
+              "Field Of View": 5.0,
+              "Max Field Of View": 15.0,
+              "Focusing Distance": 250000.0,
+              "Resolution": [
+                1024,
+                1024
+              ],
+              "Monochromatic": true
+            },
+            "position": [
+              2.285,
+              -0.015,
+              1.448
+            ],
+            "rotation": [
+              -180.0,
+              90.0,
+              -180.0
             ]
           },
           {
             "class": "Radar",
             "name": "SBR-900 Space Surveillance Radar",
-            "mesh": "SM_Radar_1U",
+            "mesh": "None",
             "enabled": true,
             "data": {
               "Field Of View": 20.0,
@@ -410,14 +412,14 @@
               "Mass": 8.0
             },
             "position": [
-              0.0,
-              0.35,
-              0.0
+              2.285,
+              -0.015,
+              1.448
             ],
             "rotation": [
-              -90.0,
-              0.0,
-              0.0
+              -180.0,
+              90.0,
+              -180.0
             ]
           },
           {
@@ -432,14 +434,14 @@
               "Mass": 2.0
             },
             "position": [
-              0.0,
-              0.35,
-              0.0
+              2.285,
+              -0.015,
+              1.448
             ],
             "rotation": [
-              -90.0,
-              0.0,
-              0.0
+              -180.0,
+              90.0,
+              -180.0
             ]
           }
         ]
@@ -450,12 +452,12 @@
         "orbit": {
           "planet": "Earth",
           "values": [
-            6930.10268,
-            0.001928257,
-            97.796446,
-            271.671926,
-            117.679377,
-            335.265965
+            6912.420633,
+            0.000258196,
+            97.837601,
+            271.486244,
+            7.059927,
+            86.131415
           ],
           "offset": [
             0.0,
@@ -599,12 +601,12 @@
         "orbit": {
           "planet": "Earth",
           "values": [
-            6932.452847,
-            0.001562587,
-            97.801662,
-            271.661078,
-            119.740239,
-            333.665103
+            6912.420633,
+            0.000258196,
+            97.837601,
+            271.486244,
+            7.059927,
+            86.007415
           ],
           "offset": [
             0.0,
@@ -748,12 +750,12 @@
         "orbit": {
           "planet": "Earth",
           "values": [
-            6917.592797,
-            0.002367979,
-            97.850842,
-            271.686183,
-            157.739911,
-            294.965431
+            6912.420633,
+            0.000258196,
+            97.837601,
+            271.486244,
+            7.059927,
+            86.115415
           ],
           "offset": [
             0.0,
@@ -897,12 +899,12 @@
         "orbit": {
           "planet": "Earth",
           "values": [
-            6910.115082,
-            0.001476204,
-            97.779936,
-            271.699965,
-            194.493244,
-            259.182098
+            6912.420633,
+            0.000258196,
+            97.837601,
+            271.486244,
+            7.059927,
+            86.032415
           ],
           "offset": [
             0.0,
@@ -1046,12 +1048,12 @@
         "orbit": {
           "planet": "Earth",
           "values": [
-            6909.520673,
-            0.000983558,
-            97.777626,
-            271.696564,
-            205.237301,
-            247.188041
+            6912.420633,
+            0.000258196,
+            97.837601,
+            271.486244,
+            7.059927,
+            86.057115
           ],
           "offset": [
             0.0,
@@ -1186,35 +1188,6 @@
             "data": {
               "Mass": 4.0
             }
-          },
-          {
-            "class": "Camera",
-            "name": "OCS-410 Narrow-Field Inspection Camera",
-            "mesh": "None",
-            "enabled": true,
-            "data": {
-              "Sample Rate": 10.0,
-              "Mass": 4.0,
-              "Aperture": 20.0,
-              "Min Field Of View": 0.25,
-              "Field Of View": 0.5,
-              "Max Field Of View": 5.0,
-              "Focusing Distance": 1000.0,
-              "Resolution": [
-                1024,
-                1024
-              ]
-            },
-            "position": [
-              0.0,
-              0.3,
-              0.0
-            ],
-            "rotation": [
-              -90.0,
-              0.0,
-              0.0
-            ]
           }
         ]
       }
@@ -1240,6 +1213,24 @@
     "ground": [],
     "space": []
   },
-  "events": [],
+  "events": [
+    {
+      "Enabled": true,
+      "Name": "ICEYE-X36 Holds Nadir",
+      "Time": 0.0,
+      "Repeat": false,
+      "Interval": 1.0,
+      "Type": "Spacecraft",
+      "Target": "Guidance",
+      "Assets": [
+        "SC_ICEYE_X36"
+      ],
+      "Data": {
+        "Pointing": "nadir",
+        "Alignment": "-y",
+        "Planet": "earth"
+      }
+    }
+  ],
   "questions": []
 }
