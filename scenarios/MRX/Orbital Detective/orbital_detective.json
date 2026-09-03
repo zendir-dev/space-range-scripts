@@ -1,0 +1,1341 @@
+{
+	"metadata": {
+		"name": "Orbital Detective",
+		"description": "This is a Space-Based Space-Surveillance (SBSD) scenario. Each team operates a network of satellites to detect and track objects in orbit, using their onboard sensors."
+	},
+	"simulation": {
+		"epoch": "2026/06/21 04:00:00",
+		"speed": 3.0,
+		"step_size": 0.1,
+		"integrator": "Euler",
+		"end_time": 10800.0
+	},
+	"universe": {
+		"atmosphere": false,
+		"magnetosphere": false,
+		"gps": true,
+		"cloud_opacity": 0.7,
+		"cloud_contrast": 2.5,
+		"ambient_light": 0.25
+	},
+	"ground_stations": {
+		"locations": [
+			"Buenos Aires",
+			"Cairo",
+			"Cape Town",
+			"Delhi",
+			"Easter Island",
+			"Honolulu",
+			"Singapore",
+			"Tokyo"
+		],
+		"min_elevation": 5,
+		"max_range": 0,
+		"scale": 100
+	},
+	"teams": [
+		{
+			"enabled": true,
+			"id": 473829,
+			"password": "R4K7MZ",
+			"name": "Team Blue",
+			"key": 42,
+			"frequency": 612,
+			"collection": "Main",
+			"color": "#0050FF"
+		},
+		{
+			"enabled": true,
+			"id": 916354,
+			"password": "8XTPWN",
+			"name": "Team Green",
+			"key": 87,
+			"frequency": 745,
+			"collection": "Main",
+			"color": "#00FF00"
+		},
+		{
+			"enabled": true,
+			"id": 263718,
+			"password": "5LZQVB",
+			"name": "Team Yellow",
+			"key": 154,
+			"frequency": 889,
+			"collection": "Main",
+			"color": "#FFFF00"
+		},
+		{
+			"enabled": true,
+			"id": 584927,
+			"password": "2WCF9H",
+			"name": "Team Orange",
+			"key": 203,
+			"frequency": 534,
+			"collection": "Main",
+			"color": "#FF7000"
+		},
+		{
+			"enabled": true,
+			"id": 731456,
+			"password": "N6RGYD",
+			"name": "Team Pink",
+			"key": 117,
+			"frequency": 678,
+			"collection": "Main",
+			"color": "#FF8CEC"
+		},
+		{
+			"enabled": true,
+			"id": 629540,
+			"password": "B8WNHQ",
+			"name": "Team White",
+			"key": 72,
+			"frequency": 712,
+			"collection": "Main",
+			"color": "#FFFFFF"
+		},
+		{
+			"enabled": true,
+			"id": 395082,
+			"password": "7SMXKE",
+			"name": "Team Purple",
+			"key": 29,
+			"frequency": 823,
+			"collection": "Main",
+			"color": "#8600FF"
+		},
+		{
+			"enabled": true,
+			"id": 847163,
+			"password": "4PVTZ3",
+			"name": "Team Cyan",
+			"key": 195,
+			"frequency": 561,
+			"collection": "Main",
+			"color": "#00FFFF"
+		}
+	],
+	"assets": {
+		"space": [
+			{
+				"id": "SC_LEO",
+				"name": "LEO",
+				"orbit": {
+					"planet": "Earth",
+					"values": [
+						9000.0,
+						0.001,
+						51.6,
+						0.0,
+						0.0,
+						0.0
+					],
+					"offset": [
+						0.0,
+						0.0,
+						0.0,
+						0.0,
+						0.0,
+						0.01
+					]
+				},
+				"physics": {
+					"override_mass": true,
+					"mass": 300.0,
+					"center_of_mass": [
+						0.0,
+						0.0,
+						0.0
+					],
+					"inertia_tensor": [
+						[
+							50.0,
+							0.0,
+							0.0
+						],
+						[
+							0.0,
+							50.0,
+							0.0
+						],
+						[
+							0.0,
+							0.0,
+							50.0
+						]
+					]
+				},
+				"visualization": {
+					"mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/ZenSat/BP_Z_SC_ZenSat_Chassis",
+					"scale": 1.0,
+					"offset": [
+						0.0,
+						0.0,
+						0.12
+					],
+					"reflectivity": 0.5
+				},
+				"controller": {
+					"safe_fraction": 0.1,
+					"capture_tax": 0.001,
+					"downlink_tax": 0.01,
+					"ping_interval": 20.0,
+					"reset_interval": 60.0,
+					"jamming_multiplier": 100.0,
+					"enable_rpo_software": false
+				},
+				"power": {
+					"bus": [
+						{
+							"source_component": "Solar Panel +X",
+							"source_terminal": "out",
+							"target_component": "Battery",
+							"target_terminal": "out"
+						},
+						{
+							"source_component": "Solar Panel -X",
+							"source_terminal": "out",
+							"target_component": "Battery",
+							"target_terminal": "out"
+						}
+					]
+				},
+				"components": [
+					{
+						"class": "Solar Panel",
+						"name": "Solar Panel +X",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.8,
+							0.276313,
+							-0.2
+						],
+						"rotation": [
+							35.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Area": 0.5,
+							"Efficiency": 0.4,
+							"Mass": 12.0
+						}
+					},
+					{
+						"class": "Solar Panel",
+						"name": "Solar Panel -X",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							-0.8,
+							0.276313,
+							-0.2
+						],
+						"rotation": [
+							-35.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Area": 0.5,
+							"Efficiency": 0.4,
+							"Mass": 12.0
+						}
+					},
+					{
+						"class": "Battery",
+						"name": "Battery",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Nominal Capacity": 160.0,
+							"Charge Fraction": 1.0,
+							"Mass": 8.0
+						}
+					},
+					{
+						"class": "Computer",
+						"name": "Computer",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Reaction Wheels",
+						"name": "Reaction Wheels",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Mass": 9.0
+						}
+					},
+					{
+						"class": "GPS Sensor",
+						"name": "GPS Sensor",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Receiver",
+						"name": "Receiver",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							-0.36,
+							-0.16
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Antenna Gain": 4.0,
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Transmitter",
+						"name": "Transmitter",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							-0.36,
+							-0.16
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Antenna Gain": 4.0,
+							"Bit Rate": 40000.0,
+							"Mass": 1.0
+						}
+					},
+					{
+						"class": "Storage",
+						"name": "Storage",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							-0.2
+						],
+						"data": {
+							"Mass": 4.0
+						}
+					},
+					{
+						"class": "Camera",
+						"name": "Optical Camera",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							-0.049,
+							-0.311,
+							0.034
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Field Of View": 15.0,
+							"Min Field of View": 1.0,
+							"Max Field of View": 30.0,
+							"Aperture": 15.0,
+							"Focusing Distance": 10000,
+							"Resolution": [
+								1024,
+								1024
+							]
+						}
+					},
+					{
+						"class": "Charge Coupled Device",
+						"name": "Charge Coupled Device",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							-0.36,
+							-0.16
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Resolution": 64,
+							"Exposure Time": 0.05,
+							"Field Of View": 5.0,
+							"Spectral Wavelength": 550,
+							"Capture On Tick": false
+						}
+					},
+					{
+						"class": "Radar",
+						"name": "RADAR",
+						"mesh": "SM_Radar_1U",
+						"enabled": true,
+						"position": [
+							0.1,
+							0.36,
+							0.087
+						],
+						"rotation": [
+							-90.0,
+							0.0,
+							0.0
+						],
+						"scale": 2.0,
+						"data": {
+							"Field Of View": 20.0,
+							"Power": 2000.0,
+							"Gain": 40.0,
+							"Detection Threshold": 10.0,
+							"Mass": 6.0
+						}
+					},
+					{
+						"class": "Laser Range Finder",
+						"name": "LRF 120",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.1,
+							0.6,
+							0.087
+						],
+						"rotation": [
+							-90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Mass": 1.0,
+							"Operating Range": 100000.0,
+							"Sample Rate": 0.2
+						}
+					}
+				]
+			},
+			{
+				"id": "SC_GEO",
+				"name": "GEO",
+				"orbit": {
+					"planet": "Earth",
+					"values": [
+						42164.0,
+						0.0002,
+						0.1,
+						0.0,
+						0.0,
+						100.0
+					],
+					"offset": [
+						0.0,
+						0.0,
+						0.0,
+						0.0,
+						0.0,
+						0.01
+					]
+				},
+				"physics": {
+					"override_mass": true,
+					"mass": 350.0,
+					"center_of_mass": [
+						0.0,
+						0.0,
+						0.0
+					],
+					"inertia_tensor": [
+						[
+							55.0,
+							0.0,
+							0.0
+						],
+						[
+							0.0,
+							55.0,
+							0.0
+						],
+						[
+							0.0,
+							0.0,
+							55.0
+						]
+					]
+				},
+				"visualization": {
+					"mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/ZenSat/BP_Z_SC_ZenSat_Chassis",
+					"scale": 1.0,
+					"offset": [
+						0.0,
+						0.0,
+						0.12
+					],
+					"reflectivity": 0.5
+				},
+				"controller": {
+					"safe_fraction": 0.1,
+					"capture_tax": 0.001,
+					"downlink_tax": 0.01,
+					"ping_interval": 20.0,
+					"reset_interval": 60.0,
+					"jamming_multiplier": 100.0,
+					"enable_rpo_software": false
+				},
+				"power": {
+					"bus": [
+						{
+							"source_component": "Solar Panel +X",
+							"source_terminal": "out",
+							"target_component": "Battery",
+							"target_terminal": "out"
+						},
+						{
+							"source_component": "Solar Panel -X",
+							"source_terminal": "out",
+							"target_component": "Battery",
+							"target_terminal": "out"
+						}
+					]
+				},
+				"components": [
+					{
+						"class": "Solar Panel",
+						"name": "Solar Panel +X",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.8,
+							0.276313,
+							-0.2
+						],
+						"rotation": [
+							35.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Area": 0.6,
+							"Efficiency": 0.4,
+							"Mass": 14.0
+						}
+					},
+					{
+						"class": "Solar Panel",
+						"name": "Solar Panel -X",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							-0.8,
+							0.276313,
+							-0.2
+						],
+						"rotation": [
+							-35.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Area": 0.6,
+							"Efficiency": 0.4,
+							"Mass": 14.0
+						}
+					},
+					{
+						"class": "Battery",
+						"name": "Battery",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Nominal Capacity": 200.0,
+							"Charge Fraction": 1.0,
+							"Mass": 10.0
+						}
+					},
+					{
+						"class": "Computer",
+						"name": "Computer",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Reaction Wheels",
+						"name": "Reaction Wheels",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Mass": 9.0
+						}
+					},
+					{
+						"class": "GPS Sensor",
+						"name": "GPS Sensor",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Receiver",
+						"name": "Receiver",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							-0.36,
+							-0.16
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Antenna Gain": 5.0,
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Transmitter",
+						"name": "Transmitter",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							-0.36,
+							-0.16
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Antenna Gain": 5.0,
+							"Bit Rate": 40000.0,
+							"Mass": 1.0
+						}
+					},
+					{
+						"class": "Storage",
+						"name": "Storage",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							-0.2
+						],
+						"data": {
+							"Mass": 4.0
+						}
+					},
+					{
+						"class": "Camera",
+						"name": "Optical Camera",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							-0.049,
+							-0.311,
+							0.034
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Field Of View": 5.0,
+							"Min Field of View": 0.1,
+							"Max Field of View": 10.0,
+							"Aperture": 30.0,
+							"Focusing Distance": 100000,
+							"Resolution": [
+								512,
+								512
+							]
+						}
+					},
+					{
+						"class": "Charge Coupled Device",
+						"name": "Charge Coupled Device",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							-0.36,
+							-0.16
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Resolution": 64,
+							"Exposure Time": 0.3,
+							"Field Of View": 2.0,
+							"Spectral Wavelength": 550,
+							"Capture On Tick": false
+						}
+					},
+					{
+						"class": "Radar",
+						"name": "RADAR",
+						"mesh": "SM_Radar_1U",
+						"enabled": true,
+						"position": [
+							0.1,
+							0.36,
+							0.087
+						],
+						"rotation": [
+							-90.0,
+							0.0,
+							0.0
+						],
+						"scale": 2.0,
+						"data": {
+							"Field Of View": 15.0,
+							"Power": 2000.0,
+							"Gain": 42.0,
+							"Detection Threshold": 9.0,
+							"Mass": 7.0
+						}
+					},
+					{
+						"class": "Laser Range Finder",
+						"name": "LRF 120",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.1,
+							0.6,
+							0.087
+						],
+						"rotation": [
+							-90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Mass": 1.0,
+							"Operating Range": 100000.0,
+							"Sample Rate": 0.2
+						}
+					}
+				]
+			}
+		],
+		"neutral": [
+
+		],
+		"collections": [
+			{
+				"id": "Main",
+				"space_assets": [
+					"SC_LEO",
+					"SC_GEO"
+				]
+			}
+		]
+	},
+	"objects": {
+		"space": [
+			{
+				"name": "Helios-1",
+				"orbit": [
+					9000.0,
+					0.001,
+					51.6,
+					0.0,
+					0.0,
+					55.0
+				],
+				"planet": "Earth",
+				"dynamic_type": "Orbit",
+				"mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/MRO/BP_Z_SC_MRO_Chassis",
+				"scale": 1.0,
+				"reflectivity": 0.1
+			},
+			{
+				"name": "Helios-2",
+				"orbit": [
+					9000.0,
+					0.001,
+					51.6,
+					0.0,
+					0.0,
+					60.0
+				],
+				"planet": "Earth",
+				"dynamic_type": "Orbit",
+				"mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/MRO/BP_Z_SC_MRO_Chassis",
+				"scale": 1.0,
+				"reflectivity": 0.1
+			},
+			{
+				"name": "Helios-3",
+				"orbit": [
+					9000.0,
+					0.001,
+					51.6,
+					0.0,
+					0.0,
+					65.0
+				],
+				"planet": "Earth",
+				"dynamic_type": "Orbit",
+				"mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/MRO/BP_Z_SC_MRO_Chassis",
+				"scale": 5.0,
+				"reflectivity": 0.9
+			},
+			{
+				"name": "Helios-4",
+				"orbit": [
+					9000.0,
+					0.001,
+					51.6,
+					0.0,
+					0.0,
+					70.0
+				],
+				"planet": "Earth",
+				"dynamic_type": "Orbit",
+				"mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/MRO/BP_Z_SC_MRO_Chassis",
+				"scale": 1.0,
+				"reflectivity": 0.1
+			},
+			{
+				"name": "Helios-5",
+				"orbit": [
+					9000.0,
+					0.001,
+					51.6,
+					0.0,
+					0.0,
+					75.0
+				],
+				"planet": "Earth",
+				"dynamic_type": "Orbit",
+				"mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/MRO/BP_Z_SC_MRO_Chassis",
+				"scale": 5.0,
+				"reflectivity": 0.9
+			},
+			{
+				"name": "Helios-6",
+				"orbit": [
+					9000.0,
+					0.001,
+					51.6,
+					0.0,
+					0.0,
+					80.0
+				],
+				"planet": "Earth",
+				"dynamic_type": "Orbit",
+				"mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/MRO/BP_Z_SC_MRO_Chassis",
+				"scale": 1.0,
+				"reflectivity": 0.1
+			},
+			{
+				"name": "R/B Titan",
+				"orbit": [
+					42145.0,
+					0.0003,
+					0.12,
+					0.0,
+					0.0,
+					99.99
+				],
+				"planet": "Earth",
+				"dynamic_type": "Integration",
+				"attitude_rate": [
+					1.8,
+					3.0,
+					0.36
+				],
+				"mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/SecondStage/BP_Z_SC_SecondStage_Chassis",
+				"scale": 300.0,
+				"reflectivity": 0.25
+			},
+			{
+				"name": "R/B Atlas",
+				"orbit": [
+					42180.0,
+					0.0004,
+					0.1,
+					0.0,
+					0.0,
+					100
+				],
+				"planet": "Earth",
+				"dynamic_type": "Integration",
+				"attitude_rate": [
+					2.0,
+					0.8,
+					0.5
+				],
+				"mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/SecondStage/BP_Z_SC_SecondStage_Chassis",
+				"scale": 300.0,
+				"reflectivity": 0.22
+			},
+			{
+				"name": "R/B Delta",
+				"orbit": [
+					8057.105,
+					0.0003,
+					39.28,
+					0.0,
+					360,
+					8.64
+				],
+				"planet": "Earth",
+				"dynamic_type": "Integration",
+				"attitude_rate": [
+					0.3,
+					4.5,
+					0.4
+				],
+				"mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/SecondStage/BP_Z_SC_SecondStage_Chassis",
+				"scale": 1000.0,
+				"reflectivity": 0.20
+			},
+			{
+				"name": "GEO-Sierra",
+				"orbit": [
+					42164.0,
+					0.0006,
+					0.12,
+					3.0,
+					0.0,
+					97.0
+				],
+				"planet": "Earth",
+				"dynamic_type": "Orbit",
+				"mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/MRO/BP_Z_SC_MRO_Chassis",
+				"scale": 3.0,
+				"color": "#FFDD66"
+			},
+			{
+				"name": "GEO-Tango",
+				"orbit": [
+					42300.0,
+					0.0029,
+					1.0,
+					112.212,
+					0.0,
+					347.9
+				],
+				"planet": "Earth",
+				"dynamic_type": "Orbit",
+				"mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/SecondStage/BP_Z_SC_SecondStage_Chassis",
+				"scale": 3.0,
+				"color": "#FF3333"
+			},
+			{
+				"name": "Intercept",
+				"orbit": [
+					26745.0,
+					0.732,
+					46.08,
+					180,
+					129.6,
+					279.36
+				],
+				"planet": "Earth",
+				"dynamic_type": "Integration",
+				"mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/MRO/BP_Z_SC_MRO_Chassis",
+				"scale": 10000.0,
+				"color": "#FF3333",
+				"attitude": [
+					3.6,
+					11.52,
+					79.919
+				],
+				"components": [
+					{
+						"class": "Physical Text",
+						"name": "Text Back",
+						"enabled": true,
+						"position": [
+							12.061,
+							40.155,
+							-8.36
+						],
+						"rotation": [
+							178.6,
+							-77.7,
+							-82.6
+						],
+						"data": {
+							"Text": "PHANTOM",
+							"Font Color": "#FF1744",
+							"Font Size": 5000.0
+						}
+					}
+				]
+			}
+		]
+	},
+	"events": [
+
+	],
+	"questions": [
+		{
+			"section": "Constellation Analysis",
+			"title": "How many Helios spacecraft stand out from the rest of the constellation?",
+			"description": "Use the LEO spacecraft's sensors to survey the six-satellite Helios constellation. How many are anomalous?",
+			"type": "number",
+			"answer": {
+				"value": 2,
+				"tolerance": 0,
+				"unit": "",
+				"reason": "There are six members of the Helios constellation, two of which are anomalous.",
+				"score": 10
+			}
+		},
+		{
+			"section": "Constellation Analysis",
+			"title": "Which specific Helios satellites are anomalous?",
+			"description": "Compare the readings of all six members and select the two that stand out from the baseline.",
+			"type": "checkbox",
+			"answer": {
+				"options": [
+					"Helios-1",
+					"Helios-2",
+					"Helios-3",
+					"Helios-4",
+					"Helios-5",
+					"Helios-6"
+				],
+				"value": [
+					2,
+					4
+				],
+				"reason": "Helios-3 and Helios-5 are anomalous, as they are different from the rest of the constellation.",
+				"score": 10
+			}
+		},
+		{
+			"section": "Constellation Analysis",
+			"title": "What was the unique feature of the anomalous Helios spacecraft?",
+			"description": "Use the LEO imaging sensors to survey the six-satellite Helios cluster. How many are anomalous?",
+			"type": "select",
+			"answer": {
+				"options": [
+                    "Different Color",
+					"Different Orbit",
+					"High Light Reflectivity",
+					"High Spin Rate",
+					"Large EM Signature"
+				],
+				"value": 2,
+				"reason": "The anomalous Helios spacecraft are brighter than the rest of the constellation, indicating a high light reflectivity.",
+				"score": 5
+			}
+		},
+		{
+			"section": "Constellation Analysis",
+			"title": "Which onboard sensor reveals the anomalous Helios spacecraft?",
+			"description": "The anomalous spacecraft can be identified by some of the sensor data. Which sensor is it?",
+			"type": "select",
+			"answer": {
+				"options": [
+					"CCD",
+					"GPS Sensor",
+                    "Optical Camera",
+					"RADAR"
+				],
+				"value": 0,
+				"reason": "The charge coupled device (CCD) sensor reveals the anomalous Helios spacecraft, which are brighter than the rest of the constellation.",
+				"score": 5
+			}
+		},
+		{
+			"section": "Debris Analysis",
+			"title": "Estimate the roll rate of R/B Atlas.",
+			"description": "Orbit Recovery Services (ORS), a commercial debris-removal company, has contracted your team to triage spent rocket bodies ahead of a capture mission. R/B Atlas sits close to your GEO spacecraft. Aim the Laser Range Finder at it (the LRF shares the RADAR boresight) and time its range oscillation to determine the roll rate. Note: the operator terminal only surfaces one LRF range point every ~20 s, so hold the beam on the body and log readings over several minutes to capture the full rise-and-fall pattern.",
+			"type": "number",
+			"answer": {
+				"value": 2.0,
+				"tolerance": 1.0,
+				"unit": "deg/s",
+				"reason": "R/B Atlas sits within Laser Range Finder range of the GEO node; its range oscillates with a period near 180 s, giving a dominant spin of about 2 deg/s.",
+				"score": 7
+			}
+		},
+		{
+			"section": "Debris Analysis",
+			"title": "Using the capture-safety table in the brief, classify R/B Atlas.",
+			"description": "For the ORS debris-triage contract, apply your measured roll rate to the capture-safety thresholds in the mission brief and advise the company whether a servicing tug can safely capture this body.",
+			"type": "select",
+			"answer": {
+				"options": [
+					"Safe",
+					"Caution",
+					"Unsafe"
+				],
+				"value": 0,
+				"reason": "R/B Atlas rolls at a slow rate, within the safe limit (2.5 deg/s or less), so it is safe for collection.",
+				"score": 3
+			}
+		},
+		{
+			"section": "Debris Analysis",
+			"title": "Estimate the roll rate of R/B Titan.",
+			"description": "Orbit Recovery Services (ORS), a commercial debris-removal company, has contracted your team to triage spent rocket bodies ahead of a capture mission. R/B Titan sits close to your GEO spacecraft. Aim the Laser Range Finder at it (the LRF shares the RADAR boresight) and time its range oscillation to determine the roll rate. Note: the operator terminal only surfaces one LRF range point every ~20 s, so hold the beam on the body and log readings over several minutes to capture the full rise-and-fall pattern.",
+			"type": "number",
+			"answer": {
+				"value": 3.0,
+				"tolerance": 1.0,
+				"unit": "deg/s",
+				"reason": "R/B Titan sits within Laser Range Finder range of the GEO node; its range oscillates with a period near 120 s, giving a dominant spin of about 3 deg/s.",
+				"score": 7
+			}
+		},   
+		{
+			"section": "Debris Analysis",
+			"title": "Using the capture-safety table in the brief, classify R/B Titan.",
+			"description": "For the ORS debris-triage contract, apply your measured roll rate to the capture-safety thresholds in the mission brief and advise the company whether a servicing tug can safely capture this body.",
+			"type": "select",
+			"answer": {
+				"options": [
+					"Safe",
+					"Caution",
+					"Unsafe"
+				],
+				"value": 1,
+				"reason": "R/B Titan rolls at about 3 deg/s, inside the caution band (2.5 to 4.0 deg/s), so it requires despin before a capture attempt.",
+				"score": 3
+			}
+		},
+		{
+			"section": "Debris Analysis",
+			"title": "Estimate the roll rate of R/B Delta.",
+			"description": "Orbit Recovery Services (ORS) has contracted your team to triage spent rocket bodies ahead of a capture mission. R/B Delta is far from BOTH of your spacecraft - well beyond Laser Range Finder range - so the LRF cannot resolve its rotation. Be resourceful",
+			"type": "number",
+			"answer": {
+				"value": 4.5,
+				"tolerance": 1.0,
+				"unit": "deg/s",
+				"reason": "R/B Delta is out of Laser Range Finder range, so its rotation is read from the optical camera; it completes a revolution about every 80 s, a dominant spin of about 4.5 deg/s.",
+				"score": 15
+			}
+		},
+		{
+			"section": "Debris Analysis",
+			"title": "Using the capture-safety table in the brief, classify R/B Delta.",
+			"description": "For the ORS debris-triage contract, apply your measured roll rate to the capture-safety thresholds in the mission brief and advise the company whether a servicing tug can safely capture this body.",
+			"type": "select",
+			"answer": {
+				"options": [
+					"Safe",
+					"Caution",
+					"Unsafe"
+				],
+				"value": 2,
+				"reason": "R/B Delta rolls at about 4.5 deg/s, above the maximum safe roll rate (4.0 deg/s), so it is unsafe to capture.",
+				"score": 5
+			}
+		},
+		{
+			"section": "Friendly Approach",
+			"title": "Two uncorrelated tracks, GEO-Sierra and GEO-Tango, are near your GEO spacecraft. Which one is a co-orbital neighbour holding station?",
+			"description": "Ground has handed you two unidentified GEO-region tracks and cannot tell you which is friendly. Track both with your GEO radar over several minutes and compare how their range to you behaves. One neighbour keeps a roughly constant range; the other does not.",
+			"type": "select",
+			"answer": {
+				"options": [
+					"GEO-Sierra",
+					"GEO-Tango"
+				],
+				"value": 0,
+				"reason": "GEO-Sierra shares the GEO node's semi-major axis (and therefore its orbital period), so it stays in a bounded relative orbit and its radar range stays roughly constant - the station-keeper.",
+				"score": 10
+			}
+		},
+		{
+			"section": "Friendly Approach",
+			"title": "Which of the two tracks is the intruder that is NOT station-keeping?",
+			"description": "Compare the radar range trend of GEO-Sierra and GEO-Tango over the pass. The intruder is the one whose range to you changes as it drifts relative to your node.",
+			"type": "select",
+			"answer": {
+				"options": [
+					"GEO-Sierra",
+					"GEO-Tango"
+				],
+				"value": 1,
+				"reason": "GEO-Tango is on a slightly different orbit and period (SMA ~42300 km vs the node's 42164 km), so it drifts relative to your node and its radar range changes over the pass, unlike the station-keeping GEO-Sierra.",
+				"score": 10
+			}
+		},
+		{
+			"section": "Friendly Approach",
+			"title": "What best describes GEO-Tango's motion relative to your GEO node?",
+			"description": "Use your radar range measurements to reason about why one track stays put relative to you and the other drifts.",
+			"type": "select",
+			"answer": {
+				"options": [
+					"It shares your exact orbital period",
+					"It is on a slightly different orbit and period",
+					"It is on the ground, not in orbit",
+					"It is a tumbling rocket body"
+				],
+				"value": 1,
+				"reason": "GEO-Tango's semi-major axis differs from the node's, so its period differs and it drifts relative to you - whereas GEO-Sierra shares the node's period and holds a bounded, roughly constant range.",
+				"score": 10
+			}
+		},
+		{
+			"section": "High-Priority Intercept",
+			"title": "An on-orbit event has been detected. Image the resulting object and classify what type of spacecraft it is.",
+			"description": "An on-orbit event has just been detected. Analysts assess the object thrown up by the event is on a transfer orbit climbing toward the GEO belt, and it rises over the LEO horizon between roughly T+18 and T+32 minutes of simulated time. This is your top collection priority: slew the LEO imager to acquire it, capture an optical image, and match its appearance against the Spacecraft Identification Catalog in the mission brief. What category of spacecraft is it?",
+			"type": "select",
+			"answer": {
+				"options": [
+					"Space Station",
+					"Earth-Observation Satellite",
+					"CubeSat / Small Satellite",
+					"Large Satellite",
+					"Rocket Body"
+				],
+				"value": 3,
+				"reason": "In the optical image the object shows a large central bus with a prominent high-gain dish antenna and large solar wings, which matches the 'Large Satellite' category - not a compact CubeSat, an elongated rocket body, a modular space station, or a small Earth-observation bus.",
+				"score": 20
+			}
+		},
+		{
+			"section": "High-Priority Intercept",
+			"title": "The analysts' call was a transfer orbit toward GEO. What orbit class is the object actually on?",
+			"description": "From your image acquisition and radar range/motion, confirm the analysts' assessment and classify the object's orbit type. It swings from a low perigee up into the GEO belt and beyond on each revolution.",
+			"type": "select",
+			"answer": {
+				"options": [
+					"Low Earth Orbit",
+					"Medium Earth Orbit",
+					"Geostationary",
+					"Highly-Elliptical Transfer Orbit",
+                    "Sun-Synchronous Orbit"
+				],
+				"value": 3,
+				"reason": "The object has eccentricity 0.732 (perigee ~790 km altitude, apogee reaching up into and beyond the GEO belt), a highly elliptical transfer orbit - consistent with the analysts' assessment that it is transferring toward GEO.",
+				"score": 10
+			}
+		},
+		{
+			"section": "Orbit Determination",
+			"title": "What is the semi-major axis of your LEO spacecraft's orbit?",
+			"description": "Use the healthy GPS telemetry on the LEO spacecraft's to determine its orbit. Report the semi-major axis in km.",
+			"type": "number",
+			"answer": {
+				"value": 9000.0,
+				"tolerance": 150.0,
+				"unit": "km",
+				"reason": "The LEO spacecraft's orbit has a semi-major axis of 9000 km.",
+				"score": 10
+			}
+		},
+		{
+			"section": "Orbit Determination",
+			"title": "What is the altitude of your LEO spacecraft's orbit above Earth's surface?",
+			"description": "Based on the SMA, calculate the altitude of the LEO spacecraft's orbit above Earth's surface, in km.",
+			"type": "number",
+			"answer": {
+				"value": 2622.0,
+				"tolerance": 200.0,
+				"unit": "km",
+				"reason": "A 9000 km semi-major axis is about 2622 km above the surface (9000 km minus Earth's ~6378 km radius).",
+				"score": 6
+			}
+		},
+		{
+			"section": "Orbit Determination",
+			"title": "What is the eccentricity of your LEO spacecraft's orbit?",
+			"description": "From the GPS-derived orbit of the LEO spacecraft, report the eccentricity.",
+			"type": "number",
+			"answer": {
+				"value": 0.001,
+				"tolerance": 0.005,
+				"unit": "",
+				"reason": "The LEO spacecraft's orbit is very nearly circular, with an eccentricity of about 0.001.",
+				"score": 7
+			}
+		},
+		{
+			"section": "Orbit Determination",
+			"title": "What is the inclination of your LEO spacecraft's orbit?",
+			"description": "Read the maximum latitude reached by the LEO spacecraft from its GPS telemetry to determine inclination, in degrees.",
+			"type": "number",
+			"answer": {
+				"value": 51.6,
+				"tolerance": 1.0,
+				"unit": "deg",
+				"reason": "The LEO spacecraft's orbit is inclined at 51.6 degrees.",
+				"score": 7
+			}
+		}
+	]
+}

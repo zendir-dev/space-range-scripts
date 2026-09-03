@@ -1,12 +1,12 @@
 # Decoding Telemetry
 
-Every byte your client receives on `Downlink` is wrapped in three layers: an MQTT XOR cipher, a 5-byte frame header, and a Caesar-encoded payload (the actual data). This guide takes you all the way from a raw MQTT message to a typed Python/JavaScript object you can plot, log, or feed into the rest of your stack.
+Every byte received on `Downlink` is wrapped in three layers: a Message Queuing Telemetry Transport (MQTT) XOR cipher, a 5-byte frame header, and a Caesar-encoded payload. This guide converts a raw MQTT message into a typed Python or JavaScript object for plotting, logging, or further processing.
 
 You should already be comfortable with [Encryption walkthrough](encryption-walkthrough.md). The XOR/Caesar helpers from that guide are reused throughout.
 
 ---
 
-## What you can decode
+## What You Can Decode
 
 | Format byte | Payload | What it carries |
 | --- | --- | --- |
@@ -19,7 +19,7 @@ Each section below decodes one of these formats end-to-end.
 
 ---
 
-## The unified entry point
+## The Unified Entry Point
 
 Every downlink starts the same way. Wrap this in your MQTT message handler:
 
@@ -61,7 +61,7 @@ After this, dispatch on `format`. Everything below works on the `body` bytes.
 
 ---
 
-## Format `1` — CCSDS Space Packet (Ping & Schedule Report)
+## Format `1`: CCSDS Space Packet (Ping & Schedule Report)
 
 The body is a single **CCSDS Space Packet** per CCSDS 133.0-B-2:
 
@@ -79,7 +79,7 @@ You can parse it three ways:
 
 For most users, #3 is the right choice while learning, then #1 or #2 if you build a custom client.
 
-### The Primary Header (6 bytes, big-endian)
+### The Primary Header (6 Bytes, Big-Endian)
 
 | Bits | Field | Meaning |
 | --- | --- | --- |
@@ -115,26 +115,26 @@ def parse_primary_header(buf: bytes):
 
 ### Routing by APID
 
-The team's XTCE schemas assign each packet type a specific APID. The Studio defaults are organised by category (numbers may vary if the scenario customises them):
+The team's XTCE schemas assign each packet type a specific APID. The Studio defaults are organized by category (numbers may vary if the scenario customizes them):
 
 | Range | Category | Examples |
 | --- | --- | --- |
 | 100–199 | System | Ping, Schedule Report, Configuration Report |
-| 200–299 | Power System | Battery, Power Source, Power Node |
-| 300–399 | Sensors | Magnetometer, GPS, EM Sensor, CCD, Gyroscope, Laser Range Finder |
-| 400–499 | ADCS | Computer, Reaction Wheels, Dynamics, Thruster, Formation Flying |
+| 200–299 | Power System | Battery, Power Source, Power Node, Power Monitor |
+| 300–399 | Sensors | Magnetometer, GPS, EM Sensor, CCD, Gyroscope, Laser Range Finder, Radar |
+| 400–499 | ADCS | Computer, Reaction Wheels, Dynamics, Thruster, Formation Flying, Fuel Tank, Fuel Flow |
 | 500–599 | Telemetry / Comms | Receiver, Transmitter, Jammer, Storage |
 
-Always treat the APID-to-message mapping as **dynamic** and re-derive it from the XTCE schemas each scenario load (the `instance` field changes when the scenario resets — re-fetch then).
+Always treat the APID-to-message mapping as **dynamic** and re-derive it from the XTCE schemas each scenario load (the `instance` field changes when the scenario resets: re-fetch then).
 
-### Loading XTCE schemas
+### Loading XTCE Schemas
 
 ```python
 schemas_xml = ground.request("get_packet_schemas")["args"]["telemetry"]  # list[str]
 # Each entry is a complete XTCE document. Save to disk or feed to your XTCE parser.
 ```
 
-### The Ping payload
+### The Ping Payload
 
 Ping (one of the system-category APIDs) is the workhorse telemetry message. After parsing the primary header, the data field contains:
 
@@ -147,7 +147,7 @@ Ping (one of the system-category APIDs) is the workhorse telemetry message. Afte
 | `Commands` | string (JSON) | JSON array of recently-executed commands. |
 | `UplinkInterceptDataBytes` | int | Bytes of intercepted uplinks waiting in the on-board ring buffer. |
 
-**The `Commands` field is a JSON-encoded *string*, not a JSON array.** This is intentional — XTCE wants fixed-shape fields and the executed command list is variable-size. Always remember to:
+**The `Commands` field is a JSON-encoded *string*, not a JSON array.** This is intentional: XTCE wants fixed-shape fields and the executed command list is variable-size. Always remember to:
 
 ```python
 ping["Commands"] = json.loads(ping["Commands"])  # now a list[dict]
@@ -155,7 +155,7 @@ ping["Commands"] = json.loads(ping["Commands"])  # now a list[dict]
 
 Each entry has `ID`, `Command`, `Time`, `Success`, `Args` (with `password` redacted). This is how you confirm a command actually ran.
 
-### The Schedule Report payload
+### The Schedule Report Payload
 
 Schedule Report is the response to [`get_schedule`](../api-reference/spacecraft-commands.md#get_schedule):
 
@@ -166,7 +166,7 @@ Schedule Report is the response to [`get_schedule`](../api-reference/spacecraft-
 
 Same JSON-string-of-array trick. Same `json.loads` after parse.
 
-### The Configuration Report payload
+### The Configuration Report Payload
 
 Configuration Report (APID 102) is the response to [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration) (or an automatic follow-up after [`power`](../api-reference/spacecraft-commands.md#power), [`guidance`](../api-reference/spacecraft-commands.md#guidance), [`camera`](../api-reference/spacecraft-commands.md#camera), or [`capture`](../api-reference/spacecraft-commands.md#capture)), sent only when the requested scope has configuration to report:
 
@@ -181,7 +181,7 @@ report["Data"] = json.loads(report["Data"])
 
 If no matching configuration exists, no packet is sent.
 
-### Worked example with the bundled parser
+### Worked Example With the Bundled Parser
 
 ```python
 import json
@@ -211,9 +211,9 @@ def on_downlink(record):
 ground.run_forever()
 ```
 
-The same flow is implemented inside the Operator UI's `DataView` — every Space Packet that arrives is routed by APID, parsed against the cached XTCE document, and rendered into the live feed.
+The same flow is implemented inside the Operator UI's `DataView`: every Space Packet that arrives is routed by APID, parsed against the cached XTCE document, and rendered into the live feed.
 
-### Worked example without a library (Python + struct)
+### Worked Example Without a Library (Python + Struct)
 
 If you don't want to depend on the script package, you can still get the same result with `struct` and a small XTCE walker. The wire encoding for every field is **big-endian** (CCSDS network byte order):
 
@@ -239,7 +239,7 @@ def read_string_be(data: bytes, off: int) -> tuple[str, int]:
 def parse_ping_user_data(data: bytes) -> dict:
     """
     Hand-coded for clarity. Real XTCE parsing should follow the schema
-    rather than hardcoded offsets — fields can move between scenarios.
+    rather than hardcoded offsets: fields can move between scenarios.
     All multi-byte fields are big-endian.
     """
     off = 0
@@ -258,9 +258,9 @@ def parse_ping_user_data(data: bytes) -> dict:
     }
 ```
 
-This is illustrative only — **prefer XTCE-driven parsing** (manual or library) so your decoder doesn't break when the scenario adds or reorders fields. The full byte-level layout is in [Reference → Packet formats](../reference/packet-formats.md).
+This is illustrative only: **prefer XTCE-driven parsing** (manual or library) so your decoder doesn't break when the scenario adds or reorders fields. The full byte-level layout is in [Reference → Packet formats](../reference/packet-formats.md).
 
-### Common pitfalls
+### Common Pitfalls
 
 - **Trying to parse format-0 packets.** They're empty by design.
 - **Forgetting to `json.loads(packet.Commands)`.** Field arrives as a string; until you load it, you can't iterate over it.
@@ -269,7 +269,7 @@ This is illustrative only — **prefer XTCE-driven parsing** (manual or library)
 
 ---
 
-## Format `2` — Media (imagery & files)
+## Format `2`: Media (Imagery & Files)
 
 The body of a media frame is fixed-format: a 50-byte name header followed by raw file bytes (typically JPEG or PNG).
 
@@ -314,19 +314,19 @@ with open(f"images/{media['name']}.jpg", "wb") as f:
 ### Pitfalls
 
 - **Names longer than 50 bytes are truncated** at capture time, before they ever reach you. Allow for that when correlating with the original `capture` command.
-- **Imagery is corrupted probabilistically** to model real-world data integrity. Some bytes will be flipped at random — don't assume every JPEG decodes cleanly. Failed decodes are still useful as evidence; archive the raw bytes.
+- **Imagery is corrupted probabilistically** to model real-world data integrity. Some bytes will be flipped at random: don't assume every JPEG decodes cleanly. Failed decodes are still useful as evidence; archive the raw bytes.
 
 ---
 
-## Format `3` — Uplink Intercept
+## Format `3`: Uplink Intercept
 
-When a spacecraft has uplink-intercept recording enabled, the receiver captures every uplink frame on its frequency — including foreign uplinks intended for other teams — and emits them on downlink as 32-byte-headered records. Use these for SIGINT analysis or replay exercises.
+When a spacecraft has uplink-intercept recording enabled, the receiver captures every uplink frame on its frequency, including foreign uplinks intended for other teams. It emits them on the downlink as records with 32-byte headers. Use these records for signals intelligence (SIGINT) analysis or replay exercises.
 
-### Header layout (little-endian, 32 bytes)
+### Header Layout (Little-Endian, 32 Bytes)
 
 | Offset | Size | Field | Meaning |
 | --- | --- | --- | --- |
-| 0 | 4 | `Magic` | `0x5055495A` ("ZIUP" — Zendir/Uplink/Intercept/Payload). Reject if mismatched. |
+| 0 | 4 | `Magic` | `0x5055495A` ("ZIUP": Zendir/Uplink/Intercept/Payload). Reject if mismatched. |
 | 4 | 1 | `Version` | Wire-format version (currently `2`; v1 also accepted, lacks frequency). |
 | 5 | 3 | _padding_ | Zero. |
 | 8 | 8 | `SimTimeSeconds` | `double`, simulation time when the frame was dequeued. |
@@ -346,7 +346,7 @@ When a spacecraft has uplink-intercept recording enabled, the receiver captures 
 | 2 | `ParseOk` | The decoded text was valid JSON. |
 | 3 | `AddressedToUs` | Parsed JSON's `Asset` field matches *our* spacecraft (so our computer would have executed it). |
 
-### Python parser
+### Python Parser
 
 ```python
 import struct
@@ -393,11 +393,11 @@ def parse_uplink_intercept(body: bytes):
     }
 ```
 
-### JavaScript parser
+### JavaScript Parser
 
-The Operator UI ships a reference implementation at `space-range-operator/src/user/helpers/uplinkInterceptParse.js` — `parseUplinkInterceptRecord(rawBytes)` returns the same shape. Use it as a drop-in if you're building a JS client.
+The Operator UI ships a reference implementation at `space-range-operator/src/user/helpers/uplinkInterceptParse.js`: `parseUplinkInterceptRecord(rawBytes)` returns the same shape. Use it as a drop-in if you're building a JS client.
 
-### What to do with intercepts
+### What to Do With Intercepts
 
 There are two common workflows.
 
@@ -406,11 +406,11 @@ There are two common workflows.
 | Pattern | What it means | What to do |
 | --- | --- | --- |
 | `AddressedToUs` set | Our own command, just observed | Confirm against our log; ignore. |
-| `ParseOk` set, not `AddressedToUs` | Foreign command JSON | Inspect — what was the other team trying to do? |
+| `ParseOk` set, not `AddressedToUs` | Foreign command JSON | Inspect: what was the other team trying to do? |
 | `DecodeOk` set, `ParseOk` not | UTF-8 but not command JSON | Probably noise or partial frame. Worth a closer look in hex. |
 | Neither | Raw ciphertext | Ciphertext for an unknown key, or random RF noise. Keep for replay. |
 
-**Replay exercises.** The stored payload is the **on-air ciphertext** — i.e. it's already encoded with whatever Caesar key the original target was on. To replay it, transmit it from your own ground station via [`transmit_bytes`](../api-reference/ground-requests.md#transmit_bytes) on the same frequency the intercept reports. If your target is on a different key, the replay will be garbage to them — which is the same problem the original sender faced.
+**Replay exercises.** The stored payload is the **on-air ciphertext**. It is already encoded with the Caesar key used by the original target. To replay it, transmit it from your ground station via [`transmit_bytes`](../api-reference/ground-requests.md#transmit_bytes) on the frequency reported by the intercept. If the target uses a different key, it cannot decode the replay. The original sender faces the same limitation.
 
 ```python
 intercept = parse_uplink_intercept(record.body)
@@ -426,7 +426,7 @@ ground.request("transmit_bytes", {
 
 ---
 
-## Putting it all together
+## Putting It All Together
 
 A complete decoder, in Python, that handles every format and dispatches into per-type handlers:
 
@@ -476,11 +476,11 @@ client.subscribe(f"Zendir/SpaceRange/{GAME}/{TEAM_ID}/Downlink")
 client.loop_forever()
 ```
 
-Substitute `parse_space_packet` for the XTCE library you choose to use — the rest of the pipeline is invariant.
+Substitute `parse_space_packet` for the XTCE library you choose to use: the rest of the pipeline is invariant.
 
 ---
 
-## Validating your decoder against the Operator UI
+## Validating Your Decoder Against the Operator UI
 
 A useful smoke test: subscribe both your custom client and the Operator UI to the same team, send a short uplink sequence (e.g. a Sun-pointing `guidance`), and confirm that:
 
@@ -490,7 +490,7 @@ A useful smoke test: subscribe both your custom client and the Operator UI to th
 
 Discrepancies almost always trace back to:
 
-- A mismatched team password (XOR layer fails — payload looks like noise).
+- A mismatched team password (XOR layer fails: payload looks like noise).
 - A mismatched Caesar key (XOR succeeds, frame header looks plausible, body is gibberish).
 - Stale XTCE schemas after an `instance` reset (Space Packet headers parse, fields don't).
 
@@ -498,6 +498,6 @@ Discrepancies almost always trace back to:
 
 ## Next
 
-- [Reference → Packet formats](../reference/packet-formats.md) — the precise binary layouts that complement this guide.
-- [Operator UI guide](operator-ui-guide.md) — how the same packets show up in the bundled UI.
-- [Troubleshooting & FAQ](troubleshooting.md) — common decode failures and what they mean.
+- [Reference → Packet formats](../reference/packet-formats.md): the precise binary layouts that complement this guide.
+- [Operator UI guide](operator-ui-guide.md): how the same packets show up in the bundled UI.
+- [Troubleshooting & FAQ](troubleshooting.md): common decode failures and what they mean.

@@ -1,6 +1,6 @@
-# Components reference
+# Components Reference
 
-Every entry in a spacecraft's `components[]` array adds one piece of on-board hardware. The `class` field selects which component type is created — see the table below for accepted classes and aliases.
+Every entry in a spacecraft's `components[]` array adds one piece of on-board hardware. The `class` field selects which component type is created: see the table below for accepted classes and aliases.
 
 The `data` object is **class-specific** tuning. `Mass` is the only universal key (every component has mass). Other keys set component parameters at load time. **Prefer spaced names** in JSON (`"Is Open"`, `"Nominal Capacity"`); Studio ignores spaces when matching, so `"IsOpen"` also works.
 
@@ -8,50 +8,70 @@ This page documents the `data` fields used in shipped scenarios and the keys tha
 
 ---
 
-## Class table
+## Class Table
 
 The `class` field is matched case-insensitive after spaces are stripped. The shipped scenarios spell classes with spaces (`"Solar Panel"`); shorter aliases also work.
 
 | Class (canonical) | Aliases | Notes |
 | --- | --- | --- |
-| `Solar Panel` | — | Power source. |
-| `Battery` | — | Power store. Required for any spacecraft that does not run on solar alone. |
-| `Power Switch` | — | On-bus switch; open/closed. |
-| `Power Fuse` | — | Over-current protection with optional auto-reset. |
-| `Power Current Limiter` | — | Limits branch current above a threshold. |
-| `Power Diode` | — | One-way conduction on the bus. |
-| `Power Sink` | — | Configurable load (watts / voltage drop). |
-| `Power Voltage Regulator` | — | Regulates downstream voltage. |
-| `Computer` | `Guidance Computer` | Brain — handles software modes (navigation, pointing, controller). |
+| `Solar Panel` | None | Power source. |
+| `Battery` | None | Power store. Required for any spacecraft that does not run on solar alone. |
+| `Power Switch` | None | On-bus switch; open/closed. |
+| `Power Fuse` | None | Over-current protection with optional auto-reset. |
+| `Power Current Limiter` | None | Limits branch current above a threshold. |
+| `Power Diode` | None | One-way conduction on the bus. |
+| `Power Sink` | None | Configurable load (watts / voltage drop). |
+| `Power Voltage Regulator` | None | Regulates downstream voltage. |
+| `Computer` | `Guidance Computer` | Brain: handles software modes (navigation, pointing, controller). |
 | `Reaction Wheels` | `RW` | Attitude actuator. |
 | `External Force Torque` | `External Force` | Generic force/torque actuator (stand-in for thrusters or RWs). |
 | `Cold Gas Thruster` | `Thruster` | Discrete-pulse thruster. |
-| `Ion Thruster` | — | Continuous low-thrust electric propulsion. |
-| `Receiver` | — | RF downlink/uplink receiver. |
-| `Transmitter` | — | RF transmitter. |
+| `Thruster Array` | None | Collects sibling/child thrusters so rendezvous and proximity operations (RPO) and reaction control system (RCS) software can command them as a set. |
+| `Ion Thruster` | None | Continuous low-thrust electric propulsion. |
+| `Receiver` | None | RF downlink/uplink receiver. |
+| `Transmitter` | None | RF transmitter. |
 | `Jammer` | `Jamming Transmitter` | Hostile RF emitter. |
 | `Storage` | `Partitioned Data Storage` | Onboard data buffer. |
 | `Camera` | `Optical Camera`, `Event Camera` | Visible-light camera. |
 | `Heatmap Camera` | `Infrared Camera` | Thermal-imagery camera. |
 | `EM Sensor` | `Electromagnetic Sensor` | RF-spectrum sensor (lets teams see radio sources). |
 | `GPS Sensor` | `GPS` | Position/velocity from the constellation. |
-| `Magnetometer` | — | Magnetic-field measurement. |
+| `Magnetometer` | None | Magnetic-field measurement. |
 | `Gyroscope` | `IMU` | Body-rate measurement. |
-| `Charge Coupled Device` | `CCD` | Low-level imaging sensor (more often used as a `Camera` model). |
+| `Charge Coupled Device` | `CCD` | Configurable imaging sensor (resolution, exposure time, FOV). Captures like a `Camera`. See [Charge Coupled Device (CCD)](#charge-coupled-device-ccd). |
+| `RADAR` | - | Able to detect the presence of nearby objects and spacecraft based on distance and signal strength. |
 | `Laser Range Finder` | `LRF` | Range-finder for determining distance to objects nearby. |
 | `Docking Adapter` | `Docking` | RPO end-effector. Both vehicles need one to exchange a docking handshake. |
-| `Power Interconnect` | — | Cross-bus connector; pairs two spacecraft power networks at load. See [Power Interconnect](#power-interconnect). |
-| `Fuel Source` | — | Propellant tank. |
-| `Fuel Valve` | — | Gated flow path between fuel components. |
-| `Fuel Pump` | — | Powered pump between fuel nodes; also needs `power.bus[]` wiring. |
-| `Fuel Interconnect` | — | Cross-bus fuel connector; pairs two spacecraft fuel networks at load. |
+| `Power Interconnect` | None | Cross-bus connector; pairs two spacecraft power networks at load. See [Power Interconnect](#power-interconnect). |
+| `Fuel Source` | None | Propellant tank. |
+| `Fuel Valve` | None | Gated flow path between fuel components. |
+| `Fuel Pump` | None | Powered pump between fuel nodes; also needs `power.bus[]` wiring. |
+| `Fuel Interconnect` | None | Cross-bus fuel connector; pairs two spacecraft fuel networks at load. |
 | `Text` | `Physical Text` | Pure-visual label (e.g. callsign written across the chassis). |
 
-If the `class` value is not recognised, Studio logs a warning and the component may not behave as intended.
+If the `class` value is not recognized, Studio logs a warning and the component may not behave as intended.
 
 ---
 
-## Universal `data` keys
+## Common Component Fields
+
+These keys sit beside `data` on every `components[]` entry:
+
+| Key | Type | Default | Description |
+| --- | --- | --- | --- |
+| `class` | `string` | _(required)_ | Component class or alias from the table above. |
+| `name` | `string` | class name | Operator-facing target name. Keep it unique within the spacecraft. |
+| `mesh` | `string` | class default | Unreal mesh/class path. Use `"None"` to clear the resolved static mesh. |
+| `enabled` | `bool` | `true` | Creates the component but disables its simulation when false. |
+| `position` | `number[3]` (m) | `[0,0,0]` | Position relative to the spacecraft origin. |
+| `rotation` | `number[3]` (deg) | `[0,0,0]` | Local 1-2-3 Euler rotation. |
+| `scale` | `number` | `1.0` | Visual scale of the component. |
+| `data` | `object` | `{}` | Class-specific initial properties. |
+| `models` | `object[]` | `[]` | Optional Universe Models attached to this component; see below. |
+
+---
+
+## Universal `data` Keys
 
 Every component accepts these keys in its `data` object. Spaces in the JSON key are stripped before matching.
 
@@ -59,13 +79,13 @@ Every component accepts these keys in its `data` object. Spaces in the JSON key 
 | --- | --- | --- | --- |
 | `Mass` | `number` (kg) | depends on class | Component mass. Summed into the spacecraft total when `physics.override_mass` is `false`. |
 
-Many components also expose tuning keys such as `Sample Rate`, `Bit Rate`, `Antenna Gain`, etc. — these are listed per class below. Keys not documented for a class are usually ignored at load time.
+Many components also expose tuning keys such as `Sample Rate`, `Bit Rate`, and `Antenna Gain`. These are listed per class below. Keys not documented for a class are usually ignored at load time.
 
 ---
 
 ## Component `models`
 
-Each entry in `components[]` may include an optional `models` array. Models are **Universe Models** — extra simulation behaviour attached to the component (error models, power-node models, radiation models, etc.). They have no `name`, `mesh`, or transform; only a class, enable flag, and parameter data.
+Each entry in `components[]` may include an optional `models` array. Models are **Universe Models**: extra simulation behavior attached to the component (error models, power-node models, radiation models, etc.). They have no `name`, `mesh`, or transform; only a class, enable flag, and parameter data.
 
 ```json
 {
@@ -92,7 +112,7 @@ Each entry in `components[]` may include an optional `models` array. Models are 
 
 | Key | JSON type | Default | Description |
 | --- | --- | --- | --- |
-| `class` | `string` | — | Model class name (matched case-insensitively against the formatted Mono class name, e.g. `"Solar Panel Degradation Error Model"`). The model must be supported on the parent component type. |
+| `class` | `string` | None | Model class name (matched case-insensitively against the formatted Mono class name, e.g. `"Solar Panel Degradation Error Model"`). The model must be supported on the parent component type. |
 | `enabled` | `bool` | `true` | When `false`, the model is attached but does not simulate. Legacy key `enable` is also accepted. |
 | `data` | `object` | `{}` | Model-specific parameters, using the same spaced-name rules as component `data`. |
 
@@ -152,19 +172,19 @@ Battery error-model events: `Battery-IntermittentConnectionErrorModel` (power sp
 
 ---
 
-## Power bus network components
+## Power Bus Network Components
 
-These components attach to the spacecraft **power bus** and are wired with `power.bus[]` on the spacecraft entry (see [spacecraft.md — power](spacecraft.md#power--electrical-bus)). Each has **`in`** and **`out`** terminals unless noted. Chain them in series from the battery (or solar) toward loads; use a **`Power Diode`** when current must only flow one way.
+These components attach to the spacecraft **power bus** and are wired with `power.bus[]` on the spacecraft entry (see [spacecraft.md: power](spacecraft.md#power--electrical-bus)). Each has **`in`** and **`out`** terminals unless noted. Chain them in series from the battery (or solar) toward loads; use a **`Power Diode`** when current must only flow one way.
 
 **Generation and storage** (`Solar Panel`, `Battery`) are documented above. **Cross-spacecraft links** use `Power Interconnect` ([below](#power-interconnect)).
 
-**Runtime operator state** (switch open/closed, fuse threshold, limiter set-point, valve/pump state, guidance pointing modes, imager settings, etc.) is not static scenario `data` — it changes during the exercise via spacecraft [`power_bus`](../api-reference/spacecraft-commands.md#power_bus), [`fuel_bus`](../api-reference/spacecraft-commands.md#fuel_bus), [`guidance`](../api-reference/spacecraft-commands.md#guidance), and [`camera`](../api-reference/spacecraft-commands.md#camera) / [`capture`](../api-reference/spacecraft-commands.md#capture) commands. Clients pull the current snapshot with [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration) (omit `scope` for all sections, or filter by `scope`). Static keys in the tables below are authored at load time; session-mutable fields are in the [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration) report shape (`power_bus`, `fuel_bus`, `computer`, `camera`).
+**Runtime operator state** (switch open/closed, fuse threshold, limiter set-point, valve/pump state, guidance pointing modes, imager settings, etc.) is not static scenario `data`: it changes during the exercise via spacecraft [`power_bus`](../api-reference/spacecraft-commands.md#power_bus), [`fuel_bus`](../api-reference/spacecraft-commands.md#fuel_bus), [`guidance`](../api-reference/spacecraft-commands.md#guidance), and [`camera`](../api-reference/spacecraft-commands.md#camera) / [`capture`](../api-reference/spacecraft-commands.md#capture) commands. Clients pull the current snapshot with [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration) (omit `scope` for all sections, or filter by `scope`). Static keys in the tables below are authored at load time; session-mutable fields are in the [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration) report shape (`power_bus`, `fuel_bus`, `computer`, `camera`).
 
-Payload hardware (`Camera`, `Transmitter`, sensors, etc.) can also be listed on `power.bus[]` when those types participate in the electrical model — same `source_component` / `target_component` rules as switches and sinks.
+Payload hardware (`Camera`, `Transmitter`, sensors, etc.) can also be listed on `power.bus[]` when those types participate in the electrical model: same `source_component` / `target_component` rules as switches and sinks.
 
 ### Power Switch
 
-User-operable (or scenario-initialised) switch on the bus. When **open**, the branch is disconnected; when **closed**, current can flow.
+User-operable (or scenario-initialized) switch on the bus. When **open**, the branch is disconnected; when **closed**, current can flow.
 
 ```json
 {
@@ -182,7 +202,7 @@ User-operable (or scenario-initialised) switch on the bus. When **open**, the br
 | --- | --- | --- | --- |
 | `Is Open` | `bool` | `false` | `true` = open (no conduction); `false` = closed. |
 | `Resistance` | `number` (Ω) | `1.0` | Series resistance when closed. |
-| `Mass` | `number` (kg) | — | Component mass. |
+| `Mass` | `number` (kg) | None | Component mass. |
 
 `Power Interconnect` is a specialised switch used for cross-spacecraft pairing; see [Power Interconnect](#power-interconnect).
 
@@ -210,9 +230,9 @@ Opens the circuit when branch current exceeds a threshold for long enough. Optio
 | `Threshold Duration` | `number` (s) | `0.0` | Time the threshold must be exceeded before blowing. |
 | `Reset Duration` | `number` (s) | `0.0` | Time after a blow before auto-reset; `0` = no auto-reset. |
 | `Resistance` | `number` (Ω) | `1.0` | Resistance while closed. |
-| `Mass` | `number` (kg) | — | Component mass. |
+| `Mass` | `number` (kg) | None | Component mass. |
 
-`Is Fuse Blown` is runtime state (read-only), not normally set in scenario JSON. Operators read it via [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration) and clear a blown fuse with [`power_bus`](../api-reference/spacecraft-commands.md#power_bus) `action: "reset"` (or wait for auto-reset when `Reset Duration` &gt; 0 and branch current is below threshold).
+`Is Fuse Blown` is runtime state (read-only), not normally set in scenario JSON. Operators read it via [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration) and clear a blown fuse with [`power_bus`](../api-reference/spacecraft-commands.md#power_bus) `action: "reset"` (or wait for auto-reset when `Reset Duration` is `> 0` and branch current is below threshold).
 
 ### Power Current Limiter
 
@@ -234,7 +254,7 @@ Reduces or blocks current when the branch exceeds `Current Limit`.
 | --- | --- | --- | --- |
 | `Current Limit` | `number` (A) | `0.0` | Limit above which limiting engages. |
 | `Resistance` | `number` (Ω) | `1.0` | Series resistance. |
-| `Mass` | `number` (kg) | — | Component mass. |
+| `Mass` | `number` (kg) | None | Component mass. |
 
 ### Power Diode
 
@@ -266,7 +286,7 @@ One-way valve: forward current flows **`in` → `out`**; reverse current is bloc
 | `Flicker Noise Coefficient` | `number` | `0.0` | Flicker noise coefficient (KF); advanced. |
 | `Flicker Noise Exponent` | `number` | `1.0` | Flicker noise exponent (AF); advanced. |
 | `Forward Bias Depletion Cap Coeff` | `number` | `0.5` | Forward-bias depletion capacitance coefficient (FC); advanced. |
-| `Mass` | `number` (kg) | — | Component mass. |
+| `Mass` | `number` (kg) | None | Component mass. |
 
 Only `Resistance` and `Mass` are needed for most scenarios; omit the diode model keys to keep defaults (1N4004-like).
 
@@ -296,7 +316,7 @@ Fixed or commanded electrical load on the bus (heaters, avionics blocks, or stan
 | `Nominal Voltage Drop` | `number` (V) | `12.0` | Target voltage drop across the sink. |
 | `Nominal Power` | `number` (W) | `0.0` | Target power consumption when active. |
 | `Resistance` | `number` (Ω) | `1.0` | Series resistance. |
-| `Mass` | `number` (kg) | — | Component mass. |
+| `Mass` | `number` (kg) | None | Component mass. |
 
 ### Power Voltage Regulator
 
@@ -318,7 +338,7 @@ Holds downstream voltage near `Regulation Voltage` when input is high enough; ot
 | --- | --- | --- | --- |
 | `Regulation Voltage` | `number` (V) | `0.0` | Regulation set-point. |
 | `Resistance` | `number` (Ω) | `1.0` | Series resistance. |
-| `Mass` | `number` (kg) | — | Component mass. |
+| `Mass` | `number` (kg) | None | Component mass. |
 
 ---
 
@@ -386,6 +406,29 @@ The `Reaction Wheels` failure event accepts `Stuck Index` to lock one wheel; see
 
 Useful as an idealised actuator on tutorial / instructor spacecraft (the `Recon` rogue in `Orbital Intel` and the `Microsat` in `Docking_Procedure` use it instead of reaction wheels for simpler dynamics).
 
+When `enable_rpo_software` is true and the spacecraft has **no** thrusters, SpaceRange wires rendezvous force commands to a dedicated `External Force Torque` (never the docking adapter's dock effector). If the spacecraft has cold-gas or ion thrusters, RPO uses a `Thruster Array` instead: do not also add an RPO `External Force Torque` or both actuators can fight.
+
+---
+
+## Thruster Array
+
+```json
+{
+  "class": "Thruster Array",
+  "name":  "Thruster Array"
+}
+```
+
+The array has no authoring-time `data` keys. It discovers `Cold Gas Thruster` / `Ion Thruster` components that are **children of the array**. Scenario JSON can still list thrusters as flat `components[]` entries; SpaceRange parents them onto the `Thruster Array` at spawn (the array must be present in `components[]`). `position` / `rotation` stay in the spacecraft body frame.
+
+SpaceRange also constructs a `Thruster Array` automatically when `enable_rpo_software` is true and the spacecraft has thrusters, but that happens after `OnBegin` so those nozzles are not collected. List the array explicitly when RPO should fire thrusters.
+
+Rendezvous translation then runs:
+
+`ROE formation controller → thruster force mapping → remainder mapping → Thruster Array → per-thruster fire requests`
+
+Failed-off thrusters (`Dispersed Factor` = 1) drop out of the allocator on the next step. Attitude pointing stays on reaction wheels unless you wire a separate RCS chain.
+
 ---
 
 ## Cold Gas Thruster / Ion Thruster
@@ -397,12 +440,24 @@ Useful as an idealised actuator on tutorial / instructor spacecraft (the `Recon`
   "position": [0.0, 0.0, -0.5],
   "rotation": [0.0, 0.0, 0.0],
   "data":  { 
+    "Max Thrust": 1.0,
+    "Specific Impulse": 250.0,
     "Mass": 1.5 
   }
 }
 ```
 
-Authoring-time keys are limited to `Mass`. Thrust magnitude and Isp are class defaults. For more nuanced thruster behaviour, use multiple thruster components placed around the spacecraft.
+| `data` key | Type | Default | Description |
+| --- | --- | --- | --- |
+| `Max Thrust` | `number` (N) | class-dependent | Maximum thrust force. Lower values reduce both translational acceleration and the torque from any residual couple. |
+| `Time To Max Thrust` | `number` (s) | `0.1` | Spool-up ramp. Larger values make pulses build more slowly, which damps attitude transients. |
+| `Specific Impulse` | `number` (s) | class-dependent | Propellant efficiency (Isp). Higher values mean less propellant consumed per unit impulse. |
+| `Dispersed Factor` | `number` (0–1) | `0.0` | Fraction of thrust lost. `0` = full performance, `1` = no thrust. Set via scenario events to model thruster failures. |
+| `Mass` | `number` (kg) | class-dependent | Component dry mass. |
+
+The `rotation` determines the thrust direction in the body frame. The thruster fires along its local +Y axis (the direction the nozzle points).
+
+For scenarios requiring thruster failures, use the `Dispersed Factor` property via events (see [`events.md`](events.md#thruster--failed-off-dispersed-factor)). A failed thruster still accepts fire commands but produces no force.
 
 ---
 
@@ -425,7 +480,7 @@ Authoring-time keys are limited to `Mass`. Thrust magnitude and Isp are class de
 | `Antenna Gain` | `number` (dBi) | Receive-antenna gain. |
 | `Mass` | `number` (kg) | Component mass. |
 
-`Frequency` and `Bandwidth` are excluded from generic data parsing (`UReceiverExtension::GetIgnoredVariables` returns `{ "Frequency", "Bandwidth" }`) — they are set by the spacecraft controller from team config and runtime commands instead.
+`Frequency` and `Bandwidth` are excluded from generic data parsing (`UReceiverExtension::GetIgnoredVariables` returns `{ "Frequency", "Bandwidth" }`): they are set by the spacecraft controller from team config and runtime commands instead.
 
 ---
 
@@ -451,7 +506,7 @@ Authoring-time keys are limited to `Mass`. Thrust magnitude and Isp are class de
 | `Mass` | `number` (kg) | Component mass. |
 | `Lookup` | `string` | Optional CSV lookup file name to configure the EM antenna pattern. Most scenarios omit this. |
 
-`Frequency` is excluded from generic parsing — set by the team config (`teams[].frequency`) and rotated at runtime via [`telemetry`](../api-reference/spacecraft-commands.md#telemetry) (from ground) or [`encryption`](../api-reference/spacecraft-commands.md#encryption) (from the spacecraft).
+`Frequency` is excluded from generic parsing: set by the team config (`teams[].frequency`) and rotated at runtime via [`telemetry`](../api-reference/spacecraft-commands.md#telemetry) (from ground) or [`encryption`](../api-reference/spacecraft-commands.md#encryption) (from the spacecraft).
 
 The `Transmitter-TransmitterPacketCorruptionErrorModel` event injects per-packet corruption; the bare `Transmitter` target with `Bit Rate` cuts throughput. See [events.md#canonical-spacecraft-event-recipes](events.md#canonical-spacecraft-event-recipes).
 
@@ -480,7 +535,7 @@ The `Transmitter-TransmitterPacketCorruptionErrorModel` event injects per-packet
 | `Lookup` | `string` | CSV lookup file describing the EM emission pattern. The shipped scenarios use `"RFPattern.csv"`. |
 | `Mass` | `number` (kg) | Component mass. |
 
-`Frequency` is excluded from generic parsing — set at runtime by the [`jammer`](../api-reference/spacecraft-commands.md#jammer) command (`Mode: start`/`stop` with one or more frequencies).
+`Frequency` is excluded from generic parsing: set at runtime by the [`jammer`](../api-reference/spacecraft-commands.md#jammer) command (`Mode: start`/`stop` with one or more frequencies).
 
 ---
 
@@ -536,9 +591,9 @@ See [events.md#canonical-spacecraft-event-recipes](events.md#canonical-spacecraf
 | --- | --- | --- |
 | `Sample Rate` | `number` (Hz) | Frame rate of the camera. |
 | `Mass` | `number` (kg) | Component mass. |
-| `Min Field Of View` | `number` (deg) | **Hardware limit** — narrowest FOV operators may command. Default `0`. Must be ≤ `Field Of View` ≤ `Max Field Of View`. |
+| `Min Field Of View` | `number` (deg) | **Hardware limit**: narrowest FOV operators may command. Default `0`. Must be ≤ `Field Of View` ≤ `Max Field Of View`. |
 | `Field Of View` | `number` (deg) | **Initial FOV** at scenario load (before any [`camera`](../api-reference/spacecraft-commands.md#camera) command). Clamped into `[Min Field Of View, Max Field Of View]`. Default `60` on the class if omitted. |
-| `Max Field Of View` | `number` (deg) | **Hardware limit** — widest FOV operators may command. Default `180`. |
+| `Max Field Of View` | `number` (deg) | **Hardware limit**: widest FOV operators may command. Default `180`. |
 | `Aperture` | `number` (mm) | Lens diameter at load. Operators can change aperture at runtime via `camera` / `capture`. |
 | `Focal Length` | `number` (mm) | Lens focal length at load. |
 | `Focusing Distance` | `number` (m) | In-focus distance at load. |
@@ -546,7 +601,7 @@ See [events.md#canonical-spacecraft-event-recipes](events.md#canonical-spacecraf
 | `Circle Of Confusion` | `number` (mm) | Depth-of-field blur tolerance at load. |
 | `Resolution` | `[w, h]` (px) | Sensor resolution at load as a two-element array (e.g. `[1024, 1024]`). Default `256×256`. |
 
-### Field of view limits
+### Field of View Limits
 
 Each `Optical Camera` / `Camera` can define a **per-unit FOV envelope** in `data`:
 
@@ -554,11 +609,44 @@ Each `Optical Camera` / `Camera` can define a **per-unit FOV envelope** in `data
 - **`Field Of View`** is the starting value inside that envelope when the simulation spawns the craft.
 - If `fov` is outside the envelope, the command is **rejected** (Studio) and the Operator UI disables capture for that value.
 
-Use tight envelopes for mission-specific optics — for example a narrow science camera (`1° … 15°`) and a wide docking camera (`30° … 60°`) on the same spacecraft. See [Lunar Logistics](../scenarios/Lunar%20Logistics/lunar_logistics.json) (`Main Camera` and `Docking Camera`).
+Use tight envelopes for mission-specific optics: for example, a narrow science camera (`1° … 15°`) and a wide docking camera (`30° … 60°`) on the same spacecraft. See [Lunar Logistics](../../scenarios/MRX/Lunar%20Logistics/lunar_logistics.json) (`Main Camera` and `Docking Camera`).
 
-At runtime, operator-chosen settings (`fov`, `resolution`, `aperture`, …) are stored in the Configuration Report `camera[]` section and **sync across the team** after each `camera` / `capture` command (same pattern as Guidance). The report also includes `min_field_of_view` and `max_field_of_view` so every operator UI shows the correct slider range.
+At runtime, operator-chosen settings (`fov`, `resolution`, `aperture`, …) are stored in the `Configuration Report` `camera[]` section and **sync across the team** after each `camera` / `capture` command (the same pattern as `Guidance`). The report also includes `min_field_of_view` and `max_field_of_view` so every **Operator UI** shows the correct slider range.
 
-Heatmap Camera and Optical Camera share the same `data` schema. `Charge Coupled Device` imagers support `Field Of View` in `data` but use the full `0 … 180°` envelope (no separate min/max properties on that class).
+Heatmap Camera and Optical Camera share the same `data` schema. `Charge Coupled Device` imagers capture using the same command/sync pipeline but expose a smaller set of settings: see [Charge Coupled Device (CCD)](#charge-coupled-device-ccd) below.
+
+---
+
+## Charge Coupled Device (CCD)
+
+A low-noise imaging sensor that captures via the same [`capture`](../api-reference/spacecraft-commands.md#capture) / [`camera`](../api-reference/spacecraft-commands.md#camera) pipeline as a `Camera`, but with a smaller, imager-specific setting set. Unlike the `Camera`, its `Resolution` is a **single integer** (a square sensor grid), and it adds an `Exposure Time`.
+
+```json
+{
+  "class": "Charge Coupled Device",
+  "name":  "Charge Coupled Device",
+  "position": [0.0, -0.36, -0.16],
+  "rotation": [90.0, 0.0, 180.0],
+  "data": {
+    "Resolution": 64,
+    "Exposure Time": 0.01,
+    "Capture On Tick": false
+  }
+}
+```
+
+| `data` key | Type | Description |
+| --- | --- | --- |
+| `Resolution` | `number` (px) | Sensor grid size as a **single integer**: the frame is `Resolution × Resolution`. Class default `16`. The Operator UI caps operator-set values to `16 … 64`. |
+| `Exposure Time` | `number` (s) | How long the sensor integrates light per capture. Class default `0.1`. The Operator UI caps operator-set values to `0.001 … 1.0`. |
+| `Field Of View` | `number` (deg) | Starting FOV. Class default `60`. The CCD uses a fixed `1° … 90°` envelope (there are no `Min/Max Field Of View` properties on this class). |
+| `Capture On Tick` | `bool` | Whether the sensor captures automatically every simulation tick. Class default `true`; set `false` to capture only on command. |
+| `Maximum ADU` | `number` (ADU) | Full-well digitization ceiling per pixel. Class default `65535`. |
+| `Mass` | `number` (kg) | Component mass. |
+
+Radiometric / noise parameters (`Area`, `Efficiency`, `Spectral Wavelength`, `Atmosphere Absorption`, `Point Spread Factor`, `Thermal Noise`, `Readout Noise`, `Quantization Noise`, `Dark Current Noise`, `Bias`) can also be set in `data`; they default to sensible values on the class and are only needed for detailed sensor-modeling exercises.
+
+At runtime, operator-chosen `resolution`, `fov`, and `exposure_time` are stored in the Configuration Report `camera[]` section and **sync across the team** after each `camera` / `capture` command: the same pattern as a `Camera`. The Operator UI shows only Camera Unit, Field of View, Resolution, and Exposure Time for a CCD.
 
 ---
 
@@ -572,13 +660,13 @@ Heatmap Camera and Optical Camera share the same `data` schema. `Charge Coupled 
 }
 ```
 
-The `GPS Sensor` failure event accepts `Fault State` to put the sensor into a degraded mode; see [events.md#canonical-spacecraft-event-recipes](events.md#canonical-spacecraft-event-recipes). Whole-constellation effects (spoofing, jamming) are scenario-level GPS events instead — see [events.md#gps-events](events.md#gps-events).
+The `GPS Sensor` failure event accepts `Fault State` to put the sensor into a degraded mode; see [events.md#canonical-spacecraft-event-recipes](events.md#canonical-spacecraft-event-recipes). Whole-constellation effects (spoofing, jamming) are scenario-level GPS events instead: see [events.md#gps-events](events.md#gps-events).
 
 ---
 
-## Magnetometer / Gyroscope / Electromagnetic Sensor / Charge Coupled Device
+## Magnetometer / Gyroscope / Electromagnetic Sensor
 
-These four sensor classes all share the same minimal `data` schema:
+These three sensor classes all share the same minimal `data` schema:
 
 ```json
 {
@@ -610,7 +698,7 @@ These four sensor classes all share the same minimal `data` schema:
 
 Each accepts a `Fault State` event to inject sensor faults at runtime (see [events.md#canonical-spacecraft-event-recipes](events.md#canonical-spacecraft-event-recipes)).
 
-The `Electromagnetic Sensor` is started disabled with a `Nominal` fault state — teams must explicitly enable it through their guidance computer to use it.
+The `Electromagnetic Sensor` is started disabled with a `Nominal` fault state: teams must explicitly enable it through their guidance computer to use it.
 
 ---
 
@@ -623,18 +711,66 @@ The laser range finder uses the following schema:
   "class": "Laser Range Finder",
   "name": "LRF",
   "data": { 
-    "Operating Range": 1000.0,
-    "Range Accuracy Constant": 0.01
+    "Operating Range": 10000.0,
+    "Range Accuracy Constant": 0.01,
+    "Range Accuracy Proportional": 0.000001,
+    "Capture On Tick": true,
+    "Sample Rate": 1.0
   }
 }
 ```
 
-| `data` key | Type | Description |
-| --- | --- | --- |
-| `Operating Range` | `number` (m) | Maximum operating range for the sensor. |
-| `Range Accuracy Constant` | The accuracy (towards 0) in which the value is correct. |
+| `data` key | Type | Default | Description |
+| --- | --- | --- | --- |
+| `Operating Range` | `number` (m) | `10000.0` | Maximum operating range for the sensor. |
+| `Range Accuracy Constant` | `number` (m) | `0.01` | Fixed part of the range error. |
+| `Range Accuracy Proportional` | `number` | `1e-6` | Range-proportional error term (ppm-style). |
+| `Capture On Tick` | `bool` | `true` | Automatically sample while the simulation runs. |
+| `Sample Rate` | `number` (s) | `1.0` | Minimum time between automatic samples. Values `<= 0` sample every simulation tick. |
 
 This also accepts a `Fault State` event to inject sensor faults at runtime (see [events.md#canonical-spacecraft-event-recipes](events.md#canonical-spacecraft-event-recipes)).
+
+---
+
+## RADAR
+
+`RADAR` detects nearby physical objects from returned signal strength and emits RADAR telemetry (APID 306).
+
+```json
+{
+  "class": "RADAR",
+  "name": "Rendezvous Radar",
+  "position": [0.0, 0.5, 0.0],
+  "rotation": [0.0, 0.0, 0.0],
+  "data": {
+    "Power": 1000.0,
+    "Aperture Diameter": 0.4,
+    "Aperture Efficiency": 0.6,
+    "Wavelength": 0.03,
+    "Bandwidth": 1000000.0,
+    "Temperature": 290.0,
+    "Detection Threshold": 13.0,
+    "Distance Noise": 0.01,
+    "Capture On Tick": true
+  }
+}
+```
+
+| `data` key | Type | Default | Description |
+| --- | --- | --- | --- |
+| `Power` | `number` (W) | `1000.0` | Transmitted radar power. |
+| `Aperture Diameter` | `number` (m) | `0.4` | Antenna aperture; contributes to gain and beam width. |
+| `Aperture Efficiency` | `number` `0–1` | `0.6` | Fraction of aperture area contributing to gain. |
+| `Wavelength` | `number` (m) | `0.03` | Radar wavelength. |
+| `Bandwidth` | `number` (Hz) | `1e6` | Receiver bandwidth used in the noise calculation. |
+| `Temperature` | `number` (K) | `290.0` | Radar system noise temperature. |
+| `Detection Threshold` | `number` (dB) | `13.0` | Minimum signal-to-noise ratio for detection. |
+| `Min Signal` / `Max Signal` | `number` (W) | `0.0` / `1e-3` | Receiver measurement floor and saturation ceiling. |
+| `Ignore Signal Outside Threshold` | `bool` | `false` | Drop out-of-range returns instead of clamping them. |
+| `Distance Noise` | `number` | `0.01` | Range error as a fraction of target distance. |
+| `Capture On Tick` | `bool` | `true` | Automatically capture radar data each simulation tick. |
+
+`Gain`, `Beamwidth`, detected-target values, and aggregate signal/noise values are calculated runtime outputs, not scenario inputs.
 
 ---
 
@@ -649,6 +785,7 @@ This also accepts a `Fault State` event to inject sensor faults at runtime (see 
   "data": {
     "Capture Distance":    0.05,
     "Capture Angle":       20.0,
+    "Capture Roll Angle":  20.0,
     "Separation Force":    100.0,
     "Separation Duration": 1.0,
     "Mass":                5.0
@@ -660,17 +797,18 @@ This also accepts a `Fault State` event to inject sensor faults at runtime (see 
 | --- | --- | --- |
 | `Capture Distance` | `number` (m) | Maximum face-to-face distance at which capture succeeds. |
 | `Capture Angle` | `number` (deg) | Maximum half-cone alignment angle for a successful capture. |
+| `Capture Roll Angle` | `number` (deg) | Maximum relative roll misalignment for capture. |
 | `Separation Force` | `number` (N) | Impulse force applied along the docking axis when undocking, to push the craft apart. Default `100`. |
 | `Separation Duration` | `number` (s) | Duration over which the separation force is applied when undocking. Default `0.5`. |
 | `Mass` | `number` (kg) | Component mass. |
 
-Both the chaser and the target need a `Docking Adapter` component. The chaser does **not** need `enable_rpo_software` — only a rendezvous manoeuvre requires that flag. Undocking via the [`docking`](../api-reference/spacecraft-commands.md#docking) command applies the separation impulse defined here. See [recipes.md](recipes.md) — Recipe 4.
+Both the chaser and the target need a `Docking Adapter` component. The chaser does **not** need `enable_rpo_software`: only a rendezvous maneuver requires that flag. Undocking via the [`docking`](../api-reference/spacecraft-commands.md#docking) command applies the separation impulse defined here. See [recipes.md](recipes.md): Recipe 4.
 
 ---
 
-## Fuel network components
+## Fuel Network Components
 
-Static topology is authored in each spacecraft's `fuel.bus[]` (see [spacecraft.md — fuel](spacecraft.md#fuel--propellant-bus)). Runtime valve/pump state changes via [`fuel_bus`](../api-reference/spacecraft-commands.md#fuel_bus) and [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration) (`scope: "fuel_bus"`). Set initial state in `data` where noted.
+Static topology is authored in each spacecraft's `fuel.bus[]` (see [spacecraft.md: fuel](spacecraft.md#fuel--propellant-bus)). Runtime valve/pump state changes via [`fuel_bus`](../api-reference/spacecraft-commands.md#fuel_bus) and [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration) (`scope: "fuel_bus"`). Set initial state in `data` where noted.
 
 ### Fuel Source
 
@@ -691,15 +829,15 @@ Static topology is authored in each spacecraft's `fuel.bus[]` (see [spacecraft.m
 
 | `data` key | Type | Default | Description |
 | --- | --- | --- | --- |
-| `Capacity` | `number` (kg) | `1.0` | Maximum propellant the tank can hold. **Always set this** — the `1.0` default is tiny and will cap fill/transfer immediately. |
-| `Amount` | `number` (kg) | `0.0` | Propellant loaded at scenario start. **Defaults to empty (`0.0`)**, so a supply/source tank must set it; a receiving tank typically starts at `0.0` (or partial). |
-| `Initial Fuel Mass` | `number` (kg) | `0.0` | Alias for `Amount` (either key works). |
+| `Capacity` | `number` (kg) | `1.0` | Maximum propellant the tank can hold. **Always set this**: the `1.0` default is tiny and will cap fill/transfer immediately. |
+| `Amount` | `number` (kg) | `0.0` | Propellant loaded at scenario start. **This is the fill that thrusters actually consume.** Defaults to empty (`0.0`), so a supply/source tank must set it; a receiving tank typically starts at `0.0` (or partial). |
+| `Initial Fuel Mass` | `number` (kg) | `0.0` | Dynamics-model reference mass (constant-volume density / tank radius). **Not** an alias for `Amount`. Set both to the same loaded mass on a supply tank. |
 | `Dry Mass` | `number` (kg) | `0.0` | Tank hardware mass without propellant. |
 | `Maximum Outgoing Flow Rate` | `number` (kg/s) | `2.0` | Outflow limit **from** the tank (how fast it can supply downstream). |
-| `Desired Ingoing Flow Rate` | `number` (kg/s) | `0.0` | Rate at which the tank actively **draws fuel in**. **Defaults to `0.0`, meaning the tank pulls nothing** — a receiving tank (e.g. the client end of a fuel interconnect) must set this **positive** or no fuel transfers in, even with valves open. |
-| `Mass` | `number` (kg) | — | Component mass (summed into spacecraft total). |
+| `Desired Ingoing Flow Rate` | `number` (kg/s) | `0.0` | Rate at which the tank actively **draws fuel in**. **Defaults to `0.0`, meaning the tank pulls nothing**: a receiving tank (e.g. the client end of a fuel interconnect) must set this **positive** or no fuel transfers in, even with valves open. |
+| `Mass` | `number` (kg) | None | Component mass (summed into spacecraft total). |
 
-> **Fuel transfer needs both ends configured.** For propellant to move across a [`Fuel Interconnect`](#fuel-interconnect), the **supply** tank needs `Amount > 0` and an adequate `Maximum Outgoing Flow Rate`, and the **receiving** tank needs spare `Capacity` and a positive `Desired Ingoing Flow Rate` (it is `0.0` by default, so an unset receiver silently accepts nothing). The transfer rate is limited by the smallest of those plus any valve `Max Flow Rate` in between.
+**Fuel transfer needs both ends configured.** For propellant to move across a [`Fuel Interconnect`](#fuel-interconnect), the **supply** tank needs `Amount > 0` and an adequate `Maximum Outgoing Flow Rate`, and the **receiving** tank needs spare `Capacity` and a positive `Desired Ingoing Flow Rate` (it is `0.0` by default, so an unset receiver silently accepts nothing). The transfer rate is limited by the smallest of those plus any valve `Max Flow Rate` in between.
 
 ### Fuel Valve
 
@@ -720,7 +858,7 @@ Static topology is authored in each spacecraft's `fuel.bus[]` (see [spacecraft.m
 | `Commanded Percent Open` | `number` `0–1` | `1.0` | Target openness at load (`0` = closed, `1` = fully open). |
 | `Max Flow Rate` | `number` (kg/s) | unlimited | Flow cap when open. |
 | `Max Actuation Angular Velocity` | `number` (rad/s) | `π/2` | How fast the valve moves toward the commanded position. |
-| `Mass` | `number` (kg) | — | Component mass. |
+| `Mass` | `number` (kg) | None | Component mass. |
 
 Wire on `fuel.bus[]` with `in` / `out` terminals (maps to inlet / outlet).
 
@@ -745,13 +883,13 @@ Wire on `fuel.bus[]` with `in` / `out` terminals (maps to inlet / outlet).
 | `Efficiency` | `number` `0–1` | `1.0` | Mechanical efficiency factor. |
 | `Is Pump Enabled` | `bool` | `false` | Whether the pump starts enabled. |
 | `Allow Flow When Disabled` | `bool` | `false` | Passive pass-through when disabled. |
-| `Mass` | `number` (kg) | — | Component mass. |
+| `Mass` | `number` (kg) | None | Component mass. |
 
 Also connect the pump on `power.bus[]` (`battery` `out` → pump `in`) so the motor can run.
 
 ### Fuel Interconnect
 
-A **Fuel Interconnect** is a passive fuel node that bonds to **one local fuel object** (a `Fuel Source`, `Fuel Valve`, or `Fuel Pump`) and **links to a matching interconnect on another spacecraft** to form a fuel-transfer bridge. Fuel only crosses the link while the two spacecraft are **docked** (and the bonded valve on each side is open), so it is the fuel analogue of [`Power Interconnect`](#power-interconnect).
+A **Fuel Interconnect** is a passive fuel node that bonds to **one local fuel object** (a `Fuel Source`, `Fuel Valve`, or `Fuel Pump`) and **links to a matching interconnect on another spacecraft** to form a fuel-transfer bridge. Fuel only crosses the link while the two spacecraft are **docked** (and the bonded valve on each side is open), so it is the fuel analog of [`Power Interconnect`](#power-interconnect).
 
 ```json
 {
@@ -771,7 +909,7 @@ A **Fuel Interconnect** is a passive fuel node that bonds to **one local fuel ob
 | `Vent To Space When Unconnected` | `bool` | `true` | When `true`, fuel vents to space (producing a small thrust) if the interconnect is unlinked, or cross-docked but **not** currently docked. Set `false` to simply stop flow. |
 | `Specific Impulse` | `number` (s) | `50.0` | Isp used to convert vent mass-flow to thrust when venting. `0` removes mass without thrust. |
 | `Require Positive Pressure Differential` | `bool` | `false` | When `true`, transfer requires the supply ullage pressure to exceed the receiver's (both sides need a `Fuel Source Thermal Model`). |
-| `Mass` | `number` (kg) | — | Component mass. |
+| `Mass` | `number` (kg) | None | Component mass. |
 
 **Bond it locally first.** On `fuel.bus[]`, wire a valve/pump/tank into the interconnect so it has a local fuel object to draw from or feed into (the interconnect maps to a single `Local` port):
 
@@ -779,7 +917,7 @@ A **Fuel Interconnect** is a passive fuel node that bonds to **one local fuel ob
 { "source_component": "Transfer Valve", "source_terminal": "out", "target_component": "Fuel Interconnect", "target_terminal": "in" }
 ```
 
-**Then link it to its partner** in the top-level [`docking`](spacecraft.md#docking-start-the-scenario-already-docked) block as a fuel-interconnect connection — `{ "from_team": 111111, "from_target": "Fuel Interconnect", "to_asset": "SC_HUB", "to_target": "Fuel Interconnect A" }`. Both endpoints name a `Fuel Interconnect`, so Studio links (rather than docks) them; address each craft by team (`from_team`/`to_team`) or by asset (`from_asset`/`to_asset`, e.g. a neutral hub). Full rules and a multi-port hub recipe: [spacecraft.md — Fuel interconnects](spacecraft.md#fuel-interconnects).
+**Then link it to its partner** in the top-level [`docking`](spacecraft.md#docking-start-the-scenario-already-docked) block as a fuel-interconnect connection: `{ "from_team": 111111, "from_asset": "SC_001", "from_target": "Fuel Interconnect", "to_asset": "SC_HUB", "to_target": "Fuel Interconnect A" }`. Both endpoints name a `Fuel Interconnect`, so Studio links (rather than docks) them; address each craft by team (`from_team`/`to_team`, which also requires `from_asset`/`to_asset`) or by asset (`from_asset`/`to_asset`, e.g. a neutral hub). Full rules and a multi-port hub recipe: [spacecraft.md: Fuel interconnects](spacecraft.md#fuel-interconnects).
 
 **Suggested use:** servicer/depot scenarios where a tanker tops up a client across a docked interface (see `Testing/test_fuel_scenario`).
 
@@ -787,7 +925,7 @@ A **Fuel Interconnect** is a passive fuel node that bonds to **one local fuel ob
 
 ## Power Interconnect
 
-A **Power Interconnect** is a power-bus connector that can **link to another interconnect on a different spacecraft**, merging the two buses into one electrical network. It extends `Power Switch`, so it is itself a switch (`Is Open`) that can break the bridge. It is the power analogue of the [Fuel Interconnect](#fuel-interconnect).
+A **Power Interconnect** is a power-bus connector that can **link to another interconnect on a different spacecraft**, merging the two buses into one electrical network. It extends `Power Switch`, so it is itself a switch (`Is Open`) that can break the bridge. It is the power analog of the [Fuel Interconnect](#fuel-interconnect).
 
 ```json
 {
@@ -798,18 +936,18 @@ A **Power Interconnect** is a power-bus connector that can **link to another int
 
 No class-specific `data` keys are required for typical scenarios (it inherits `Is Open`, `Resistance`, etc. from [Power Switch](#power-switch)).
 
-### Terminal usage (same spacecraft)
+### Terminal Usage (Same Spacecraft)
 
 | Terminal | Wiring |
 | --- | --- |
 | **`in`** | Upstream components on **this** bus connect **to** the interconnect here (e.g. `Battery` `out` → `Interconnect` `in`). Required before a cross-spacecraft link. |
 | **`out`** | Used for downstream loads on the same bus (series continuation). The cross-spacecraft bridge to the partner bus is created by the `docking` link, not by an extra `bus[]` row to the other hull. |
 
-### Cross-spacecraft link (scenario JSON)
+### Cross-Spacecraft Link (Scenario JSON)
 
-Link two interconnects in the top-level [`docking`](spacecraft.md#docking-start-the-scenario-already-docked) block as a power-interconnect connection — `{ "from_team": 111111, "from_target": "Interconnect", "to_asset": "SC_HUB", "to_target": "Interconnect A" }`. Both endpoints name a `Power Interconnect`, so Studio links (rather than docks) them; address each craft by team (`from_team`/`to_team`) or asset (`from_asset`/`to_asset`, e.g. a neutral hub). Full rules and a hub recipe: [spacecraft.md — Power interconnects](spacecraft.md#power-interconnects).
+Link two interconnects in the top-level [`docking`](spacecraft.md#docking-start-the-scenario-already-docked) block as a power-interconnect connection: `{ "from_team": 111111, "from_asset": "SC_001", "from_target": "Interconnect", "to_asset": "SC_HUB", "to_target": "Interconnect A" }`. Both endpoints name a `Power Interconnect`, so Studio links (rather than docks) them; address each craft by team (`from_team`/`to_team`, which also requires `from_asset`/`to_asset`) or asset (`from_asset`/`to_asset`, e.g. a neutral hub). Full rules and a hub recipe: [spacecraft.md: Power interconnects](spacecraft.md#power-interconnects).
 
-**Suggested use:** docking / depot scenarios where two hulls should **start** with a shared power network — e.g. the RPO hub charging docked clients.
+**Suggested use:** docking / depot scenarios where two hulls should **start** with a shared power network: e.g. the RPO hub charging docked clients.
 
 ---
 
@@ -817,15 +955,15 @@ Link two interconnects in the top-level [`docking`](spacecraft.md#docking-start-
 
 ```json
 {
-  "class": "Text",
+  "class": "Physical Text",
   "name":  "Text Front",
   "enabled": true,
   "position": [13.418, 40.162, -8.064],
   "rotation": [-1.4, 77.7, -97.2],
+  "scale": 1.0,
   "data": {
     "Text":  "RECON",
-    "Color": "#FFFF0D",
-    "Scale": 50.0
+    "Font Size": 50
   }
 }
 ```
@@ -833,21 +971,20 @@ Link two interconnects in the top-level [`docking`](spacecraft.md#docking-start-
 | `data` key | Type | Description |
 | --- | --- | --- |
 | `Text` | `string` | The text to render on the spacecraft. |
-| `Color` | `string` (hex) | Text color. Accepts `#RRGGBB`. |
-| `Scale` | `number` | Text scale factor. |
+| `Font Size` | `integer` | Font size used by the rendered text. |
 
-Pure visual / labelling — the text has no simulation effect, but teams can read it from a Camera image. This is the trick used by `Orbital Intel`'s rogue spacecraft, where the answer to one of the questions is the word painted on its solar panels.
+Pure visual / labeling: the text has no simulation effect, but teams can read it from a Camera image. This is the trick used by `Orbital Intel`'s rogue spacecraft, where the answer to one of the questions is the word painted on its solar panels.
 
-`Text` uses dedicated keys only (case-insensitive, no aliases): `Text`, `Color`, `Scale`.
+`Text` and `Font Size` are the supported scenario `data` keys. Although the underlying component has a `Font Color` property, the current generic scenario loader does not apply color-valued `data` fields; choose a mesh/material with the required text color instead. Use the component-level `scale` field (outside `data`) to resize the whole text component.
 
 ---
 
-## Authoring tips
+## Authoring Tips
 
 - **Always include `Mass`** on every component. Power, propellant, and inertia calculations rely on a non-zero spacecraft mass.
 - **Place components physically** (`position`, `rotation`) when they affect geometry-aware physics: cameras, antennas, jammers, docking adapters, solar panels. For "anywhere on the bus" components (computer, battery, storage), the position is purely cosmetic.
-- **Pick standardised names** within a fleet. If every spacecraft has a `Camera`, name it `Camera` everywhere; teams can then write commands that target `Camera` without knowing which spacecraft they're addressing.
-- **Disable components with `enabled: false`** when an event is going to enable them later — for example, a `Jammer` that should only come online mid-scenario.
+- **Pick standardized names** within a fleet. If every spacecraft has a `Camera`, name it `Camera` everywhere; teams can then write commands that target `Camera` without knowing which spacecraft they're addressing.
+- **Disable components with `enabled: false`** when an event is going to enable them later: for example, a `Jammer` that should only come online mid-scenario.
 - **Use a `Text` label** on rogue/constructive-agent spacecraft so teams have a way to identify them visually.
 
 For runtime exploration of any spacecraft's component graph, use [`list_entity`](../api-reference/ground-requests.md#list_entity) with the spacecraft's asset ID.

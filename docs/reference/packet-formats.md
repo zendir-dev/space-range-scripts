@@ -1,18 +1,18 @@
 # Packet Formats
 
-Byte-level reference for every binary format on the Space Range wire. This page is the canonical answer to "what byte goes where?" — if you're building a custom decoder and need to know the exact layout, this is the page to keep open.
+This page specifies every binary format on the Space Range wire. It covers Message Queuing Telemetry Transport (MQTT) framing, Consultative Committee for Space Data Systems (CCSDS) Space Packets, and XML Telemetric and Command Exchange (XTCE) field definitions for custom decoders.
 
 For a working code walkthrough, see [Decoding telemetry](../guides/decoding-telemetry.md). For the higher-level conceptual treatment, see [Concepts → Telemetry](../concepts/telemetry.md).
 
 ---
 
-## Endianness conventions
+## Endianness Conventions
 
-Two conventions co-exist on the wire. The relevant one depends on which layer you're decoding:
+Two conventions coexist on the wire. The relevant convention depends on the layer being decoded:
 
 | Layer | Endianness | Source |
 | --- | --- | --- |
-| MQTT XOR ciphertext | byte-stream (no order) | n/a — XOR is per-byte |
+| MQTT XOR ciphertext | byte-stream (no order) | n/a: XOR is per-byte |
 | Downlink frame header (5 bytes) | **little-endian** | Studio writes the team ID with `IntToBytes(..., LittleEndian)` |
 | Uplink Intercept header (32 bytes) | **little-endian** | The intercept record is a packed C++ struct, naturally LE on x86 / Unreal |
 | CCSDS Space Packet primary header (6 bytes) | **big-endian** (network byte order) | CCSDS 133.0-B-2 §4.1.3 |
@@ -20,11 +20,11 @@ Two conventions co-exist on the wire. The relevant one depends on which layer yo
 | CCSDS user-data fields (XTCE-defined) | **big-endian** | Studio writes every numeric field with `WriteBigEndian*()` |
 | Media name header & body | byte-stream | name is plain ASCII bytes, file body is the file format's own |
 
-If you're getting numeric values that look like swapped bytes (e.g. `0x0100_0000` instead of `1`), 95% of the time you've used the wrong endianness for the layer.
+Numeric values that look byte-swapped (for example, `0x0100_0000` instead of `1`) usually indicate that the decoder used the wrong endianness for the layer.
 
 ---
 
-## The downlink envelope (overview)
+## The Downlink Envelope (Overview)
 
 Every byte that arrives on `Zendir/SpaceRange/<GAME>/<TEAM>/Downlink` has the same layered shape:
 
@@ -45,6 +45,7 @@ Every byte that arrives on `Zendir/SpaceRange/<GAME>/<TEAM>/Downlink` has the sa
 |        F=1: CCSDS Space Packet                    |
 |        F=2: Media (50B name + file)               |
 |        F=3: Uplink Intercept (32B + raw)          |
+||        F=4: CCD Frame (50B name + hdr + u16[])    |
 +---------------------------------------------------+
 ```
 
@@ -52,7 +53,7 @@ The 5-byte frame header is documented next, then each `F` value is detailed in t
 
 ---
 
-## 5-byte downlink frame header
+## 5-Byte Downlink Frame Header
 
 After XOR-decryption, **before** Caesar decryption, the first 5 bytes describe the inner payload.
 
@@ -70,6 +71,7 @@ After XOR-decryption, **before** Caesar decryption, the first 5 bytes describe t
 | `1` | `Message` | CCSDS Space Packet (Ping, Schedule Report, Configuration Report, or any other XTCE-defined message). |
 | `2` | `Media` | 50-byte name header + file bytes. |
 | `3` | `UplinkIntercept` | 32-byte intercept header + raw on-air bytes. |
+| `4` | `CCDFrame` | 50-byte name header + 20-byte metadata header + `uint16` LE ADU array. |
 
 Quick decode (Python):
 
@@ -79,7 +81,7 @@ team_id = int.from_bytes(decoded[1:5], "little", signed=False)
 inner   = caesar_decrypt(team_key, decoded[5:])
 ```
 
-The `TeamID` field is always little-endian regardless of platform — Studio explicitly serialises it that way when assembling the frame.
+The `TeamID` field is always little-endian regardless of platform: Studio explicitly serializes it that way when assembling the frame.
 
 ---
 
@@ -94,9 +96,9 @@ Studio's "Message" frames are CCSDS 133.0-B-2 Space Packets with the optional Se
 +---------------------+----------------------+-----------------------+
 ```
 
-> (1) The default Studio config is 24 bytes. The exact size is determined by the [Secondary Header config](#secondary-header-default-24-bytes); the XTCE schema you fetch via [`get_packet_schemas`](../api-reference/ground-requests.md#get_packet_schemas) is the authoritative description for the running scenario.
+(1) The default Studio config is 24 bytes. The exact size is determined by the [Secondary Header config](#secondary-header-default-24-bytes); the XTCE schema returned by [`get_packet_schemas`](../api-reference/ground-requests.md#get_packet_schemas) is the authoritative description for the running scenario.
 
-### Primary Header (6 bytes, big-endian)
+### Primary Header (6 Bytes, Big-Endian)
 
 Three 16-bit words. Bit positions are MSB-first within each word.
 
@@ -148,7 +150,7 @@ def parse_primary_header(buf: bytes) -> dict:
     }
 ```
 
-### Secondary Header (default 24 bytes)
+### Secondary Header (Default 24 Bytes)
 
 Space Range uses CUC time format with all optional fields enabled except packet sub-type, which **is** enabled. Layout:
 
@@ -164,15 +166,15 @@ Space Range uses CUC time format with all optional fields enabled except packet 
 
 Notes:
 
-- **`SpacecraftID`** is the same 8-character hex `asset_id` that you see in the team-side API (`A3F2C014`-style). Use it to demultiplex packets when subscribing on behalf of a team that has multiple spacecraft.
-- **`SimulationTime`** is the most reliable timestamp for plotting — it's monotonic across leap seconds and matches the `Session` topic's `time` field exactly.
-- **`CoarseTime + FineTime`** give the wall-clock UTC. If you're correlating with external systems, prefer this; if you're plotting against the simulation timeline, use `SimulationTime`.
+- **`SpacecraftID`** is the same 8-character hex `asset_id` exposed by the team-side API (`A3F2C014`-style). Use it to demultiplex packets for a team with multiple spacecraft.
+- **`SimulationTime`** is the most reliable timestamp for plotting: it's monotonic across leap seconds and matches the `Session` topic's `time` field exactly.
+- **`CoarseTime + FineTime`** give wall-clock UTC. Use this value for external-system correlation and `SimulationTime` for simulation-timeline plots.
 
-If a scenario customises the secondary header config, the XTCE schema you fetch will reflect the new layout — always trust the schema over this table.
+If a scenario customizes the secondary header config, the returned XTCE schema reflects the new layout. Treat the schema as authoritative over this table.
 
-### APID catalog
+### APID Catalog
 
-Studio ships with the following APIDs already registered for telemetry. Each appears in the XTCE schema you fetch via [`get_packet_schemas`](../api-reference/ground-requests.md#get_packet_schemas). APIDs are grouped by subsystem; ranges are reserved for future expansion.
+Studio ships with the following APIDs already registered for telemetry. Each appears in the XTCE schema returned by [`get_packet_schemas`](../api-reference/ground-requests.md#get_packet_schemas). APIDs are grouped by subsystem; ranges are reserved for future expansion.
 
 Source: `USpaceRangeSubsystem::InitializeSpacePacketDefinitions` (`studio/Plugins/SpaceRange/Source/SpaceRange/Private/Subsystems/SpaceRangeSubsystem.cpp`).
 
@@ -186,13 +188,15 @@ Source: `USpaceRangeSubsystem::InitializeSpacePacketDefinitions` (`studio/Plugin
 | 200 | Battery | `BatteryMessage` | `PowerSystem` | Has a `Battery` component. |
 | 201 | Power Source | `PowerMessage` | `PowerSystem` | Per-source power (`Solar Panel`, etc.). |
 | 202 | Power Node | `PowerNodeMessage` | `PowerSystem` | Per-consumer node breakdown. |
+| 203 | Power Monitor | `PowerMonitorMessage` | `PowerSystem` | Aggregate EPS/bus telemetry, emitted when `controller.monitor` is `true` (attaches the `PowerMonitor` behavior). |
 | **Sensors (300-399)** | | | | |
 | 300 | Magnetometer | `TAMDataMessage` | `Sensors` | Has a `Magnetometer` component. |
 | 301 | GPS | `GPSDataMessage` | `Sensors` | Has a `GPS Sensor` component. |
-| 302 | EM Sensor | `ElectromagneticSensorMessage` | `Sensors` | Has an `EM Sensor` component (and it's enabled — see [components.md § EM Sensor](../scenarios/components.md)). |
+| 302 | EM Sensor | `ElectromagneticSensorMessage` | `Sensors` | Has an `EM Sensor` component (and it's enabled: see [components.md § EM Sensor](../scenarios/components.md)). |
 | 303 | CCD | `CCDDataMessage` | `Sensors` | Has a `Charge Coupled Device` (or `Camera`) component. |
 | 304 | Gyroscope | `GyroscopeDataMessage` | `Sensors` | Has a `Gyroscope` component. |
-| 305 | Laser Range Finder | `LaserRangeFinderDataMessage` | `Sensors` | Has a `Laser Range Finder` component |
+| 305 | Laser Range Finder | `LaserRangeFinderMessage` | `Sensors` | Has a `Laser Range Finder` component. |
+| 306 | Radar | `RADARDataMessage` | `Sensors` | Has a `Radar` component. |
 | **ADCS (400-499)** | | | | |
 | 400 | Computer | `ComputerMessage` | `ADCS` | Has a `Computer` component. |
 | 401 | Reaction Wheels | `ReactionWheelsMessage` | `ADCS` | Has a `Reaction Wheels` component. |
@@ -210,10 +214,10 @@ Source: `USpaceRangeSubsystem::InitializeSpacePacketDefinitions` (`studio/Plugin
 Notes for authoring **Cyber events** (telemetry tamper overlays, see [scenarios/events.md § Cyber](../scenarios/events.md#cyber-events)):
 
 - Pick an APID **whose component is actually present** on the targeted spacecraft. Tampering APID 502 on a spacecraft with no `Jammer` is a no-op because the packet is never emitted in the first place.
-- The byte offsets you patch are **relative to the start of CCSDS user data**, not the packet start. The first 30 bytes (6 primary + 24 secondary header) are not patchable from a Cyber event.
+- Patch byte offsets are **relative to the start of CCSDS user data**, not the packet start. The first 30 bytes (6 primary + 24 secondary header) cannot be patched by a Cyber event.
 - The full byte layout for Ping (APID 100) is documented below; for any other APID, fetch the live XTCE schema with [`get_packet_schemas`](../api-reference/ground-requests.md#get_packet_schemas) and offset against the field of interest.
 
-### User Data Field (XTCE-defined)
+### User Data Field (XTCE-Defined)
 
 The user data field's bytes follow the order and types declared in the XTCE schema for the matching APID. Encoding rules are uniform:
 
@@ -228,20 +232,20 @@ The user data field's bytes follow the order and types declared in the XTCE sche
 | `Vector3` | Three big-endian `float64`s, `X, Y, Z`. |
 | `Vector4` | Four big-endian `float64`s, `X, Y, Z, W`. |
 
-These rules are uniform across every XTCE-defined message — once you can parse one, you can parse all of them.
+These rules are uniform across every XTCE-defined message. A decoder that parses one can parse all of them.
 
 ---
 
-## Ping packet (`APID` = system, e.g. 100)
+## Ping Packet (`APID` = System, E.G. 100)
 
 The most common message. Periodic snapshot of the spacecraft's state.
 
-### XTCE field order (in encoded order)
+### XTCE Field Order (in Encoded Order)
 
 | # | Field | XTCE type | Range / unit | Description |
 | --- | --- | --- | --- | --- |
 | 1 | `State` | String | enum below | Current operational state. |
-| 2 | `Station` | String | — | Nearest ground station name, or `"None"`. |
+| 2 | `Station` | String | None | Nearest ground station name, or `"None"`. |
 | 3 | `Memory` | Float (32) | `0.0–1.0` | On-board storage usage as a fraction of capacity. |
 | 4 | `Battery` | Float (32) | `0.0–1.0` | Battery charge as a fraction of capacity. |
 | 5 | `Commands` | String | JSON array | Commands executed since the previous Ping. |
@@ -258,7 +262,7 @@ The most common message. Periodic snapshot of the spacecraft's state.
 | `FULL STORAGE` | On-board storage is full; new captures are being dropped. |
 | `REBOOTING` | Just executed a `reset` (or `encryption` rotation) and is offline for the configured `reset_interval`. |
 
-### Wire layout (concrete byte view)
+### Wire Layout (Concrete Byte View)
 
 For an example Ping with `State="NOMINAL"`, `Station="Madrid"`, `Memory=0.42`, `Battery=0.81`, `Commands="[]"`, `UplinkInterceptDataBytes=0`:
 
@@ -276,9 +280,9 @@ Offset  Bytes                                                Field
 29      00 00 00 00                                          UplinkInterceptDataBytes (BE int32)
 ```
 
-The total user-data length depends entirely on the actual string contents, so the primary header's `Data Length` field is your authoritative measure of where the packet ends.
+The total user-data length depends on the string contents, so the primary header's `Data Length` field is the authoritative packet boundary.
 
-### `Commands` JSON shape
+### `Commands` JSON Shape
 
 After parsing the user-data field, `Commands` is a UTF-8 string whose contents are a JSON array. Each entry:
 
@@ -300,22 +304,22 @@ After parsing the user-data field, `Commands` is a UTF-8 string whose contents a
 | `Success` | bool | Whether execution succeeded. |
 | `Args` | string (JSON) | The command's arguments as a JSON-encoded string with sensitive keys (e.g. `password`) redacted. |
 
-`Args` is itself a JSON string — `json.loads(entry["Args"])` to recover the arguments object.
+`Args` is itself a JSON string: `json.loads(entry["Args"])` to recover the arguments object.
 
 ---
 
-## Schedule Report packet
+## Schedule Report Packet
 
 Sent only in response to [`get_schedule`](../api-reference/spacecraft-commands.md#get_schedule).
 
-### XTCE field order
+### XTCE Field Order
 
 | # | Field | XTCE type | Range / unit | Description |
 | --- | --- | --- | --- | --- |
 | 1 | `Count` | Int (32) | `≥ 0` | Number of pending commands. |
 | 2 | `Commands` | String | JSON array | Pending command queue. |
 
-### `Commands` JSON shape
+### `Commands` JSON Shape
 
 Each entry:
 
@@ -337,21 +341,21 @@ Each entry:
 | `Command` | string | Command type. |
 | `Args` | string (JSON) | Arguments, redacted of sensitive keys. |
 
-The same JSON-string-of-array trick as Ping — `json.loads(report["Commands"])` to access the list.
+The same JSON-string-of-array trick as Ping: `json.loads(report["Commands"])` to access the list.
 
 ---
 
-## Configuration Report packet
+## Configuration Report Packet
 
 Sent in response to [`get_configuration`](../api-reference/spacecraft-commands.md#get_configuration), or automatically after a successful [`power_bus`](../api-reference/spacecraft-commands.md#power_bus), [`fuel_bus`](../api-reference/spacecraft-commands.md#fuel_bus), [`guidance`](../api-reference/spacecraft-commands.md#guidance), [`camera`](../api-reference/spacecraft-commands.md#camera), or [`capture`](../api-reference/spacecraft-commands.md#capture) command, and **only when** the requested scope has configuration to report.
 
-### XTCE field order
+### XTCE Field Order
 
 | # | Field | XTCE type | Range / unit | Description |
 | --- | --- | --- | --- | --- |
 | 1 | `Data` | String | JSON object | Configuration snapshot. |
 
-### `Data` JSON shape
+### `Data` JSON Shape
 
 After XTCE decode, parse with `json.loads(report["Data"])`. Scope controls which top-level keys appear (`power_bus`, `fuel_bus`, `computer`, `camera`, or any combination):
 
@@ -431,13 +435,13 @@ After XTCE decode, parse with `json.loads(report["Data"])`. Scope controls which
 | `power_bus` | array | Power-bus components with session-mutable configuration. Omitted when scope excludes power_bus or every candidate component has nothing to report. |
 | `power_bus[].name` | string | Component name (matches [`list_entity`](../api-reference/ground-requests.md#list_entity)). |
 | `power_bus[].class` | string | Component class (e.g. `Power Switch`, `Power Fuse`). |
-| `power_bus[].configuration` | object | Current operator-mutable values only — not static scenario parameters or simulation telemetry. Keys use spaced names (`Is Open`, `Current Threshold`, …). |
+| `power_bus[].configuration` | object | Current operator-mutable values only: not static scenario parameters or simulation telemetry. Keys use spaced names (`Is Open`, `Current Threshold`, …). |
 | `fuel_bus` | array | Fuel-bus components (valves, pumps) with session-mutable configuration. Omitted when scope excludes fuel_bus or every candidate component has nothing to report. |
 | `fuel_bus[].name` | string | Component name. |
 | `fuel_bus[].class` | string | `Fuel Valve` or `Fuel Pump`. |
 | `fuel_bus[].configuration` | object | `Commanded Percent Open`, `Percent Open` (valve); `Is Pump Enabled`, `Speed Input` (pump). |
 | `computer` | object | Guidance operator state: `pointing` (active mode) and `configs` (last-applied Args per mode, without repeating `pointing`). Stored from executed [`guidance`](../api-reference/spacecraft-commands.md#guidance) commands; cleared on scenario reset. |
-| `computer.pointing` | string | Active pointing mode (`idle`, `inertial`, `velocity`, `sun`, `nadir`, `ground`, `location`, `relative`). |
+| `computer.pointing` | string | Active pointing mode (`idle`, `inertial`, `velocity`, `sun`, `nadir`, `ground`, `location`, `relative`, `dock`). |
 | `computer.configs` | object | Per-mode settings. Keys match [`guidance`](../api-reference/spacecraft-commands.md#guidance) Args for that mode (e.g. `target`, `alignment`, `pitch`/`roll`/`yaw`, `station`, `spacecraft`, `component`). |
 | `camera` | array | Per-imager operator configuration. One entry per imager on the spacecraft (even before the first capture). Omitted when scope excludes camera or the craft has no imagers. |
 | `camera[].name` | string | Imager component name. |
@@ -449,7 +453,7 @@ After XTCE decode, parse with `json.loads(report["Data"])`. Scope controls which
 
 ---
 
-## Media frame (`Format = 2`)
+## Media Frame (`Format = 2`)
 
 Inside the Caesar-decoded body of a `Format = 2` frame:
 
@@ -458,7 +462,7 @@ Inside the Caesar-decoded body of a `Format = 2` frame:
 | 0 | 50 | `Name` | `char[50]` | File name, UTF-8, **null-padded** to 50 bytes. Names longer than 50 bytes are truncated at capture time. |
 | 50 | … | `FileBytes` | bytes | The complete file body. Almost always JPEG or PNG. |
 
-The 50-byte name field is fixed-width — extract bytes `[0, 50)`, strip trailing nulls, decode as UTF-8. Everything from byte 50 onward is the raw file.
+The 50-byte name field is fixed-width: extract bytes `[0, 50)`, strip trailing nulls, decode as UTF-8. Everything from byte 50 onward is the raw file.
 
 ```python
 name_raw  = body[:50]
@@ -466,11 +470,59 @@ name      = name_raw.split(b"\x00", 1)[0].decode("utf-8", errors="replace")
 file_data = body[50:]
 ```
 
-> Imagery is corrupted **probabilistically** to simulate real-world data integrity issues. A small fraction of bytes are randomly bit-flipped before transmission. This means JPEG decoders will sometimes fail, and you should always preserve the raw bytes alongside any decoded preview.
+Imagery is corrupted **probabilistically** to simulate real-world data integrity issues. A small fraction of bytes are randomly bit-flipped before transmission. JPEG decoders may fail, so clients should preserve the raw bytes alongside any decoded preview.
 
 ---
 
-## Uplink Intercept frame (`Format = 3`)
+## CCD Detector Frame (`Format = 4`)
+
+A raw 16-bit detector frame emitted by a `Charge Coupled Device` capture. Unlike a Media frame (which carries a lossy JPEG), this carries the **raw ADU array** so the operator can do lossless pixel analysis (exact values, histograms, statistics). The frame is a 50-byte name header, then a fixed 20-byte metadata header, then the ADU samples.
+
+```text
++--------------+------------------------+-----------------------------+
+|  Name (50B)  |  Metadata header (20B) |  ADU samples (W*H * bps)    |
++--------------+------------------------+-----------------------------+
+```
+
+### Name Header (50 Bytes)
+
+Identical to the [Media frame](#media-frame-format--2) name field: UTF-8, null-padded to 50 bytes, using the `assetId_name` convention (e.g. `A3F2C014_earth_742.ccd`). Extract `[0, 50)`, strip trailing nulls, decode UTF-8.
+
+### Metadata Header (20 Bytes, Little-Endian)
+
+| Offset | Size | Field | Type | Meaning |
+| --- | --- | --- | --- | --- |
+| 50 | 1 | `Version` | `uint8` | Header/layout version. `1` currently. |
+| 51 | 1 | `Compression` | `uint8` | `0` = uncompressed (only value currently emitted). |
+| 52 | 1 | `BytesPerSample` | `uint8` | `2` = `uint16` samples. |
+| 53 | 1 | `Reserved` | `uint8` | Zero (alignment / future use). |
+| 54 | 2 | `Width` | `uint16` LE | Frame width in pixels. |
+| 56 | 2 | `Height` | `uint16` LE | Frame height in pixels. |
+| 58 | 4 | `MaxADU` | `uint32` LE | Full-scale value (e.g. `65535`). Normalizes the samples for display. |
+| 62 | 4 | `ExposureTime` | `float32` LE | Exposure in seconds. |
+| 66 | 4 | `CaptureTime` | `uint32` LE | Simulation seconds at capture. |
+| **70** | | | | **End of metadata header.** |
+
+### ADU Samples
+
+`Width * Height * BytesPerSample` bytes, row-major (top-left origin), little-endian. With `BytesPerSample = 2` each sample is a `uint16` in `[0, MaxADU]`.
+
+```python
+name = body[:50].split(b"\x00", 1)[0].decode("utf-8", errors="replace")
+version, compression, bps, _ = body[50], body[51], body[52], body[53]
+width  = int.from_bytes(body[54:56], "little")
+height = int.from_bytes(body[56:58], "little")
+max_adu = int.from_bytes(body[58:62], "little")
+exposure = struct.unpack("<f", body[62:66])[0]
+capture_time = int.from_bytes(body[66:70], "little")
+adu = struct.unpack(f"<{width*height}H", body[70:70 + width*height*2])
+```
+
+Like Media, the **ADU payload is corrupted probabilistically** before transmission: a fraction of sample bytes are bit-flipped. The 50-byte name and 20-byte metadata header are **never** corrupted, so the frame always remains structurally decodable (its dimensions and scale survive); expect occasional speckle in the pixel values themselves.
+
+---
+
+## Uplink Intercept Frame (`Format = 3`)
 
 A captured uplink frame, as recorded **before** any decode or team-ID validation. Layout:
 
@@ -481,11 +533,11 @@ A captured uplink frame, as recorded **before** any decode or team-ID validation
 +----------------------------+--------------------------------+
 ```
 
-### Header layout (32 bytes, **little-endian**)
+### Header Layout (32 Bytes, **Little-Endian**)
 
 | Offset | Size | Field | Type | Meaning |
 | --- | --- | --- | --- | --- |
-| 0 | 4 | `Magic` | `int32` LE | `0x5055495A` ("ZIUP" — Zendir Uplink Intercept Payload). |
+| 0 | 4 | `Magic` | `int32` LE | `0x5055495A` ("ZIUP": Zendir Uplink Intercept Payload). |
 | 4 | 1 | `Version` | `uint8` | `2` currently; `1` also accepted (no frequency field). |
 | 5 | 1 | `Padding0` | `uint8` | Reserved, zero. |
 | 6 | 1 | `Padding1` | `uint8` | Reserved, zero. |
@@ -500,9 +552,9 @@ A captured uplink frame, as recorded **before** any decode or team-ID validation
 | 28 | 4 | `ReceiverFrequency` | `float32` LE | Receiver tune in MHz at dequeue. v2+ only; in v1 these bytes are zero. |
 | **32** | | | | **End of header.** |
 
-Total header size is invariant at 32 bytes — there's a `static_assert` in the C++ source guaranteeing it.
+Total header size is invariant at 32 bytes: there's a `static_assert` in the C++ source guaranteeing it.
 
-### Flags (`uint8` bitmask)
+### Flags (`uint8` Bitmask)
 
 | Bit | Mask | Name | Meaning |
 | --- | --- | --- | --- |
@@ -510,19 +562,19 @@ Total header size is invariant at 32 bytes — there's a `static_assert` in the 
 | 1 | `0x02` | `DecodeOk` | Stored payload decoded as UTF-8 text successfully. |
 | 2 | `0x04` | `ParseOk` | Decoded text parsed as a valid command JSON. |
 | 3 | `0x08` | `AddressedToUs` | Parsed JSON's `Asset` field matches the receiver's spacecraft. |
-| 4–7 | — | reserved | Set to zero. |
+| 4–7 | None | reserved | Set to zero. |
 
 ### Payload
 
-After the 32-byte header, `StoredLengthBytes` raw bytes follow. These are the **on-air ciphertext** as captured — i.e. they're already encoded with whatever Caesar key the original target was on. The bytes are byte-identical to what was transmitted, suitable for replay via [`transmit_bytes`](../api-reference/ground-requests.md#transmit_bytes).
+After the 32-byte header, `StoredLengthBytes` raw bytes follow. These are the **on-air ciphertext** as captured: i.e. they're already encoded with whatever Caesar key the original target was on. The bytes are byte-identical to what was transmitted, suitable for replay via [`transmit_bytes`](../api-reference/ground-requests.md#transmit_bytes).
 
-If `Truncated` is set, you have only the start of the original frame; the tail was dropped at capture.
+If `Truncated` is set, only the start of the original frame is available; the tail was dropped at capture.
 
-A reference parser is shipped in the Operator UI at `space-range-operator/src/user/helpers/uplinkInterceptParse.js` — `parseUplinkInterceptRecord(rawBytes)` returns the parsed header + payload.
+A reference parser is shipped in the Operator UI at `space-range-operator/src/user/helpers/uplinkInterceptParse.js`: `parseUplinkInterceptRecord(rawBytes)` returns the parsed header + payload.
 
 ---
 
-## XOR cipher specification
+## XOR Cipher Specification
 
 The transport-layer cipher used on every team-scoped MQTT topic.
 
@@ -545,13 +597,13 @@ for i in 0 .. len(data) - 1:
 | Output length | identical to input length |
 | Empty input | returned unchanged |
 
-### Topics that use it
+### Topics That Use It
 
 Every team-scoped or admin-scoped topic except `Session` and `Info`. See [MQTT topics](../api-reference/mqtt-topics.md) for the full list.
 
 ---
 
-## Caesar cipher specification
+## Caesar Cipher Specification
 
 The "RF-layer" cipher, applied to telemetry payloads inside the downlink frame.
 
@@ -571,7 +623,7 @@ decrypt: p[i] = (c[i] - key) mod 256
 | IV / nonce | none |
 | Output length | identical to input length |
 
-### Where it's applied
+### Where It's Applied
 
 Only on the **inner payload** of `Downlink` frames (`bytes[5:]` of the XOR-decrypted message). Uplinks, requests, responses, and the session topic do **not** use Caesar.
 
@@ -579,7 +631,7 @@ The team's current Caesar key can be fetched at runtime via [`get_telemetry`](..
 
 ---
 
-## Session topic payload
+## Session Topic Payload
 
 The unencrypted heartbeat on `Zendir/SpaceRange/<GAME>/Session` is a UTF-8 JSON object published every **~0.3 s** of real time:
 
@@ -598,14 +650,14 @@ The unencrypted heartbeat on `Zendir/SpaceRange/<GAME>/Session` is a UTF-8 JSON 
 | `timestamp` | `float64` | Real-time UNIX epoch seconds (wall clock at publish). Not simulation time. |
 | `time` | `float64` | Simulation seconds since `t = 0` for the current `instance`. |
 | `utc` | `string` | Simulation UTC at `time`, format `YYYY/MM/DD HH:MM:SS`. |
-| `instance` | `int32` | Scenario instance ID; changes on reset — clients should clear cached state. |
+| `instance` | `int32` | Scenario instance ID; changes on reset: clients should clear cached state. |
 | `state` | `string` | `running`, `standby`, `paused`, or `ended`. |
 
-The legacy boolean `running` is **deprecated** — use `state` instead. See [Session stream](../api-reference/session-stream.md) for consumer-side details.
+The legacy boolean `running` is **deprecated**: use `state` instead. See [Session stream](../api-reference/session-stream.md) for consumer-side details.
 
 ---
 
-## Quick decode cheat sheet
+## Quick Decode Cheat Sheet
 
 The full pipeline, expressed as one Python function:
 
@@ -631,15 +683,17 @@ def decode_downlink(payload: bytes,
         return parse_media(inner)                        # 50B name + bytes
     if fmt == 3:
         return parse_uplink_intercept(inner)             # 32B header + bytes
+    if fmt == 4:
+        return parse_ccd_frame(inner)                    # 50B name + 20B hdr + u16[]
     raise ValueError(f"Unknown frame format {fmt}")
 ```
 
-Hold this picture in your head and every wire-level decision in Space Range becomes obvious.
+This framing model explains each wire-level decision in Space Range.
 
 ---
 
 ## Next
 
-- [Data types](data-types.md) — units, ranges, and conventions for every value that travels over these formats.
-- [Decoding telemetry](../guides/decoding-telemetry.md) — runnable code that uses every layout on this page.
-- [Concepts → Telemetry](../concepts/telemetry.md) — why these formats look the way they do.
+- [Data types](data-types.md): units, ranges, and conventions for every value that travels over these formats.
+- [Decoding telemetry](../guides/decoding-telemetry.md): runnable code that uses every layout on this page.
+- [Concepts → Telemetry](../concepts/telemetry.md): why these formats look the way they do.

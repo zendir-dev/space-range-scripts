@@ -1,7 +1,7 @@
 {
 	"metadata": {
 		"name": "Module 6",
-		"description": "Basic ethically hacking training scenario \u2014 nine identical Microsat spacecraft in MEO with continuous ground contact to London, Athens, and Dubai."
+		"description": "Build core spacecraft operations skills by navigating the operator terminal, interpreting telemetry, comparing communications links, and managing power and payload activities. Coordinate mission, satellite, payload, and ground-network responsibilities while gathering evidence for the module tasks."
 	},
 	"simulation": {
 		"epoch": "2026/04/15 10:00:00",
@@ -312,7 +312,9 @@
 							"Resolution": [
 								1024,
 								1024
-							]
+							],
+							"Min Field Of View": 3.0,
+							"Max Field Of View": 60.0
 						}
 					},
 					{
@@ -398,25 +400,26 @@
 	"questions": [
 		{
 			"section": "Satellite Operations",
-			"title": "Where can you find and plot the spacecraft's GPS position data?",
+			"title": "Where can you find and/or plot the spacecraft's GPS position data?",
 			"description": "Select all areas of the operator terminal where GPS position data can be viewed or plotted. There may be more than one correct answer.",
 			"type": "checkbox",
 			"answer": {
 				"options": [
 					"Controls",
 					"Images",
-					"Schedule",
-					"Telemetry",
+					"Map",
 					"Messages",
 					"Plots",
-					"Map",
+					"Schedule",
+					"Telemetry",
 					"Timeline"
 				],
 				"value": [
-					5,
-					6
+					2,
+					3,
+					4
 				],
-				"reason": "GPS position can be plotted in the Plots tab and displayed on the Map. Selecting any incorrect tab scores zero.",
+				"reason": "GPS position can be plotted in the Plots tab, displayed in the Messages tab and shown on the Map. Selecting any incorrect tab scores zero.",
 				"score": 10
 			}
 		},
@@ -427,11 +430,11 @@
 			"type": "select",
 			"answer": {
 				"options": [
-					"London",
 					"Dubai",
+					"London",
 					"Singapore"
 				],
-				"value": 1,
+				"value": 0,
 				"reason": "Dubai provided the best signal-to-noise ratio for this pass configuration.",
 				"score": 10
 			}
@@ -482,13 +485,13 @@
 			"type": "select",
 			"answer": {
 				"options": [
-					"Sun",
-					"Nadir",
-					"Inertial",
 					"Ground",
-					"Idle"
+					"Idle",
+					"Inertial",
+					"Nadir",
+					"Sun"
 				],
-				"value": 0,
+				"value": 4,
 				"reason": "Sun pointing aligns the solar panels with the Sun to maximize power generation.",
 				"score": 10
 			}
@@ -513,12 +516,12 @@
 			"type": "select",
 			"answer": {
 				"options": [
+					"Ground Network Coordinator",
 					"Mission Lead",
-					"Satellite Operator",
 					"Payload Operator",
-					"Ground Network Coordinator"
+					"Satellite Operator"
 				],
-				"value": 0,
+				"value": 1,
 				"reason": "The Mission Lead holds go/no-go authority for transitioning from comms checkout to payload operations.",
 				"score": 10
 			}
@@ -530,13 +533,13 @@
 			"type": "select",
 			"answer": {
 				"options": [
+					"Ground Network Coordinator",
 					"Mission Lead",
-					"Satellite Operator",
 					"Payload Operator",
-					"Ground Network Coordinator"
+					"Satellite Operator"
 				],
-				"value": 1,
-				"reason": "The Payload Operator executes and verifies payload-related pointing, including sun-pointing for power operations.",
+				"value": 3,
+				"reason": "The Satellite Operator commands and verifies guidance pointing, including the sun-pointing maneuver used for power operations.",
 				"score": 10
 			}
 		},
@@ -547,12 +550,12 @@
 			"type": "select",
 			"answer": {
 				"options": [
+					"Ground Network Coordinator",
 					"Mission Lead",
-					"Satellite Operator",
 					"Payload Operator",
-					"Ground Network Coordinator"
+					"Satellite Operator"
 				],
-				"value": 0,
+				"value": 1,
 				"reason": "Satellite Operations escalates link-quality issues to the Mission Lead first so the team can hold or replan payload tasking.",
 				"score": 10
 			}

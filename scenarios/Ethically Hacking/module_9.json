@@ -1,7 +1,7 @@
 {
 	"metadata": {
 		"name": "Module 9",
-		"description": "Detect and Confirm - alert is not incident. LEO operations with ground stations at Tokyo, Anchorage, Houston, Lima, and Santiago. Triage alerts within sixty seconds and separate cyber-physical from natural causes. GPS spoofing near Houston from session start. Cyber text Hacked Inject on Power Source telemetry (APID 201) from 1800 s for 600 s. Natural reaction wheel stuck from 2700 s until 3600 s during vessel tasking in the Caribbean and off Peru. Escalate confirmed cyber incidents in detection-report format; log the wheel fault as non-cyber."
+		"description": "Detect and assess navigation, telemetry-integrity, and attitude-control alerts while continuing maritime imagery tasking. Triage each alert from evidence, distinguish confirmed cyber activity from natural faults, and report findings through the appropriate channel."
 	},
 	"simulation": {
 		"epoch": "2025/11/01 17:00:00",
@@ -16,7 +16,7 @@
 		"gps": true,
 		"cloud_opacity": 0.85,
 		"cloud_contrast": 2.5,
-		"ambient_light": 0.07
+		"ambient_light": 0.2
 	},
 	"ground_stations": {
 		"locations": [
@@ -314,7 +314,9 @@
 							"Resolution": [
 								1024,
 								1024
-							]
+							],
+							"Min Field Of View": 3.0,
+							"Max Field Of View": 60.0
 						}
 					},
 					{

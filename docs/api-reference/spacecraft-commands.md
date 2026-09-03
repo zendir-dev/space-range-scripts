@@ -2,7 +2,7 @@
 
 Every spacecraft action in Space Range is driven by a single uplink JSON message. This page documents every command the spacecraft controller accepts: the envelope, the `Args` for each `Command` value, and the most common gotchas.
 
-For background — how commands flow through the system, how scheduling works, why the keys are PascalCase — see [Concepts → Commands and scheduling](../concepts/commands-and-scheduling.md).
+For background: how commands flow through the system, how scheduling works, why the keys are PascalCase: see [Concepts → Commands and scheduling](../concepts/commands-and-scheduling.md).
 
 ---
 
@@ -27,55 +27,55 @@ with the payload:
 
 | Field | Type | Description |
 | --- | --- | --- |
-| `Asset` | `string` | 8-character hex ID of the target spacecraft. Case-insensitive on the wire (Studio uppercases internally). The same uplink topic serves every spacecraft on the team — only the spacecraft whose ID matches will execute. |
+| `Asset` | `string` | 8-character hex ID of the target spacecraft. Case-insensitive on the wire (Studio uppercases internally). The same uplink topic serves every spacecraft on the team: only the spacecraft whose ID matches will execute. |
 | `Command` | `string` | One of the command names listed below (case-insensitive: `guidance`, `Guidance`, `GUIDANCE` are equivalent). |
 | `Time` | `number` | Simulation seconds at which to execute. `0` (or any value `≤ current sim time`) means "execute immediately". A future value schedules the command. |
 | `Args` | `object` | Command-specific arguments. Keys are case-insensitive. Missing keys fall back to documented defaults. |
 
-There is **no** top-level `ID` on uplink. **`Asset`** is how you target a spacecraft on the shared team topic. After the controller accepts the message, it assigns a monotonic **command `ID`** on board; that value is returned in Ping executed-command arrays and Schedule Reports, and is what you pass in `Args` for schedule edits ([`remove_command`](#remove_command), [`update_command`](#update_command)).
+There is **no** top-level `ID` on uplink. **`Asset`** targets a spacecraft on the shared team topic. After the controller accepts the message, it assigns a monotonic **command `ID`** on board. That value is returned in Ping executed-command arrays and Schedule Reports and is passed in `Args` for schedule edits ([`remove_command`](#remove_command), [`update_command`](#update_command)).
 
-### Notes about the envelope
+### Notes About the Envelope
 
-- Uplink keys are **PascalCase** (`Asset`, `Command`, `Time`, `Args`). The keys *inside* `Args` are typically lowercase. The historical schema used lowercase top-level keys; that form is no longer accepted by the current backend — use the PascalCase form documented here.
-- An incorrect `Asset` ID is **not an error** — Studio simply has no spacecraft to deliver the command to and the uplink is dropped silently. Verify your ID via [`list_assets`](ground-requests.md#list_assets) if commands appear to be ignored.
-- An unrecognised `Command` name is a no-op. The spacecraft does not return a "command rejected" message; you'll see no Ping field changes and no scheduled entry. Double-check the spelling.
+- Uplink keys are **PascalCase** (`Asset`, `Command`, `Time`, `Args`). The keys *inside* `Args` are typically lowercase. The historical schema used lowercase top-level keys; that form is no longer accepted by the current backend: use the PascalCase form documented here.
+- An incorrect `Asset` ID is **not an error**. Studio has no matching spacecraft, so the uplink is dropped silently. Verify the ID via [`list_assets`](ground-requests.md#list_assets) if commands appear to be ignored.
+- An unrecognized `Command` name is a no-op. The spacecraft does not return a "command rejected" message, change any Ping fields, or create a scheduled entry. Double-check the spelling.
 - Once accepted, scheduled commands appear in the Schedule Report (request via the [`get_schedule`](#get_schedule) command). Use that to confirm what the spacecraft has queued.
 
 ---
 
-## Command index
+## Command Index
 
 ADCS / pointing
-: [`guidance`](#guidance) — set the spacecraft's pointing mode.
+: [`guidance`](#guidance): set the spacecraft's pointing mode.
 
 Imaging
-: [`camera`](#camera) — configure a camera.
-: [`capture`](#capture) — capture an image with a configured camera.
+: [`camera`](#camera): configure a camera.
+: [`capture`](#capture): capture an image with a configured camera.
 
 Communications
-: [`telemetry`](#telemetry) — change RF link parameters (frequency, key, bandwidth) via ground.
-: [`encryption`](#encryption) — rotate the team's RF key/frequency directly from the spacecraft.
-: [`downlink`](#downlink) — flush the on-board cache to the ground station.
-: [`jammer`](#jammer) — activate / deactivate the jammer payload.
+: [`telemetry`](#telemetry): change RF link parameters (frequency, key, bandwidth) via ground.
+: [`encryption`](#encryption): rotate the team's RF key/frequency directly from the spacecraft.
+: [`downlink`](#downlink): flush the on-board cache to the ground station.
+: [`jammer`](#jammer): activate / deactivate the jammer payload.
 
 Maintenance
-: [`reset`](#reset) — reboot a malfunctioning component.
+: [`reset`](#reset): reboot a malfunctioning component.
 
 Power bus
-: [`power_bus`](#power_bus) — set switch state, fuse threshold, limiter, regulator, or load power; [`fuel_bus`](#fuel_bus) — valve and pump state.
-: [`get_configuration`](#get_configuration) — read back session-mutable operator settings (power bus + guidance; Configuration Report).
+: [`power_bus`](#power_bus): set switch state, fuse threshold, limiter, regulator, or load power; [`fuel_bus`](#fuel_bus): valve and pump state.
+: [`get_configuration`](#get_configuration): read back session-mutable operator settings (power bus + guidance; Configuration Report).
 
 Propulsion
-: [`thrust`](#thrust) — fire a thruster for a duration.
+: [`thrust`](#thrust): fire a thruster for a duration.
 
 RPO
-: [`rendezvous`](#rendezvous) — hold a relative position in another spacecraft's LVLH frame.
-: [`docking`](#docking) — initiate or release a docking with another spacecraft.
+: [`rendezvous`](#rendezvous): hold a relative position in another spacecraft's local vertical/local horizontal (LVLH) frame.
+: [`docking`](#docking): initiate or release a docking with another spacecraft.
 
 Schedule management
-: [`get_schedule`](#get_schedule) — request the on-board command queue.
-: [`remove_command`](#remove_command) — cancel a scheduled command.
-: [`update_command`](#update_command) — modify a scheduled command's time or args.
+: [`get_schedule`](#get_schedule): request the on-board command queue.
+: [`remove_command`](#remove_command): cancel a scheduled command.
+: [`update_command`](#update_command): modify a scheduled command's time or args.
 
 ---
 
@@ -96,17 +96,17 @@ Sets the spacecraft's pointing mode through the on-board ADCS. Each `pointing` v
 }
 ```
 
-### Args (common)
+### Args (Common)
 
 | Argument | Default | Range / Values | Unit | Description |
 | --- | --- | --- | --- | --- |
-| `pointing` | `inertial` | `inertial`, `velocity`, `sun`, `nadir`, `ground`, `location`, `relative`, `idle` | — | Pointing law to engage. `idle` disables the controller and stops drawing reaction-wheel torque. Any unrecognised value also falls through to `idle`. |
-| `target` | _(spacecraft body)_ | component name | — | Component on the spacecraft whose face should align with the pointing direction. Case-insensitive match against the spacecraft's component list (see [`list_entity`](ground-requests.md#list_entity)). If omitted, the alignment is interpreted in the spacecraft body frame. The Operator UI limits eligible `target` values by `pointing` mode (see below); the on-board controller accepts any valid component name. |
-| `alignment` | `+z` | `+x`, `-x`, `+y`, `-y`, `+z`, `-z` | — | Which axis of the `target` to point along the pointing direction. Most components (cameras, panels, antennas) have their working face on `+z`. |
+| `pointing` | `inertial` | `inertial`, `velocity`, `sun`, `nadir`, `ground`, `location`, `relative`, `dock`, `idle` | None | Pointing law to engage. `idle` disables the controller and stops drawing reaction-wheel torque. Any unrecognized value also falls through to `idle`. |
+| `target` | _(spacecraft body)_ | component name | None | Component on the spacecraft whose face should align with the pointing direction. Case-insensitive match against the spacecraft's component list (see [`list_entity`](ground-requests.md#list_entity)). If omitted, the alignment is interpreted in the spacecraft body frame. The Operator UI limits eligible `target` values by `pointing` mode (see below); the on-board controller accepts any valid component name. |
+| `alignment` | `+z` | `+x`, `-x`, `+y`, `-y`, `+z`, `-z` | None | Which axis of the `target` to point along the pointing direction. Most components (cameras, panels, antennas) have their working face on `+z`. |
 
-### Args by `pointing` mode
+### Args by `pointing` Mode
 
-**`inertial`** — hold a fixed attitude in the inertial frame.
+**`inertial`**: hold a fixed attitude in the inertial frame.
 
 | Argument | Default | Range | Unit | Description |
 | --- | --- | --- | --- | --- |
@@ -114,37 +114,44 @@ Sets the spacecraft's pointing mode through the on-board ADCS. Each `pointing` v
 | `roll` | `0.0` | `-180 … 180` | deg | Roll component of the target attitude. |
 | `yaw` | `0.0` | `-180 … 180` | deg | Yaw component of the target attitude. |
 
-**`velocity`**, **`sun`** — no extra arguments. Aligns `target`/`alignment` with the velocity vector or the Sun direction respectively.
+**`velocity`**, **`sun`**: no extra arguments. Aligns `target`/`alignment` with the velocity vector or the Sun direction respectively.
 
-**`nadir`** — point at the centre of a celestial body.
+**`nadir`**: point at the center of a celestial body.
 
 | Argument | Default | Values | Description |
 | --- | --- | --- | --- |
 | `planet` | `earth` | `sun`, `earth`, `moon`, `mars` | Body to point at. |
 
-**`ground`** — point at a named ground station from the scenario.
+**`ground`**: point at a named ground station from the scenario.
 
 | Argument | Default | Description |
 | --- | --- | --- |
 | `station` | `singapore` | Name of a ground station (case-insensitive). Available names come from [`list_stations`](ground-requests.md#list_stations). |
 
-**`location`** — point at a fixed lat/lon/alt on a celestial body.
+**`location`**: point at a fixed lat/lon/alt on a celestial body.
 
 | Argument | Default | Range | Unit | Description |
 | --- | --- | --- | --- | --- |
 | `latitude` | `0.0` | `-90 … 90` | deg | Latitude on `planet`. |
 | `longitude` | `0.0` | `-180 … 180` | deg | Longitude on `planet`. |
 | `altitude` | `0.0` | `0 … 100000` | m | Altitude above the surface. |
-| `planet` | `earth` | `sun`, `earth`, `moon`, `mars` | — | Body the lat/lon is on. |
+| `planet` | `earth` | `sun`, `earth`, `moon`, `mars` | None | Body the lat/lon is on. |
 
-**`relative`** — point at another spacecraft (RPO).
+**`relative`**: point at another spacecraft (RPO).
 
 | Argument | Default | Description |
 | --- | --- | --- |
 | `spacecraft` | _(none)_ | Asset ID of another spacecraft in the simulation. If the ID does not resolve, the controller engages but holds its current target. |
-| `component` | _(none)_ | Optional **name** of a hardware component on the **target** spacecraft (`spacecraft`). Same naming as [`list_entity`](ground-requests.md#list_entity) / local `target`. Omit, leave empty, or set to `none` to aim at the target spacecraft origin. When set to a valid component on the target hull, the controller applies that component's body-frame position (`GetPosition_LB_B()`, metres) as a target offset before slewing. If the name does not resolve, the offset is treated as `(0, 0, 0)`. In the Operator UI, **Aim Component** lists all components on the target spacecraft (no type filter). |
+| `component` | _(none)_ | Optional **name** of a hardware component on the **target** spacecraft (`spacecraft`). Same naming as [`list_entity`](ground-requests.md#list_entity) / local `target`. Omit, leave empty, or set to `none` to aim at the target spacecraft origin. When set to a valid component on the target hull, the controller applies that component's body-frame position (`GetPosition_LB_B()`, meters) as a target offset before slewing. If the name does not resolve, the offset is treated as `(0, 0, 0)`. In the Operator UI, **Aim Component** lists all components on the target spacecraft (no type filter). |
 
-### Eligible `target` components (Operator UI)
+**`dock`**: align this spacecraft's docking adapter with the target spacecraft's adapter (anti-parallel port axes plus optional clocking). This is the pointing law for a docking approach. The Operator UI does not send `target` / `alignment` in this mode.
+
+| Argument | Default | Range | Unit | Description |
+| --- | --- | --- | --- | --- |
+| `spacecraft` | _(none)_ | None | None | Asset ID of the spacecraft to dock with. SpaceRange resolves that craft's docking adapter and binds Dock `TargetID` to the **adapter** GUID (not the spacecraft GUID). Optional `component` names a specific adapter on the target; otherwise the first docking adapter is used. |
+| `clocking` | `0.0` | `-180 … 180` | deg | Roll about the docking axis. Zero aligns the adapters without extra clock offset. |
+
+### Eligible `target` Components (Operator UI)
 
 The **Guidance Controller** panel filters the **Target Component** dropdown by pointing mode. Custom clients may use the same rules with [`list_entity`](ground-requests.md#list_entity) flags:
 
@@ -154,8 +161,9 @@ The **Guidance Controller** panel filters the **Target Component** dropdown by p
 | `sun` | `class` is **`Solar Panel`** |
 | `velocity`, `nadir`, `ground`, `location` | `is_sensor` **or** `is_antenna` is `true` |
 | `relative` | `is_sensor` **or** `is_antenna` is `true`, **or** `class` is **`Docking Adapter`** |
+| `dock` | `class` is **`Docking Adapter`** (shown only if a local target component is offered; the Dock law uses the on-board adapter automatically) |
 
-In **`relative`** mode, **Aim Component** on the target spacecraft is **not** filtered — any component from [`list_entity`](ground-requests.md#list_entity) may be chosen.
+In **`relative`** mode, **Aim Component** on the target spacecraft is **not** filtered: any component from [`list_entity`](ground-requests.md#list_entity) may be chosen.
 
 ### Notes
 
@@ -181,7 +189,7 @@ Flushes telemetry, imagery, and other cached data from the spacecraft to its gro
 
 | Argument | Default | Values | Description |
 | --- | --- | --- | --- |
-| `downlink` | `true` | `true`, `false` | Whether to perform a one-shot downlink now. `false` makes the command a no-op for the immediate flush — useful if you only want to change the `ping` flag. |
+| `downlink` | `true` | `true`, `false` | Whether to perform a one-shot downlink now. `false` skips the immediate flush and changes only the `ping` flag. |
 | `ping` | `false` | `true`, `false` | If `true`, the spacecraft auto-downlinks every Ping (~20 sim s). Keeps caches drained but consumes more transmitter power. |
 
 ### Notes
@@ -193,7 +201,7 @@ Flushes telemetry, imagery, and other cached data from the spacecraft to its gro
 
 ## `camera`
 
-Configures a camera on the spacecraft. This does **not** capture an image (unless `sample = true`); it sets up the optics so a subsequent [`capture`](#capture) produces the image you expect.
+Configures a camera on the spacecraft. This does **not** capture an image unless `sample = true`; it configures the optics for a subsequent [`capture`](#capture).
 
 ```json
 {
@@ -211,21 +219,21 @@ Configures a camera on the spacecraft. This does **not** capture an image (unles
 
 | Argument | Default | Range | Unit | Description |
 | --- | --- | --- | --- | --- |
-| `target` | _(none)_ | component name | — | Camera component to configure (case-insensitive). `Camera` matches the default sensor on most scenarios. |
-| `monochromatic` | `false` | `true`, `false` | — | Capture in greyscale. Saves downlink budget at the cost of colour resolution. |
+| `target` | _(none)_ | component name | None | Camera component to configure (case-insensitive). `Camera` matches the default sensor on most scenarios. |
+| `monochromatic` | `false` | `true`, `false` | None | Capture in grayscale. Saves downlink budget at the cost of color resolution. |
 | `resolution` | `512` | `128 … 1024` | px | Image side length in pixels. Cameras are square: total pixels = `resolution²`. |
-| `coc` | `0.03` | `0.0 … 1.0` | mm | Circle of confusion — acceptable blur on the sensor for depth-of-field calculations. |
-| `pixel_pitch` | `0.012` | `0.0 … 1.0` | mm | Distance between adjacent pixel centres. Smaller pitch + smaller resolution → smaller sensor → tighter crop. |
-| `focusing_distance` | `4.0` | `0.0 … 1000000.0` | m | Distance to the in-focus plane. Use the approximate range to your imaging target. |
+| `coc` | `0.03` | `0.0 … 1.0` | mm | Circle of confusion: acceptable blur on the sensor for depth-of-field calculations. |
+| `pixel_pitch` | `0.012` | `0.0 … 1.0` | mm | Distance between adjacent pixel centers. Smaller pitch + smaller resolution → smaller sensor → tighter crop. |
+| `focusing_distance` | `4.0` | `0.0 … 1000000.0` | m | Distance to the in-focus plane. Use the approximate range to the imaging target. |
 | `aperture` | `1.0` | `0.0 … 1000.0` | mm | Lens diameter. Larger = brighter image and wider FOV. |
 | `focal_length` | `100.0` | `0.0 … 1000.0` | mm | Distance from nodal point to sensor. Longer = narrower FOV. |
-| `fov` | `60.0` | per-camera | deg | Field of view. Must be within **`[min_field_of_view, max_field_of_view]`** for the target imager. Those limits come from scenario `data` (`Min Field Of View` / `Max Field Of View` on the component) and default to `0 … 180°` when omitted. See [components.md — Camera](../scenarios/components.md#camera-optical-camera--heatmap-camera-infrared). |
-| `sample` | `false` | `true`, `false` | — | Capture and downlink a 32×32 preview on the next Ping. Useful for confirming the optics without committing to a full image. |
+| `fov` | `60.0` | per-camera | deg | Field of view. Must be within **`[min_field_of_view, max_field_of_view]`** for the target imager. Those limits come from scenario `data` (`Min Field Of View` / `Max Field Of View` on the component) and default to `0 … 180°` when omitted. See [components.md: Camera](../scenarios/components.md#camera-optical-camera--heatmap-camera-infrared). |
+| `sample` | `false` | `true`, `false` | None | Capture and downlink a 32×32 preview on the next Ping. Useful for confirming the optics without committing to a full image. |
 
 ### Notes
 
-- The configuration sticks until the next `camera` command — multiple `capture` calls can share the same setup.
-- An imager with `monochromatic = true` followed by a colour `capture` returns greyscale; the capture command does not override imaging mode.
+- The configuration sticks until the next `camera` command: multiple `capture` calls can share the same setup.
+- An imager with `monochromatic = true` followed by a color `capture` returns grayscale; the capture command does not override imaging mode.
 - After a successful `camera` command, the spacecraft automatically queues a Configuration Report with `scope: "camera"`. [`capture`](#capture) does the same (it configures the imager before storing the image).
 
 ---
@@ -272,19 +280,19 @@ Changes the **link parameters** of the spacecraft's communication system through
 | Argument | Default | Range | Unit | Description |
 | --- | --- | --- | --- | --- |
 | `frequency` | `0` | `0 … 10000` | MHz | New uplink/downlink carrier frequency. |
-| `key` | `0` | `0 … 255` | — | New Caesar key for the RF link. |
-| `bandwidth` | _(unchanged)_ | — | MHz | New ground-receiver bandwidth. Optional — omit to leave the bandwidth alone. |
+| `key` | `0` | `0 … 255` | None | New Caesar key for the RF link. |
+| `bandwidth` | _(unchanged)_ | None | MHz | New ground-receiver bandwidth. Optional: omit to leave the bandwidth alone. |
 
 ### Notes
 
-- The change is **brokered through the ground controller**. The spacecraft is told the new settings over the *current* link, then both ends switch. If the new settings are unreachable from the spacecraft (out of range, jammed), the spacecraft may end up on the new key/frequency while the ground stays on the old one — recover with another `telemetry` command from ground or with [`encryption`](#encryption) from the spacecraft.
-- See also [`set_telemetry`](ground-requests.md#set_telemetry), the request you usually invoke from a client. It produces this command internally.
+- The change is **brokered through the ground controller**. The spacecraft is told the new settings over the *current* link, then both ends switch. If the new settings are unreachable from the spacecraft (out of range, jammed), the spacecraft may end up on the new key/frequency while the ground stays on the old one: recover with another `telemetry` command from ground or with [`encryption`](#encryption) from the spacecraft.
+- See also [`set_telemetry`](ground-requests.md#set_telemetry), the request typically invoked by a client. It produces this command internally.
 
 ---
 
 ## `encryption`
 
-Rotates the team's password, RF Caesar key, and frequency directly from the spacecraft side. Unlike `telemetry`, this command **requires the team password** in `Args` as a credential — it must come from someone who already knows the team secret, not from a relayed RF message.
+Rotates the team's password, RF Caesar key, and frequency directly from the spacecraft side. Unlike `telemetry`, this command **requires the team password** in `Args` as a credential: it must come from someone who already knows the team secret, not from a relayed RF message.
 
 ```json
 {
@@ -301,21 +309,21 @@ Rotates the team's password, RF Caesar key, and frequency directly from the spac
 
 | Argument | Default | Range | Unit | Description |
 | --- | --- | --- | --- | --- |
-| `password` | _(required)_ | 6-char alphanumeric | — | The team's current XOR password. The spacecraft rejects the command if this does not match. |
+| `password` | _(required)_ | 6-char alphanumeric | None | The team's current XOR password. The spacecraft rejects the command if this does not match. |
 | `frequency` | _(required)_ | `0 … 10000` | MHz | New RF frequency. |
-| `key` | _(required)_ | `0 … 255` | — | New Caesar key. |
+| `key` | _(required)_ | `0 … 255` | None | New Caesar key. |
 
 ### Notes
 
 - Triggers a spacecraft **reboot** while the new settings come up. Expect a brief telemetry blackout.
 - The password in `Args` is **redacted** from any internal command-execution logs to avoid accidental disclosure.
-- Use this when you suspect the team password or RF key has leaked. Coordinate with the ground side to expect the new key, or you'll fail to decode subsequent downlinks.
+- Use this when the team password or RF key may have leaked. The ground side must expect the new key or subsequent downlinks cannot be decoded.
 
 ---
 
 ## `jammer`
 
-Activates or deactivates the jammer payload. The jammer outputs noise on one or more frequencies, drains battery, and disrupts other teams' RF — but only while the spacecraft has line of sight.
+Activates or deactivates the jammer payload. The jammer outputs noise on one or more frequencies, drains the battery, and disrupts other teams' radio-frequency (RF) links. Disruption occurs only while the spacecraft has line of sight.
 
 ```json
 {
@@ -332,14 +340,14 @@ Activates or deactivates the jammer payload. The jammer outputs noise on one or 
 
 | Argument | Default | Range | Unit | Description |
 | --- | --- | --- | --- | --- |
-| `active` | `false` | `true`, `false` | — | Master switch. Set `false` to stop the jammer immediately. |
+| `active` | `false` | `true`, `false` | None | Master switch. Set `false` to stop the jammer immediately. |
 | `frequencies` | `[]` | `0 … 10000` per entry | MHz | Array of frequencies to broadcast on. Multiple entries → multi-band jamming. |
 | `power` | `0` | `0 … 10000` | W | Transmit power per frequency. Higher power = wider effective range, faster battery drain. |
 
 ### Notes
 
 - If the spacecraft has no jammer component, the command is a no-op.
-- Jamming yourself is possible — if `frequencies` overlaps your own RF link, your downlinks will degrade.
+- A jammer can disrupt its team's own link. If `frequencies` overlaps the team's RF link, its downlinks degrade.
 
 ---
 
@@ -363,7 +371,7 @@ Power-cycles a single component. Use this when telemetry shows a component is ma
 ### Notes
 
 - A reset usually triggers a **spacecraft reboot**, which can take ~60 sim s before the spacecraft is responsive again.
-- Resetting a healthy component is safe but wasteful — you'll lose telemetry for the duration of the reboot.
+- Resetting a healthy component is safe but unnecessary. Telemetry is unavailable for the duration of the reboot.
 
 ---
 
@@ -380,16 +388,35 @@ Fires a thruster at its rated force for a fixed duration. Direction is determine
 }
 ```
 
+Fire several nozzles in one command with `targets` (a string array). `target` is still accepted and is merged with `targets` when both are present.
+
+```json
+{
+  "Asset": "A3F2C014",
+  "Command": "thrust",
+  "Time": 0,
+  "Args": {
+    "targets": ["Thruster 1 (+Y +X +Z)", "Thruster 2 (+Y +X -Z)", "Thruster 3 (+Y -X +Z)"],
+    "active": true,
+    "duration": 10.0
+  }
+}
+```
+
 | Argument | Default | Unit | Description |
 | --- | --- | --- | --- |
-| `target` | _(none)_ | — | Thruster component name. Required if the spacecraft has more than one. |
-| `active` | `false` | — | `true` to start firing, `false` to stop early (overrides `duration`). |
+| `target` | _(none)_ | None | Thruster component name. Required if the spacecraft has more than one and `targets` is omitted. |
+| `targets` | _(none)_ | None | Array of thruster component names to fire together. |
+| `active` | `false` | None | `true` to start firing, `false` to stop early (overrides `duration`). |
 | `duration` | `0` | s | Time to fire, in simulation seconds. After this elapses the thruster shuts off automatically. |
 
 ### Notes
 
 - Thrust consumes fuel from the spacecraft's tank model. Out of fuel = no thrust regardless of command.
-- For larger maneuvers, plan a sequence of `thrust` commands at different sim times rather than one long burn — the dynamics may evolve mid-burn.
+- For larger maneuvers, plan a sequence of `thrust` commands at different sim times rather than one long burn: the dynamics may evolve mid-burn.
+- Fire several named nozzles at once with `targets` instead of a sequence of identical-time commands.
+- When the spacecraft has a `Thruster Array` (RPO translation), idle array on-time commands do **not** cancel an in-progress operator fire. Target a named nozzle (`Cold Gas Thruster`, `Ion Thruster`), not the array itself.
+- Manual firing still works after capture and after [`docking`](#docking) `dock: false`. Disable an active [`rendezvous`](#rendezvous) hold when the perch must not resume after the burn.
 
 ---
 
@@ -416,21 +443,32 @@ Engages a perch-mode hold relative to another spacecraft. The chaser holds a fix
 
 | Argument | Default | Range | Unit | Description |
 | --- | --- | --- | --- | --- |
-| `target` | _(none)_ | asset ID | — | The spacecraft to perch relative to. The LVLH frame is anchored on this target. |
-| `active` | `false` | `true`, `false` | — | `true` engages the controller; `false` releases it. |
+| `target` | _(none)_ | asset ID | None | The spacecraft to perch relative to. The LVLH frame is anchored on this target. |
+| `active` | `false` | `true`, `false` | None | `true` engages the controller; `false` releases it. |
 | `offset` | `[0, 0, 0]` | `[-10000, 10000]` per axis | m | Desired `[X, Y, Z]` offset in the target's LVLH frame. |
-| `component` | _(none)_ | component name | — | Optional **name** of a hardware component on the **target** spacecraft (`target`). Same naming as [`list_entity`](ground-requests.md#list_entity). Omit, leave empty, or set to `none` to hold relative to the target spacecraft origin. When set to a valid component on the target hull, the controller applies that component's body-frame position (`GetPosition_LB_B()`, metres) as the LVLH anchor offset before applying `offset`. If the name does not resolve, the anchor offset is treated as `(0, 0, 0)`. Each chaser spacecraft owns its own target ephemeris translator, so multiple chasers can hold on the same target with different component anchors. |
+| `component` | _(none)_ | component name | None | Optional **name** of a hardware component on the **target** spacecraft (`target`). Same naming as [`list_entity`](ground-requests.md#list_entity). Omit, leave empty, or set to `none` to hold relative to the target spacecraft origin. When set to a docking adapter, the Operator UI sends a port-relative perch instead of LVLH `offset` (see below). For a non-adapter component, the controller applies that component's body-frame position (`GetPosition_LB_B()`, meters) as the LVLH anchor offset before applying `offset`. If the name does not resolve, the anchor offset is treated as `(0, 0, 0)`. Each chaser spacecraft owns its own target ephemeris translator, so multiple chasers can hold on the same target with different component anchors. |
+| `port_relative` | `false` | `true`, `false` | None | When `true`, the perch is along the target docking adapter axis rather than a static LVLH `offset`. |
+| `port_standoff` | `5.0` | `> 0` | m | Distance to hold along the target port axis when `port_relative` is `true`. |
+| `max_speed` | `0.0` | `≥ 0` | m/s | Maximum approach speed. When positive, a trapezoidal velocity profile is used. |
+| `approach_acceleration` | `0.01` | `> 0` | m/s² | Acceleration for the trapezoidal profile when `max_speed` is positive. |
+| `force_deadband` | `0.0` | `≥ 0` | N | Force requests below this magnitude are zeroed (quiets thrusters in hold). |
+| `corridor_radius` | `0.5` | `≥ 0` | m | Maximum lateral offset from the port axis allowed before final closure. |
+| `alignment_gate` | `5.0` | `≥ 0` | deg | Mating-axis alignment that must be met before final closure. |
+| `roll_gate` | `180.0` | `≥ 0` | deg | Clocking alignment that must be met before final closure. `180` accepts any roll. |
+| `dock_after_perch` | `false` | `true`, `false` | None | When `true`, start a second approach from the perch to capture after the hold and gates are satisfied. The Operator **Dock** command sets this when a perch is already active. |
+
+When the Operator UI **Aim Component** is a docking adapter, it sends `port_relative: true` with `port_standoff` (default 5 m) and hold defaults (`max_speed` 0.05 m/s, `dock_after_perch: false`). LVLH `offset` is omitted.
 
 ### Notes
 
 - The spacecraft must have RPO flight software enabled in the scenario. If `rpo_software_enabled` is `false` in [`list_assets`](ground-requests.md#list_assets), the command is silently ignored.
-- The maneuver uses the spacecraft's existing thrusters/control authority — bring fuel.
+- If the spacecraft has thrusters, force commands are allocated onto a `Thruster Array` (propellant is consumed; `Dispersed Factor` failures are honoured). Otherwise SpaceRange uses a dedicated `External Force Torque`. Bring fuel when thrusters are present.
 
 ---
 
 ## `docking`
 
-Initiates or releases a docking with another spacecraft (a team craft or a neutral hub). The current spacecraft must have at least one Docking Adapter component. Docking only completes once the two spacecraft are physically close enough — the command sets the target; the simulation does the connection. Undocking (`dock: false`) releases with a **separation impulse** so the two craft gently push apart.
+Initiates or releases a docking with another spacecraft (a team craft or a neutral hub). The current spacecraft must have at least one Docking Adapter component. When `dock: true`, the command arms both adapters **and**, if a rendezvous perch is already active, enables `dock_after_perch` so the chaser closes from that standoff and captures. Capture still requires the vehicles to meet the adapter distance and angle limits. Undocking (`dock: false`) releases with a **separation impulse** and stops the formation perch.
 
 ```json
 {
@@ -453,11 +491,11 @@ Initiates or releases a docking with another spacecraft (a team craft or a neutr
 
 ### Notes
 
-- Plan your approach with [`rendezvous`](#rendezvous) first. The docking command sets intent; physics handles capture.
+- Begin the approach with [`rendezvous`](#rendezvous), typically using a port-relative perch on the target docking adapter. The Operator UI disables **Dock** until an active rendezvous has been applied. The docking command then arms capture and starts the slow close from that perch. Physics completes the latch once range ≤ 0.05 m and axis/roll errors are within the adapter capture limits.
 - Once docked, both spacecraft become rigidly attached until an explicit `dock = false` is issued.
-- Undocking applies a separation impulse along the docking axis. The push is governed by the `Separation Force` (N) and `Separation Duration` (s) values on the **chaser's Docking Adapter** component (set in the scenario `data`; default 100 N over 0.5 s — the RPO scenario uses 1.0 s). See [components](../scenarios/components.md).
-- The live docked/undocked state, and which target/port a craft is docked to, is reported via [`get_configuration`](#get_configuration) (`docking` section) and pushed automatically whenever it changes. The Operator UI uses this to pre-fill and lock the docking controls.
-- Spacecraft can also **start the scenario already docked** — see the scenario [`docking`](../scenarios/spacecraft.md#docking-start-the-scenario-already-docked) block.
+- Undocking (`dock: false`) does **not** require `target` / `component` to still resolve. After capture the peer hull may be parented under the chaser; the chaser adapter already knows its mate. The command applies a separation impulse along the docking axis and stops the formation perch. The push is governed by the `Separation Force` (N) and `Separation Duration` (s) values on the **chaser's Docking Adapter** component (set in the scenario `data`; default 100 N over 0.5 s). See [components](../scenarios/components.md).
+- The live docked/undocked state, and which target/port a craft is docked to, is reported via [`get_configuration`](#get_configuration) (`docking` section) and pushed automatically whenever it changes. The Operator UI uses this to pre-fill and lock the docking controls; **Undock** is enabled while `docked` is true.
+- Spacecraft can also **start the scenario already docked**: see the scenario [`docking`](../scenarios/spacecraft.md#docking-start-the-scenario-already-docked) block.
 
 ---
 
@@ -478,7 +516,7 @@ No arguments are read.
 
 ### Notes
 
-- The reply is delivered via the normal Downlink path, so it's subject to RF availability. If you don't see one, you may need to wait for a pass or downlink window.
+- The reply uses the normal Downlink path and is subject to RF availability. If no reply arrives, wait for a pass or downlink window.
 - Sensitive `Args` (passwords, etc.) are redacted in the report.
 
 ---
@@ -496,9 +534,9 @@ Every `power_bus` command uses a single `values` array. Each element describes *
 | `target` | Component name. |
 | *(configure only)* | One type-specific parameter key (see registry below). Additional keys may be added per type in future. |
 
-Send **one** uplink per logical operation (e.g. one **Update Bus** with every pending change). Entries are applied **in array order** (first to last). Invalid entries are skipped silently; duplicate `target` entries — last wins. An empty or missing `values` array is a silent no-op.
+Send **one** uplink per logical operation (e.g. one **Update Bus** with every pending change). Entries are applied **in array order** (first to last). Invalid entries are skipped silently; duplicate `target` entries: last wins. An empty or missing `values` array is a silent no-op.
 
-### Example — multiple changes in one command
+### Example: Multiple Changes in One Command
 
 ```json
 {
@@ -542,7 +580,7 @@ Send **one** uplink per logical operation (e.g. one **Update Bus** with every pe
 }
 ```
 
-### `configure` parameter keys
+### `configure` Parameter Keys
 
 | `type` | Parameter key | Type | Meaning | Classes |
 | --- | --- | --- | --- | --- |
@@ -552,9 +590,9 @@ Send **one** uplink per logical operation (e.g. one **Update Bus** with every pe
 | `voltage_regulator` | `regulation_voltage` | `number` (V) | Regulation set-point | `Power Voltage Regulator` |
 | `load` | `nominal_power` | `number` (W) | Nominal load power | `Power Sink` |
 
-### `reset` actions
+### `reset` Actions
 
-**Fuse reset** — manually clear a blown fuse (no-op if the fuse is not blown):
+**Fuse reset**: manually clear a blown fuse (no-op if the fuse is not blown):
 
 ```json
 {
@@ -577,7 +615,7 @@ This is separate from **auto-reset** (`Reset Duration` in scenario `data`), whic
 
 After a successful `power_bus` command, the spacecraft **automatically** queues a Configuration Report for `scope: "power_bus"` (same as [`get_configuration`](#get_configuration) with that scope). Scripts and other clients can also call `get_configuration` explicitly. The Operator UI still uses **Refresh** for on-demand sync and requests an initial snapshot when components are first loaded.
 
-Python helpers: `commands.power_bus_configure_values(...)`, `commands.power_bus_configure(...)`, `commands.power_bus_fuse_reset(...)` in [`src/commands.py`](../src/commands.py).
+Python helpers: `commands.power_bus_configure_values(...)`, `commands.power_bus_configure(...)`, `commands.power_bus_fuse_reset(...)` in [`src/commands.py`](../../src/commands.py).
 
 ---
 
@@ -610,7 +648,7 @@ Sets session-mutable values on fuel-bus components (valves and pumps). Same `val
 }
 ```
 
-### `configure` parameter keys
+### `configure` Parameter Keys
 
 | `type` | Parameter key | Type | Meaning | Classes |
 | --- | --- | --- | --- | --- |
@@ -620,7 +658,7 @@ Sets session-mutable values on fuel-bus components (valves and pumps). Same `val
 
 For `pump` + `configure`, include **at least one** of `is_pump_enabled` or `speed_input`. Both may be set in the same entry.
 
-### Convenience valve and pump actions
+### Convenience Valve and Pump Actions
 
 | `type` | `action` | Effect |
 | --- | --- | --- |
@@ -631,13 +669,13 @@ For `pump` + `configure`, include **at least one** of `is_pump_enabled` or `spee
 
 After a successful `fuel_bus` command, the spacecraft automatically queues a Configuration Report for `scope: "fuel_bus"`.
 
-Python helpers: `commands.fuel_bus_configure_values(...)`, `commands.fuel_bus_configure(...)` in [`src/commands.py`](../src/commands.py).
+Python helpers: `commands.fuel_bus_configure_values(...)`, `commands.fuel_bus_configure(...)` in [`src/commands.py`](../../src/commands.py).
 
 ---
 
 ## `get_configuration`
 
-Asks the spacecraft to report **session-mutable operator configuration** — values that can change during the exercise via operator commands, not static scenario parameters (like `Mass`) and not simulation telemetry (voltages, sensor readings, battery state of charge). The spacecraft replies with a **Configuration Report** telemetry message when there is configuration to report; see [Concepts → Telemetry](../concepts/telemetry.md#configuration-report) for the wire format.
+Asks the spacecraft to report **session-mutable operator configuration**: values that can change during the exercise via operator commands, not static scenario parameters (like `Mass`) and not simulation telemetry (voltages, sensor readings, battery state of charge). The spacecraft replies with a **Configuration Report** telemetry message when there is configuration to report; see [Concepts → Telemetry](../concepts/telemetry.md#configuration-report) for the wire format.
 
 ```json
 {
@@ -656,7 +694,7 @@ Asks the spacecraft to report **session-mutable operator configuration** — val
 | `scope` | Optional filter. Omit or `"all"` → **power_bus**, **fuel_bus**, **computer**, **camera**, and **docking**. `"power_bus"`, `"fuel_bus"`, `"computer"`, `"camera"`, or `"docking"` → that section only. Unknown scopes are ignored and **no report is sent**. |
 | `components` | Optional string array (**power_bus**, **fuel_bus**, and **camera** scopes). One component = one element. Omit or `[]` for all matching components. Names are matched case-insensitively (same as `target` elsewhere). |
 
-### Report shape (`Data` JSON)
+### Report Shape (`Data` JSON)
 
 ```json
 {
@@ -716,25 +754,25 @@ Asks the spacecraft to report **session-mutable operator configuration** — val
 }
 ```
 
-- **`power_bus`** — array of per-component power entries (see table below).
-- **`fuel_bus`** — array of per-component fuel entries (valves and pumps).
-- **`computer`** — guidance computer operator state (stored from successful [`guidance`](#guidance) command Args, not from simulation internals):
-  - **`pointing`** — active mode (`idle`, `inertial`, `velocity`, `sun`, `nadir`, `ground`, `location`, `relative`).
-  - **`configs`** — last-applied settings **per mode** (only modes that have been configured at least once). Keys match [`guidance`](#guidance) Args for that mode (without repeating `pointing`). Includes `target` component names and normalised `alignment` strings (`+z`, `-x`, …). Switching modes in the UI can restore these saved values.
+- **`power_bus`**: array of per-component power entries (see table below).
+- **`fuel_bus`**: array of per-component fuel entries (valves and pumps).
+- **`computer`**: guidance computer operator state (stored from successful [`guidance`](#guidance) command Args, not from simulation internals):
+  - **`pointing`**: active mode (`idle`, `inertial`, `velocity`, `sun`, `nadir`, `ground`, `location`, `relative`, `dock`).
+  - **`configs`**: last-applied settings **per mode** (only modes that have been configured at least once). Keys match [`guidance`](#guidance) Args for that mode (without repeating `pointing`). Includes `target` component names and normalized `alignment` strings (`+z`, `-x`, …). Switching modes in the UI can restore these saved values.
   - Cleared to `{ "pointing": "idle", "configs": {} }` when the scenario instance resets.
-- **`camera`** — array of per-imager entries (same shape as `power[]`). Stored from successful [`camera`](#camera) / [`capture`](#capture) command Args:
-  - **`name`** / **`class`** — imager component (from [`list_entity`](ground-requests.md#list_entity); `is_imager` components).
-  - **`configuration`** — last-applied settings using [`camera`](#camera) Arg names (`monochromatic`, `resolution`, `fov`, …). **`Charge Coupled Device`** entries include `fov` only. Capture `name` (filename) and `sample` are not stored.
+- **`camera`**: array of per-imager entries (same shape as `power[]`). Stored from successful [`camera`](#camera) / [`capture`](#capture) command Args:
+  - **`name`** / **`class`**: imager component (from [`list_entity`](ground-requests.md#list_entity); `is_imager` components).
+  - **`configuration`**: last-applied settings using [`camera`](#camera) Arg names (`monochromatic`, `resolution`, `fov`, …). **`Charge Coupled Device`** entries include `fov` only. Capture `name` (filename) and `sample` are not stored.
   - Cleared when the scenario instance resets. Only imagers configured at least once appear.
-- **`docking`** — live docking state of this craft's docking adapter (present only when the craft has a Docking Adapter). Reflects the real simulation state, not stored command Args:
-  - **`adapter`** — name of this craft's docking adapter.
-  - **`docked`** — whether it is currently docked.
-  - **`target`** — when docked, the `asset_id` of the spacecraft it is docked to (a team craft or a neutral hub).
-  - **`target_component`** — when docked, the name of the port (Docking Adapter) on the target it is attached to.
+- **`docking`**: live docking state of this craft's docking adapter (present only when the craft has a Docking Adapter). Reflects the real simulation state, not stored command Args:
+  - **`adapter`**: name of this craft's docking adapter.
+  - **`docked`**: whether it is currently docked.
+  - **`target`**: when docked, the `asset_id` of the spacecraft it is docked to (a team craft or a neutral hub).
+  - **`target_component`**: when docked, the name of the port (Docking Adapter) on the target it is attached to.
 
-Configuration Reports are also queued automatically after successful [`power_bus`](#power_bus) (`scope: "power_bus"`), [`fuel_bus`](#fuel_bus) (`scope: "fuel_bus"`), [`guidance`](#guidance) (`scope: "computer"`), and [`camera`](#camera) / [`capture`](#capture) (`scope: "camera"`) commands. A `scope: "docking"` report is queued automatically **whenever the docking state changes** — both from a commanded [`docking`](#docking) dock/undock and from proximity capture during a close approach — so every team member sees the live docked/undocked state.
+Configuration Reports are also queued automatically after successful [`power_bus`](#power_bus) (`scope: "power_bus"`), [`fuel_bus`](#fuel_bus) (`scope: "fuel_bus"`), [`guidance`](#guidance) (`scope: "computer"`), and [`camera`](#camera) / [`capture`](#capture) (`scope: "camera"`) commands. A `scope: "docking"` report is queued automatically **whenever the docking state changes**. This includes a commanded [`docking`](#docking) dock or undock and a proximity capture during close approach, so every team member sees the live docking state.
 
-### Power bus fields
+### Power Bus Fields
 
 Only components with session-mutable configuration are included. Components with nothing to report are omitted.
 
@@ -748,7 +786,7 @@ Only components with session-mutable configuration are included. Components with
 
 These align with the spacecraft `power_bus` command `configure` actions (`switch`, `fuse`, `current_limiter`, `voltage_regulator`, `load`). `Is Fuse Blown` is updated by simulation and cleared by `power_bus` + `action: "reset"`.
 
-### Fuel bus fields
+### Fuel Bus Fields
 
 | Class | `configuration` fields |
 | --- | --- |
@@ -768,14 +806,14 @@ These align with the spacecraft `fuel_bus` command `configure` actions (`valve`,
 The bundled Operator UI uses this command to keep **Power Bus Configuration**, **Fuel Bus Configuration**, **Guidance**, **Camera**, and **Docking** in sync across operators:
 
 - Requests `get_configuration` (no `scope` → power_bus + fuel_bus + computer + camera + docking) once when each asset's components are first loaded (`list_entity`).
-- **Power Bus Configuration** — shown when the asset has a switch, limiter, regulator, fuse, or diode; picks up updates after each `power_bus` command; **Refresh** requests `scope: "power_bus"`.
-- **Fuel Bus Configuration** — shown when the asset has a valve or pump; picks up updates after each `fuel_bus` command; **Refresh** requests `scope: "fuel_bus"`.
-- **Guidance** — picks up updates from automatic reports after each executed `guidance` command; per-mode values in `configs` repopulate the form when switching pointing mode.
-- **Camera** — picks up updates after each `camera` / `capture`; switching imager in the dropdown restores that component's saved `configuration`.
-- **Docking** — reflects the live docked state: when docked, the target and port are shown and locked, the **Dock** button is disabled and **Undock** is enabled; when undocked, the reverse. Updates arrive automatically on any docking state change.
+- **Power Bus Configuration**: shown when the asset has a switch, limiter, regulator, fuse, or diode; picks up updates after each `power_bus` command; **Refresh** requests `scope: "power_bus"`.
+- **Fuel Bus Configuration**: shown when the asset has a valve or pump; picks up updates after each `fuel_bus` command; **Refresh** requests `scope: "fuel_bus"`.
+- **Guidance**: picks up updates from automatic reports after each executed `guidance` command; per-mode values in `configs` repopulate the form when switching pointing mode.
+- **Camera**: picks up updates after each `camera` / `capture`; switching imager in the dropdown restores that component's saved `configuration`.
+- **Docking**: reflects the live docked state: when docked, the target and port are shown and locked, the **Dock** button is disabled and **Undock** is enabled; when undocked, the reverse. Updates arrive automatically on any docking state change.
 - Parses APID 102 on Downlink into a per-asset buffer; see [Guides → Operator UI](../guides/operator-ui-guide.md).
 
-Python: `commands.get_configuration(scope=None)` in [`src/commands.py`](../src/commands.py) — omit `scope` for both sections.
+Python: `commands.get_configuration(scope=None)` in [`src/commands.py`](../../src/commands.py): omit `scope` for both sections.
 
 ---
 
@@ -792,11 +830,11 @@ Removes a previously scheduled command from the on-board queue.
 }
 ```
 
-You may identify the command in one of two ways:
+The command can be identified in one of two ways:
 
 | Argument | Description |
 | --- | --- |
-| `id` | The unique ID of the scheduled command, as reported in the Schedule Report. **Preferred** — unambiguous. |
+| `id` | The unique ID of the scheduled command, as reported in the Schedule Report. **Preferred**: unambiguous. |
 | `time` + `command` | Fallback. The spacecraft removes the **first** queued command whose `Time` and `Command` name both match. If multiple match, only one is removed (subsequent calls remove the next). |
 
 If neither identifier matches a queued command, the request is a silent no-op. Issue [`get_schedule`](#get_schedule) afterwards to confirm.
@@ -833,7 +871,7 @@ Modifies the `Time` and/or `Args` of a previously scheduled command without remo
 
 ---
 
-## Worked example: a small uplink sequence
+## Worked Example: a Small Uplink Sequence
 
 A typical "image Earth on the next pass" sequence:
 
@@ -863,6 +901,6 @@ The first two run immediately (slew to nadir, set up optics). The capture is sch
 
 ## Next
 
-- [Concepts → Commands and scheduling](../concepts/commands-and-scheduling.md) — lifecycle and validation rules.
-- [Ground requests](ground-requests.md) — how to discover asset IDs, component names, and station names referenced above.
-- [Guides → Decoding telemetry](../guides/decoding-telemetry.md) — how to read the Ping / Schedule Report messages that confirm command execution.
+- [Concepts → Commands and scheduling](../concepts/commands-and-scheduling.md): lifecycle and validation rules.
+- [Ground requests](ground-requests.md): how to discover asset IDs, component names, and station names referenced above.
+- [Guides → Decoding telemetry](../guides/decoding-telemetry.md): how to read the Ping / Schedule Report messages that confirm command execution.

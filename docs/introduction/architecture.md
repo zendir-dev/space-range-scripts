@@ -1,12 +1,12 @@
 # Architecture
 
-Space Range is a hub-and-spoke system. A single **Studio backend** runs the simulation and is the source of truth for all state. Every other participant — Operator UI, Python scripts, custom apps, the Admin UI — is a **client**, and every client talks to Studio exclusively through an **MQTT broker**.
+Space Range is a hub-and-spoke system. A single **Studio backend** runs the simulation and is the source of truth for all state. Every other participant: Operator UI, Python scripts, custom apps, the Admin UI: is a **client**, and every client talks to Studio exclusively through an **MQTT broker**.
 
 There are no direct connections between Studio and clients, and no direct connections between clients. All traffic is namespaced by **game name** and segmented by **team**, with cryptographic separation enforced via per-team passwords.
 
 ---
 
-## High-level diagram
+## High-Level Diagram
 
 ```text
                 ┌────────────────────────────────────────────────────────┐
@@ -38,14 +38,14 @@ There are no direct connections between Studio and clients, and no direct connec
 
 Two cryptographic layers are in play:
 
-- **Transport layer** — every team-scoped MQTT payload is XOR-encrypted with the team's 6-character alphanumeric password (admin payloads use the admin password). This is what segregates teams on the broker.
-- **RF layer** — telemetry packets *inside* downlink payloads are additionally Caesar-cipher-encoded with a per-team **frequency** and **numeric key**. Operators must know both to decode telemetry. The session topic is unencrypted.
+- **Transport layer**: every team-scoped MQTT payload is XOR-encrypted with the team's 6-character alphanumeric password (admin payloads use the admin password). This is what segregates teams on the broker.
+- **RF layer**: telemetry packets *inside* downlink payloads are additionally Caesar-cipher-encoded with a per-team **frequency** and **numeric key**. Operators must know both to decode telemetry. The session topic is unencrypted.
 
 Both layers are described in detail in [Concepts → Encryption](../concepts/encryption.md).
 
 ---
 
-## Topic layout
+## Topic Layout
 
 All topics are rooted at `Zendir/SpaceRange/<GAME>/...`, where `<GAME>` is the game name configured in Studio.
 
@@ -60,15 +60,15 @@ All topics are rooted at `Zendir/SpaceRange/<GAME>/...`, where `<GAME>` is the g
 | Admin → Studio | `Zendir/SpaceRange/<GAME>/Admin/Request` | XOR(admin password) | Admin / instructor requests. |
 | Studio → admin | `Zendir/SpaceRange/<GAME>/Admin/Response` | XOR(admin password) | Admin / instructor replies. |
 
-A few internal topics also exist (notably the per-frequency RF medium) but are not part of the public client API — operators and admins use only the topics above.
+A few internal topics also exist (notably the per-frequency RF medium) but are not part of the public client API: operators and admins use only the topics above.
 
 The full reference, including QoS recommendations and retained-message behavior, is in [API Reference → MQTT topics](../api-reference/mqtt-topics.md).
 
 ---
 
-## Component responsibilities
+## Component Responsibilities
 
-### Studio backend
+### Studio Backend
 
 Studio is the only authoritative component. It:
 
@@ -76,15 +76,15 @@ Studio is the only authoritative component. It:
 - Runs the **physics, RF link budget, and component models** (ADCS, propulsion, payloads, etc.).
 - Publishes the **session clock** continuously.
 - Hosts a **SpacecraftController** per asset that consumes uplink commands and emits telemetry.
-- Hosts a **GroundController** per team that handles request/response queries and ground-station behaviour (transmit power, antenna gain, etc.).
+- Hosts a **GroundController** per team that handles request/response queries and ground-station behavior (transmit power, antenna gain, etc.).
 - Hosts a single **SpaceRangeAdminController** that handles admin-side queries and simulation-control commands.
 - Manages **command scheduling** (time-tagged uplinks executed when the simulation clock reaches them).
 - Manages **encryption key/frequency rotation** when a team uplinks an `encryption` command.
 - Records **scenario events** (success / failure / informational milestones) for later admin queries.
 
-Clients should treat Studio as opaque — only the MQTT message contracts are stable.
+Clients should treat Studio as opaque: only the MQTT message contracts are stable.
 
-### MQTT broker
+### MQTT Broker
 
 Any MQTT 3.1.1+ broker works (Mosquitto, EMQX, HiveMQ, NanoMQ, etc.). Space Range does not require any specific broker plugin; it uses standard publish/subscribe with no broker-side ACLs (segregation is achieved through XOR passwords, which means a misconfigured client can't decrypt traffic for teams it does not have credentials for).
 
@@ -94,22 +94,22 @@ For development, a single-node Mosquitto on `localhost:1883` is the simplest set
 
 A React web app (`space-range-operator/`). It runs in two modes:
 
-- **User mode** — drives a single team's spacecraft. Subscribes to the team's downlink/response topics and publishes on uplink/request. Decrypts telemetry, displays imagery, plots state, and provides forms for every command type.
-- **Admin mode** — uses the admin password and admin topics. Provides team rosters, simulation controls, scenario events, and historical data.
+- **User mode**: drives a single team's spacecraft. Subscribes to the team's downlink/response topics and publishes on uplink/request. Decrypts telemetry, displays imagery, plots state, and provides forms for every command type.
+- **Admin mode**: uses the admin password and admin topics. Provides team rosters, simulation controls, scenario events, and historical data.
 
 The UI is one valid client, not a privileged one. Anything the UI can do, a custom client can do over MQTT.
 
-### Python scripting framework
+### Python Scripting Framework
 
 The `space-range-scripts/` directory contains a reference Python client and a small framework for writing scripted scenarios. It is useful for:
 
 - **Automated test missions** and regression scenarios.
-- **Teaching** — operators can read concise, well-named Python and adapt it to their own clients.
+- **Teaching**: operators can read concise, well-named Python and adapt it to their own clients.
 - **Headless or batch operations** when the Operator UI is not appropriate.
 
 The framework's own `README.md` covers usage. These docs cover the wire formats it builds on.
 
-### Custom clients
+### Custom Clients
 
 A custom client only needs to:
 
@@ -118,11 +118,11 @@ A custom client only needs to:
 3. Speak the JSON message formats described in the [API Reference](../api-reference/mqtt-topics.md).
 4. (Optional) Decode CCSDS Space Packets using the team's **XTCE schema**, which can be pulled with the `get_packet_schemas` request.
 
-There is no SDK requirement — any language with an MQTT client and a JSON parser can drive Space Range.
+There is no SDK requirement: any language with an MQTT client and a JSON parser can drive Space Range.
 
 ---
 
-## End-to-end command path
+## End-to-End Command Path
 
 When an operator issues `guidance` to point a spacecraft at a target, the path is:
 
@@ -135,7 +135,7 @@ When an operator issues `guidance` to point a spacecraft at a target, the path i
 
 ---
 
-## End-to-end telemetry path
+## End-to-End Telemetry Path
 
 When the spacecraft emits telemetry (e.g. a periodic Ping):
 
@@ -145,12 +145,12 @@ When the spacecraft emits telemetry (e.g. a periodic Ping):
 4. The downlink payload is **XOR-encrypted** with the team password and published on `Zendir/SpaceRange/<GAME>/<TEAM>/Downlink`.
 5. The client subscribes, **XOR-decrypts**, **Caesar-decodes** with the current key, and parses Space Packets using the XTCE schema.
 
-If the link is jammed or out of range, the operator sees nothing on downlink — the absence of telemetry is itself a meaningful signal.
+If the link is jammed or out of range, the operator sees nothing on downlink: the absence of telemetry is itself a meaningful signal.
 
 ---
 
 ## Next
 
-- [Concepts → Encryption](../concepts/encryption.md) — the two crypto layers in detail.
-- [API Reference → MQTT topics](../api-reference/mqtt-topics.md) — the full topic table with examples.
-- [Getting Started → Connecting](../getting-started/connecting.md) — minimal end-to-end example.
+- [Concepts → Encryption](../concepts/encryption.md): the two crypto layers in detail.
+- [API Reference → MQTT topics](../api-reference/mqtt-topics.md): the full topic table with examples.
+- [Getting Started → Connecting](../getting-started/connecting.md): minimal end-to-end example.

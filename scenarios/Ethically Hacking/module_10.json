@@ -1,7 +1,7 @@
 {
 	"metadata": {
 		"name": "Module 10",
-		"description": "Respond and Recover - act on confirmed adversary activity. Same LEO operations as Module 9 with ground stations at Tokyo, Anchorage, Houston, Lima, and Santiago. GPS spoofing near Houston from session start and a cyber text System Compromised on Power Source telemetry (APID 201) from 1800 s for 600 s are identical to Module 9. This time the injects are confirmed adversary activity and teams must act: declare the incident, execute the safe-mode/rollback playbook, hold and re-baseline payload products, and report recovery SITREPs. A reaction wheel (Wheel X, Stuck Index 0) is jammed from session start and stays stuck until the team recovers it - there is no automatic clear."
+		"description": "Respond to confirmed adversary activity while managing a concurrent attitude-control fault and protecting payload-product integrity. Declare and scope the incident, execute containment and recovery procedures, re-establish trusted operations, and issue regular recovery reports."
 	},
 	"simulation": {
 		"epoch": "2025/11/01 17:00:00",
@@ -16,7 +16,7 @@
 		"gps": true,
 		"cloud_opacity": 0.85,
 		"cloud_contrast": 2.5,
-		"ambient_light": 0.07
+		"ambient_light": 0.2
 	},
 	"ground_stations": {
 		"locations": [
@@ -314,7 +314,9 @@
 							"Resolution": [
 								1024,
 								1024
-							]
+							],
+							"Min Field Of View": 3.0,
+							"Max Field Of View": 60.0
 						}
 					},
 					{

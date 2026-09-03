@@ -1,4 +1,8 @@
 {
+	"metadata": {
+		"name": "Orbital Intel",
+		"description": "In this scenario, participants will analyze a complex orbital environment with multiple vessels and spacecraft. The scenario includes various events and questions that challenge the participant to identify and analyze the activities of different vessels, as well as their impacts on the overall situation. Participants will need to use their knowledge of orbital mechanics, satellite operations, and maritime activities to successfully navigate the scenario and answer the questions."
+	},
 	"simulation": {
 		"epoch": "2025/04/15 07:30:00",
 		"speed": 5.0,
@@ -41,18 +45,18 @@
 		},
 		{
 			"enabled": true,
-			"id": 584203,
-			"password": "Q7X9PL",
+			"id": 473829,
+			"password": "R4K7MZ",
 			"name": "Team Blue",
 			"key": 42,
 			"frequency": 612,
 			"collection": "Main",
-			"color": "#020CF1"
+			"color": "#0050FF"
 		},
 		{
 			"enabled": true,
-			"id": 917462,
-			"password": "M3K8ZT",
+			"id": 916354,
+			"password": "8XTPWN",
 			"name": "Team Green",
 			"key": 87,
 			"frequency": 745,
@@ -61,8 +65,8 @@
 		},
 		{
 			"enabled": true,
-			"id": 263891,
-			"password": "X9L2QA",
+			"id": 263718,
+			"password": "5LZQVB",
 			"name": "Team Yellow",
 			"key": 154,
 			"frequency": 889,
@@ -71,13 +75,53 @@
 		},
 		{
 			"enabled": true,
-			"id": 748105,
-			"password": "T6W3HY",
-			"name": "Team Violet",
-			"key": 201,
-			"frequency": 523,
+			"id": 584927,
+			"password": "2WCF9H",
+			"name": "Team Orange",
+			"key": 203,
+			"frequency": 534,
 			"collection": "Main",
-			"color": "#8000FF"
+			"color": "#FF7000"
+		},
+		{
+			"enabled": true,
+			"id": 731456,
+			"password": "N6RGYD",
+			"name": "Team Pink",
+			"key": 117,
+			"frequency": 678,
+			"collection": "Main",
+			"color": "#FF8CEC"
+		},
+		{
+			"enabled": true,
+			"id": 629540,
+			"password": "B8WNHQ",
+			"name": "Team White",
+			"key": 72,
+			"frequency": 712,
+			"collection": "Main",
+			"color": "#FFFFFF"
+		},
+		{
+			"enabled": true,
+			"id": 395082,
+			"password": "7SMXKE",
+			"name": "Team Purple",
+			"key": 29,
+			"frequency": 823,
+			"collection": "Main",
+			"color": "#8600FF"
+		},
+		{
+			"enabled": true,
+			"id": 847163,
+			"password": "4PVTZ3",
+			"name": "Team Cyan",
+			"key": 195,
+			"frequency": 561,
+			"collection": "Main",
+			"color": "#00FFFF"
 		}
 	],
 	"assets": {
@@ -498,7 +542,7 @@
 						}
 					},
 					{
-						"class": "Text",
+						"class": "Physical Text",
 						"name": "Text Front",
 						"enabled": true,
 						"position": [
@@ -513,12 +557,12 @@
 						],
 						"data": {
 							"Text": "RECON",
-							"Color": "#FFFF0D",
-							"Scale": 50.0
+							"Font Color": "#FFFF0D",
+							"Font Size": 5000.0
 						}
 					},
 					{
-						"class": "Text",
+						"class": "Physical Text",
 						"name": "Text Back",
 						"enabled": true,
 						"position": [
@@ -533,8 +577,8 @@
 						],
 						"data": {
 							"Text": "RECON",
-							"Color": "#FFFF0D",
-							"Scale": 50.0
+							"Font Color": "#FFFF0D",
+							"Font Size": 5000.0
 						}
 					}
 				]
@@ -810,6 +854,96 @@
 				"data": {
 					"text": ","
 				}
+			},
+			{
+				"id": "GO_017",
+				"type": "vessel",
+				"name": "Iron Horizon",
+				"planet": "Earth",
+				"latitude": 11.932,
+				"longitude": -63.547,
+				"altitude": 1,
+				"scale": 225,
+				"color": "#ff0000",
+				"data": {
+					"heading": 85.0,
+					"speed": 4.4
+				}
+			},
+			{
+				"id": "GO_018",
+				"type": "vessel",
+				"name": "Ocean Tribute",
+				"planet": "Earth",
+				"latitude": 14.471,
+				"longitude": -62.871,
+				"altitude": 1,
+				"scale": 225,
+				"color": "#8000ff",
+				"data": {
+					"heading": 120.0,
+					"speed": 6.6
+				}
+			},
+			{
+				"id": "GO_019",
+				"type": "vessel",
+				"name": "Harbor Sentinel",
+				"planet": "Earth",
+				"latitude": 13.39,
+				"longitude": -60.362,
+				"altitude": 1,
+				"scale": 225,
+				"color": "#FFFF00",
+				"data": {
+					"heading": 290.0,
+					"speed": 5.5
+				}
+			},
+			{
+				"id": "GO_020",
+				"type": "vessel",
+				"name": "Golden Ballast",
+				"planet": "Earth",
+				"latitude": 12.793,
+				"longitude": -65.922,
+				"altitude": 1,
+				"scale": 225,
+				"color": "#00FF00",
+				"data": {
+					"heading": 185.0,
+					"speed": 3.9
+				}
+			},
+			{
+				"id": "GO_021",
+				"type": "vessel",
+				"name": "Titan Manifest",
+				"planet": "Earth",
+				"latitude": 15.517,
+				"longitude": -57.367,
+				"altitude": 1,
+				"scale": 225,
+				"color": "#00FFFF",
+				"data": {
+					"heading": 219.0,
+					"speed": 5.7
+				}
+			},
+			{
+				"id": "GO_022",
+				"type": "vessel",
+				"name": "Steel Voyager",
+				"planet": "Earth",
+				"latitude": 16.952,
+				"longitude": -67.196,
+				"altitude": 1,
+				"scale": 225,
+				"color": "#FFFFFF",
+				"data": {
+					"heading": 340.0,
+					"speed": 3.9
+				}
 			}
 		]
 	},
@@ -865,7 +999,7 @@
 					"Yellow"
 				],
 				"value": 3,
-				"reason": "Its Yellow, the only ship hovering near the damaged ships in the straight",
+				"reason": "Its Yellow as it's the only ship hovering near the damaged ships in the straight",
 				"score": 8
 			}
 		},
@@ -903,6 +1037,63 @@
 			"answer": {
 				"value": 5,
 				"reason": "There are 5 small vessels that can be seen near the island if a small enough FOV is set on the camera, with the correct pointing algorithm.",
+				"score": 6
+			}
+		},
+		{
+			"section": "Coast of Venezuela (AIS Verification)",
+			"title": "Which vessel, as per the AIS data provided located near Venezuela, is lying about its position?",
+			"description": "Refer to the AIS data provided in your mission brief.",
+			"type": "select",
+			"answer": {
+				"options": [
+					"Cyan",
+					"Green",
+					"Red",
+					"Violet",
+					"White",
+					"Yellow"
+				],
+				"value": 0,
+				"reason": "The Cyan vessel is lying about its longitude. All other variables match the broadcasted data for 'Titan Manifest', the cyan vessel.",
+				"score": 7
+			}
+		},
+		{
+			"section": "Coast of Venezuela (AIS Verification)",
+			"title": "Which vessel, as per the AIS data provided located near Venezuela, is lying about its heading direction?",
+			"description": "Refer to the AIS data provided in your mission brief.",
+			"type": "select",
+			"answer": {
+				"options": [
+					"Cyan",
+					"Green",
+					"Red",
+					"Violet",
+					"White",
+					"Yellow"
+				],
+				"value": 1,
+				"reason": "It is the Golden Ballast as it's lying about its rotation, it is actually heading south instead of north-east.",
+				"score": 7
+			}
+		},
+		{
+			"section": "Coast of Venezuela (AIS Verification)",
+			"title": "What colored vessel, located near Venezuela, has disabled their AIS transponder and not broadcasting any data, compared to the AIS data provided?",
+			"description": "Refer to the AIS data provided in your mission brief.",
+			"type": "select",
+			"answer": {
+				"options": [
+					"Cyan",
+					"Green",
+					"Red",
+					"Violet",
+					"White",
+					"Yellow"
+				],
+				"value": 4,
+				"reason": "It is the White vessel as it's not associated with any AIS data stream provided",
 				"score": 6
 			}
 		},

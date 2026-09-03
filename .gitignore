@@ -216,3 +216,6 @@ logs/
 # Scenario capture dumps written beside scenario scripts (any subdirectory)
 captures.json
 replays.json
+
+# Microsoft Office lock files created while a document is open
+~$*

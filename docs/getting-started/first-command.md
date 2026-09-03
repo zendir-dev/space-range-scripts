@@ -1,6 +1,6 @@
 # Your First Command
 
-This page builds on [Connecting](connecting.md) — once you can read the session clock and round-trip a ground request, you're ready to actually drive a spacecraft.
+This page builds on [Connecting](connecting.md): once you can read the session clock and round-trip a ground request, you're ready to actually drive a spacecraft.
 
 We will:
 
@@ -12,7 +12,7 @@ The full code listing at the bottom is around 80 lines of Python, with a JavaScr
 
 ---
 
-## Step 1 — Resolve your asset ID
+## Step 1: Resolve Your Asset ID
 
 Asset IDs are 8-character hex strings assigned by Studio at scenario load. Fetch them dynamically rather than hard-coding:
 
@@ -68,11 +68,12 @@ const assetId = assets[0].asset_id;
 console.log(`Targeting asset ${assetId} (${assets[0].name}).`);
 ```
 
-> **Tip.** `list_assets` is also a good reachability check during normal operation. If it stops responding, the simulation has paused or your credentials have changed.
+> [!NOTE]
+> `list_assets` is also a good reachability check during normal operation. If it stops responding, the simulation has paused or your credentials have changed.
 
 ---
 
-## Step 2 — Build and uplink a `guidance` command
+## Step 2: Build and Uplink a `guidance` Command
 
 The command envelope is the same for every command type:
 
@@ -132,11 +133,11 @@ client.publish(UPLINK_TOPIC, payload);
 console.log("Uplinked guidance command.");
 ```
 
-You will *not* receive a direct response on the `Response` topic — uplink commands are reported via telemetry, not via the request/response channel. (See [Concepts → Commands and scheduling → Reporting](../concepts/commands-and-scheduling.md#6-reporting).)
+You will *not* receive a direct response on the `Response` topic: uplink commands are reported via telemetry, not via the request/response channel. (See [Concepts → Commands and scheduling → Reporting](../concepts/commands-and-scheduling.md#6-reporting).)
 
 ---
 
-## Step 3 — Confirm execution via Ping
+## Step 3: Confirm Execution via Ping
 
 The spacecraft emits **Ping** telemetry on a periodic cadence (and on demand). Each Ping includes a `Commands` field listing commands executed since the previous Ping. Watch for an entry matching your `Command` and `Time`.
 
@@ -155,7 +156,7 @@ def on_downlink(_c, _u, msg):
     fmt = xor_decoded[0]               # 1 = Message, 2 = Media, 3 = UplinkIntercept
     payload = caesar_decrypt(TEAM_KEY, xor_decoded[5:])
     if fmt == 1 and b"guidance" in payload:
-        print("Saw guidance entry in Ping payload — command executed.")
+        print("Saw guidance entry in Ping payload: command executed.")
         # In a real client, parse the Space Packet and read the JSON Commands field.
 
 client.message_callback_add(DOWNLINK, on_downlink)
@@ -177,7 +178,7 @@ client.on("message", (topic, payload) => {
   const fmt = xorDecoded[0];
   const body = caesarDecrypt(TEAM_KEY, xorDecoded.slice(5));
   if (fmt === 1 && Buffer.from(body).includes("guidance")) {
-    console.log("Saw guidance entry in Ping payload — command executed.");
+    console.log("Saw guidance entry in Ping payload: command executed.");
   }
 });
 ```
@@ -204,7 +205,7 @@ When the Ping arrives and the substring shows up, you've completed a full round 
 
 ---
 
-## Full Python listing
+## Full Python Listing
 
 ```python
 import json
@@ -279,7 +280,7 @@ c.loop_forever()
 
 ---
 
-## Where to go next
+## Where to Go Next
 
 You now have the full pattern any client follows: connect → resolve assets → build envelope → encrypt → publish → watch telemetry. To go further:
 

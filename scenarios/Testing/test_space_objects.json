@@ -1,0 +1,383 @@
+{
+	"metadata": {
+		"name": "Test Space Objects",
+		"description": "Single-team harness demonstrating the top-level 'objects.space' block. One operable main spacecraft plus a field of bare space objects (no controller, no components) placed in orbit or at a fixed geodetic location. Exercises orbit vs geodetic positioning, dynamic types, meshes, scales, and colors."
+	},
+	"simulation": {
+		"epoch": "2026/04/27 12:00:00",
+		"speed": 10.0,
+		"step_size": 0.1,
+		"integrator": "Euler",
+		"end_time": 0.0
+	},
+	"universe": {
+		"atmosphere": false,
+		"magnetosphere": false,
+		"gps": true,
+		"cloud_opacity": 0.7,
+		"cloud_contrast": 2.5,
+		"ambient_light": 0.25
+	},
+	"ground_stations": {
+		"locations": [
+			"New York",
+			"Paris",
+			"Dubai"
+		],
+		"min_elevation": 0,
+		"max_range": 0,
+		"scale": 100
+	},
+	"teams": [
+		{
+			"enabled": true,
+			"id": 111111,
+			"password": "AAAAAA",
+			"name": "Team Blue",
+			"key": 42,
+			"frequency": 612,
+			"collection": "Main",
+			"color": "#0050FF"
+		}
+	],
+	"assets": {
+		"space": [
+			{
+				"id": "SC_MAIN",
+				"name": "Microsat",
+				"orbit": {
+					"planet": "Earth",
+					"values": [
+						8200.0,
+						0.0,
+						45.0,
+						220.0,
+						0.0,
+						80.0
+					],
+					"offset": [
+						0.0,
+						0.0,
+						0.0,
+						0.0,
+						0.0,
+						0.0
+					]
+				},
+				"physics": {
+					"override_mass": true,
+					"mass": 100.0,
+					"center_of_mass": [
+						0.0,
+						0.0,
+						0.0
+					],
+					"inertia_tensor": [
+						[
+							10.0,
+							0.0,
+							0.0
+						],
+						[
+							0.0,
+							10.0,
+							0.0
+						],
+						[
+							0.0,
+							0.0,
+							10.0
+						]
+					]
+				},
+				"visualization": {
+					"mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/ZenSat/BP_Z_SC_ZenSat_Chassis",
+					"scale": 1.0,
+					"offset": [
+						0.0,
+						0.0,
+						0.12
+					]
+				},
+				"controller": {
+					"safe_fraction": 0.1,
+					"capture_tax": 0.001,
+					"downlink_tax": 0.01,
+					"ping_interval": 20.0,
+					"reset_interval": 60.0,
+					"jamming_multiplier": 100.0,
+					"enable_rpo_software": false
+				},
+				"power": {
+					"bus": [
+						{
+							"source_component": "Solar Panel +X",
+							"source_terminal": "out",
+							"target_component": "Battery",
+							"target_terminal": "out"
+						},
+						{
+							"source_component": "Solar Panel -X",
+							"source_terminal": "out",
+							"target_component": "Battery",
+							"target_terminal": "out"
+						}
+					]
+				},
+				"components": [
+					{
+						"class": "Reaction Wheels",
+						"name": "Reaction Wheels",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Mass": 9.0
+						}
+					},
+					{
+						"class": "Computer",
+						"name": "Computer",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Battery",
+						"name": "Battery",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Nominal Capacity": 80.0,
+							"Charge Fraction": 1.0,
+							"Mass": 5.0
+						}
+					},
+					{
+						"class": "GPS Sensor",
+						"name": "GPS Sensor",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Receiver",
+						"name": "Receiver",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							-0.36,
+							-0.16
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Antenna Gain": 3.0,
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Transmitter",
+						"name": "Transmitter",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							-0.36,
+							-0.16
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Mass": 1.0
+						}
+					},
+					{
+						"class": "Storage",
+						"name": "Storage",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							-0.2
+						],
+						"data": {
+							"Mass": 4.0
+						}
+					},
+					{
+						"class": "Camera",
+						"name": "Camera",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							-0.36,
+							-0.16
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Resolution": [
+								1024,
+								1024
+							],
+							"Min Field Of View": 10.0,
+							"Field Of View": 60.0,
+							"Max Field Of View": 90.0,
+							"Focusing Distance": 100000.0,
+							"Aperture": 5.0,
+							"Sample Rate": 100000.0
+						}
+					},
+					{
+						"class": "Charge Coupled Device",
+						"name": "Charge Coupled Device",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							-0.36,
+							-0.16
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Area": 100,
+							"Efficiency": 0.85,
+							"Spectral Wavelength": 550.0,
+							"Atmosphere Absorption": 0.0,
+							"Point Spread Factor": 0.15,
+							"Thermal Noise": 0.005,
+							"Readout Noise": 3.0,
+							"Dark Current Noise": 0.01,
+							"Resolution": 64,
+							"Exposure Time": 0.1,
+							"Capture On Tick": false
+						}
+					}
+				]
+			}
+		],
+		"collections": [
+			{
+				"id": "Main",
+				"space_assets": [
+					"SC_MAIN"
+				]
+			}
+		]
+	},
+	"objects": {
+		"space": [
+			{
+				"name": "Debris Alpha",
+				"orbit": [7500.0, 0.0, 45.0, 220.0, 0.0, 82.0],
+				"planet": "Earth",
+				"dynamic_type": "Orbit",
+				"mesh": "None",
+				"scale": 100.0,
+				"color": "#FF0000"
+			},
+			{
+				"name": "Debris Beta",
+				"orbit": [7500.0, 0.0, 45.0, 220.0, 0.0, 78.0],
+				"planet": "Earth",
+				"dynamic_type": "Orbit",
+				"mesh": "None",
+				"scale": 200.0,
+				"color": "#FF7000"
+			},
+			{
+				"name": "Debris Gamma",
+				"orbit": [7520.0, 0.002, 45.5, 221.0, 10.0, 80.0],
+				"planet": "Earth",
+				"dynamic_type": "Orbit",
+				"scale": 150.0,
+				"color": "#FFFF00"
+			},
+			{
+				"name": "Defunct Satellite",
+				"orbit": [7800.0, 0.01, 51.6, 90.0, 0.0, 0.0],
+				"planet": "Earth",
+				"dynamic_type": "Orbit",
+				"mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/ZenSat/BP_Z_SC_ZenSat_Chassis",
+				"scale": 1000.0,
+				"color": "#FFFFFF"
+			},
+			{
+				"name": "Spent Rocket Body",
+				"orbit": [9200.0, 0.12, 63.4, 45.0, 270.0, 120.0],
+				"planet": "Earth",
+				"dynamic_type": "Orbit",
+				"mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/ZenSat/BP_Z_SC_ZenSat_Chassis",
+				"scale": 2000.0,
+				"color": "#808080"
+			},
+			{
+				"name": "Polar Debris",
+				"orbit": [7100.0, 0.0, 98.6, 0.0, 0.0, 210.0],
+				"planet": "Earth",
+				"dynamic_type": "Orbit",
+				"scale": 500.0,
+				"color": "#00FFFF"
+			},
+			{
+				"name": "Molniya Fragment",
+				"orbit": [26600.0, 0.74, 63.4, 270.0, 270.0, 0.0],
+				"planet": "Earth",
+				"dynamic_type": "Orbit",
+				"scale": 3000.0,
+				"color": "#FF00FF"
+			},
+			{
+				"name": "Fixed Geo Marker",
+				"geodetic": [0.0, 150.0, 35786000.0],
+				"planet": "Earth",
+				"dynamic_type": "Static",
+				"color": "#00FF00",
+				"scale": 1000.0,
+				"trackable": false
+			}
+		]
+	},
+	"events": [],
+	"questions": []
+}

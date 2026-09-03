@@ -10,7 +10,7 @@
 
 You are a duty crew on the Maritime Cyber Watch programme, operating a single medium Earth orbit defender spacecraft that provides imagery and signals intelligence across a busy maritime corridor. Your spacecraft begins operating nominally. Over the session, both the surrounding environment and a co-orbital rogue spacecraft introduce a series of faults and cyber effects that you must detect, diagnose, and where possible mitigate.
 
-Each team shares the same spacecraft design, but each with its own radio identity. A separate adversary operates a co-orbital spacecraft and is not under your control.
+Each team shares the same spacecraft design, but each team operates a unique spacecraft with its own radio-communications link. A separate adversary operates a co-orbital spacecraft and is not under your control.
 
 > Questions and scoring are delivered in the **Tasks** section. Use this brief for mission context, spacecraft configuration, and the threat environment, not as an answer key.
 
@@ -88,7 +88,7 @@ The defender carries one imaging payload and a set of sensors that matter for bo
 
 ## Communications
 
-### Ground stations
+### Ground Stations
 
 | Station | Notes |
 | --- | --- |
@@ -100,7 +100,7 @@ The defender carries one imaging payload and a set of sensors that matter for bo
 
 The minimum elevation angle is 5 degrees, so passes are finite. Use the **Link Budget** panel in the operator terminal for contact intervals, signal-to-noise ratio, and pass geometry. Which station you are keyed through matters when interference appears, so track your active pass.
 
-### Team radio identity
+### Team Communications Budget
 
 Each team is assigned a unique frequency and key at session start, pre-configured on the operator terminal. Your frequency is the same on the uplink and downlink. Because crews have their own spacecraft, an attack aimed at one crew's frequency will not necessarily affect the others.
 
@@ -128,7 +128,7 @@ Use this quick reference to triage what you see. Match the symptoms in your tele
 | **Replay attack** | Commands in the schedule that your crew never sent; outdated or invalid guidance, downlink, or other commands running on their own | Change your communication frequency; cycle your encryption key |
 | **Data injection (telemetry tampering)** | Unexpected values in telemetry plots; text injected into data packets; invalid telemetry that breaks analysis tooling | Reboot the operations computer; apply encryption or rotate your key |
 | **Component fault** | Broken functionality in a specific component; erroneous or non-linear data in plots or packet inspection | Reboot the flight computer; reset the affected software or component; discard the erroneous telemetry |
-| **Rogue actor** | Large spikes in EM sensor readings; a capture of the actor on camera | Characterise the adversary from EM and imagery, and track its transmissions. TYour spacecraft has no thrusters, so evasive maneuvering is not available |
+| **Rogue actor** | Large spikes in EM sensor readings; a capture of the actor on camera | Characterise the adversary from EM and imagery, and track its transmissions. Your spacecraft has no thrusters, so evasive maneuvering is not available |
 
 > All threats will occur within the first 45 minutes of the scenario. After this time, assume all cyber and environmental threats have occurred for the purposes of solving questions in the **Tasks** section.
 
@@ -143,34 +143,34 @@ Split responsibilities early. The Mission Lead should assign these roles at the 
 - **Payload Operator:** Captures camera imagery and works the EM sensor for maritime collection and rogue attribution.
 - **Communications Specialist:** Monitors link budgets, ground-station passes, GPS integrity, and radio interference, and drives link mitigations.
 
-> **Working method:** Split the work across comms and RF, spacecraft health, and commanding, and keep talking to each other. Log every change you make, such as a frequency hop, key rotation, reset, or guidance command, along with what happened next. When operators see different symptoms, compare notes to tell a shared environmental effect apart from an attack on a single radio identity, and apart from a side effect of your own actions. Stabilise the link or the subsystem first, then work out the root cause for your report.
+> **Working method:** Split the work across comms and RF, spacecraft health, and commanding, and keep talking to each other. Log every change you make, such as a frequency hop, key rotation, reset, or guidance command, along with what happened next. When operators see different symptoms, compare notes to tell a shared environmental effect apart from an attack on a single radio link, and apart from a side effect of your own actions. Stabilise the link or the subsystem first, then work out the root cause for your report.
 
 ---
 
 ## Before You Begin
 
-1. Log in to the operator terminal with your team credentials.
+1. Read through the Mission Brief and the Tasks required.
 2. Confirm your spacecraft appears on the **Map** and that telemetry and the Link Budget are updating.
 3. Take a baseline reading of power, navigation, storage, and attitude health while conditions are nominal.
-4. Read the Tasks section so you know what to record, then split the work across your roles.
+4. Split the work across your roles, based on the skills and objectives required.
 5. You are not expected to answer every question. Prioritise across your roles and log evidence as you go.
 
 ---
 
-## Learning focuses
+## Learning Focuses
 
-### Threat recognition
+### Threat Recognition
 
 Recognise the telemetry signatures of GPS spoofing, GPS jamming, uplink and downlink jamming, telemetry injection, replay, and subsystem faults across power, storage, and attitude control.
 
 ### Attribution
 
-Separate environmental effects that every crew sees from targeted effects aimed at your own radio identity, and use the EM sensor to tie hostile activity to the co-orbital adversary.
+Separate environmental effects that every crew sees from targeted effects aimed at your own communications link, and use the EM sensor to tie hostile activity to the co-orbital adversary.
 
 ### Mitigation
 
 Choose the right response for each effect, such as frequency hopping, key rotation, or component reset, and confirm from telemetry that the response worked.
 
-### Forensic reporting
+### Forensic Reporting
 
 Track what happened and when, tie each observation to evidence in telemetry or imagery, and report it accurately in the Tasks section.

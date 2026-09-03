@@ -1,6 +1,6 @@
 {
 	"metadata": {
-		"name": "Demonstration",
+		"name": "Lunar Logistics",
 		"description": "This scenario tests teams' ability to perform lunar logistics operations with a central hub spacecraft. This includes docked procedures, such as fuel transfer and power sharing, as well as undocking and debris inspection."
 	},
 	"simulation": {
@@ -16,25 +16,66 @@
 		"gps": false,
 		"cloud_opacity": 1.5,
 		"cloud_contrast": 2.3,
-		"ambient_light": 0
+		"ambient_light": 0.0
 	},
 	"ground_stations": {
 		"locations": [
 			"Canberra"
 		],
-		"min_elevation": 0,
-		"max_range": 0
+		"min_elevation": 0.0,
+		"max_range": 0.0,
+		"scale": 1000.0
 	},
 	"teams": [
 		{
 			"enabled": true,
 			"id": 1,
-			"password": "AAAAAA",
+			"password": "R4K7MZ",
 			"name": "Team Blue",
-			"key": 87,
-			"frequency": 745,
+			"key": 42,
+			"frequency": 612.0,
 			"collection": "Main",
-			"color": "#3377FF"
+			"color": "#0050FF"
+		},
+		{
+			"enabled": true,
+			"id": 2,
+			"password": "8XTPWN",
+			"name": "Team Green",
+			"key": 87,
+			"frequency": 745.0,
+			"collection": "Main",
+			"color": "#00FF00"
+		},
+		{
+			"enabled": true,
+			"id": 3,
+			"password": "5LZQVB",
+			"name": "Team Yellow",
+			"key": 154,
+			"frequency": 889.0,
+			"collection": "Main",
+			"color": "#FFFF00"
+		},
+		{
+			"enabled": true,
+			"id": 4,
+			"password": "2WCF9H",
+			"name": "Team Orange",
+			"key": 203,
+			"frequency": 534.0,
+			"collection": "Main",
+			"color": "#FF7000"
+		},
+		{
+			"enabled": true,
+			"id": 5,
+			"password": "7SMXKE",
+			"name": "Team Purple",
+			"key": 29,
+			"frequency": 823.0,
+			"collection": "Main",
+			"color": "#8600FF"
 		}
 	],
 	"assets": {
@@ -49,7 +90,7 @@
 						0.03,
 						39.0,
 						38.0,
-						156,
+						156.0,
 						280.0
 					],
 					"offset": [
@@ -104,52 +145,111 @@
 					"reset_interval": 60.0,
 					"jamming_multiplier": 100.0,
 					"enable_rpo_software": false,
-					"enable_intercept": false
+					"enable_intercept": false,
+					"pid_k": 15.0,
+					"pid_p": 20.0,
+					"pid_ki": -1.0,
+					"pid_limit": -20.0
 				},
-			"power": {
-				"bus": [
-					{
-						"source_component": "Solar Panel +X",
-						"source_terminal": "out",
-						"target_component": "Battery",
-						"target_terminal": "in"
-					},
-					{
-						"source_component": "Solar Panel -X",
-						"source_terminal": "out",
-						"target_component": "Battery",
-						"target_terminal": "in"
-					},
-					{
-						"source_component": "Battery",
-						"source_terminal": "in",
-						"target_component": "Power Transfer Switch",
-						"target_terminal": "in"
-					}
-				]
-			},
-			"fuel": {
-				"bus": [
-					{
-						"source_component": "Fuel Tank",
-						"source_terminal": "out",
-						"target_component": "Fuel Pump",
-						"target_terminal": "in"
-					},
-					{
-						"source_component": "Fuel Pump",
-						"source_terminal": "out",
-						"target_component": "Transfer Valve",
-						"target_terminal": "in"
-					},
-					{
-						"source_component": "Transfer Valve",
-						"source_terminal": "out",
-						"target_component": "Fuel Transfer",
-						"target_terminal": "in"
-					}
-				]
-			},
+				"power": {
+					"monitor": true,
+					"bus": [
+						{
+							"source_component": "Solar Panel +X",
+							"source_terminal": "out",
+							"target_component": "Solar Panel Isolation Switch",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "Solar Panel -X",
+							"source_terminal": "out",
+							"target_component": "Solar Panel Isolation Switch",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "Solar Panel Isolation Switch",
+							"source_terminal": "out",
+							"target_component": "Battery",
+							"target_terminal": "out"
+						},
+						{
+							"source_component": "Battery",
+							"source_terminal": "out",
+							"target_component": "Power Transfer Switch",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "Battery",
+							"source_terminal": "out",
+							"target_component": "Fuel Pump Switch",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "Fuel Pump Switch",
+							"source_terminal": "out",
+							"target_component": "Fuel Pump Fuse",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "Fuel Pump Fuse",
+							"source_terminal": "out",
+							"target_component": "Fuel Pump Controller",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "Fuel Pump Controller",
+							"source_terminal": "out",
+							"target_component": "Fuel Pump",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "Battery",
+							"source_terminal": "out",
+							"target_component": "Fuel Pump Switch - Backup",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "Fuel Pump Switch - Backup",
+							"source_terminal": "out",
+							"target_component": "Fuel Pump Fuse - Backup",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "Fuel Pump Fuse - Backup",
+							"source_terminal": "out",
+							"target_component": "Fuel Pump Controller - Backup",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "Fuel Pump Controller - Backup",
+							"source_terminal": "out",
+							"target_component": "Fuel Pump",
+							"target_terminal": "in"
+						}
+					]
+				},
+				"fuel": {
+					"bus": [
+						{
+							"source_component": "Fuel Tank",
+							"source_terminal": "out",
+							"target_component": "Fuel Pump",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "Fuel Pump",
+							"source_terminal": "out",
+							"target_component": "Transfer Valve",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "Transfer Valve",
+							"source_terminal": "out",
+							"target_component": "Fuel Transfer",
+							"target_terminal": "in"
+						}
+					]
+				},
 				"components": [
 					{
 						"class": "Solar Panel",
@@ -192,6 +292,17 @@
 							"Area": 0.3,
 							"Efficiency": 0.4,
 							"Mass": 10.0
+						}
+					},
+					{
+						"class": "Power Switch",
+						"name": "Solar Panel Isolation Switch",
+						"mesh": "None",
+						"enabled": true,
+						"data": {
+							"Is Open": true,
+							"Resistance": 0.1,
+							"Mass": 0.5
 						}
 					},
 					{
@@ -278,7 +389,7 @@
 							"Min Field Of View": 1.0,
 							"Field Of View": 10.0,
 							"Max Field Of View": 15.0,
-                            "Focusing Distance": 100.0
+							"Focusing Distance": 100.0
 						}
 					},
 					{
@@ -511,33 +622,120 @@
 							"Vent To Space When Unconnected": false
 						}
 					},
-				{
-					"class": "Power Interconnect",
-					"name": "Power Transfer Switch",
-					"data": {
-						"Is Open": true,
-						"Mass": 0.2
+					{
+						"class": "Power Interconnect",
+						"name": "Power Transfer Switch",
+						"data": {
+							"Is Open": true,
+							"Mass": 0.2
+						}
+					},
+					{
+						"class": "Fuel Pump",
+						"name": "Fuel Pump",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.1
+						],
+						"data": {
+							"Max Flow Rate": 0.2,
+							"Efficiency": 0.8,
+							"Max Speed": 0.5,
+							"Is Pump Enabled": true,
+							"Allow Flow When Disabled": false,
+							"Mass": 1.5
+						}
+					},
+					{
+						"class": "Power Switch",
+						"name": "Fuel Pump Switch",
+						"mesh": "None",
+						"enabled": true,
+						"data": {
+							"Is Open": false,
+							"Resistance": 0.1,
+							"Mass": 0.5
+						}
+					},
+					{
+						"class": "Power Fuse",
+						"name": "Fuel Pump Fuse",
+						"mesh": "None",
+						"enabled": true,
+						"data": {
+							"Current Threshold": 1.0,
+							"Threshold Duration": 0.0,
+							"Reset Duration": 0.0,
+							"Resistance": 0.1,
+							"Mass": 0.3
+						}
+					},
+					{
+						"class": "Power Sink",
+						"name": "Fuel Pump Controller",
+						"mesh": "None",
+						"enabled": true,
+						"data": {
+							"Is Active": true,
+							"Nominal Voltage Drop": 12.0,
+							"Nominal Power": 8.0,
+							"Mass": 0.5
+						},
+						"models": [
+							{
+								"class": "Short To Ground Error Model",
+								"enabled": true,
+								"data": {
+									"Short Resistance": 0,
+									"Trigger Mean": 780.0,
+									"Trigger Std": 0.0
+								}
+							}
+						]
+					},
+					{
+						"class": "Power Switch",
+						"name": "Fuel Pump Switch - Backup",
+						"mesh": "None",
+						"enabled": true,
+						"data": {
+							"Is Open": true,
+							"Resistance": 0.1,
+							"Mass": 0.5
+						}
+					},
+					{
+						"class": "Power Fuse",
+						"name": "Fuel Pump Fuse - Backup",
+						"mesh": "None",
+						"enabled": true,
+						"data": {
+							"Current Threshold": 1.0,
+							"Threshold Duration": 0.0,
+							"Reset Duration": 0.0,
+							"Resistance": 0.1,
+							"Mass": 0.3
+						}
+					},
+					{
+						"class": "Power Sink",
+						"name": "Fuel Pump Controller - Backup",
+						"mesh": "None",
+						"enabled": true,
+						"data": {
+							"Is Active": true,
+							"Nominal Voltage Drop": 12.0,
+							"Nominal Power": 8.0,
+							"Mass": 0.5
+						}
 					}
-				},
-				{
-					"class": "Fuel Pump",
-					"name": "Fuel Pump",
-					"mesh": "None",
-					"enabled": true,
-					"position": [0.0, 0.0, 0.1],
-					"data": {
-						"Max Flow Rate": 0.2,
-						"Efficiency": 0.8,
-						"Max Speed": 0.5,
-						"Is Pump Enabled": true,
-						"Allow Flow When Disabled": false,
-						"Mass": 1.5
-					}
-				}
-			]
-		},
-		{
-			"id": "SC_002",
+				]
+			},
+			{
+				"id": "SC_002",
 				"name": "Hub",
 				"orbit": {
 					"planet": "Moon",
@@ -559,16 +757,6 @@
 					]
 				},
 				"physics": {
-					"attitude": [
-						52,
-						68,
-						20
-					],
-					"attitude_rate": [
-						0.0,
-						0.0,
-						0.0
-					],
 					"override_mass": true,
 					"mass": 63000.0,
 					"center_of_mass": [
@@ -592,6 +780,16 @@
 							0.0,
 							1000000.0
 						]
+					],
+					"attitude": [
+						52,
+						68,
+						-36
+					],
+					"attitude_rate": [
+						0.0,
+						0.0,
+						0.0
 					]
 				},
 				"visualization": {
@@ -624,6 +822,24 @@
 						{
 							"source_component": "Battery",
 							"source_terminal": "out",
+							"target_component": "Power Transfer Switch A",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "Battery",
+							"source_terminal": "out",
+							"target_component": "Power Transfer Switch B",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "Battery",
+							"source_terminal": "out",
+							"target_component": "Power Transfer Switch C",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "Battery",
+							"source_terminal": "out",
 							"target_component": "Power Transfer Switch D",
 							"target_terminal": "in"
 						},
@@ -637,6 +853,42 @@
 				},
 				"fuel": {
 					"bus": [
+						{
+							"source_component": "Fuel Transfer A",
+							"source_terminal": "out",
+							"target_component": "Valve A",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "Valve A",
+							"source_terminal": "out",
+							"target_component": "Tank A",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "Fuel Transfer B",
+							"source_terminal": "out",
+							"target_component": "Valve B",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "Valve B",
+							"source_terminal": "out",
+							"target_component": "Tank B",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "Fuel Transfer C",
+							"source_terminal": "out",
+							"target_component": "Valve C",
+							"target_terminal": "in"
+						},
+						{
+							"source_component": "Valve C",
+							"source_terminal": "out",
+							"target_component": "Tank C",
+							"target_terminal": "in"
+						},
 						{
 							"source_component": "Fuel Transfer D",
 							"source_terminal": "out",
@@ -816,7 +1068,7 @@
 						"rotation": [
 							-90.0,
 							0.0,
-							-90.0
+							90.0
 						],
 						"data": {
 							"Mass": 5.0,
@@ -835,7 +1087,7 @@
 						"rotation": [
 							-90.0,
 							0.0,
-							-90.0
+							90.0
 						],
 						"data": {
 							"Mass": 5.0,
@@ -873,7 +1125,7 @@
 						"rotation": [
 							90.0,
 							0.0,
-							-90.0
+							90.0
 						],
 						"data": {
 							"Mass": 5.0,
@@ -892,12 +1144,63 @@
 						"rotation": [
 							90.0,
 							0.0,
-							-90.0
+							90.0
 						],
 						"data": {
 							"Mass": 5.0,
 							"Capture Distance": 0.05,
 							"Capture Angle": 20.0
+						}
+					},
+					{
+						"class": "Fuel Source",
+						"name": "Tank A",
+						"mesh": "None",
+						"position": [
+							0.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Capacity": 100.0,
+							"Amount": 55.0,
+							"Dry Mass": 40.0,
+							"Maximum Outgoing Flow Rate": 10.0,
+							"Desired Ingoing Flow Rate": 0.0
+						}
+					},
+					{
+						"class": "Fuel Source",
+						"name": "Tank B",
+						"mesh": "None",
+						"position": [
+							0.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Capacity": 100.0,
+							"Amount": 55.0,
+							"Dry Mass": 40.0,
+							"Maximum Outgoing Flow Rate": 10.0,
+							"Desired Ingoing Flow Rate": 0.0
+						}
+					},
+					{
+						"class": "Fuel Source",
+						"name": "Tank C",
+						"mesh": "None",
+						"position": [
+							0.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Capacity": 100.0,
+							"Amount": 55.0,
+							"Dry Mass": 40.0,
+							"Maximum Outgoing Flow Rate": 10.0,
+							"Desired Ingoing Flow Rate": 0.0
 						}
 					},
 					{
@@ -936,6 +1239,36 @@
 					},
 					{
 						"class": "Fuel Valve",
+						"name": "Valve A",
+						"mesh": "None",
+						"data": {
+							"Commanded Percent Open": 1.0,
+							"Max Flow Rate": 2.0,
+							"Mass": 0.4
+						}
+					},
+					{
+						"class": "Fuel Valve",
+						"name": "Valve B",
+						"mesh": "None",
+						"data": {
+							"Commanded Percent Open": 1.0,
+							"Max Flow Rate": 2.0,
+							"Mass": 0.4
+						}
+					},
+					{
+						"class": "Fuel Valve",
+						"name": "Valve C",
+						"mesh": "None",
+						"data": {
+							"Commanded Percent Open": 1.0,
+							"Max Flow Rate": 2.0,
+							"Mass": 0.4
+						}
+					},
+					{
+						"class": "Fuel Valve",
 						"name": "Valve D",
 						"mesh": "None",
 						"data": {
@@ -952,6 +1285,51 @@
 							"Commanded Percent Open": 1.0,
 							"Max Flow Rate": 2.0,
 							"Mass": 0.4
+						}
+					},
+					{
+						"class": "Fuel Interconnect",
+						"name": "Fuel Transfer A",
+						"mesh": "None",
+						"position": [
+							-0.005,
+							0.318,
+							0.002
+						],
+						"data": {
+							"Mass": 0.5,
+							"Is Bidirectional": true,
+							"Vent To Space When Unconnected": false
+						}
+					},
+					{
+						"class": "Fuel Interconnect",
+						"name": "Fuel Transfer B",
+						"mesh": "None",
+						"position": [
+							-1.503,
+							0.354,
+							0.002
+						],
+						"data": {
+							"Mass": 0.5,
+							"Is Bidirectional": true,
+							"Vent To Space When Unconnected": false
+						}
+					},
+					{
+						"class": "Fuel Interconnect",
+						"name": "Fuel Transfer C",
+						"mesh": "None",
+						"position": [
+							-2.109,
+							-0.003,
+							0.006
+						],
+						"data": {
+							"Mass": 0.5,
+							"Is Bidirectional": true,
+							"Vent To Space When Unconnected": false
 						}
 					},
 					{
@@ -983,6 +1361,21 @@
 							"Is Bidirectional": true,
 							"Vent To Space When Unconnected": false
 						}
+					},
+					{
+						"class": "Power Interconnect",
+						"name": "Power Transfer Switch A",
+						"mesh": "None"
+					},
+					{
+						"class": "Power Interconnect",
+						"name": "Power Transfer Switch B",
+						"mesh": "None"
+					},
+					{
+						"class": "Power Interconnect",
+						"name": "Power Transfer Switch C",
+						"mesh": "None"
 					},
 					{
 						"class": "Power Interconnect",
@@ -1019,16 +1412,6 @@
 					]
 				},
 				"physics": {
-					"attitude": [
-						0.0,
-						0.0,
-						90.0
-					],
-					"attitude_rate": [
-						5.0,
-						0.0,
-						0.0
-					],
 					"override_mass": true,
 					"mass": 100.0,
 					"center_of_mass": [
@@ -1052,6 +1435,16 @@
 							0.0,
 							10000.0
 						]
+					],
+					"attitude": [
+						0.0,
+						0.0,
+						90.0
+					],
+					"attitude_rate": [
+						5.0,
+						0.0,
+						0.0
 					]
 				},
 				"visualization": {
@@ -1071,7 +1464,7 @@
 				},
 				"components": [
 					{
-						"class": "Text",
+						"class": "Physical Text",
 						"name": "Marking",
 						"enabled": true,
 						"position": [
@@ -1086,8 +1479,8 @@
 						],
 						"data": {
 							"Text": "NASA",
-							"Color": "#0010FF",
-							"Scale": 0.3
+							"Font Color": "#0010FF",
+							"Font Size": 30
 						}
 					}
 				]
@@ -1109,24 +1502,127 @@
 	"docking": [
 		{
 			"from_team": 1,
+			"from_asset": "SC_001",
+			"from_target": "Docking Adapter",
+			"to_asset": "SC_002",
+			"to_target": "Docking A"
+		},
+		{
+			"from_team": 2,
+			"from_asset": "SC_001",
+			"from_target": "Docking Adapter",
+			"to_asset": "SC_002",
+			"to_target": "Docking B"
+		},
+		{
+			"from_team": 3,
+			"from_asset": "SC_001",
+			"from_target": "Docking Adapter",
+			"to_asset": "SC_002",
+			"to_target": "Docking C"
+		},
+		{
+			"from_team": 4,
+			"from_asset": "SC_001",
 			"from_target": "Docking Adapter",
 			"to_asset": "SC_002",
 			"to_target": "Docking D"
 		},
 		{
+			"from_team": 5,
+			"from_asset": "SC_001",
+			"from_target": "Docking Adapter",
+			"to_asset": "SC_002",
+			"to_target": "Docking E"
+		},
+		{
 			"from_team": 1,
+			"from_asset": "SC_001",
+			"from_target": "Fuel Transfer",
+			"to_asset": "SC_002",
+			"to_target": "Fuel Transfer A"
+		},
+		{
+			"from_team": 2,
+			"from_asset": "SC_001",
+			"from_target": "Fuel Transfer",
+			"to_asset": "SC_002",
+			"to_target": "Fuel Transfer B"
+		},
+		{
+			"from_team": 3,
+			"from_asset": "SC_001",
+			"from_target": "Fuel Transfer",
+			"to_asset": "SC_002",
+			"to_target": "Fuel Transfer C"
+		},
+		{
+			"from_team": 4,
+			"from_asset": "SC_001",
 			"from_target": "Fuel Transfer",
 			"to_asset": "SC_002",
 			"to_target": "Fuel Transfer D"
 		},
 		{
+			"from_team": 5,
+			"from_asset": "SC_001",
+			"from_target": "Fuel Transfer",
+			"to_asset": "SC_002",
+			"to_target": "Fuel Transfer E"
+		},
+		{
 			"from_team": 1,
+			"from_asset": "SC_001",
+			"from_target": "Power Transfer Switch",
+			"to_asset": "SC_002",
+			"to_target": "Power Transfer Switch A"
+		},
+		{
+			"from_team": 2,
+			"from_asset": "SC_001",
+			"from_target": "Power Transfer Switch",
+			"to_asset": "SC_002",
+			"to_target": "Power Transfer Switch B"
+		},
+		{
+			"from_team": 3,
+			"from_asset": "SC_001",
+			"from_target": "Power Transfer Switch",
+			"to_asset": "SC_002",
+			"to_target": "Power Transfer Switch C"
+		},
+		{
+			"from_team": 4,
+			"from_asset": "SC_001",
 			"from_target": "Power Transfer Switch",
 			"to_asset": "SC_002",
 			"to_target": "Power Transfer Switch D"
+		},
+		{
+			"from_team": 5,
+			"from_asset": "SC_001",
+			"from_target": "Power Transfer Switch",
+			"to_asset": "SC_002",
+			"to_target": "Power Transfer Switch E"
 		}
 	],
 	"objects": {
+		"ground": [
+			{
+				"id": "TEXT",
+				"type": "text",
+				"name": "Lunar Crater",
+				"planet": "Moon",
+				"latitude": -56.0,
+				"longitude": -160.0,
+				"altitude": 0,
+				"scale": 1000000,
+				"data": {
+					"text": "*",
+					"color": "#3D3D3D"
+				}
+			}
+		]
 	},
 	"events": [],
 	"questions": [
@@ -1155,7 +1651,10 @@
 					"Power Transfer Switch",
 					"Solar Panel Isolation Switch"
 				],
-				"value": [2, 3],
+				"value": [
+					2,
+					3
+				],
 				"reason": "Both the Power Transfer Switch and the Solar Panel Isolation Switch can be closed to enable the Microsat to charge.",
 				"score": 12
 			}
@@ -1169,7 +1668,7 @@
 				"unit": "kg",
 				"value": 45.0,
 				"tolerance": 1.0,
-				"reason": "Each hub port tank has 100 kg capacity and starts at with 55 kg of fuel, so 45 kg is required to fill it.",
+				"reason": "Each hub port tank has 100 kg capacity and starts at with 55 kg of fuel, so 45 kg is required to fill it. However, the exact amount of fuel lost from the Microsat tank may not equate to the amount of fuel gained in Lunar Gateway.",
 				"score": 12
 			}
 		},
@@ -1182,9 +1681,12 @@
 				"options": [
 					"The Hub port tank fuel mass increased during transfer",
 					"The Microsat fuel tank fuel mass decreased during transfer",
-					"The changes in the stored mass of fuel of both tanks are balanced"				
+					"The changes in the stored mass of fuel of both tanks are balanced"
 				],
-				"value": [0, 1],
+				"value": [
+					0,
+					1
+				],
 				"reason": "During transfer the hub and Microsat tank both change, but propellant accounting does not balance - more leaves the Microsat tank than arrives at the hub. The Transfer Valve (0.05 kg/s), not the Fuel Pump (0.2 kg/s), sets the maximum transfer rate.",
 				"score": 8
 			}
@@ -1238,9 +1740,14 @@
 					"Transfer required fuel into the Lunar Gateway tank to full capacity",
 					"Close the interconnect valve and disable the fuel pump after transfer",
 					"Verify battery charge is sufficient for independent operation",
-					"Run full diagnostics on all systems to validate safe undocking"				
+					"Run full diagnostics on all systems to validate safe undocking"
 				],
-				"value": [0, 1, 2, 3],
+				"value": [
+					0,
+					1,
+					2,
+					3
+				],
 				"reason": "Mission-critical pre-undock steps: complete the fuel transfer, close valves and disable pump, ensure battery health, run final diagnostics.",
 				"score": 8
 			}
@@ -1258,14 +1765,17 @@
 					"Fuel leakage at the transfer valve",
 					"None of the above"
 				],
-				"value": [0, 3],
+				"value": [
+					0,
+					3
+				],
 				"reason": "The Fuel Pump Controller suffers a short-to-ground fault that blows the primary fuse and interrupts pump power, and the Transfer Valve carries a fuel leak that vents propellant during transfer. Inspect coupled fuel and power telemetry together to identify both faults.",
 				"score": 12
 			}
 		},
 		{
 			"section": "Undocking",
-			"title": "What separation velocity (m/s) does the Microsat acquire immediately after undocking from the hub?",
+			"title": "What separation velocity (m/s) does the Microsat acquire after undocking from the hub?",
 			"description": "The three laser range finders are body-fixed and already sighted on the Lunar Gateway while docked. Undock the Microsat and determine the separation velocity from the LRF telemetry.",
 			"type": "number",
 			"answer": {
@@ -1294,7 +1804,7 @@
 		{
 			"section": "Undocking",
 			"title": "Which laser range finder is miscalibrated?",
-			"description": "With all three static LRFs already sighted on the Lunar Gateway, compare telemetry from the LRFs. One unit will show a persistent offset from the others.",
+			"description": "With all three static LRFs already sighted on the Lunar Gateway, determine which LRF is miscalibrated by comparing the telemetry from the LRFs.",
 			"type": "select",
 			"answer": {
 				"options": [
@@ -1329,7 +1839,7 @@
 			"answer": {
 				"unit": "RPM",
 				"value": 0.8333,
-				"tolerance": 0.1,
+				"tolerance": 0.18,
 				"reason": "The debris attitude rate is 5 deg/s about the body axis, which equals 0.8333 RPM.",
 				"score": 10
 			}
@@ -1348,26 +1858,26 @@
 		{
 			"section": "Lunar Observation",
 			"title": "What is the latitude of the star-shaped crater on the Moon's surface?",
-			"description": "Use the optical camera to survey the lunar surface and locate the distinctive star-shaped crater on the Moon's surface. Report its latitude in degrees to the nearest 5\u00b0. South of the equator is negative.",
+			"description": "Use the optical camera to survey the lunar surface and locate the distinctive star-shaped crater on the Moon's surface. Report its latitude in degrees to the nearest 5°. South of the equator is negative.",
 			"type": "number",
 			"answer": {
 				"unit": "deg",
 				"value": -56.0,
 				"tolerance": 9,
-				"reason": "The star-shaped crater ground marker is placed at latitude -56\u00b0 on the Moon.",
+				"reason": "The star-shaped crater ground marker is placed at latitude -56° on the Moon.",
 				"score": 10
 			}
 		},
 		{
 			"section": "Lunar Observation",
 			"title": "What is the longitude of the star-shaped crater on the Moon's surface?",
-			"description": "Using the same camera pass, fix the longitude of the star-shaped crater on the Moon's surface. Report longitude in degrees to the nearest 5\u00b0. West of the prime meridian is negative.",
+			"description": "Using the same camera pass, fix the longitude of the star-shaped crater on the Moon's surface. Report longitude in degrees to the nearest 5°. West of the prime meridian is negative.",
 			"type": "number",
 			"answer": {
 				"unit": "deg",
 				"value": -160.0,
 				"tolerance": 9,
-				"reason": "The star-shaped crater ground marker is placed at longitude -160\u00b0 on the Moon's far side.",
+				"reason": "The star-shaped crater ground marker is placed at longitude -160° on the Moon's far side.",
 				"score": 10
 			}
 		}

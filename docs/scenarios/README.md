@@ -2,11 +2,11 @@
 
 This section is the **complete reference** for authoring Space Range scenarios in JSON. It is structured for both human authors and AI agents that need to generate scenario files from a brief.
 
-If you have not authored a scenario before, read [Scenario configuration](../guides/scenario-config.md) first — it is the narrative tour. This section is the deep specification it references.
+If you have not authored a scenario before, read [Scenario configuration](../guides/scenario-config.md) first: it is the narrative tour. This section is the deep specification it references.
 
 ---
 
-## What a scenario is
+## What a Scenario Is
 
 A scenario is a single JSON file Studio loads to set up an exercise: simulation parameters, the universe model, ground stations, teams and their credentials, spacecraft and their components, ground decorations (vessels, text), scripted failure events, and (optionally) Q&A questions for scoring.
 
@@ -14,12 +14,17 @@ Studio loads the JSON and builds the simulation: teams, spacecraft, ground objec
 
 ---
 
-## Top-level shape
+## Top-Level Shape
 
-Every scenario JSON has this shape. **Every section is optional** except `teams` and `assets` — without those the scenario can be loaded but no team can do anything.
+Every scenario JSON has this shape. **Every section is optional** except `teams` and `assets`: without those the scenario can be loaded but no team can do anything.
 
 ```json
 {
+  "metadata": {
+    "name":        "...",
+    "description": "...",
+    "brief":       "..."
+  },
   "simulation":      { ... },
   "universe":        { ... },
   "ground_stations": { ... },
@@ -31,7 +36,8 @@ Every scenario JSON has this shape. **Every section is optional** except `teams`
   },
   "docking":         [ ... ],
   "objects": {
-    "ground":        [ ... ]
+    "ground":        [ ... ],
+    "space":         [ ... ]
   },
   "events":          [ ... ],
   "questions":       [ ... ]
@@ -40,6 +46,7 @@ Every scenario JSON has this shape. **Every section is optional** except `teams`
 
 | Section | Purpose | Page |
 | --- | --- | --- |
+| `metadata` | Scenario display name, description, and optional Markdown operator brief | This page, below |
 | `simulation` | Clock, integrator, simulation speed | [simulation.md](simulation.md) |
 | `universe` | Atmosphere, magnetosphere, GPS, lighting toggles | [universe.md](universe.md) |
 | `ground_stations` | The pool of receiving sites used by every team | [ground-stations.md](ground-stations.md) |
@@ -49,18 +56,39 @@ Every scenario JSON has this shape. **Every section is optional** except `teams`
 | `assets.neutral` | Team-less shared craft (single instance, targetable by all) | [spacecraft.md#neutral-team-less-shared-craft](spacecraft.md#neutral-team-less-shared-craft) |
 | `docking` | Pre-dock team craft to ports (e.g. each team to a hub port) at scenario start | [spacecraft.md#docking-start-the-scenario-already-docked](spacecraft.md#docking-start-the-scenario-already-docked) |
 | `objects.ground` | Vessels, text labels, and other passive ground actors | [ground-objects.md](ground-objects.md) |
+| `objects.space` | Passive orbital objects (bare spacecraft, no controller/components) | [space-objects.md](space-objects.md) |
 | `events` | Scripted failures and GPS effects on the simulation timeline | [events.md](events.md) |
 | `questions` | Q&A scoring (text, number, select, checkbox) | [questions.md](questions.md) |
 | (recipes) | End-to-end annotated patterns for common scenario shapes | [recipes.md](recipes.md) |
 
 ---
 
-## Casing, key matching, and whitespace
+## `metadata`: Scenario Identity and Operator Brief
+
+```json
+"metadata": {
+  "name": "Orbital Intel",
+  "description": "Identify and assess a rogue spacecraft.",
+  "brief": "# Mission brief\nInspect the unknown spacecraft and report your findings."
+}
+```
+
+| Key | Type | Description |
+| --- | --- | --- |
+| `name` | `string` | Scenario display name. When omitted, Studio derives the name from the scenario filename. |
+| `description` | `string` | Short description used by Studio's simulation metadata and scenario UI. |
+| `brief` | `string` | Optional Markdown operator brief published to connected clients. A non-empty value replaces the currently loaded brief. |
+
+Studio writes `name` and `description` when exporting scenario JSON. Treat `brief` as load-time content and keep the source copy in your authored scenario file.
+
+---
+
+## Casing, Key Matching, and Whitespace
 
 Studio parses every section when the scenario file is loaded. Two rules to keep in mind:
 
 1. **Keys are case-insensitive.** `enabled`, `Enabled`, and `ENABLED` all match. The shipped templates and example files mix `lowercase` (`simulation`, `teams`, `universe`) and `PascalCase` (`Enabled`, `Name`, `Time`, `Type` inside `events[]`). Both load. **Pick one casing per section and keep it consistent** so JSON diffs stay readable.
-2. **Nested keys are reachable via dots.** Internally Studio writes `"orbit.values"`, `"physics.mass"`, `"visualization.mesh"`, etc. — so when authoring you can either nest the JSON normally:
+2. **Nested keys are reachable via dots.** Internally Studio writes `"orbit.values"`, `"physics.mass"`, `"visualization.mesh"`, and similar keys. When authoring, you can either nest the JSON normally:
 
    ```json
    "orbit": { "planet": "Earth", "values": [...] }
@@ -80,11 +108,11 @@ There are two important exceptions to "any casing works":
 - The **`questions[]` `type` field** is matched case-insensitively but must be one of `text`, `number` (alias `numeric`), `select`, `checkbox`. See [questions.md](questions.md).
 - The **`events[]` `Data` keys** must match the property names the event type expects (whitespace in the key is ignored). `"Stuck Index"` and `"StuckIndex"` both work, but `"stuckindex"` does **not** if the canonical name is `StuckIndex`. See [events.md](events.md).
 
-Trailing commas, comments, and bare keys are **not** allowed — Studio uses a strict JSON parser. Lint your file before loading.
+Trailing commas, comments, and bare keys are **not** allowed: Studio uses a strict JSON parser. Lint your file before loading.
 
 ---
 
-## How a scenario loads (so you know what to debug)
+## How a Scenario Loads (So You Know What to Debug)
 
 When the scenario JSON is loaded (Studio UI scenario picker or admin/scenario API), sections are applied in this order:
 
@@ -95,21 +123,21 @@ When the scenario JSON is loaded (Studio UI scenario picker or admin/scenario AP
 5. `assets.space[]` instantiates each spacecraft: orbit → physics → visualization → controller → components.
 6. `assets.collections[]` is recorded so that team `collection` strings resolve to spacecraft IDs, and `assets.neutral[]` spawns shared team-less craft.
 7. `docking[]` places and docks the configured chaser craft onto their target ports (after all craft are built).
-8. `objects.ground[]` instantiates vessels / text actors.
+8. `objects.ground[]` instantiates vessels / text actors, and `objects.space[]` instantiates passive orbital objects.
 9. `events[]` are registered on the simulation event queue (they fire later, on `Time`).
 10. `questions[]` are stored on the subsystem and exposed to teams via [`list_questions`](../api-reference/ground-requests.md#list_questions).
 
-If a section fails to parse, Studio logs the error and continues with the next section. **Always check the Studio log after loading** — silent partial loads are a common authoring trap.
+If a section fails to parse, Studio logs the error and continues with the next section. **Always check the Studio log after loading**: silent partial loads are a common authoring trap.
 
 To verify a load programmatically, use the admin API:
-- [`admin_list_entities`](../api-reference/admin-requests.md#admin_list_entities) — every team should show up.
-- [`list_assets`](../api-reference/ground-requests.md#list_assets) — every spacecraft should show up for its team.
-- [`list_entity`](../api-reference/ground-requests.md#list_entity) — every component name on a spacecraft should be reachable.
-- [`admin_get_scenario_events`](../api-reference/admin-requests.md#admin_get_scenario_events) — every scripted event should be listed.
+- [`admin_list_entities`](../api-reference/admin-requests.md#admin_list_entities): every team should show up.
+- [`list_assets`](../api-reference/ground-requests.md#list_assets): every spacecraft should show up for its team.
+- [`list_entity`](../api-reference/ground-requests.md#list_entity): every component name on a spacecraft should be reachable.
+- [`admin_get_scenario_events`](../api-reference/admin-requests.md#admin_get_scenario_events): every scripted event should be listed.
 
 ---
 
-## Minimal scenario
+## Minimal Scenario
 
 The smallest scenario that loads and runs:
 
@@ -148,24 +176,24 @@ This is enough to give Blue Team one spacecraft they can `ping`, `capture`, `dow
 
 ---
 
-## Author / agent quickstart
+## Author / Agent Quickstart
 
 When generating a scenario from a brief, work in this order. Each step is small and independently testable.
 
-1. **Clock & world** — `simulation`, `universe`, `ground_stations`. These rarely change once set; copy them from a similar shipped scenario.
-2. **Teams** — one per side / observer. Pick distinct `id`, `password`, `frequency`, `color`. See [teams.md](teams.md).
-3. **One spacecraft** — define `assets.space[0]` end-to-end and add a single-entry `assets.collections[0]` linking it to one team. Get this working before adding more spacecraft. See [spacecraft.md](spacecraft.md).
-4. **Components** — start with the canonical 6: `Solar Panel`, `Battery`, `Computer`, `Receiver`, `Transmitter`, `Storage`. Add `Camera`, `GPS Sensor`, `Reaction Wheels`, `Jammer`, `Docking Adapter`, `Power Interconnect`, etc. as the scenario requires. See [components.md](components.md). To share power across a docked interface, wire each `Power Interconnect` on `power.bus` and link it to its partner with a power-interconnect entry in the top-level [`docking`](spacecraft.md#docking-start-the-scenario-already-docked) block — [spacecraft.md — Power interconnects](spacecraft.md#power-interconnects). For cross-spacecraft **fuel transfer**, do the same with a `Fuel Interconnect` on `fuel.bus` — [spacecraft.md — Fuel interconnects](spacecraft.md#fuel-interconnects).
-5. **More spacecraft and collections** — duplicate the first spacecraft, vary `id` / `name` / `orbit`, and assign each to a team via collections.
-6. **Ground objects** — add vessels, labels, and decorations to support imagery exercises. See [ground-objects.md](ground-objects.md).
-7. **Events** — add scripted failures *one at a time*. Test each by lowering its `Time` and watching the admin event stream. See [events.md](events.md).
-8. **Questions** — add scoring questions only after the scenario shape is stable; broken JSON in a question hides scoring entirely for that question. See [questions.md](questions.md).
+1. **Clock & world**: `simulation`, `universe`, `ground_stations`. These rarely change once set; copy them from a similar shipped scenario.
+2. **Teams**: one per side / observer. Pick distinct `id`, `password`, `frequency`, `color`. See [teams.md](teams.md).
+3. **One spacecraft**: define `assets.space[0]` end-to-end and add a single-entry `assets.collections[0]` linking it to one team. Get this working before adding more spacecraft. See [spacecraft.md](spacecraft.md).
+4. **Components**: start with the canonical 6: `Solar Panel`, `Battery`, `Computer`, `Receiver`, `Transmitter`, `Storage`. Add `Camera`, `GPS Sensor`, `Reaction Wheels`, `Jammer`, `Docking Adapter`, `Power Interconnect`, etc. as the scenario requires. See [components.md](components.md). To share power across a docked interface, wire each `Power Interconnect` on `power.bus` and link it to its partner with a power-interconnect entry in the top-level [`docking`](spacecraft.md#docking-start-the-scenario-already-docked) block: [spacecraft.md: Power interconnects](spacecraft.md#power-interconnects). For cross-spacecraft **fuel transfer**, do the same with a `Fuel Interconnect` on `fuel.bus`: [spacecraft.md: Fuel interconnects](spacecraft.md#fuel-interconnects).
+5. **More spacecraft and collections**: duplicate the first spacecraft, vary `id` / `name` / `orbit`, and assign each to a team via collections.
+6. **Ground objects**: add vessels, labels, and decorations to support imagery exercises. See [ground-objects.md](ground-objects.md).
+7. **Events**: add scripted failures *one at a time*. Test each by lowering its `Time` and watching the admin event stream. See [events.md](events.md).
+8. **Questions**: add scoring questions only after the scenario shape is stable; broken JSON in a question hides scoring entirely for that question. See [questions.md](questions.md).
 
 Patterns for whole-scenario shapes (counter-piracy, telemetry-drop, docking, GPS denial) are documented in [recipes.md](recipes.md).
 
 ---
 
-## Reference scenarios
+## Reference Scenarios
 
 The best references for valid JSON shape and field names are the **shipped scenario files** in the Space Range scenarios bundle and the pages in this section (`simulation`, `teams`, `spacecraft`, `components`, `events`, etc.).
 
