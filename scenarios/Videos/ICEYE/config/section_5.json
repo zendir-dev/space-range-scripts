@@ -1,0 +1,1216 @@
+{
+  "metadata": {
+    "name": "Intent in Orbit - Stage 5",
+    "description": "Reset to the early pattern and ask when Blue should have acted.",
+    "brief": "# Closing state\nReplay the partial-burn state. The key decision window is Days 2–3 in the real chronology: the pattern is emerging, evidence is still incomplete, and low-cost responses remain available."
+  },
+  "simulation": {
+    "epoch": "2026/05/14 00:00:00",
+    "speed": 8.0,
+    "step_size": 0.1,
+    "integrator": "Euler",
+    "end_time": 1800.0
+  },
+  "universe": {
+    "atmosphere": false,
+    "magnetosphere": false,
+    "gps": true,
+    "cloud_opacity": 0.35,
+    "cloud_contrast": 2.0,
+    "ambient_light": 0.35
+  },
+  "ground_stations": {
+    "locations": [
+      "Anchorage",
+      "Vancouver",
+      "Reykjavik"
+    ],
+    "min_elevation": 5,
+    "max_range": 0,
+    "scale": 100
+  },
+  "teams": [
+    {
+      "enabled": true,
+      "id": 591036,
+      "password": "X36SDA",
+      "name": "Blue",
+      "key": 36,
+      "frequency": 591,
+      "collection": "Blue",
+      "color": "#18D5FF"
+    }
+  ],
+  "assets": {
+    "space": [
+      {
+        "id": "SC_ICEYE_X36",
+        "name": "ICEYE-X36",
+        "orbit": {
+          "planet": "Earth",
+          "values": [
+            6912.420633,
+            0.000258196,
+            97.837601,
+            271.486244,
+            7.059927,
+            86.065415
+          ],
+          "offset": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "physics": {
+          "override_mass": true,
+          "mass": 100.0,
+          "center_of_mass": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "inertia_tensor": [
+            [
+              12.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              12.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              12.0
+            ]
+          ]
+        },
+        "visualization": {
+          "mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/ZenSat/BP_Z_SC_ZenSat_Chassis",
+          "scale": 0.7,
+          "offset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "reflectivity": 0.45
+        },
+        "controller": {
+          "safe_fraction": 0.1,
+          "capture_tax": 0.001,
+          "downlink_tax": 0.01,
+          "ping_interval": 5.0,
+          "reset_interval": 30.0,
+          "jamming_multiplier": 1.0,
+          "enable_rpo_software": false
+        },
+        "components": [
+          {
+            "class": "Solar Panel",
+            "name": "SAW-X36 Deployable Solar Array",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Area": 0.35,
+              "Efficiency": 0.3,
+              "Mass": 4.0
+            }
+          },
+          {
+            "class": "Battery",
+            "name": "BAT-28V Li-Ion Battery Module",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Nominal Capacity": 80.0,
+              "Charge Fraction": 0.9,
+              "Mass": 5.0
+            }
+          },
+          {
+            "class": "Computer",
+            "name": "OBC-360 Flight Computer",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Mass": 2.0
+            }
+          },
+          {
+            "class": "Reaction Wheels",
+            "name": "ADCS-04 Reaction Wheel Assembly",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Mass": 5.0
+            }
+          },
+          {
+            "class": "GPS Sensor",
+            "name": "GNSS-24 Navigation Receiver",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Mass": 1.0
+            }
+          },
+          {
+            "class": "Receiver",
+            "name": "SRX-120 S-Band Command Receiver",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Antenna Gain": 4.0,
+              "Mass": 1.0
+            }
+          },
+          {
+            "class": "Transmitter",
+            "name": "XTX-220 X-Band Data Transmitter",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Antenna Gain": 4.0,
+              "Bit Rate": 40000.0,
+              "Mass": 1.0
+            }
+          },
+          {
+            "class": "Storage",
+            "name": "SSR-512 Solid-State Mission Recorder",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Mass": 4.0
+            }
+          },
+          {
+            "class": "Camera",
+            "name": "SAR-X36 X-Band Imaging Payload",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Sample Rate": 5.0,
+              "Mass": 8.0,
+              "Aperture": 25.0,
+              "Min Field Of View": 2.0,
+              "Field Of View": 12.0,
+              "Max Field Of View": 25.0,
+              "Focusing Distance": 600000.0,
+              "Resolution": [
+                1024,
+                1024
+              ]
+            },
+            "position": [
+              0.008,
+              -0.276,
+              -0.014
+            ],
+            "rotation": [
+              90.0,
+              0.0,
+              0.0
+            ]
+          }
+        ]
+      },
+      {
+        "id": "SC_SDA_OVERWATCH",
+        "name": "SDA Overwatch",
+        "orbit": {
+          "planet": "Earth",
+          "values": [
+            6927.420633,
+            0.000258196,
+            97.837601,
+            271.486244,
+            7.059927,
+            86.285415
+          ],
+          "offset": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "physics": {
+          "override_mass": true,
+          "mass": 220.0,
+          "center_of_mass": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "inertia_tensor": [
+            [
+              12.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              12.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              12.0
+            ]
+          ]
+        },
+        "visualization": {
+          "mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/MRO/BP_Z_SC_MRO_Chassis",
+          "scale": 0.65,
+          "offset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "reflectivity": 0.45
+        },
+        "controller": {
+          "safe_fraction": 0.1,
+          "capture_tax": 0.001,
+          "downlink_tax": 0.01,
+          "ping_interval": 5.0,
+          "reset_interval": 30.0,
+          "jamming_multiplier": 1.0,
+          "enable_rpo_software": false
+        },
+        "components": [
+          {
+            "class": "Solar Panel",
+            "name": "SAW-XN High-Efficiency Solar Array",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Area": 0.35,
+              "Efficiency": 0.3,
+              "Mass": 4.0
+            }
+          },
+          {
+            "class": "Battery",
+            "name": "BAT-42V Li-Ion Power Module",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Nominal Capacity": 80.0,
+              "Charge Fraction": 0.9,
+              "Mass": 5.0
+            }
+          },
+          {
+            "class": "Computer",
+            "name": "OBC-750 Mission Flight Computer",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Mass": 2.0
+            }
+          },
+          {
+            "class": "Reaction Wheels",
+            "name": "ADCS-06 Precision Reaction Wheel Assembly",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Mass": 5.0
+            }
+          },
+          {
+            "class": "GPS Sensor",
+            "name": "GNSS-30 Multi-Constellation Nav Receiver",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Mass": 1.0
+            }
+          },
+          {
+            "class": "Receiver",
+            "name": "SRX-1550 Secure S-Band Command Receiver",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Antenna Gain": 4.0,
+              "Mass": 1.0
+            }
+          },
+          {
+            "class": "Transmitter",
+            "name": "XTX-440 Ka-Band Intelligence Downlink",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Antenna Gain": 4.0,
+              "Bit Rate": 40000.0,
+              "Mass": 1.0
+            }
+          },
+          {
+            "class": "Storage",
+            "name": "SSR-2048 Intelligence Data Recorder",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Mass": 4.0
+            }
+          },
+          {
+            "class": "Camera",
+            "name": "OTC-450 Optical Tracking Camera",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Sample Rate": 10.0,
+              "Mass": 6.0,
+              "Aperture": 40.0,
+              "Min Field Of View": 0.5,
+              "Field Of View": 5.0,
+              "Max Field Of View": 15.0,
+              "Focusing Distance": 250000.0,
+              "Resolution": [
+                1024,
+                1024
+              ]
+            },
+            "position": [
+              0.0,
+              0.35,
+              0.0
+            ],
+            "rotation": [
+              -90.0,
+              0.0,
+              0.0
+            ]
+          },
+          {
+            "class": "Radar",
+            "name": "SBR-900 Space Surveillance Radar",
+            "mesh": "SM_Radar_1U",
+            "enabled": true,
+            "data": {
+              "Field Of View": 20.0,
+              "Power": 5000.0,
+              "Gain": 45.0,
+              "Detection Threshold": 8.0,
+              "Mass": 8.0
+            },
+            "position": [
+              0.0,
+              0.35,
+              0.0
+            ],
+            "rotation": [
+              -90.0,
+              0.0,
+              0.0
+            ]
+          },
+          {
+            "class": "Laser Range Finder",
+            "name": "LRP-1550 Laser Ranging Payload",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Operating Range": 2000000.0,
+              "Range Accuracy Constant": 1.0,
+              "Sample Rate": 1.0,
+              "Mass": 2.0
+            },
+            "position": [
+              0.0,
+              0.35,
+              0.0
+            ],
+            "rotation": [
+              -90.0,
+              0.0,
+              0.0
+            ]
+          }
+        ]
+      },
+      {
+        "id": "SC_COSMOS_2610",
+        "name": "COSMOS 2610",
+        "orbit": {
+          "planet": "Earth",
+          "values": [
+            6930.10268,
+            0.001928257,
+            97.796446,
+            271.671926,
+            117.679377,
+            260.225198
+          ],
+          "offset": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "physics": {
+          "override_mass": true,
+          "mass": 120.0,
+          "center_of_mass": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "inertia_tensor": [
+            [
+              12.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              12.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              12.0
+            ]
+          ]
+        },
+        "visualization": {
+          "mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/ZenSat/BP_Z_SC_ZenSat_Chassis",
+          "scale": 0.75,
+          "offset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "reflectivity": 0.45
+        },
+        "controller": {
+          "safe_fraction": 0.1,
+          "capture_tax": 0.001,
+          "downlink_tax": 0.01,
+          "ping_interval": 5.0,
+          "reset_interval": 30.0,
+          "jamming_multiplier": 1.0,
+          "enable_rpo_software": false
+        },
+        "components": [
+          {
+            "class": "Solar Panel",
+            "name": "SAW-2 Deployable Solar Array",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Area": 0.35,
+              "Efficiency": 0.3,
+              "Mass": 4.0
+            }
+          },
+          {
+            "class": "Battery",
+            "name": "BAT-50V Li-Ion Battery Module",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Nominal Capacity": 80.0,
+              "Charge Fraction": 0.9,
+              "Mass": 5.0
+            }
+          },
+          {
+            "class": "Computer",
+            "name": "OBC-620 Hardened Flight Computer",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Mass": 2.0
+            }
+          },
+          {
+            "class": "Reaction Wheels",
+            "name": "ADCS-08 Reaction Wheel Assembly",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Mass": 5.0
+            }
+          },
+          {
+            "class": "GPS Sensor",
+            "name": "GNSS-24 Navigation Receiver",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Mass": 1.0
+            }
+          },
+          {
+            "class": "Receiver",
+            "name": "SRX-180 S-Band Command Receiver",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Antenna Gain": 4.0,
+              "Mass": 1.0
+            }
+          },
+          {
+            "class": "Transmitter",
+            "name": "STX-180 S-Band Telemetry Transmitter",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Antenna Gain": 4.0,
+              "Bit Rate": 40000.0,
+              "Mass": 1.0
+            }
+          },
+          {
+            "class": "Storage",
+            "name": "SSR-256 Mission Data Recorder",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Mass": 4.0
+            }
+          }
+        ]
+      },
+      {
+        "id": "SC_COSMOS_2611",
+        "name": "COSMOS 2611",
+        "orbit": {
+          "planet": "Earth",
+          "values": [
+            6932.452847,
+            0.001562587,
+            96.950662,
+            271.661078,
+            119.740239,
+            246.37694
+          ],
+          "offset": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "physics": {
+          "override_mass": true,
+          "mass": 120.0,
+          "center_of_mass": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "inertia_tensor": [
+            [
+              12.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              12.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              12.0
+            ]
+          ]
+        },
+        "visualization": {
+          "mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/ZenSat/BP_Z_SC_ZenSat_Chassis",
+          "scale": 0.75,
+          "offset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "reflectivity": 0.45
+        },
+        "controller": {
+          "safe_fraction": 0.1,
+          "capture_tax": 0.001,
+          "downlink_tax": 0.01,
+          "ping_interval": 5.0,
+          "reset_interval": 30.0,
+          "jamming_multiplier": 1.0,
+          "enable_rpo_software": false
+        },
+        "components": [
+          {
+            "class": "Solar Panel",
+            "name": "SAW-2 Deployable Solar Array",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Area": 0.35,
+              "Efficiency": 0.3,
+              "Mass": 4.0
+            }
+          },
+          {
+            "class": "Battery",
+            "name": "BAT-50V Li-Ion Battery Module",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Nominal Capacity": 80.0,
+              "Charge Fraction": 0.9,
+              "Mass": 5.0
+            }
+          },
+          {
+            "class": "Computer",
+            "name": "OBC-620 Hardened Flight Computer",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Mass": 2.0
+            }
+          },
+          {
+            "class": "Reaction Wheels",
+            "name": "ADCS-08 Reaction Wheel Assembly",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Mass": 5.0
+            }
+          },
+          {
+            "class": "GPS Sensor",
+            "name": "GNSS-24 Navigation Receiver",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Mass": 1.0
+            }
+          },
+          {
+            "class": "Receiver",
+            "name": "SRX-180 S-Band Command Receiver",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Antenna Gain": 4.0,
+              "Mass": 1.0
+            }
+          },
+          {
+            "class": "Transmitter",
+            "name": "STX-180 S-Band Telemetry Transmitter",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Antenna Gain": 4.0,
+              "Bit Rate": 40000.0,
+              "Mass": 1.0
+            }
+          },
+          {
+            "class": "Storage",
+            "name": "SSR-256 Mission Data Recorder",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Mass": 4.0
+            }
+          }
+        ]
+      },
+      {
+        "id": "SC_COSMOS_2612",
+        "name": "COSMOS 2612",
+        "orbit": {
+          "planet": "Earth",
+          "values": [
+            6917.592797,
+            0.002367979,
+            97.850842,
+            271.686183,
+            157.739911,
+            257.369878
+          ],
+          "offset": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "physics": {
+          "override_mass": true,
+          "mass": 120.0,
+          "center_of_mass": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "inertia_tensor": [
+            [
+              12.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              12.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              12.0
+            ]
+          ]
+        },
+        "visualization": {
+          "mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/ZenSat/BP_Z_SC_ZenSat_Chassis",
+          "scale": 0.75,
+          "offset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "reflectivity": 0.45
+        },
+        "controller": {
+          "safe_fraction": 0.1,
+          "capture_tax": 0.001,
+          "downlink_tax": 0.01,
+          "ping_interval": 5.0,
+          "reset_interval": 30.0,
+          "jamming_multiplier": 1.0,
+          "enable_rpo_software": false
+        },
+        "components": [
+          {
+            "class": "Solar Panel",
+            "name": "SAW-2 Deployable Solar Array",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Area": 0.35,
+              "Efficiency": 0.3,
+              "Mass": 4.0
+            }
+          },
+          {
+            "class": "Battery",
+            "name": "BAT-50V Li-Ion Battery Module",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Nominal Capacity": 80.0,
+              "Charge Fraction": 0.9,
+              "Mass": 5.0
+            }
+          },
+          {
+            "class": "Computer",
+            "name": "OBC-620 Hardened Flight Computer",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Mass": 2.0
+            }
+          },
+          {
+            "class": "Reaction Wheels",
+            "name": "ADCS-08 Reaction Wheel Assembly",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Mass": 5.0
+            }
+          },
+          {
+            "class": "GPS Sensor",
+            "name": "GNSS-24 Navigation Receiver",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Mass": 1.0
+            }
+          },
+          {
+            "class": "Receiver",
+            "name": "SRX-180 S-Band Command Receiver",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Antenna Gain": 4.0,
+              "Mass": 1.0
+            }
+          },
+          {
+            "class": "Transmitter",
+            "name": "STX-180 S-Band Telemetry Transmitter",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Antenna Gain": 4.0,
+              "Bit Rate": 40000.0,
+              "Mass": 1.0
+            }
+          },
+          {
+            "class": "Storage",
+            "name": "SSR-256 Mission Data Recorder",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Mass": 4.0
+            }
+          }
+        ]
+      },
+      {
+        "id": "SC_COSMOS_2613",
+        "name": "COSMOS 2613",
+        "orbit": {
+          "planet": "Earth",
+          "values": [
+            6910.115082,
+            0.001476204,
+            97.779936,
+            271.699965,
+            194.493244,
+            249.082821
+          ],
+          "offset": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "physics": {
+          "override_mass": true,
+          "mass": 120.0,
+          "center_of_mass": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "inertia_tensor": [
+            [
+              12.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              12.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              12.0
+            ]
+          ]
+        },
+        "visualization": {
+          "mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/ZenSat/BP_Z_SC_ZenSat_Chassis",
+          "scale": 0.75,
+          "offset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "reflectivity": 0.45
+        },
+        "controller": {
+          "safe_fraction": 0.1,
+          "capture_tax": 0.001,
+          "downlink_tax": 0.01,
+          "ping_interval": 5.0,
+          "reset_interval": 30.0,
+          "jamming_multiplier": 1.0,
+          "enable_rpo_software": false
+        },
+        "components": [
+          {
+            "class": "Solar Panel",
+            "name": "SAW-2 Deployable Solar Array",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Area": 0.35,
+              "Efficiency": 0.3,
+              "Mass": 4.0
+            }
+          },
+          {
+            "class": "Battery",
+            "name": "BAT-50V Li-Ion Battery Module",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Nominal Capacity": 80.0,
+              "Charge Fraction": 0.9,
+              "Mass": 5.0
+            }
+          },
+          {
+            "class": "Computer",
+            "name": "OBC-620 Hardened Flight Computer",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Mass": 2.0
+            }
+          },
+          {
+            "class": "Reaction Wheels",
+            "name": "ADCS-08 Reaction Wheel Assembly",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Mass": 5.0
+            }
+          },
+          {
+            "class": "GPS Sensor",
+            "name": "GNSS-24 Navigation Receiver",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Mass": 1.0
+            }
+          },
+          {
+            "class": "Receiver",
+            "name": "SRX-180 S-Band Command Receiver",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Antenna Gain": 4.0,
+              "Mass": 1.0
+            }
+          },
+          {
+            "class": "Transmitter",
+            "name": "STX-180 S-Band Telemetry Transmitter",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Antenna Gain": 4.0,
+              "Bit Rate": 40000.0,
+              "Mass": 1.0
+            }
+          },
+          {
+            "class": "Storage",
+            "name": "SSR-256 Mission Data Recorder",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Mass": 4.0
+            }
+          }
+        ]
+      },
+      {
+        "id": "SC_COSMOS_2614",
+        "name": "COSMOS 2614",
+        "orbit": {
+          "planet": "Earth",
+          "values": [
+            6909.520673,
+            0.000983558,
+            96.960126,
+            271.696564,
+            205.237301,
+            251.398552
+          ],
+          "offset": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "physics": {
+          "override_mass": true,
+          "mass": 120.0,
+          "center_of_mass": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "inertia_tensor": [
+            [
+              12.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              12.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              12.0
+            ]
+          ]
+        },
+        "visualization": {
+          "mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/ZenSat/BP_Z_SC_ZenSat_Chassis",
+          "scale": 0.75,
+          "offset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "reflectivity": 0.45
+        },
+        "controller": {
+          "safe_fraction": 0.1,
+          "capture_tax": 0.001,
+          "downlink_tax": 0.01,
+          "ping_interval": 5.0,
+          "reset_interval": 30.0,
+          "jamming_multiplier": 1.0,
+          "enable_rpo_software": false
+        },
+        "components": [
+          {
+            "class": "Solar Panel",
+            "name": "SAW-2 Deployable Solar Array",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Area": 0.35,
+              "Efficiency": 0.3,
+              "Mass": 4.0
+            }
+          },
+          {
+            "class": "Battery",
+            "name": "BAT-50V Li-Ion Battery Module",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Nominal Capacity": 80.0,
+              "Charge Fraction": 0.9,
+              "Mass": 5.0
+            }
+          },
+          {
+            "class": "Computer",
+            "name": "OBC-620 Hardened Flight Computer",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Mass": 2.0
+            }
+          },
+          {
+            "class": "Reaction Wheels",
+            "name": "ADCS-08 Reaction Wheel Assembly",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Mass": 5.0
+            }
+          },
+          {
+            "class": "GPS Sensor",
+            "name": "GNSS-24 Navigation Receiver",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Mass": 1.0
+            }
+          },
+          {
+            "class": "Receiver",
+            "name": "SRX-180 S-Band Command Receiver",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Antenna Gain": 4.0,
+              "Mass": 1.0
+            }
+          },
+          {
+            "class": "Transmitter",
+            "name": "STX-180 S-Band Telemetry Transmitter",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Antenna Gain": 4.0,
+              "Bit Rate": 40000.0,
+              "Mass": 1.0
+            }
+          },
+          {
+            "class": "Storage",
+            "name": "SSR-256 Mission Data Recorder",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Mass": 4.0
+            }
+          }
+        ]
+      }
+    ],
+    "collections": [
+      {
+        "id": "Blue",
+        "space_assets": [
+          "SC_ICEYE_X36",
+          "SC_SDA_OVERWATCH"
+        ]
+      }
+    ],
+    "neutral": [
+      "SC_COSMOS_2610",
+      "SC_COSMOS_2611",
+      "SC_COSMOS_2612",
+      "SC_COSMOS_2613",
+      "SC_COSMOS_2614"
+    ]
+  },
+  "objects": {
+    "ground": [],
+    "space": []
+  },
+  "events": [],
+  "questions": []
+}

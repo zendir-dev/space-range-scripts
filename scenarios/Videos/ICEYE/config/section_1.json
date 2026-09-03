@@ -1,0 +1,286 @@
+{
+  "metadata": {
+    "name": "Intent in Orbit - Stage 1",
+    "description": "ICEYE-X36 performs a routine commercial maritime imaging task.",
+    "brief": "# Filming state\nBlue controls ICEYE-X36. The five Cosmos craft are absent from this section entirely so the opening shot shows one asset and one plane; they arrive in Stage 2. This is a neutral illustrative maritime task, not a historical ICEYE collection claim. The Camera-class SAR-X36 payload is a visual stand-in for command flow; it does not simulate SAR phenomenology."
+  },
+  "simulation": {
+    "epoch": "2026/05/14 00:00:00",
+    "speed": 8.0,
+    "step_size": 0.1,
+    "integrator": "Euler",
+    "end_time": 900.0
+  },
+  "universe": {
+    "atmosphere": false,
+    "magnetosphere": false,
+    "gps": true,
+    "cloud_opacity": 0.35,
+    "cloud_contrast": 2.0,
+    "ambient_light": 0.35
+  },
+  "ground_stations": {
+    "locations": [
+      "Anchorage",
+      "Vancouver",
+      "Reykjavik"
+    ],
+    "min_elevation": 5,
+    "max_range": 0,
+    "scale": 100
+  },
+  "teams": [
+    {
+      "enabled": true,
+      "id": 591036,
+      "password": "X36SDA",
+      "name": "Blue",
+      "key": 36,
+      "frequency": 591,
+      "collection": "Blue",
+      "color": "#18D5FF"
+    }
+  ],
+  "assets": {
+    "space": [
+      {
+        "id": "SC_ICEYE_X36",
+        "name": "ICEYE-X36",
+        "orbit": {
+          "planet": "Earth",
+          "values": [
+            6912.420633,
+            0.000258196,
+            97.837601,
+            271.486244,
+            7.059927,
+            86.065415
+          ],
+          "offset": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "physics": {
+          "override_mass": true,
+          "mass": 100.0,
+          "center_of_mass": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "inertia_tensor": [
+            [
+              12.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              12.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              12.0
+            ]
+          ]
+        },
+        "visualization": {
+          "mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/ZenSat/BP_Z_SC_ZenSat_Chassis",
+          "scale": 0.7,
+          "offset": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "reflectivity": 0.45
+        },
+        "controller": {
+          "safe_fraction": 0.1,
+          "capture_tax": 0.001,
+          "downlink_tax": 0.01,
+          "ping_interval": 5.0,
+          "reset_interval": 30.0,
+          "jamming_multiplier": 1.0,
+          "enable_rpo_software": false
+        },
+        "components": [
+          {
+            "class": "Solar Panel",
+            "name": "SAW-X36 Deployable Solar Array",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Area": 0.35,
+              "Efficiency": 0.3,
+              "Mass": 4.0
+            }
+          },
+          {
+            "class": "Battery",
+            "name": "BAT-28V Li-Ion Battery Module",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Nominal Capacity": 80.0,
+              "Charge Fraction": 0.9,
+              "Mass": 5.0
+            }
+          },
+          {
+            "class": "Computer",
+            "name": "OBC-360 Flight Computer",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Mass": 2.0
+            }
+          },
+          {
+            "class": "Reaction Wheels",
+            "name": "ADCS-04 Reaction Wheel Assembly",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Mass": 5.0
+            }
+          },
+          {
+            "class": "GPS Sensor",
+            "name": "GNSS-24 Navigation Receiver",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Mass": 1.0
+            }
+          },
+          {
+            "class": "Receiver",
+            "name": "SRX-120 S-Band Command Receiver",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Antenna Gain": 4.0,
+              "Mass": 1.0
+            }
+          },
+          {
+            "class": "Transmitter",
+            "name": "XTX-220 X-Band Data Transmitter",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Antenna Gain": 4.0,
+              "Bit Rate": 40000.0,
+              "Mass": 1.0
+            }
+          },
+          {
+            "class": "Storage",
+            "name": "SSR-512 Solid-State Mission Recorder",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Mass": 4.0
+            }
+          },
+          {
+            "class": "Camera",
+            "name": "SAR-X36 X-Band Imaging Payload",
+            "mesh": "None",
+            "enabled": true,
+            "data": {
+              "Sample Rate": 5.0,
+              "Mass": 8.0,
+              "Aperture": 25.0,
+              "Min Field Of View": 2.0,
+              "Field Of View": 12.0,
+              "Max Field Of View": 25.0,
+              "Focusing Distance": 600000.0,
+              "Resolution": [
+                1024,
+                1024
+              ]
+            },
+            "position": [
+              0.008,
+              -0.276,
+              -0.014
+            ],
+            "rotation": [
+              90.0,
+              0.0,
+              0.0
+            ]
+          }
+        ]
+      }
+    ],
+    "collections": [
+      {
+        "id": "Blue",
+        "space_assets": [
+          "SC_ICEYE_X36"
+        ]
+      }
+    ],
+    "neutral": []
+  },
+  "objects": {
+    "ground": [
+      {
+        "id": "GO_MARITIME_01",
+        "type": "vessel",
+        "name": "Commercial Vessel Alpha",
+        "planet": "Earth",
+        "latitude": 76.85,
+        "longitude": -104.6,
+        "altitude": 0.001,
+        "scale": 140,
+        "color": "#FFFFFF",
+        "data": {
+          "heading": 92.0,
+          "speed": 8.0
+        }
+      },
+      {
+        "id": "GO_MARITIME_02",
+        "type": "vessel",
+        "name": "Commercial Vessel Bravo",
+        "planet": "Earth",
+        "latitude": 76.7,
+        "longitude": -105.2,
+        "altitude": 0.001,
+        "scale": 140,
+        "color": "#80DEEA",
+        "data": {
+          "heading": 275.0,
+          "speed": 6.0
+        }
+      },
+      {
+        "id": "GO_MARITIME_LABEL",
+        "type": "text",
+        "name": "Nominal Maritime Task",
+        "planet": "Earth",
+        "latitude": 76.78,
+        "longitude": -104.89,
+        "altitude": 0.003,
+        "scale": 90000,
+        "color": "#0B2239",
+        "data": {
+          "text": "MARITIME TASK"
+        }
+      }
+    ],
+    "space": []
+  },
+  "events": [],
+  "questions": []
+}
