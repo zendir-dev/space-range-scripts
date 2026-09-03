@@ -2,10 +2,10 @@
   "metadata": {
     "name": "Intent in Orbit - Stage 4",
     "description": "With Cosmos 2614 holding near ICEYE, Blue tasks an orbital SDA asset to improve range and optical custody.",
-    "brief": "# Operator shot\nThis section starts 12 hours later with the five Cosmos spacecraft already at illustrative close stations around ICEYE-X36: Cosmos 2614 is about 1 km from ICEYE, the other four are about 4-8 km away, and SDA Overwatch is staged about 5 km radially outside Cosmos 2614. ICEYE-X36 has no imaging payload here and is slewed to nadir at T+0, so do not set it up by hand. The Cosmos craft have no cameras. Select SDA Overwatch, point SBR-900 Space Surveillance Radar, OTC-450 Optical Tracking Camera or EVS-450 Neuromorphic Event Camera at Cosmos 2614, capture/range, then downlink. The proximity and orbital sensor are illustrative; this fictional orbital sensor is not Spaceflux. Spaceflux credit is limited to optical observations of Cosmos 2610, 2612, 2613, and 2614."
+    "brief": "# Operator shot\nThis section starts 22 hours later with the five Cosmos spacecraft already at illustrative close stations around ICEYE-X36: Cosmos 2614 is about 1 km from ICEYE, the other four are about 4-8 km away, and SDA Overwatch is staged about 5 km radially outside Cosmos 2614. ICEYE-X36 has no imaging payload here and is slewed to nadir at T+0, so do not set it up by hand. The Cosmos craft have no cameras. Select SDA Overwatch, point SBR-900 Space Surveillance Radar, OTC-450 Optical Tracking Camera or EVS-450 Neuromorphic Event Camera at Cosmos 2614, capture/range, then downlink. The proximity and orbital sensor are illustrative; this fictional orbital sensor is not Spaceflux. Spaceflux credit is limited to optical observations of Cosmos 2610, 2612, 2613, and 2614."
   },
   "simulation": {
-    "epoch": "2026/05/14 12:00:00",
+    "epoch": "2026/05/14 22:00:00",
     "speed": 5.0,
     "step_size": 0.1,
     "integrator": "Euler",
@@ -356,7 +356,7 @@
                 1024,
                 1024
               ],
-              "Monochromatic": true
+              "IsMonochromatic": true
             },
             "position": [
               2.285,
@@ -386,7 +386,7 @@
                 1024,
                 1024
               ],
-              "Monochromatic": true
+              "IsMonochromatic": true
             },
             "position": [
               2.285,

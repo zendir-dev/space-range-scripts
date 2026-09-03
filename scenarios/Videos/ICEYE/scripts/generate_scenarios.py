@@ -22,7 +22,7 @@ CONFIG_DIR = ICEYE_DIR / "config"
 OUTPUT_NAMES = [f"section_{index}.json" for index in range(1, 6)]
 
 EPOCH = "2026/05/14 00:00:00"
-SECTION_4_EPOCH = "2026/05/14 12:00:00"
+SECTION_4_EPOCH = "2026/05/14 22:00:00"
 ICEYE_INCLINATION_DEG = 97.837601
 ICEYE_ARGUMENT_OF_LATITUDE_DEG = 7.059927 + 86.065415
 
@@ -422,11 +422,14 @@ def overwatch_asset(stage: str) -> dict[str, Any]:
                     "Max Field Of View": 15.0,
                     "Focusing Distance": 250000.0,
                     "Resolution": [1024, 1024],
-                    "Monochromatic": True,
+                    "IsMonochromatic": True,
                 },
                 position=OVERWATCH_SENSOR_POSITION,
                 rotation=OVERWATCH_SENSOR_ROTATION,
             ),
+            # The "Event Camera" class alias resolves to the same ACamera class as
+            # a plain camera, so "IsEvent" is what actually puts it in event mode.
+            # Without it this would just be a second ordinary camera.
             component(
                 "Event Camera",
                 OVERWATCH_EVENT_CAMERA,
@@ -439,7 +442,8 @@ def overwatch_asset(stage: str) -> dict[str, Any]:
                     "Max Field Of View": 15.0,
                     "Focusing Distance": 250000.0,
                     "Resolution": [1024, 1024],
-                    "Monochromatic": True,
+                    "IsMonochromatic": True,
+                    "IsEvent": True,
                 },
                 position=OVERWATCH_SENSOR_POSITION,
                 rotation=OVERWATCH_SENSOR_ROTATION,
@@ -848,7 +852,7 @@ def build_section_4() -> dict[str, Any]:
         description="With Cosmos 2614 holding near ICEYE, Blue tasks an orbital SDA asset to improve range and optical custody.",
         brief=(
             "# Operator shot\n"
-            "This section starts 12 hours later with the five Cosmos spacecraft already at illustrative close stations "
+            "This section starts 22 hours later with the five Cosmos spacecraft already at illustrative close stations "
             "around ICEYE-X36: Cosmos 2614 is about 1 km from ICEYE, the other four are about 4-8 km away, and SDA "
             "Overwatch is staged about 5 km radially outside Cosmos 2614. ICEYE-X36 has no imaging payload here "
             "and is slewed to nadir at T+0, so do not set it up by hand. The Cosmos craft have no cameras. "
@@ -1026,8 +1030,11 @@ def validate(scenarios: dict[str, dict[str, Any]]) -> None:
         entry for entry in overwatch_sensors if entry["name"] == OVERWATCH_EVENT_CAMERA
     )
     assert optical["class"] == "Camera"
-    assert optical["data"]["Monochromatic"] is True
+    assert optical["data"]["IsMonochromatic"] is True
     assert event_camera["class"] == "Event Camera"
+    assert event_camera["data"]["IsMonochromatic"] is True
+    # The class alias alone does not enable event mode; IsEvent does.
+    assert event_camera["data"]["IsEvent"] is True
     for entry in overwatch_sensors:
         assert entry["position"] == OVERWATCH_SENSOR_POSITION
         assert entry["rotation"] == OVERWATCH_SENSOR_ROTATION

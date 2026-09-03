@@ -12,6 +12,8 @@ The story is:
 
 > Five spacecraft begin quietly changing their orbits toward one commercial satellite. When does ordinary activity become a coordinated threat, and what can an operator still do by the time the pattern is clear?
 
+
+
 ## Recording style
 
 - Use **Studio** for orbital geometry, spacecraft motion, labels, trails, time compression and cinematic views.
@@ -20,6 +22,8 @@ The story is:
 - Record clean Studio views both with and without labels.
 - Do not film mouse travel, loading screens or scenario setup.
 - Each section JSON is a clean retake point. Reload the section rather than manually rebuilding the state.
+
+
 
 ### Narration timing
 
@@ -30,6 +34,8 @@ The story is:
 - After changing any narration or duration, run `python scripts/check_timing.py`. It fails if a shot lost its beat or is too short to speak it.
 
 ---
+
+
 
 # Spoken narration
 
@@ -109,6 +115,8 @@ Initial conditions and inclination changes derived from public catalogue history
 
 ---
 
+
+
 # Section 1 — Nominal Operations
 
 Load: `config/section_1.json`
@@ -129,6 +137,8 @@ Do not introduce the Cosmos spacecraft yet.
 
 ## What to prepare
 
+
+
 ### Studio
 
 1. Load `config/section_1.json`.
@@ -136,6 +146,8 @@ Do not introduce the Cosmos spacecraft yet.
 3. Select ICEYE-X36 and enable its orbit trail.
 4. Frame Earth and the spacecraft from a wide orbital view.
 5. Prepare a second view following ICEYE-X36 over the Arctic maritime task area.
+
+
 
 ### Operator
 
@@ -155,6 +167,8 @@ The payload uses the simulator's Camera component to demonstrate the imaging wor
 **Timing constraint:** the pass starts over the pole with no ground station in view. Anchorage acquires at T+185 s and Vancouver at T+290 s. Shoot the capture early (T+100–150 s, when the vessels are overhead) and the downlink after T+185 s.
 
 ## What to record
+
+
 
 ### Shot 1 — Establish the mission
 
@@ -212,6 +226,8 @@ Narration for this shot:
 
 > At this point, everything is nominal. One spacecraft, one stable orbital plane and one predictable operating rhythm.
 
+
+
 ## Spoken script
 
 Read as one continuous take; the shot boundaries above fall between paragraphs.
@@ -224,6 +240,8 @@ Read as one continuous take; the shot boundaries above fall between paragraphs.
 >
 > At this point, everything is nominal. One spacecraft, one stable orbital plane and one predictable operating rhythm.
 
+
+
 ## On-screen text
 
 Use only brief callouts:
@@ -233,6 +251,8 @@ Use only brief callouts:
 - `Nominal Maritime Task`
 - `Inclination: 97.84°`
 
+
+
 ## Transition to Section 2
 
 End on the wide ICEYE orbit.
@@ -240,6 +260,8 @@ End on the wide ICEYE orbit.
 Begin Section 2 from a similar Studio camera angle, then reveal the five Cosmos orbital tracks. The matching camera position should make the change in the environment feel immediate.
 
 ---
+
+
 
 # Section 2 — The Pattern Emerges
 
@@ -265,6 +287,8 @@ Do not shoot multiple Studio angles of this scene. They are the same frozen fram
 
 ## What to prepare
 
+
+
 ### Studio
 
 1. Match the final camera angle from Section 1.
@@ -275,6 +299,8 @@ Do not shoot multiple Studio angles of this scene. They are the same frozen fram
   - Cosmos group: red or orange
 5. Run live at 8× rather than paused, and speed the footage up in the edit.
 6. Frame near **maximum latitude**, never near the equator — the plane separation collapses to zero at the node crossings. At T+0 ICEYE is already at 81.6°N, near its 82.2° maximum, so the opening moment is the best one.
+
+
 
 ### Operator
 
@@ -365,6 +391,8 @@ One paragraph per shot, in order: establishing shot, chart, Operator, payload vi
 >
 > What looked like isolated activity is becoming a coordinated pattern — and all of it points toward one destination plane.
 
+
+
 ## On-screen text
 
 - `Cosmos 2610–2614`
@@ -374,6 +402,8 @@ One paragraph per shot, in order: establishing shot, chart, Operator, payload vi
 - `Repeated Direction: Pattern`
 - `Exact Burn Timing: Illustrative`
 
+
+
 ## Transition to Section 3
 
 Hold on the chart with three lines converged on the ICEYE reference and two still flat at the bottom.
@@ -381,6 +411,8 @@ Hold on the chart with three lines converged on the ICEYE reference and two stil
 Cut straight into Section 3's Shot 1, which is the same chart resuming from that exact frame. The two renders are frame-matched at 16 May 12:00, so the join reads as the playhead starting to move again rather than as a cut. What follows is the remainder of the fleet-level campaign — the 20–21 May steps that sat greyed out to the right of the playhead.
 
 ---
+
+
 
 # Section 3 — Coercive Proximity
 
@@ -398,6 +430,8 @@ The inclination changes and reconstructed Delta-V totals come from the supplied 
 
 ## What to prepare
 
+
+
 ### Studio
 
 Shot 1 is the pre-rendered chart and needs nothing from Studio. Everything below is for Shots 2 to 5.
@@ -413,11 +447,15 @@ Shot 1 is the pre-rendered chart and needs nothing from Studio. Everything below
 6. Cosmos 2614 then repeats the approach: in to 1.0 km at T+3000 s, back out to 6.0 km at T+4800 s. That is about 10 minutes of real recording at 8×, so plan to speed it up heavily in the edit.
 7. At T+3000 s, the same event beat automatically slews Cosmos 2614's `OCS-410 Narrow-Field Inspection Camera` toward ICEYE-X36. The 0.5° field of view is deliberately tight. Allow the reaction wheels to settle before opening the camera view.
 
+
+
 ### Operator
 
 No Operator interaction is required in this section. The fleet Delta-V commitment and the evidence boundary are carried by narration and on-screen text.
 
 ## What to record
+
+
 
 ### Shot 1 — Complete the plane-change story
 
@@ -480,6 +518,8 @@ Narration for this shot:
 
 > The close grouping shown here is an illustrative continuation. The evidence underneath it is the coordinated inclination campaign.
 
+
+
 ### Shot 5 — Optical inspection from COSMOS 2614
 
 Use **14–17 seconds** in the edit after the T+3000 s event and after the attitude slew settles; record at least 20 seconds.
@@ -514,6 +554,8 @@ One paragraph per shot, in order.
 >
 > At inspection range, proximity also enables narrow-field optical collection. Here, Cosmos 2614 is shown holding ICEYE-X36 in its field of view — an illustrative capability, not a reconstructed observation.
 
+
+
 ## On-screen text
 
 - `11 Inclination Steps`
@@ -531,6 +573,8 @@ Do not show:
 - A kinetic attack
 - Exact burn times
 
+
+
 ## Transition to Section 4
 
 End with ICEYE-X36 surrounded by the five labelled Cosmos spacecraft.
@@ -538,6 +582,8 @@ End with ICEYE-X36 surrounded by the five labelled Cosmos spacecraft.
 Cut to the Operator interface with the question: what can Blue still do without sacrificing the asset's remaining mission life?
 
 ---
+
+
 
 # Section 4 — Blue Tightens Custody
 
@@ -547,7 +593,7 @@ Duration: **52–61 seconds** across 4 shots
 
 ## What happens
 
-Section 4 opens **12 hours later** than the other scenario files, giving the Earth and ground track a visibly different starting orientation. It begins at the close-state consequence of Section 3 rather than replaying the approach: Cosmos 2614 is already about **1 km from ICEYE-X36**, and the other four Cosmos spacecraft are staged roughly **4–8 km away**.
+Section 4 opens **22 hours later** than the other scenario files, giving the Earth and ground track a visibly different starting orientation. It begins at the close-state consequence of Section 3 rather than replaying the approach: Cosmos 2614 is already about **1 km from ICEYE-X36**, and the other four Cosmos spacecraft are staged roughly **4–8 km away**.
 
 SDA Overwatch begins roughly **5 km radially outside Cosmos 2614**, already close enough for a readable optical and radar custody shot. There is no RPO approach to wait for in this section; the live action is the Overwatch payload slew, radar/ranging collection, camera capture and downlink.
 
@@ -559,14 +605,18 @@ Blue does not attempt to outrun five committed vehicles. Instead, the operator t
 
 ## What to prepare
 
+
+
 ### Studio
 
-1. Confirm the scenario epoch reads `2026/05/14 12:00:00`, twelve hours after Sections 1–3.
+1. Confirm the scenario epoch reads `2026/05/14 22:00:00`, 22 hours after Sections 1–3.
 2. At T+0, confirm Cosmos 2614 is about 1 km from ICEYE-X36, the other Cosmos craft are within roughly 4–8 km, and SDA Overwatch is about 5 km from Cosmos 2614.
 3. Frame ICEYE-X36, SDA Overwatch and the selected Cosmos target.
 4. Prefer Cosmos 2614 as the primary tracked object.
 5. Prepare a line-of-sight view from Overwatch toward Cosmos 2614.
 6. Prepare a wide view showing the broader five-vehicle geometry.
+
+
 
 ### Operator
 
@@ -579,11 +629,15 @@ Blue does not attempt to outrun five committed vehicles. Instead, the operator t
   - Downlink
 3. Prepare these payloads:
   - `OTC-450 Optical Tracking Camera` (monochromatic)
-  - `EVS-450 Neuromorphic Event Camera`
+  - `EVS-450 Neuromorphic Event Camera` (monochromatic, event mode)
   - `SBR-900 Space Surveillance Radar`
   - `LRP-1550 Laser Ranging Payload`
 
+
+
 ## What to record
+
+
 
 ### Shot 1 — Task the additional sensor
 
@@ -599,6 +653,8 @@ Narration for this shot:
 
 > ICEYE-X36 cannot simply outrun five spacecraft that have already demonstrated this level of commitment. Every metre per second spent by the commercial asset is mission life it cannot recover.
 
+
+
 ### Shot 2 — Show the physical result
 
 Use **11–13 seconds** in Studio.
@@ -609,6 +665,8 @@ Use **11–13 seconds** in Studio.
 Narration for this shot:
 
 > Blue's immediate advantage is custody. The operator tasks an additional surveillance asset and points its optical and ranging payloads toward Cosmos 2614.
+
+
 
 ### Shot 3 — Collect evidence
 
@@ -622,6 +680,8 @@ Use **12–14 seconds** in Operator. This shot has more interface actions than n
 Narration for this shot:
 
 > Independent observations begin to accumulate: imagery, range and range-rate, collected and downlinked without touching ICEYE.
+
+
 
 ### Shot 4 — Return to the operational picture
 
@@ -648,6 +708,8 @@ One paragraph per shot, in order.
 >
 > Increased revisit, improved ranging and additional imagery sharpen the orbital picture. This gives the team better information for protection, attribution and the next operational decision — without immediately spending ICEYE's limited fuel.
 
+
+
 ## On-screen text
 
 - `Blue Response: Tighten Custody`
@@ -670,6 +732,8 @@ Cut back to the earlier partial-burn state. The final question is not what Blue 
 
 ---
 
+
+
 # Section 5 — Debrief and Replay
 
 Load: `config/section_5.json`
@@ -684,6 +748,8 @@ The key conclusion is that Days 2–3 were the useful decision window: multiple 
 
 ## What to prepare
 
+
+
 ### Studio
 
 1. Return to the partially converged orbital view.
@@ -691,6 +757,8 @@ The key conclusion is that Days 2–3 were the useful decision window: multiple 
   - the early pattern;
   - the final five-vehicle geometry.
 3. Prepare a visible simulation reset or replay action.
+
+
 
 ### Operator
 
@@ -702,6 +770,8 @@ The key conclusion is that Days 2–3 were the useful decision window: multiple 
 Do not claim a specific AAR metric unless it is visible in the recorded build.
 
 ## What to record
+
+
 
 ### Shot 1 — Reset to the decision point
 
@@ -715,6 +785,8 @@ Narration for this shot:
 
 > During debrief, the scenario can be reset to the moment the pattern first became visible.
 
+
+
 ### Shot 2 — Show the warning was already there
 
 Use **12–14 seconds** in Studio.
@@ -726,6 +798,8 @@ Narration for this shot:
 
 > The warning existed well before the close geometry. It was written in cumulative behaviour and in the amount of propellant the fleet was prepared to spend.
 
+
+
 ### Shot 3 — Land the timing point
 
 Use **11–13 seconds** in Studio.
@@ -736,6 +810,8 @@ Use **11–13 seconds** in Studio.
 Narration for this shot:
 
 > The useful decision point was Days 2 to 3 — when the evidence was still incomplete, but low-cost responses were still available.
+
+
 
 ### Shot 4 — Final image
 
@@ -762,6 +838,8 @@ One paragraph per shot, in order.
 >
 > If this were your spacecraft, when would you call the pattern hostile?
 
+
+
 ## On-screen text
 
 - `Day 0: Ambiguous`
@@ -772,17 +850,23 @@ One paragraph per shot, in order.
 
 ---
 
+
+
 # Optional opening line
 
 Use this only if the edit needs a 3–5 second cold open before Section 1:
 
 > A close approach may be the final alert. The intent to create it can be visible days earlier.
 
+
+
 # Optional final Zendir line
 
 Use this after the final question only if a product close is required:
 
 > Zendir enables operators to replay these decisions against realistic spacecraft systems and orbital behaviour—before the same pattern appears around a real asset.
+
+
 
 # Evidence and attribution card
 

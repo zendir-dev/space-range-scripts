@@ -379,7 +379,7 @@ Purpose: show an operator doing something realistic and useful without pretendin
 
 Section 4 is a staged continuation, not a replay of Section 3's approach:
 
-- Epoch: `2026/05/14 12:00:00`, exactly 12 hours after the other sections so Earth and the ground track begin in a visibly different orientation.
+- Epoch: `2026/05/14 22:00:00`, 22 hours after the other sections so Earth and the ground track begin in a visibly different orientation.
 - Cosmos 2614 starts about **1 km from ICEYE-X36**.
 - Cosmos 2610–2613 start at separate illustrative stations roughly **4–8 km from ICEYE-X36**.
 - SDA Overwatch starts about **5 km radially outside Cosmos 2614**, close enough for optical and radar custody at T+0.
@@ -398,7 +398,7 @@ Section 4 is a staged continuation, not a replay of Section 3's approach:
 2. Target component: `SBR-900 Space Surveillance Radar`, `OTC-450 Optical Tracking Camera` or `EVS-450 Neuromorphic Event Camera`.
 3. Target spacecraft: `COSMOS 2614`.
 4. Apply guidance and wait for the slew.
-5. Capture with `OTC-450 Optical Tracking Camera` (monochromatic) or `EVS-450 Neuromorphic Event Camera`, name it `COSMOS_2614_Custody`.
+5. Capture with `OTC-450 Optical Tracking Camera` (monochromatic) or `EVS-450 Neuromorphic Event Camera` (monochromatic, event mode), name it `COSMOS_2614_Custody`.
 6. Hold `SBR-900 Space Surveillance Radar`/`LRP-1550 Laser Ranging Payload` on the target long enough to show range updates.
 7. Downlink the observation.
 

@@ -385,7 +385,7 @@
                 1024,
                 1024
               ],
-              "Monochromatic": true
+              "IsMonochromatic": true
             },
             "position": [
               2.285,
@@ -415,7 +415,8 @@
                 1024,
                 1024
               ],
-              "Monochromatic": true
+              "IsMonochromatic": true,
+              "IsEvent": true
             },
             "position": [
               2.285,
