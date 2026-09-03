@@ -1,6 +1,6 @@
 # Info Stream
 
-The **Info** topic publishes scenario metadata and live team scores. Use it for scoreboards, instructor dashboards, and lobby displays — without polling [`admin_list_team`](admin-requests.md#admin_list_team) on every score change.
+The **Info** topic publishes scenario metadata and live team scores. Use it for scoreboards, instructor dashboards, and lobby displays: without polling [`admin_list_team`](admin-requests.md#admin_list_team) on every score change.
 
 Like [Session](session-stream.md), this topic is **not** encrypted.
 
@@ -15,23 +15,23 @@ Zendir/SpaceRange/<GAME>/Info
 | Property | Value |
 | --- | --- |
 | Direction | Studio → all clients |
-| Encryption | None — plain ASCII JSON |
-| Cadence | **Event-driven** — a new message is published only when something changes (see below) |
+| Encryption | None: plain ASCII JSON |
+| Cadence | **Event-driven**: a new message is published only when something changes (see below) |
 | QoS | 0; the **latest** payload remains available on the topic for new subscribers |
 
 `<GAME>` is the game name configured in Studio (case-significant), same as for Session and team topics.
 
 ---
 
-## When messages are published
+## When Messages Are Published
 
 Studio publishes a fresh Info payload when any of these change:
 
-- **Game metadata** — e.g. display `name`, `description`, or `duration`
-- **Team roster** — teams added or removed
-- **Scores** — any team's `correct` or `incorrect` point totals change (after a graded question submission)
+- **Game metadata**: e.g. display `name`, `description`, or `duration`
+- **Team roster**: teams added or removed
+- **Scores**: any team's `correct` or `incorrect` point totals change (after a graded question submission)
 
-Between those events, **no repeat publishes** are sent. If you subscribe after traffic has already started, read the **most recent** message on the topic to get current game and score state.
+Between those events, **no repeat publishes** are sent. Clients that subscribe after traffic starts should read the **most recent** message on the topic for current game and score state.
 
 ---
 
@@ -69,7 +69,7 @@ Between those events, **no repeat publishes** are sent. If you subscribe after t
 }
 ```
 
-### `game` object
+### `game` Object
 
 | Field | Type | Description |
 | --- | --- | --- |
@@ -79,16 +79,16 @@ Between those events, **no repeat publishes** are sent. If you subscribe after t
 | `description` | `string` | Longer description text; may be a placeholder if none was configured. |
 | `duration` | `number` (seconds) | Planned or configured exercise duration in **seconds** (e.g. `3600.0` = one hour). |
 
-### `teams[]` entries
+### `teams[]` Entries
 
 | Field | Type | Description |
 | --- | --- | --- |
-| `id` | `integer` | Team numeric ID — matches `teams[].id` in scenario JSON and `<TEAM>` in MQTT team topics. |
+| `id` | `integer` | Team numeric ID: matches `teams[].id` in scenario JSON and `<TEAM>` in MQTT team topics. |
 | `name` | `string` | Display name (e.g. `Team Blue`, `Rogue`). |
-| `color` | `string` | Team colour as **8 hex digits** `AARRGGBB` (alpha, red, green, blue), no `#` prefix. Example: `0098FFFF`. |
-| `score` | `string` | JSON **string** (escaped) encoding point totals — parse it as JSON (see below). |
+| `color` | `string` | Team color as **8 hex digits** `AARRGGBB` (alpha, red, green, blue), no `#` prefix. Example: `0098FFFF`. |
+| `score` | `string` | JSON **string** (escaped) encoding point totals: parse it as JSON (see below). |
 
-### `score` object
+### `score` Object
 
 The `score` field is a nest JSON object containing score information.
 
@@ -116,7 +116,7 @@ GAME = "SPACE RANGE"
 def on_info(client, userdata, msg):
     info = json.loads(msg.payload.decode("ascii"))
     g = info["game"]
-    print(f"{g['name']} ({g['id']}) — duration {g['duration']}s")
+    print(f"{g['name']} ({g['id']}): duration {g['duration']}s")
 
     for team in info["teams"]:
         pts = json.loads(team["score"])
@@ -154,18 +154,18 @@ client.on("message", (topic, payload) => {
 
 ---
 
-## Common pitfalls
+## Common Pitfalls
 
 - **Expecting a steady heartbeat.** Unlike Session (~0.3 s), Info is quiet until something changes. Build UI around the last message received, not periodic ticks.
 - **Confusing `game.id` and `<GAME>`.** The MQTT path uses the Studio game name; `game.id` is an internal short code.
-- **XOR-decrypting Info.** It is plain JSON — same as Session.
+- **XOR-decrypting Info.** It is plain JSON: same as Session.
 - **Using simulation time.** `game.timestamp` is real-time UNIX only; use [Session](session-stream.md) `time` for command scheduling.
 
 ---
 
 ## Next
 
-- [MQTT topics](mqtt-topics.md) — full topic map.
-- [Session stream](session-stream.md) — simulation clock (complementary unencrypted topic).
-- [Questions](../scenarios/questions.md) — how scenario questions define scoring.
-- [Ground requests → submit_answer](ground-requests.md#submit_answer) — how teams submit answers that update scores.
+- [MQTT topics](mqtt-topics.md): full topic map.
+- [Session stream](session-stream.md): simulation clock (complementary unencrypted topic).
+- [Questions](../scenarios/questions.md): how scenario questions define scoring.
+- [Ground requests → submit_answer](ground-requests.md#submit_answer): how teams submit answers that update scores.

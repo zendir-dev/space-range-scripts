@@ -9,19 +9,19 @@ Space Range applies **two layers of encryption** to most of the traffic on the b
 
 This page describes each layer, why both exist, what is and isn't encrypted, and how to implement them in client code.
 
-> **Threat model.** Space Range encryption is designed to **segregate teams** during exercises and to model the operational burden of managing encryption keys. It is **not** intended as production-grade cryptography. The XOR layer is trivially breakable given any known-plaintext, and the Caesar layer offers ~8 bits of secrecy. Treat both as in-game obfuscation, not security.
+**Threat model.** Space Range encryption is designed to **segregate teams** during exercises and to model the operational burden of managing encryption keys. It is **not** intended as production-grade cryptography. The XOR layer is trivially breakable given any known-plaintext, and the Caesar layer offers ~8 bits of secrecy. Treat both as in-game obfuscation, not security.
 
 ---
 
-## The XOR transport layer
+## The XOR Transport Layer
 
-### What it protects
+### What It Protects
 
 Every JSON payload published on a team's `Uplink`, `Downlink`, `Request`, or `Response` topic is XOR-encrypted with the team's **password**. The same applies to admin payloads on `Admin/Request` and `Admin/Response` using the **admin password**.
 
-The **session** and **info** topics are *not* encrypted — they carry no team-specific secrets (clock/state and public scoreboard metadata respectively).
+The **session** and **info** topics are *not* encrypted: they carry no team-specific secrets (clock/state and public scoreboard metadata respectively).
 
-### How it works
+### How It Works
 
 The cipher is byte-cyclic XOR:
 
@@ -29,7 +29,7 @@ The cipher is byte-cyclic XOR:
 2. For each byte of the plaintext at index `i`, XOR it with the password byte at `i mod len(password)`.
 3. Output the result.
 
-Because XOR is involutive, **encryption and decryption are the same operation** with the same key. There is no IV, no padding, and no length prefix — the ciphertext has exactly the same length as the plaintext.
+Because XOR is involutive, **encryption and decryption are the same operation** with the same key. There is no IV, no padding, and no length prefix: the ciphertext has exactly the same length as the plaintext.
 
 In pseudocode:
 
@@ -70,21 +70,21 @@ The same function encrypts when given plaintext and decrypts when given cipherte
 
 ### Pitfalls
 
-- **Empty payloads** are returned unchanged in the C++ reference. Don't try to publish an empty body — it carries no information either way.
+- **Empty payloads** are returned unchanged in the C++ reference. Don't try to publish an empty body: it carries no information either way.
 - **Wrong password** produces garbage that JSON parsing will reject. Treat parse failures as a sign you're using the wrong password (or the wrong topic).
 - **Extra whitespace in the password** counts. Passwords are exactly 6 alphanumeric characters; do not pad.
 
 ---
 
-## The Caesar RF layer
+## The Caesar RF Layer
 
-### What it protects
+### What It Protects
 
 Telemetry packets that travel over the simulated RF link are **additionally** Caesar-encoded *before* they are XOR-wrapped for MQTT. Inside a team's `Downlink` topic payload, the bytes you recover after XOR-decryption are still Caesar-shifted; you must apply the inverse Caesar shift to get the actual CCSDS Space Packet.
 
 This layer models the burden of managing radio encryption keys in real spacecraft operations and supports the **encryption rotation** mechanic (see below).
 
-### How it works
+### How It Works
 
 The cipher is a per-byte additive shift modulo 256:
 
@@ -122,9 +122,9 @@ function caesarEncrypt(key, data) {
 
 ---
 
-## Putting both layers together
+## Putting Both Layers Together
 
-### Decoding a downlink
+### Decoding a Downlink
 
 Given a payload received on `Zendir/SpaceRange/<GAME>/<TEAM>/Downlink`:
 
@@ -140,7 +140,7 @@ space_packet    = caesar_decrypt(team.key, caesar_payload)
 # → parse with the team's XTCE schema
 ```
 
-### Encoding an uplink
+### Encoding an Uplink
 
 Uplinks do **not** use the Caesar layer. The plaintext is just the JSON command:
 
@@ -152,7 +152,7 @@ client.publish(f"Zendir/SpaceRange/{game}/{team.id}/Uplink", ciphertext)
 
 The asymmetry exists because the RF model only fires on downlink (telemetry from spacecraft → ground). Uplink commands are delivered to Studio "out-of-band" by the simulation and only need the transport layer.
 
-### Downlink frame format
+### Downlink Frame Format
 
 The 5-byte header that precedes every downlink payload (after XOR decoding) is:
 
@@ -168,14 +168,14 @@ The full frame layout is documented in [Reference → Packet formats](../referen
 
 ---
 
-## Key rotation
+## Key Rotation
 
-The team password is **fixed** for a scenario — there is no API to change it at runtime, and there is no automatic rotation.
+The team password is **fixed** for a scenario: there is no API to change it at runtime, and there is no automatic rotation.
 
 The Caesar key and the team's downlink frequency, however, **can be rotated** at runtime by uplinking the [`encryption`](../api-reference/spacecraft-commands.md#encryption) command. Rotating happens in three phases:
 
 1. The operator uplinks `encryption` with new `key` and `frequency` values.
-2. The spacecraft validates the password (which must match the team ID — see the command reference) and updates its outgoing transmitter accordingly.
+2. The spacecraft validates the password (which must match the team ID: see the command reference) and updates its outgoing transmitter accordingly.
 3. The spacecraft **shuts down briefly** (a reset interval) and reboots with the new RF settings. Telemetry pauses during the shutdown.
 
 The team must also update its **ground-side** view of `(key, frequency)` so it can decode the new downlinks. There are two ways to do that:
@@ -183,20 +183,20 @@ The team must also update its **ground-side** view of `(key, frequency)` so it c
 - Use [`set_telemetry`](../api-reference/ground-requests.md#set_telemetry) on the ground controller to apply the new key/frequency on the receive side.
 - Or query [`get_telemetry`](../api-reference/ground-requests.md#get_telemetry) to read the current values and confirm the rotation took effect.
 
-If the spacecraft and ground go out of sync — different keys, or different frequencies — telemetry decoding will produce garbage, the link budget may report no link, and the team is effectively locked out of its own spacecraft until the keys are reconciled.
+If the spacecraft and ground go out of sync: different keys, or different frequencies: telemetry decoding will produce garbage, the link budget may report no link, and the team is effectively locked out of its own spacecraft until the keys are reconciled.
 
 A walkthrough of a clean rotation is in [Guides → Encryption walkthrough](../guides/encryption-walkthrough.md).
 
 ---
 
-## What is *not* encrypted
+## What Is *Not* Encrypted
 
 For completeness, here is what travels in the clear:
 
-- The **session topic** (`<GAME>/Session`) — `timestamp` (real-time UNIX), `time` (sim seconds), `utc` (sim calendar), `state`, `instance` ID.
-- The **info topic** (`<GAME>/Info`) — `game` metadata and `teams[]` scores. See [Info stream](../api-reference/info-stream.md).
-- **MQTT topic strings themselves** — anyone watching the broker can see which teams are active and how often each is publishing. Topic-level metadata is part of the threat model.
-- **Message timing** — even with valid encryption, the timing of publishes leaks information (e.g., "the red team just sent a command").
+- The **session topic** (`<GAME>/Session`): `timestamp` (real-time UNIX), `time` (sim seconds), `utc` (sim calendar), `state`, `instance` ID.
+- The **info topic** (`<GAME>/Info`): `game` metadata and `teams[]` scores. See [Info stream](../api-reference/info-stream.md).
+- **MQTT topic strings themselves**: anyone watching the broker can see which teams are active and how often each is publishing. Topic-level metadata is part of the threat model.
+- **Message timing**: even with valid encryption, the timing of publishes leaks information (e.g., "the red team just sent a command").
 
 If you are integrating Space Range into a setting where these leaks matter, place the broker behind an authenticated TLS endpoint and rely on broker-level access control as well as the in-game cryptography.
 
@@ -204,6 +204,6 @@ If you are integrating Space Range into a setting where these leaks matter, plac
 
 ## Next
 
-- [Commands and scheduling](commands-and-scheduling.md) — how to actually use these encrypted channels.
-- [Telemetry](telemetry.md) — what comes back over the encrypted RF layer.
-- [Guides → Encryption walkthrough](../guides/encryption-walkthrough.md) — runnable Python and JavaScript examples for both layers.
+- [Commands and scheduling](commands-and-scheduling.md): how to actually use these encrypted channels.
+- [Telemetry](telemetry.md): what comes back over the encrypted RF layer.
+- [Guides → Encryption walkthrough](../guides/encryption-walkthrough.md): runnable Python and JavaScript examples for both layers.

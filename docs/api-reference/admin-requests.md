@@ -1,6 +1,6 @@
 # Admin Requests
 
-The admin / instructor controller exposes its own request/response API. These endpoints are **not** scoped to a single team — they let an authorized client see every team's data, query historical telemetry from the database, control the simulation timeline, and inspect the scenario's scripted events.
+The admin / instructor controller exposes its own request/response API. These endpoints are **not** scoped to a single team: they let an authorized client see every team's data, query historical telemetry from the database, control the simulation timeline, and inspect the scenario's scripted events.
 
 This API uses a separate password (the **admin password**), distinct from any team password. Anyone holding it has full visibility into the simulation.
 
@@ -15,7 +15,7 @@ Zendir/SpaceRange/<GAME>/Admin/Request     (admin client → Studio)
 Zendir/SpaceRange/<GAME>/Admin/Response    (Studio → admin client)
 ```
 
-Both topics are XOR-encrypted with the **admin password**. The team-side topics under `<GAME>/<TEAM>/...` are **not** accessible with the admin password — if you also need to read a team's `Downlink` or `Response`, you must subscribe to those team topics with that team's password.
+Both topics are XOR-encrypted with the **admin password**. The team-side topics under `<GAME>/<TEAM>/...` are **not** accessible with the admin password. Reading a team's `Downlink` or `Response` requires a separate subscription using that team's password.
 
 The `Admin/Response` topic also receives the unsolicited [`admin_event_triggered`](#admin_event_triggered) push.
 
@@ -39,29 +39,29 @@ Both the request and response envelopes are identical to the team-side ones docu
 }
 ```
 
-Unknown `type` values respond with `success: false` and `error: "Unknown admin request type '...'"`. This is one of the few endpoints that responds explicitly to unknown types — handy when probing the API.
+Unknown `type` values respond with `success: false` and `error: "Unknown admin request type '...'"`. This is one of the few endpoints that responds explicitly to unknown types: handy when probing the API.
 
 ---
 
-## Request index
+## Request Index
 
 Discovery
-: [`admin_list_entities`](#admin_list_entities) — every team and ground station in the scenario.
-: [`admin_list_team`](#admin_list_team) — full configuration of one team (assets, components, password).
+: [`admin_list_entities`](#admin_list_entities): every team and ground station in the scenario.
+: [`admin_list_team`](#admin_list_team): full configuration of one team (assets, components, password).
 
 Historical data
-: [`admin_query_data`](#admin_query_data) — periodic spacecraft data snapshots from the on-disk database.
-: [`admin_query_events`](#admin_query_events) — historical tracking events.
+: [`admin_query_data`](#admin_query_data): periodic spacecraft data snapshots from the on-disk database.
+: [`admin_query_events`](#admin_query_events): historical tracking events.
 
 Simulation control
-: [`admin_get_simulation`](#admin_get_simulation) — current run state & speed.
-: [`admin_set_simulation`](#admin_set_simulation) — play / pause / stop / change speed.
+: [`admin_get_simulation`](#admin_get_simulation): current run state & speed.
+: [`admin_set_simulation`](#admin_set_simulation): play / pause / stop / change speed.
 
 Scenario events
-: [`admin_get_scenario_events`](#admin_get_scenario_events) — list scripted scenario events.
+: [`admin_get_scenario_events`](#admin_get_scenario_events): list scripted scenario events.
 
 Push notifications
-: [`admin_event_triggered`](#admin_event_triggered) — _(unsolicited)_ a tracking event happened, on **any** team.
+: [`admin_event_triggered`](#admin_event_triggered): _(unsolicited)_ a tracking event happened, on **any** team.
 
 ---
 
@@ -100,7 +100,7 @@ No arguments.
 | --- | --- |
 | `teams[].name` | Display name of the team. |
 | `teams[].id` | Numeric team ID. Use this in team-scoped topics (`<GAME>/<TEAM>/...`). |
-| `teams[].password` | The team's XOR password — sensitive. Anyone with the admin password can read every team's password. |
+| `teams[].password` | The team's XOR password: sensitive. Anyone with the admin password can read every team's password. |
 | `teams[].color` | Hex RGB color used for UI plotting. |
 | `stations[]` | Array of all ground stations in the scenario, each with `name`, `latitude` (deg), `longitude` (deg), `altitude` (m). |
 
@@ -234,7 +234,7 @@ The full set of `<category>.<property>` keys available in each sample:
 | `location.*` | `latitude`, `longitude`, `altitude`, `position_x/y/z`, `velocity_x/y/z`, `station` | Geodetic + ECI position/velocity, plus the nearest ground station. |
 | `rotation.*` | `euler_x/y/z`, `attitude_rate_x/y/z` | Attitude in degrees and degrees/s. |
 | `power.*` | `battery_percent`, `battery_capacity`, `sunlight_percent`, `power_generated` | Power-system snapshot. |
-| `storage.*` | `storage_percent`, `storage_used` | On-board storage utilisation. |
+| `storage.*` | `storage_percent`, `storage_used` | On-board storage utilization. |
 | `computer.*` | `state`, `navigation_mode`, `pointing_mode`, `controller_mode`, `mapping_mode` | ADCS / computer status strings. |
 | `uplink.*` / `downlink.*` | `IsConnected`, `Frequency`, `Distance`, `SignalPower`, `InterferencePower`, `EffectiveSignalToNoise`, `BitErrorRate`, `TransmissionRate`, … | Live link-budget snapshots, same shape as `get_telemetry`. |
 | `jammer.*` | `is_active`, `frequency`, `power` | Present only if the spacecraft has a jamming transmitter. |
@@ -339,11 +339,11 @@ No arguments.
 | Field | Values | Description |
 | --- | --- | --- |
 | `state` | `Running`, `Paused`, `Stopped`, `Scrubbing` | Current run state. **Stopped** means the simulation has not been started yet (or has been reset). **Scrubbing** means the timeline is being rewound through the database. |
-| `speed` | `≥ 0.0` | Sim time advance per real-time second. `1.0` is real-time, `5.0` is 5×, `0.0` is paused (rare — `state: Paused` is the usual signal). |
+| `speed` | `≥ 0.0` | Sim time advance per real-time second. `1.0` is real-time, `5.0` is 5×, `0.0` is paused (rare: `state: Paused` is the usual signal). |
 
 Common errors:
 
-- `"Simulation subsystem not available."` — Studio is mid-load or unconfigured. Retry shortly.
+- `"Simulation subsystem not available."`: Studio is mid-load or unconfigured. Retry shortly.
 
 ---
 
@@ -363,7 +363,7 @@ Controls the simulation timeline. Provide `state`, `speed`, or both.
 
 | Argument | Values | Description |
 | --- | --- | --- |
-| `state` | `Running`, `Paused`, `Stopped` | _(case-insensitive)_ `Running` plays/resumes, `Paused` pauses, `Stopped` resets the simulation to its initial conditions. **Resetting also changes the session `instance` — every subscriber should clear cached state.** |
+| `state` | `Running`, `Paused`, `Stopped` | _(case-insensitive)_ `Running` plays/resumes, `Paused` pauses, `Stopped` resets the simulation to its initial conditions. **Resetting also changes the session `instance`: every subscriber should clear cached state.** |
 | `speed` | `≥ 0.0` | New simulation speed factor. |
 
 At least one of the two must be provided. Both are applied atomically when both are present (state first, then speed).
@@ -376,9 +376,9 @@ At least one of the two must be provided. Both are applied atomically when both 
 
 Common errors:
 
-- `"At least one of 'state' or 'speed' must be provided."` — empty `args`.
-- `"Invalid state '...'. Must be 'Running', 'Paused' or 'Stopped'."` — unknown state name.
-- `"Simulation subsystem not available."` — Studio not ready.
+- `"At least one of 'state' or 'speed' must be provided."`: empty `args`.
+- `"Invalid state '...'. Must be 'Running', 'Paused' or 'Stopped'."`: unknown state name.
+- `"Simulation subsystem not available."`: Studio not ready.
 
 ### Notes
 
@@ -389,7 +389,7 @@ Common errors:
 
 ## `admin_get_scenario_events`
 
-Returns the **scripted** scenario events configured in the current scenario — failures, anomalies, and other events the instructor pre-loaded. These are distinct from the live tracking events surfaced by `admin_query_events`.
+Returns the **scripted** scenario events configured in the current scenario: failures, anomalies, and other events the instructor pre-loaded. These are distinct from the live tracking events surfaced by `admin_query_events`.
 
 **Request**
 
@@ -443,9 +443,9 @@ No arguments.
 
 ---
 
-## `admin_event_triggered` (push)
+## `admin_event_triggered` (Push)
 
-Unsolicited message published on `Admin/Response` whenever any team triggers a tracking event — commands sent, telemetry changes, reboots, scenario events firing, etc. Same shape as the team-side [`event_triggered`](ground-requests.md#event_triggered) push, but cross-team.
+Unsolicited message published on `Admin/Response` whenever any team triggers a tracking event: commands sent, telemetry changes, reboots, scenario events firing, etc. Same shape as the team-side [`event_triggered`](ground-requests.md#event_triggered) push, but cross-team.
 
 ```json
 {
@@ -471,28 +471,28 @@ Unsolicited message published on `Admin/Response` whenever any team triggers a t
 | `event_id` | Monotonic ID matching the one used in `admin_query_events`. |
 | `simulation_time`, `simulation_utc`, `clock_time` | Same as on `event_triggered`. |
 | `trigger` | `Scenario`, `Operator`, `Spacecraft`, or `Ground`. |
-| `team_id` | Affected team (any team — the admin push is not filtered). |
+| `team_id` | Affected team (any team: the admin push is not filtered). |
 | `asset_id` | Affected asset, may be empty. |
 | `name` | Event name. |
 | `arguments` | Event-specific context. |
 
-Use this to build a live cross-team event timeline without polling. Combined with `admin_query_events` at startup (to backfill any events you missed), you can build a complete event log.
+Use this message to build a live cross-team event timeline without polling. Combine it with `admin_query_events` at startup to backfill earlier events and build a complete event log.
 
 ---
 
-## Common patterns
+## Common Patterns
 
-### Bootstrap (admin client)
+### Bootstrap (Admin Client)
 
 1. Subscribe to `Session` (for the clock and `instance`).
 2. Subscribe to `Admin/Response` (for replies and pushes).
 3. `admin_list_entities` → cache teams + stations.
 4. For each team, `admin_list_team` → cache asset/component lists.
 5. `admin_get_scenario_events` → display the scripted timeline.
-6. `admin_query_events` → backfill any tracking events that fired before you connected.
-7. From here, the live `admin_event_triggered` stream keeps you up to date; periodic `admin_query_data` polls drive any per-team telemetry dashboards.
+6. `admin_query_events` → backfill tracking events that fired before the client connected.
+7. The live `admin_event_triggered` stream supplies updates; periodic `admin_query_data` polls drive per-team telemetry dashboards.
 
-### Pausing for a debrief
+### Pausing for a Debrief
 
 ```json
 { "type": "admin_set_simulation", "req_id": 0, "args": { "state": "Paused" } }
@@ -504,7 +504,7 @@ Followed when ready by:
 { "type": "admin_set_simulation", "req_id": 0, "args": { "state": "Running" } }
 ```
 
-### Restarting the scenario
+### Restarting the Scenario
 
 ```json
 { "type": "admin_set_simulation", "req_id": 0, "args": { "state": "Stopped" } }
@@ -517,6 +517,6 @@ After this, every client (including yours) should observe a new `instance` on `S
 
 ## Next
 
-- [Ground requests](ground-requests.md) — team-side counterpart.
-- [MQTT topics](mqtt-topics.md) — topic and encryption layout.
-- [Concepts → Simulation clock](../concepts/simulation-clock.md) — what `instance` and the timeline mean.
+- [Ground requests](ground-requests.md): team-side counterpart.
+- [MQTT topics](mqtt-topics.md): topic and encryption layout.
+- [Concepts → Simulation clock](../concepts/simulation-clock.md): what `instance` and the timeline mean.

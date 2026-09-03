@@ -6,7 +6,7 @@ Terminology used throughout the Space Range documentation. Where a term has a Sp
 
 ## A
 
-**ADCS — Attitude Determination and Control System**
+**ADCS: Attitude Determination and Control System**
 The subsystem that measures and controls a spacecraft's orientation. In Space Range, ADCS is the target of the [`guidance`](../api-reference/spacecraft-commands.md#guidance) command and produces orientation fields in [Ping telemetry](../reference/packet-formats.md#ping).
 
 **Admin / Admin Password**
@@ -25,11 +25,11 @@ Encodings accepted by [`transmit_bytes`](../api-reference/ground-requests.md#tra
 **Caesar cipher**
 The numeric-key substitution cipher used as the **RF layer** of Space Range encryption. Applied byte-wise to telemetry before transmission. Key is an integer 0–255 and rotates with the [`encryption`](../api-reference/spacecraft-commands.md#encryption) command. See [Concepts → Encryption](../concepts/encryption.md).
 
-**CCSDS — Consultative Committee for Space Data Systems**
+**CCSDS: Consultative Committee for Space Data Systems**
 The international body whose standards Space Range telemetry follows. In particular, telemetry is delivered as **CCSDS Space Packets** with primary headers conforming to CCSDS 133.0-B-2.
 
 **Collection**
-A grouping of assets within a team's scenario configuration. Used for organisation and visibility, not for control.
+A grouping of assets within a team's scenario configuration. Used for organization and visibility, not for control.
 
 **Command**
 A JSON object published on a team's `Uplink` topic to drive a spacecraft. See the [Spacecraft commands](../api-reference/spacecraft-commands.md) reference.
@@ -101,7 +101,7 @@ A spacecraft payload that degrades or denies RF links. Targeted with the [`jamme
 **Link budget**
 The RF calculation performed each tick to decide whether a downlink packet is delivered. Inputs include transmitter power, antenna gain, range, frequency, and active jamming.
 
-**LVLH — Local Vertical / Local Horizontal**
+**LVLH: Local Vertical / Local Horizontal**
 The orbital reference frame whose axes are aligned with the radial vector to the central body and the orbital velocity. Used by [`guidance`](../api-reference/spacecraft-commands.md#guidance) when pointing relative to the orbit, not the inertial frame.
 
 ---
@@ -129,7 +129,7 @@ The bundled React web app under `space-range-operator/`. The reference operator 
 A 6-character alphanumeric string used as the XOR key for all of a team's MQTT traffic. Issued in the scenario configuration. Distinct from the **admin password**.
 
 **Payload (RF)**
-The byte-stream delivered after RF and encryption have been applied. Distinct from the simulation **JSON payload** of a command — context disambiguates.
+The byte-stream delivered after RF and encryption have been applied. Distinct from the simulation **JSON payload** of a command: context disambiguates.
 
 **Ping**
 The standard periodic spacecraft status message. See [Reference → Packet formats → Ping](../reference/packet-formats.md#ping).
@@ -145,9 +145,9 @@ Maneuvering one spacecraft into the proximity of another. Commanded with [`rende
 The per-team JSON RPC channel exposed by the Ground Controller. Distinct from spacecraft uplink commands. See [API Reference → Ground requests](../api-reference/ground-requests.md).
 
 **RF**
-Radio frequency. In Space Range, used to describe the simulated link layer between spacecraft and ground stations, modelled with a link budget and (per team) frequency and Caesar key.
+Radio frequency. In Space Range, used to describe the simulated link layer between spacecraft and ground stations, modeled with a link budget and (per team) frequency and Caesar key.
 
-**RPO — Rendezvous and Proximity Operations**
+**RPO: Rendezvous and Proximity Operations**
 The umbrella term for close-range maneuvering between two spacecraft. Includes [`rendezvous`](../api-reference/spacecraft-commands.md#rendezvous) and [`docking`](../api-reference/spacecraft-commands.md#docking).
 
 ---
@@ -155,7 +155,7 @@ The umbrella term for close-range maneuvering between two spacecraft. Includes [
 ## S
 
 **Scenario**
-The configured world for a session — teams, assets, ground stations, scenario questions, encryption keys. Defined in the scenario JSON.
+The configured world for a session: teams, assets, ground stations, scenario questions, encryption keys. Defined in the scenario JSON.
 
 **Schedule Report**
 The downlinked telemetry message that lists currently scheduled (pending) commands on a spacecraft. Produced in response to [`get_schedule`](../api-reference/spacecraft-commands.md#get_schedule). Sensitive arguments (like raw bytes or new encryption keys) are redacted before transmission.
@@ -211,7 +211,7 @@ A telemetry record produced when a spacecraft receives a (possibly foreign) upli
 **XOR encryption**
 The transport-level cipher used on all team and admin MQTT traffic. Each byte of the payload is XOR-ed against the corresponding byte of the team (or admin) password, repeated cyclically. Cheap, deterministic, and sufficient to keep teams from accidentally reading each other's traffic.
 
-**XTCE — XML Telemetric and Command Exchange**
+**XTCE: XML Telemetric and Command Exchange**
 The CCSDS-standard XML format used by Space Range to describe telemetry packet structures. Each team has its own XTCE schema (delivered via [`get_packet_schemas`](../api-reference/ground-requests.md#get_packet_schemas)) which clients use to parse downlinked Space Packets.
 
 ---

@@ -1,6 +1,6 @@
 # Teams and Assets
 
-Every Space Range scenario is organized around two primary entities — **teams** and **assets**. A team is a logical group of operators who share credentials and topics; an asset is a controllable simulation object (most commonly a spacecraft) that belongs to a single team.
+Every Space Range scenario is organized around two primary entities: **teams** and **assets**. A team is a logical group of operators who share credentials and topics; an asset is a controllable simulation object (most commonly a spacecraft) that belongs to a single team.
 
 This page describes how teams and assets are configured, how they relate to one another, and how they show up on the wire.
 
@@ -10,7 +10,7 @@ This page describes how teams and assets are configured, how they relate to one 
 
 A team is the **unit of identity and segregation** in Space Range. Every operator-side message is scoped to exactly one team, and the team's password is the key used to XOR-encrypt all of its MQTT traffic.
 
-### Team properties
+### Team Properties
 
 Teams are declared in the scenario JSON file under the top-level `teams` array. Each team has:
 
@@ -27,7 +27,7 @@ Teams are declared in the scenario JSON file under the top-level `teams` array. 
 
 Two teams must have **distinct passwords** (otherwise their MQTT traffic decrypts identically) and **distinct frequencies** (otherwise they share an RF channel and can read each other's downlinks once they crack the Caesar key).
 
-### Per-team MQTT topics
+### Per-Team MQTT Topics
 
 Each team has its own slice of the topic tree:
 
@@ -44,9 +44,9 @@ Zendir/SpaceRange/<GAME>/<TEAM>/Response   ← ground-controller replies
 
 Three pieces of data make up a team's "keys to the kingdom":
 
-1. **Password** — a 6-character alphanumeric string used as the XOR key for the team's MQTT traffic.
-2. **Frequency** — a number in MHz used as the RF channel for the team's downlinked telemetry. Required to listen on the right RF stream.
-3. **Caesar key** — an integer 0–255 used to byte-shift telemetry payloads inside the RF stream. Required to decode telemetry.
+1. **Password**: a 6-character alphanumeric string used as the XOR key for the team's MQTT traffic.
+2. **Frequency**: a number in MHz used as the RF channel for the team's downlinked telemetry. Required to listen on the right RF stream.
+3. **Caesar key**: an integer 0–255 used to byte-shift telemetry payloads inside the RF stream. Required to decode telemetry.
 
 Operators must hold all three to participate. The Caesar key and frequency can be **rotated** at runtime by the team using the [`encryption`](../api-reference/spacecraft-commands.md#encryption) spacecraft command; the password is fixed for the duration of a scenario.
 
@@ -59,7 +59,7 @@ An asset is anything in the scenario that the simulation owns and a team can int
 ### Asset IDs
 
 - **Asset IDs are 8-character hex strings** (e.g. `A3F2C014`).
-- They are case-insensitive on the wire — Studio uppercases them before matching — so `a3f2c014` and `A3F2C014` refer to the same asset.
+- They are case-insensitive on the wire. Studio uppercases them before matching, so `a3f2c014` and `A3F2C014` refer to the same asset.
 - IDs are assigned by Studio at scenario load and remain stable for the lifetime of the simulation instance. They change when the scenario is reset (which also changes the [instance ID](simulation-clock.md)).
 
 In commands, the asset ID is sent as the **`Asset`** field of the uplink JSON. In ground-controller responses it appears as **`asset_id`**. (The two key names predate the unified docs; they describe the same thing.)
@@ -79,7 +79,7 @@ Each spacecraft is hosted by a `SpacecraftController` on the Studio side. From t
 
 You can list a team's spacecraft and discover their components via [`list_assets`](../api-reference/ground-requests.md#list_assets) and [`list_entity`](../api-reference/ground-requests.md#list_entity).
 
-### Ground stations
+### Ground Stations
 
 A ground station is the team's physical RF transmitter/receiver on the surface. It has:
 
@@ -88,15 +88,15 @@ A ground station is the team's physical RF transmitter/receiver on the surface. 
 - `gain` (antenna gain, dBi).
 - `bandwidth` (link bandwidth).
 
-Ground stations are not commanded directly — they participate automatically in every link budget computation that involves a team-owned spacecraft. They can be enumerated with [`list_stations`](../api-reference/ground-requests.md#list_stations). Their transmit power and antenna gain feed the [link budget](telemetry.md#the-rf-link-budget) that decides whether a downlink packet reaches the team or is lost.
+Ground stations are not commanded directly: they participate automatically in every link budget computation that involves a team-owned spacecraft. They can be enumerated with [`list_stations`](../api-reference/ground-requests.md#list_stations). Their transmit power and antenna gain feed the [link budget](telemetry.md#the-rf-link-budget) that decides whether a downlink packet reaches the team or is lost.
 
-The ground transmitter can also be commanded to emit raw bytes (separate from any spacecraft uplink) via [`transmit_bytes`](../api-reference/ground-requests.md#transmit_bytes) — useful for SIGINT-style training and red-team injection scenarios.
+The ground transmitter can also be commanded to emit raw bytes (separate from any spacecraft uplink) via [`transmit_bytes`](../api-reference/ground-requests.md#transmit_bytes): useful for SIGINT-style training and red-team injection scenarios.
 
 ---
 
 ## Collections
 
-A **collection** is a named bundle of asset IDs. Each team is wired up to exactly one collection in the scenario JSON, and that collection determines which spacecraft the team controls. Collections are an organisational tool: they let you reuse the same set of spacecraft across multiple team layouts, or hand a single team an entire fleet by referencing one collection.
+A **collection** is a named bundle of asset IDs. Each team is wired up to exactly one collection in the scenario JSON, and that collection determines which spacecraft the team controls. Collections are an organizational tool: they let you reuse the same set of spacecraft across multiple team layouts, or hand a single team an entire fleet by referencing one collection.
 
 ```jsonc
 {
@@ -117,13 +117,13 @@ A **collection** is a named bundle of asset IDs. Each team is wired up to exactl
 }
 ```
 
-In this example, Red Team controls `SC_002` and Blue Team controls `SC_001`. Neither team can command the other's spacecraft — uplinks addressed to a foreign asset are silently rejected at the controller (see [Commands and Scheduling → Validation](commands-and-scheduling.md#validation)).
+In this example, Red Team controls `SC_002` and Blue Team controls `SC_001`. Neither team can command the other's spacecraft: uplinks addressed to a foreign asset are silently rejected at the controller (see [Commands and Scheduling → Validation](commands-and-scheduling.md#validation)).
 
 The full scenario file format, including ground stations and scenario events, is documented in [Guides → Scenario configuration](../guides/scenario-config.md).
 
 ---
 
-## Discovering assets at runtime
+## Discovering Assets at Runtime
 
 You typically don't hard-code asset IDs into your client. Instead, fetch them once after connecting:
 
@@ -162,6 +162,6 @@ ground.request("list_entity", {"asset_id": "A3F2C014"})
 
 ## Next
 
-- [Simulation clock](simulation-clock.md) — how time and instance IDs work.
-- [Encryption](encryption.md) — the password and Caesar key in detail.
-- [Commands and scheduling](commands-and-scheduling.md) — how commands flow from a client to an asset.
+- [Simulation clock](simulation-clock.md): how time and instance IDs work.
+- [Encryption](encryption.md): the password and Caesar key in detail.
+- [Commands and scheduling](commands-and-scheduling.md): how commands flow from a client to an asset.

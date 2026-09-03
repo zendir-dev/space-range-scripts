@@ -481,7 +481,7 @@ def _random_command_for_asset(asset: _Asset, *, allow_reset: bool = True) -> dic
         camera_name = random.choice(imagers).get("name", "")
         options.append(("camera", {
             "target":        camera_name,
-            "fov":           round(random.uniform(10.0, 90.0), 1),
+            "fov":           round(random.uniform(10.0, 60.0), 1),
             "resolution":    random.choice([128, 256, 512, 1024]),
             "monochromatic": random.choice([True, False]),
         }))

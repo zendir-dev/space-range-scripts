@@ -1,6 +1,6 @@
 # Instructor & Admin Guide
 
-The **admin** role in Space Range is the instructor / exercise controller — the person responsible for running a scenario, monitoring all teams, intervening when needed, and grading the result. This guide is a working playbook for that role.
+The **admin** role in Space Range is the instructor / exercise controller: the person responsible for running a scenario, monitoring all teams, intervening when needed, and grading the result. This guide is a working playbook for that role.
 
 It assumes:
 
@@ -12,7 +12,7 @@ If any of those are not true, start at [Getting started → Prerequisites](../ge
 
 ---
 
-## What admin actually controls
+## What Admin Actually Controls
 
 Admin is **not** "team zero". The admin password unlocks a separate API on its own MQTT topic pair:
 
@@ -41,11 +41,11 @@ In other words: **admin gives you visibility and timeline control, not impersona
 
 ---
 
-## Connecting as admin
+## Connecting as Admin
 
 You have the same two options as a team operator:
 
-### Option A — The bundled Operator UI
+### Option A: the Bundled Operator UI
 
 The Operator UI ships an **admin mode**, accessed by URL parameter:
 
@@ -59,7 +59,7 @@ In admin mode the views shift:
 
 | View | What you see |
 | --- | --- |
-| **Map** | Every team's spacecraft and ground tracks, colour-coded by team. |
+| **Map** | Every team's spacecraft and ground tracks, color-coded by team. |
 | **Teams** | Roster of all teams, current scores, asset state. |
 | **Telemetry** | Per-asset link summaries across teams. |
 | **Plots** | Plot any field of any asset across teams. |
@@ -68,7 +68,7 @@ In admin mode the views shift:
 | **Timeline** | Scenario events with countdown timers. |
 | **Settings** | Connection, theme, simulation control (play/pause/speed). |
 
-### Option B — Custom client
+### Option B: Custom Client
 
 A custom admin client connects exactly like a team client, with two changes: the topic root drops the team ID, and the password is the admin password. A minimal Python client:
 
@@ -108,19 +108,19 @@ The `space-range-scripts` package wraps this in an `AdminClient` helper; see `sp
 
 ---
 
-## A pre-flight checklist
+## A Pre-Flight Checklist
 
 Before kicking off an exercise, walk through this checklist. It takes ~5 minutes and prevents most "we restarted three times" sessions.
 
 1. **Studio is running and the right scenario is loaded.** Verify by calling `admin_get_simulation` and checking the broker has the topics for every expected team.
-2. **Every team is in the roster.** Run `admin_list_entities` and confirm the names and IDs match what you'll hand out. If a team is missing, the team's `enabled` flag in the scenario JSON is `false` or its config has a parse error — fix and reload.
+2. **Every team is in the roster.** Run `admin_list_entities` and confirm the names and IDs match what you'll hand out. If a team is missing, the team's `enabled` flag in the scenario JSON is `false` or its config has a parse error: fix and reload.
 3. **Every spacecraft is alive.** For each team, fetch `admin_list_team` and check that `spacecraft[].asset_id` is set (not `null`). A `null` asset_id means the spacecraft definition failed to instantiate.
 4. **Scenario events are visible.** Run `admin_get_scenario_events` and confirm the count matches the JSON. Note the trigger times; they're sim seconds from `t=0`, so plan your real-time launch around them.
 5. **Simulation is paused at `t = 0`.** Check `admin_get_simulation`; if `state != "Paused"` or `current_time > 0`, [stop and reset](#stopping-and-resetting-the-simulation) before handing the keys to the operators.
 6. **Operator credentials are distributed.** Each team needs its team ID + password. The Operator UI's clipboard-copy on Settings → Connection generates a one-link-per-team URL to share.
 7. **Your own admin client is connected and stable.** You don't want to be debugging broker connectivity once the exercise starts.
 
-A scripted version of the checklist (Python) — useful to drop into a cold-start procedure:
+A scripted version of the checklist (Python): useful to drop into a cold-start procedure:
 
 ```python
 sim = admin.request("admin_get_simulation")["args"]
@@ -142,7 +142,7 @@ If anything fails the assertions, fix it before you start.
 
 ---
 
-## Running the simulation
+## Running the Simulation
 
 The simulation has three states, controlled by [`admin_set_simulation`](../api-reference/admin-requests.md#admin_set_simulation):
 
@@ -158,7 +158,7 @@ The simulation has three states, controlled by [`admin_set_simulation`](../api-r
 admin.request("admin_set_simulation", {"state": "Running", "speed": 1.0})
 ```
 
-### Pausing & resuming
+### Pausing & Resuming
 
 ```python
 admin.request("admin_set_simulation", {"state": "Paused"})  # freeze
@@ -168,17 +168,18 @@ admin.request("admin_set_simulation", {"state": "Running"}) # resume
 
 Pausing is non-destructive: pending commands, telemetry buffers, and component state are all preserved.
 
-### Changing the simulation speed
+### Changing the Simulation Speed
 
 ```python
 admin.request("admin_set_simulation", {"speed": 4.0})
 ```
 
-`speed` is sim-seconds per real-second. Allowed values vary slightly by build, but `0.25, 0.5, 1.0, 2.0, 4.0` are universally supported. Operators should be told before you change speed mid-exercise — fast forward changes the cadence of telemetry they're watching.
+`speed` is sim-seconds per real-second. Allowed values vary slightly by build, but `0.25, 0.5, 1.0, 2.0, 4.0` are universally supported. Operators should be told before you change speed mid-exercise: fast forward changes the cadence of telemetry they're watching.
 
-### Stopping and resetting the simulation
+### Stopping and Resetting the Simulation
 
-> **`Stopped` is destructive. Use only when you mean it.** It triggers a full reset: all asset state, schedules, queued telemetry, and tracked events are wiped, and the `instance` ID increments. Operators must re-fetch their assets and XTCE schemas after a reset.
+> [!WARNING]
+> `Stopped` triggers a full reset. It clears all asset state, schedules, queued telemetry, and tracked events, and increments the `instance` ID. Operators must fetch their assets and XTCE schemas again after a reset.
 
 ```python
 admin.request("admin_set_simulation", {"state": "Stopped"})
@@ -196,19 +197,19 @@ admin.request("admin_set_simulation", {"state": "Running",
 
 Operators will see a session-clock discontinuity (sometimes a small backwards step into the new instance), then their UIs will repopulate against the fresh state.
 
-### Scripted events vs. live commands
+### Scripted Events vs. Live Commands
 
-Scenario events fire on the simulation timeline regardless of pause/resume — they're scheduled in **simulation time**, not wall time. So pausing for ten real minutes does *not* delay the next scripted event.
+Scenario events fire on the simulation timeline regardless of pause/resume: they're scheduled in **simulation time**, not wall time. So pausing for ten real minutes does *not* delay the next scripted event.
 
 If the next scripted event isn't due for an hour of sim time and you don't want to wait, increase `speed` until you reach the trigger time, then drop back to `1.0`.
 
 ---
 
-## Watching what's happening
+## Watching What's Happening
 
 The `Admin/Response` topic is a firehose. There are three things on it you should keep an eye on:
 
-### 1. Live event push: `admin_event_triggered`
+### 1. Live Event Push: `admin_event_triggered`
 
 Every time **any** team triggers a tracked event (sent a command, executed a command, captured an image, jammed something, …), Studio pushes one of these to `Admin/Response`:
 
@@ -237,11 +238,11 @@ Use it as the primary feed for your "what's going on" view. The Operator UI's ad
 - `safe_entered`, `safe_exited`, `rebooted`
 - `question_answered`
 
-### 2. Per-team scoring
+### 2. Per-Team Scoring
 
 If the scenario defines `questions[]`, each correct submission triggers a scoring update. The Operator UI's admin **Teams** view shows the running totals; programmatically, you can poll [`admin_query_events`](../api-reference/admin-requests.md#admin_query_events) with `type: "question_answered"`.
 
-### 3. Historical drill-down
+### 3. Historical Drill-Down
 
 For "what did Red Team do an hour ago?" investigations, query the database directly:
 
@@ -261,13 +262,13 @@ admin.request("admin_query_data", {
 })
 ```
 
-Both return Studio's persisted records, not just what's currently in memory — useful for after-action reports.
+Both return Studio's persisted records, not just what's currently in memory: useful for after-action reports.
 
 ---
 
-## Common interventions
+## Common Interventions
 
-### A team's spacecraft is bricked
+### A Team's Spacecraft Is Bricked
 
 Symptoms: no Pings, no link, no command acks, regardless of `downlink` retries.
 
@@ -280,7 +281,7 @@ Without impersonating the team, your options are:
 - **Reset the simulation.** Nuclear option; only when one team's recovery is worth disrupting everyone else.
 - **Hand the team their own escape hatch.** Tell them to use [`set_telemetry`](../api-reference/ground-requests.md#set_telemetry) on the ground side to walk through plausible `(key, frequency)` combinations until they recover.
 
-### A team is jamming everyone unintentionally
+### A Team Is Jamming Everyone Unintentionally
 
 A misfired `jammer` command can take out the entire shared band. Diagnose with `admin_list_entities`'s asset listing (the team's spacecraft will report `jammer.is_active = true`) and either:
 
@@ -288,7 +289,7 @@ A misfired `jammer` command can take out the entire shared band. Diagnose with `
 - Wait for the timer-bound jamming to expire.
 - Pause the simulation while you sort it out.
 
-### A scripted event needs to be skipped
+### A Scripted Event Needs to Be Skipped
 
 You cannot delete or reorder a scripted event at runtime. You can:
 
@@ -296,7 +297,7 @@ You cannot delete or reorder a scripted event at runtime. You can:
 - **Pause around it.** Pausing freezes the sim clock; the event still fires on the next tick after resume.
 - **Edit the JSON and reset.** Toggle `Enabled: false` for the event, save, reload, hit `Stopped → Running`. Disruptive; use only when planning the next round.
 
-### Mid-session reload
+### Mid-Session Reload
 
 To swap scenarios mid-session, you must:
 
@@ -308,13 +309,13 @@ There is no zero-downtime scenario hotswap.
 
 ---
 
-## Distributing credentials
+## Distributing Credentials
 
 A practical pattern for handing out team credentials:
 
-1. From the Operator UI, connect once to each team (in admin mode you can switch to a team's view if you also have its password — typically you'll have all of them as the instructor).
+1. From the Operator UI, connect once to each team (in admin mode you can switch to a team's view if you also have its password: typically you'll have all of them as the instructor).
 2. Click the clipboard icon next to **Connection Settings**. The UI copies a URL of the form `?server=...&game=...&team=...&password=...`.
-3. Send each URL via the team's chosen channel (private chat, individual emails, in-room handout). **Don't** post these in shared channels — anyone with the URL can play as that team.
+3. Send each URL via the team's chosen channel (private chat, individual emails, in-room handout). **Don't** post these in shared channels: anyone with the URL can play as that team.
 
 If you're running an exercise with strict secrecy, distribute team passwords on paper and let operators type them in by hand; never round-trip them through email or shared chat.
 
@@ -339,14 +340,14 @@ for t in teams:
 
 ---
 
-## After-action: extracting results
+## After-Action: Extracting Results
 
 When the exercise is over, what you usually want is:
 
-1. **Final score per team** — call `admin_query_events` filtered by `type: "question_answered"` and aggregate.
-2. **Command history** — `admin_query_events` for each team filtered by command-related types.
-3. **Telemetry over time** — `admin_query_data` per asset, full time range, all fields.
-4. **Captured imagery** — these aren't in the structured database; they'll be in your team operators' clients (the Operator UI's **Image** view) or in any custom storage you configured. Make sure operators export imagery before disconnecting if you need it for review.
+1. **Final score per team**: call `admin_query_events` filtered by `type: "question_answered"` and aggregate.
+2. **Command history**: `admin_query_events` for each team filtered by command-related types.
+3. **Telemetry over time**: `admin_query_data` per asset, full time range, all fields.
+4. **Captured imagery**: these aren't in the structured database; they'll be in your team operators' clients (the Operator UI's **Image** view) or in any custom storage you configured. Make sure operators export imagery before disconnecting if you need it for review.
 
 Bundle all of those into a per-team report; your scenario authors will thank you for the feedback when designing the next iteration.
 
@@ -354,7 +355,7 @@ Bundle all of those into a per-team report; your scenario authors will thank you
 
 ## Next
 
-- [Operator UI guide](operator-ui-guide.md) — the views your operators see and the workflow you'll observe them following.
-- [Scenario configuration](scenario-config.md) — the JSON file backing every exercise.
-- [API reference → Admin requests](../api-reference/admin-requests.md) — the full set of admin calls.
-- [Troubleshooting & FAQ](troubleshooting.md) — diagnostic playbooks for common issues.
+- [Operator UI guide](operator-ui-guide.md): the views your operators see and the workflow you'll observe them following.
+- [Scenario configuration](scenario-config.md): the JSON file backing every exercise.
+- [API reference → Admin requests](../api-reference/admin-requests.md): the full set of admin calls.
+- [Troubleshooting & FAQ](troubleshooting.md): diagnostic playbooks for common issues.

@@ -2,41 +2,47 @@
 
 A Space Range **scenario** is a single JSON file describing everything Studio needs to spin up an exercise: simulation parameters, the universe, ground stations, teams and their credentials, spacecraft and their components, ground objects (vessels, decals, text), scripted failure events, and (optionally) Q&A questions for scoring.
 
-This guide is the **narrative tour** of that file — short enough to read end-to-end, focused on the parts authors edit most often. For the **complete field-by-field specification** (every component class, every event-`Data` key, every question scoring rule, recipes, and an agent checklist), see the [Scenario authoring reference](../scenarios/README.md).
+This guide is the **narrative tour** of that file: short enough to read end-to-end, focused on the parts authors edit most often. For the **complete field-by-field specification** (every component class, every event-`Data` key, every question scoring rule, recipes, and an agent checklist), see the [Scenario authoring reference](../scenarios/README.md).
 
 The shipped reference scenario at `space-range-scripts/scenarios/Orbital Intel/orbital_intel.json` is a good starting point; quote it freely.
 
 ---
 
-## File location & layout
+## File Location & Layout
 
-Scenario JSONs live in Studio's `Scenarios` directory (the location varies by build — check your Studio install). Filenames are usually short snake-case identifiers (`orbital_intel.json`). The matching scripted-scenario Python file (e.g. `orbital_intel.py`) sits alongside it; see [The scripted-scenario companion](#the-scripted-scenario-companion) at the end.
+Scenario JSONs live in Studio's `Scenarios` directory (the location varies by build: check your Studio install). Filenames are usually short snake-case identifiers (`orbital_intel.json`). The matching scripted-scenario Python file (e.g. `orbital_intel.py`) sits alongside it; see [The scripted-scenario companion](#the-scripted-scenario-companion) at the end.
 
 The top-level shape of every scenario is:
 
 ```json
 {
+  "metadata":        { ... },
   "simulation":      { ... },
   "universe":        { ... },
   "ground_stations": { ... },
   "teams":           [ ... ],
   "assets": {
     "space":         [ ... ],
-    "collections":   [ ... ]
+    "collections":   [ ... ],
+    "neutral":       [ ... ]
   },
+  "docking":         [ ... ],
   "objects": {
-    "ground":        [ ... ]
+    "ground":        [ ... ],
+    "space":         [ ... ]
   },
   "events":          [ ... ],
   "questions":       [ ... ]
 }
 ```
 
-Every section is optional except `teams` and `assets` — without those the scenario can be loaded but no team can do anything. A minimal scenario is ~50 lines; a competition-grade scenario like `orbital_intel.json` is ~1300 lines.
+Every section is optional except `teams` and `assets`: without those the scenario can be loaded but no team can do anything. A minimal scenario is ~50 lines; a competition-grade scenario like `orbital_intel.json` is ~1300 lines.
+
+`metadata` can provide `name`, `description`, and a Markdown `brief` for operators. `assets.neutral`, `docking`, and `objects.space` support shared craft, initial docking/interconnect links, and passive orbital targets respectively; the [deep scenario reference](../scenarios/README.md) documents those advanced sections.
 
 ---
 
-## `simulation` — global timeline & solver
+## `simulation`: Global Timeline & Solver
 
 Controls how the simulation clock advances and what dynamics integrator is used.
 
@@ -58,9 +64,11 @@ Controls how the simulation clock advances and what dynamics integrator is used.
 | `integrator` | `string` | One of `Euler`, `RK4`. `Euler` is fine for most exercises; switch to `RK4` for long propagation accuracy. |
 | `end_time` | `number` | Hard stop in sim seconds. `0.0` means "run forever / until reset". |
 
+Set `end_time` explicitly. If the key is omitted, Studio uses a `3600.0` second hard stop; only an explicit `0.0` disables it.
+
 ---
 
-## `universe` — environment switches
+## `universe`: Environment Switches
 
 Toggles for the simulated environment that the spacecraft react to.
 
@@ -78,16 +86,18 @@ Toggles for the simulated environment that the spacecraft react to.
 | Field | Type | Description |
 | --- | --- | --- |
 | `atmosphere` | `bool` | If `true`, atmospheric drag and visual scattering apply. Off by default at typical operating altitudes. |
-| `magnetosphere` | `bool` | If `true`, Earth's magnetic field is modelled (relevant to magnetometer telemetry and magnetorquer-style components). |
+| `magnetosphere` | `bool` | If `true`, Earth's magnetic field is modeled (relevant to magnetometer telemetry and magnetorquer-style components). |
 | `gps` | `bool` | If `true`, the GPS sensor returns valid fixes. Set `false` to model a GPS-denied scenario. |
-| `cloud_opacity`, `cloud_contrast` | `number` | Visual settings for the rendered Earth — they affect how bright and how cloudy imagery from the camera looks. `0–1` opacity, contrast around `1.0–3.0`. |
-| `ambient_light` | `number` | Scene ambient light. Higher values brighten dark sides for visualisation; doesn't affect physics. |
+| `cloud_opacity`, `cloud_contrast` | `number` | Visual settings for the rendered Earth: they affect how bright and how cloudy imagery from the camera looks. `0–1` opacity, contrast around `1.0–3.0`. |
+| `ambient_light` | `number` | Scene ambient light. Higher values brighten dark sides for visualization; doesn't affect physics. |
 
-These values change the *experience* of the scenario — they do not change command/telemetry semantics.
+These values change the *experience* of the scenario: they do not change command/telemetry semantics.
+
+Both `magnetosphere` and `gps` default to `false` when omitted, so enable them explicitly when the exercise depends on either system.
 
 ---
 
-## `ground_stations` — receiving network
+## `ground_stations`: Receiving Network
 
 The pool of ground stations available to teams.
 
@@ -110,11 +120,11 @@ The pool of ground stations available to teams.
 | `max_range` | `number` (km) | Maximum range over which the station can close a link. `0` means unlimited (link budget alone gates it). |
 | `scale` | `number` | Visual scale factor for ground-station markers in the world view. |
 
-Every ground station defined here is shared by every team — there is no per-team ground network. To restrict which station a team uses, control it operationally (e.g. let the team choose one with [`guidance` mode `ground`](../api-reference/spacecraft-commands.md#guidance)) rather than configurationally.
+Every ground station defined here is shared by every team: there is no per-team ground network. To restrict which station a team uses, control it operationally (e.g. let the team choose one with [`guidance` mode `ground`](../api-reference/spacecraft-commands.md#guidance)) rather than configurationally.
 
 ---
 
-## `teams` — the units of identity
+## `teams`: the Units of Identity
 
 Every team in the scenario gets one entry. The order doesn't matter; the IDs do.
 
@@ -142,22 +152,22 @@ Every team in the scenario gets one entry. The order doesn't matter; the IDs do.
 | `key` | `integer` | `0` | Initial Caesar key (`0–255`). Teams can rotate this at runtime via [`encryption`](../api-reference/spacecraft-commands.md#encryption). |
 | `frequency` | `integer` (MHz) | `0` | Initial RF carrier frequency. Pick distinct values per team to avoid cross-talk. |
 | `collection` | `string` | `""` | Name of an entry in `assets.collections` listing the spacecraft this team controls. Empty = no spacecraft. |
-| `color` | `string` | `"#FFFFFF"` | Hex RGB. Used for ground tracks, asset markers, plot colours. |
+| `color` | `string` | `"#FFFFFF"` | Hex RGB. Used for ground tracks, asset markers, plot colors. |
 
 **Picking team values, in practice:**
 
-- Use random alphanumeric passwords (no patterns, no shared substrings between teams). The XOR layer is weak; defence in depth is to make passwords un-guessable.
+- Use random alphanumeric passwords (no patterns, no shared substrings between teams). The XOR layer is weak; defense in depth is to make passwords un-guessable.
 - Spread frequencies across the band (`468–901 MHz` is the typical range used by `orbital_intel.json`). Closer-spaced frequencies make jamming exercises more interesting; widely-spaced frequencies make accidents less likely.
-- Caesar keys can collide between teams without consequence — they're scoped per-team. But keep them random anyway.
+- Caesar keys can collide between teams without consequence: they're scoped per-team. But keep them random anyway.
 - Reserve small IDs (e.g. `111111`, `222222`) for tutorial/testing scenarios; production scenarios should use larger random IDs to avoid muscle-memory mistakes.
 
 ---
 
-## `assets` — spacecraft and their hardware
+## `assets`: Spacecraft and Their Hardware
 
 Two arrays: `space` (the spacecraft definitions) and `collections` (the lookup tables that map team `collection` strings to spacecraft IDs).
 
-### `assets.space[]` — spacecraft
+### `assets.space[]`: Spacecraft
 
 Each spacecraft is the most complex object in the scenario. The shape:
 
@@ -179,23 +189,24 @@ Each spacecraft is the most complex object in the scenario. The shape:
 | `id` | Unique string referenced by `assets.collections[].space_assets`. The 8-character hex `asset_id` you see at runtime is **derived** from this. |
 | `name` | Display name. The Operator UI and ground-controller responses strip the team name prefix from this for cleanliness. |
 | `orbit` | Initial orbit (Keplerian). `values` is `[a (km), e, i (deg), Ω (deg), ω (deg), ν (deg)]`; `offset` is a small per-axis perturbation to avoid identical co-located twins. |
-| `physics` | Mass, centre-of-mass, inertia tensor, and optional initial attitude / body rate. Drives attitude dynamics. |
+| `physics` | Mass, center-of-mass, inertia tensor, and optional initial attitude / body rate. Drives attitude dynamics. |
 | `visualization` | The Unreal mesh path and scale used to render the spacecraft. `hide: true` hides it visually but keeps it simulating. |
 | `controller` | Per-spacecraft tuning (see below). |
-| `power` | Optional electrical-bus wiring between solar panels, batteries, and jammer. See [spacecraft.md — power](../scenarios/spacecraft.md#power--electrical-bus). |
+| `power` | Optional electrical-bus wiring between solar panels, batteries, and jammer. See [spacecraft.md: power](../scenarios/spacecraft.md#power--electrical-bus). |
 | `components` | The on-board hardware list. |
 
-#### `controller`
+### `controller`
 
 ```json
 "controller": {
   "safe_fraction":      0.1,
   "capture_tax":        0.001,
-  "downlink_tax":       0.01,
+  "downlink_tax":       0.001,
   "ping_interval":      20.0,
-  "reset_interval":     60.0,
-  "jamming_multiplier": 100.0,
-  "enable_rpo_software":         false
+  "reset_interval":     300.0,
+  "jamming_multiplier": 1.0,
+  "enable_rpo_software": false,
+  "enable_intercept":    false
 }
 ```
 
@@ -207,20 +218,21 @@ Each spacecraft is the most complex object in the scenario. The shape:
 | `ping_interval` | Sim seconds between auto-Pings. Affects how quickly teams see command acks. |
 | `reset_interval` | Sim seconds the spacecraft is offline after a `reset` (or after [`encryption`](../api-reference/spacecraft-commands.md#encryption) which causes a reboot). |
 | `jamming_multiplier` | Scales the per-watt RF interference produced by the spacecraft's jammer payload. |
-| `enable_rpo_software` | `true` installs RPO flight software so [`rendezvous`](../api-reference/spacecraft-commands.md#rendezvous) can run. If the spacecraft has thrusters, force commands are allocated onto a `Thruster Array`; otherwise SpaceRange uses a dedicated `External Force Torque`. [`docking`](../api-reference/spacecraft-commands.md#docking) depends on `Docking Adapter` components, not this flag. |
+| `enable_rpo_software` | `true` installs rendezvous and proximity operations (RPO) flight software so [`rendezvous`](../api-reference/spacecraft-commands.md#rendezvous) can run. If the spacecraft has thrusters, force commands are allocated onto a `Thruster Array`; otherwise SpaceRange uses a dedicated `External Force Torque`. [`docking`](../api-reference/spacecraft-commands.md#docking) depends on `Docking Adapter` components, not this flag. |
+| `enable_intercept` | `true` records overheard uplinks for signals intelligence (SIGINT) and replay. It defaults to `false`; set it explicitly on spacecraft that need intercept records. |
 
-#### `power`
+### `power`
 
 Optional. The `power` object holds the on-board bus:
 
-- **`monitor`** — when `true`, attaches a `PowerMonitor` behaviour and downlinks aggregate EPS telemetry (`PowerMonitorMessage`) for plotting.
-- **`bus`** — on-board connections (`source_component`, `source_terminal`, `target_component`, `target_terminal`). Component names must match `components[].name`. Bus-capable classes include `Solar Panel`, `Battery`, `Power Switch`, `Power Fuse`, `Power Diode`, `Power Current Limiter`, `Power Voltage Regulator`, `Power Sink`, `Power Interconnect`, and payload types that participate in the bus (e.g. `Camera`, `Transmitter`). See [Power bus network components](../scenarios/components.md#power-bus-network-components). If `bus` is omitted or empty, Studio auto-connects solar panels → first battery and battery → jammer (when those parts exist).
+- **`monitor`**: when `true`, attaches a `PowerMonitor` behavior and downlinks aggregate electrical power system (EPS) telemetry (`PowerMonitorMessage`) for plotting.
+- **`bus`**: on-board connections (`source_component`, `source_terminal`, `target_component`, `target_terminal`). Component names must match `components[].name`. Bus-capable classes include `Solar Panel`, `Battery`, `Power Switch`, `Power Fuse`, `Power Diode`, `Power Current Limiter`, `Power Voltage Regulator`, `Power Sink`, `Power Interconnect`, and payload types that participate in the bus (e.g. `Camera`, `Transmitter`). See [Power bus network components](../scenarios/components.md#power-bus-network-components). If `bus` is omitted or empty, Studio auto-connects solar panels → first battery and battery → jammer (when those parts exist).
 
 Cross-spacecraft power links (between `Power Interconnect` components on different hulls) are declared in the top-level [`docking`](../scenarios/spacecraft.md#docking-start-the-scenario-already-docked) block, not inside `power`.
 
-Full rules, restrictions, and docking guidance: [spacecraft.md — power](../scenarios/spacecraft.md#power--electrical-bus) and [Power interconnects](../scenarios/spacecraft.md#power-interconnects).
+Full rules, restrictions, and docking guidance: [spacecraft.md: power](../scenarios/spacecraft.md#power--electrical-bus) and [Power interconnects](../scenarios/spacecraft.md#power-interconnects).
 
-#### `components[]`
+### `components[]`
 
 Each entry instantiates one piece of on-board hardware. The `class` decides which simulation module is constructed; the `name` is what teams use in the `target` field of commands.
 
@@ -232,6 +244,7 @@ Each entry instantiates one piece of on-board hardware. The `class` decides whic
   "enabled":  true,
   "position": [0.0, -0.36, -0.16],
   "rotation": [90.0, 0.0, 0.0],
+  "scale":    1.0,
   "data":     { "Mass": 5.0 }
 }
 ```
@@ -242,7 +255,8 @@ Each entry instantiates one piece of on-board hardware. The `class` decides whic
 | `name` | `string` | Friendly name. **Must be unique** within a spacecraft. Teams reference it via `target` in commands. Case-insensitive at runtime. |
 | `mesh` | `string` | Unreal mesh path, or `"None"` to use the class default. |
 | `enabled` | `bool` | If `false`, the component is loaded but inactive (good for failure events that flip it on later). |
-| `position`, `rotation` | `number[3]` | Local placement. `position` in metres relative to spacecraft origin; `rotation` in degrees (Yaw/Pitch/Roll). |
+| `position`, `rotation` | `number[3]` | Local placement. `position` in meters relative to spacecraft origin; `rotation` in degrees (Yaw/Pitch/Roll). |
+| `scale` | `number` | Visual scale of the component; default `1.0`. |
 | `data` | `object` | Class-specific tuning. `Mass` is universal (kg). Class-specific keys are documented in Studio's component reference. |
 
 **Most-used component classes and what's in their `data`:**
@@ -257,11 +271,11 @@ Each entry instantiates one piece of on-board hardware. The `class` decides whic
 | `Storage` | `Mass` (capacity scales with mass in default builds) |
 | `Jammer` | `Power` (W), `Antenna Gain` (dB), `Lookup` (RF pattern CSV file) |
 | `Computer`, `GPS Sensor`, `EM Sensor`, `Magnetometer`, `Gyroscope`, `External Force Torque` | `Mass` |
-| `Laser Range Finder` | `Operating Range`, `Range Accuracy Constant` |
-| `Docking Adapter` | `Mass`, `Half Cone Angle` (deg) |
-| `Text` | `Text` (string), `Color` (hex), `Scale`. Pure visual/labelling component. |
+| `Laser Range Finder` | `Operating Range`, `Range Accuracy Constant`, `Range Accuracy Proportional`, `Sample Rate`, `Capture On Tick` |
+| `Docking Adapter` | `Mass`, `Capture Distance`, `Capture Angle`, `Capture Roll Angle`, `Separation Force`, `Separation Duration` |
+| `Text` | `Text` (string), `Font Size`; use component-level `scale` for size. Color-valued `data` is not currently applied by the scenario loader. |
 
-### `assets.collections[]` — team-to-asset lookup
+### `assets.collections[]`: Team-to-Asset Lookup
 
 ```json
 "collections": [
@@ -275,11 +289,11 @@ Each entry instantiates one piece of on-board hardware. The `class` decides whic
 | `id` | The string referenced by a team's `collection` field. |
 | `space_assets[]` | Spacecraft `id`s in this collection. The team controls every spacecraft listed here. |
 
-A team can have multiple spacecraft (just list them all). A spacecraft can belong to multiple collections only if you genuinely want multiple teams to share it — usually you don't, so keep collections one-to-one.
+A team can have multiple spacecraft by listing them all. A spacecraft can belong to multiple collections when multiple teams must share it, but collections are usually one-to-one.
 
 ---
 
-## `objects.ground[]` — ground decorations
+## `objects.ground[]`: Ground Decorations
 
 Visual ground objects: vessels, text labels, anything that needs to appear at a lat/lon.
 
@@ -291,7 +305,7 @@ Visual ground objects: vessels, text labels, anything that needs to appear at a 
   "planet":    "Earth",
   "latitude":  12.1,
   "longitude": 44.2,
-  "altitude":  1,
+  "altitude":  0.001,
   "scale":     120,
   "color":     "#00FF00",
   "data":      { "heading": 76.0, "speed": 10.0 }
@@ -304,18 +318,18 @@ Visual ground objects: vessels, text labels, anything that needs to appear at a 
 | `type` | `vessel`, `text`, or any other supported ground-object class. |
 | `name` | Display name. |
 | `planet` | Body the object sits on (`Earth`, `Moon`, `Mars`). |
-| `latitude`, `longitude`, `altitude` | Position. Altitude in metres above the surface. |
+| `latitude`, `longitude`, `altitude` | Position. Altitude is authored in kilometers; `0.001` is one meter above the surface. |
 | `scale` | Visual size factor. |
-| `color` | Hex RGB. For `vessel`, this is the ship's hull colour. |
+| `color` | Hex RGB. For `vessel`, this is the ship's hull color. |
 | `data` | Type-specific values: `heading` (deg) and `speed` (m/s) for vessels; `text` (string) for `type: text`. |
 
-Ground objects are **passive** — they don't generate telemetry, can't be commanded, and aren't part of the team configuration. They exist to give imagery exercises something realistic to find.
+Ground objects are **passive**: they don't generate telemetry, can't be commanded, and aren't part of the team configuration. They exist to give imagery exercises something realistic to find.
 
 ---
 
-## `objects.space[]` — passive orbital objects
+## `objects.space[]`: Passive Orbital Objects
 
-Bare spacecraft in orbit with **no controller and no components** — debris, spent rocket bodies, defunct satellites, or visual markers.
+Bare spacecraft in orbit with **no controller and no components**: debris, spent rocket bodies, defunct satellites, or visual markers.
 
 ```json
 {
@@ -346,11 +360,11 @@ Bare spacecraft in orbit with **no controller and no components** — debris, sp
 | `color` | Hex RGB. |
 | `reflectivity` | Material reflectivity (`0.0`–`1.0`, default `0.5`). |
 
-Like ground objects, space objects are **passive** — no telemetry, no commands, not part of any team. See [space-objects.md](../scenarios/space-objects.md) for full details.
+Like ground objects, space objects are **passive**: no telemetry, no commands, not part of any team. See [space-objects.md](../scenarios/space-objects.md) for full details.
 
 ---
 
-## `events[]` — scripted failures and anomalies
+## `events[]`: Scripted Failures and Anomalies
 
 Studio fires these on the simulation timeline. They're how an instructor injects scripted hardware failures or environmental events without having to be at the controls.
 
@@ -397,13 +411,13 @@ GPS events configure spoofing regions and jamming sources on the global GPS subs
 
 Cyber events configure APID-targeted telemetry byte overlays (for packet-forensics/cyber scenarios); see [Scenario reference → events](../scenarios/events.md#cyber-events) for full schema and examples.
 
-When you're authoring events, fire one at a time during testing — failure cascades are easy to write and hard to debug. To list every event in the loaded scenario at runtime, an admin can call [`admin_get_scenario_events`](../api-reference/admin-requests.md#admin_get_scenario_events).
+When you're authoring events, fire one at a time during testing: failure cascades are easy to write and hard to debug. To list every event in the loaded scenario at runtime, an admin can call [`admin_get_scenario_events`](../api-reference/admin-requests.md#admin_get_scenario_events).
 
 ---
 
-## `questions[]` — Q&A scoring
+## `questions[]`: Q&A Scoring
 
-Optional. If present, scenarios become "graded" — teams can answer questions via [`list_questions`](../api-reference/ground-requests.md#list_questions) / [`submit_answer`](../api-reference/ground-requests.md#submit_answer), and per-team scores are tracked.
+Optional. If present, scenarios become "graded": teams can answer questions via [`list_questions`](../api-reference/ground-requests.md#list_questions) / [`submit_answer`](../api-reference/ground-requests.md#submit_answer), and per-team scores are tracked.
 
 ```json
 {
@@ -426,11 +440,11 @@ Optional. If present, scenarios become "graded" — teams can answer questions v
 | `title` | `string` | Short prompt. |
 | `description` | `string` | Long-form explanation shown to the team. |
 | `type` | `string` | `text`, `number`, `select`, or `checkbox`. Selects how `answer` is interpreted. |
-| `answer` | `object` | The grading config — see below per-type. |
+| `answer` | `object` | The grading config: see below per-type. |
 
 ### `answer` by `type`
 
-#### `number`
+### `number`
 
 ```json
 "answer": { "value": 7, "tolerance": 0, "unit": "deg", "reason": "...", "score": 4 }
@@ -444,7 +458,7 @@ Optional. If present, scenarios become "graded" — teams can answer questions v
 | `reason` | Feedback shown to the team after submission. |
 | `score` | Points awarded for a correct answer. |
 
-#### `text`
+### `text`
 
 ```json
 "answer": { "value": "Caesar cipher", "score": 5, "reason": "..." }
@@ -452,7 +466,7 @@ Optional. If present, scenarios become "graded" — teams can answer questions v
 
 `value` is matched case-insensitively against `submit_answer`'s `value` field.
 
-#### `select`
+### `select`
 
 ```json
 "answer": {
@@ -465,7 +479,7 @@ Optional. If present, scenarios become "graded" — teams can answer questions v
 
 `options[]` is the list shown to the team. `value` is the **index** of the correct option. `reason` is an array of the same length so each option can have its own feedback string.
 
-#### `checkbox`
+### `checkbox`
 
 Like `select`, but `value` is an **array of indices** representing the correct combination. Submissions with the same set of indices (in any order) score.
 
@@ -482,9 +496,9 @@ Each team can answer each question once. Re-submission attempts are rejected (se
 
 ---
 
-## The scripted-scenario companion
+## The Scripted-Scenario Companion
 
-Many scenarios pair the JSON with a Python script (`<scenario>.py`) that schedules commands on behalf of a team — typically a "rogue" or "constructive agent" team that the live operators are reacting to. The script:
+Many scenarios pair the JSON with a Python script (`<scenario>.py`) that schedules commands on behalf of a team: typically a "rogue" or "constructive agent" team that the live operators are reacting to. The script:
 
 - Loads its config from the **same JSON** by matching scenario name.
 - Connects via the bundled `space-range-scripts` framework using the team password from the JSON.
@@ -512,13 +526,13 @@ scheduler.add_event(
 scenario.run()
 ```
 
-The script is **optional** — you can run a scenario from the JSON alone and have all teams be human-operated. The script is the right answer when you want a deterministic adversary that runs every time you start the scenario.
+The script is **optional**: you can run a scenario from the JSON alone and have all teams be human-operated. The script is the right answer when you want a deterministic adversary that runs every time you start the scenario.
 
 A full description of the framework is intentionally out of scope here; see `space-range-scripts/README.md` for its API.
 
 ---
 
-## Iterating on a scenario
+## Iterating on a Scenario
 
 A practical workflow when authoring or editing a scenario:
 
@@ -526,7 +540,7 @@ A practical workflow when authoring or editing a scenario:
 2. Edit `simulation`, `universe`, `ground_stations` to set the world. These rarely change once set.
 3. Build out `teams` and `assets`. Get one team flying with one spacecraft first.
 4. Add `objects.ground[]` decorations as the scenario narrative requires.
-5. Add `events[]` last — they're the easiest to break things with. Test each event individually by setting a small `Time` and watching the admin event stream.
+5. Add `events[]` last: they're the easiest to break things with. Test each event individually by setting a small `Time` and watching the admin event stream.
 6. Add `questions[]` only after the rest of the scenario is stable.
 7. Lint your JSON. Studio's parser is strict; trailing commas and bare keys will fail to load.
 
@@ -543,7 +557,7 @@ If any of those don't match, the JSON did not load fully; fix the scenario file 
 
 ## Next
 
-- [Scenario authoring reference](../scenarios/README.md) — the deep, per-section specification, with full component tables, event recipes, question-scoring rules, and an agent checklist.
-- [Instructor & admin guide](instructor-admin.md) — running a scenario you've authored, with admin tools.
-- [API reference → Admin requests](../api-reference/admin-requests.md) — programmatic access to the same controls.
-- [Concepts → Teams and assets](../concepts/teams-and-assets.md) — the runtime view of what you configure here.
+- [Scenario authoring reference](../scenarios/README.md): the deep, per-section specification, with full component tables, event recipes, question-scoring rules, and an agent checklist.
+- [Instructor & admin guide](instructor-admin.md): running a scenario you've authored, with admin tools.
+- [API reference → Admin requests](../api-reference/admin-requests.md): programmatic access to the same controls.
+- [Concepts → Teams and assets](../concepts/teams-and-assets.md): the runtime view of what you configure here.

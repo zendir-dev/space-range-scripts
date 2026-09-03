@@ -1,6 +1,6 @@
 # Ground Requests
 
-The ground controller exposes a request/response API for everything that isn't a spacecraft uplink: discovering assets, querying link budgets, transmitting raw bytes, talking to the AI assistant, and submitting scenario answers. This page documents every request type the team-side ground controller accepts.
+The ground controller exposes a request/response application programming interface (API) for everything that is not a spacecraft uplink: discovering assets, querying link budgets, transmitting raw bytes, talking to the artificial intelligence (AI) assistant, and submitting scenario answers. This page documents every request type the team-side ground controller accepts.
 
 For the topic plumbing, see [MQTT topics](mqtt-topics.md). For the underlying simulation concepts, see [Concepts → Teams and assets](../concepts/teams-and-assets.md).
 
@@ -15,11 +15,11 @@ Zendir/SpaceRange/<GAME>/<TEAM>/Response    (Studio → client)
 
 Both topics are XOR-encrypted with the team password.
 
-The `Response` topic also receives **unsolicited** push messages — `event_triggered` and `chat_response`. Dispatch by the `type` field, not by request order.
+The `Response` topic also receives **unsolicited** push messages: `event_triggered` and `chat_response`. Dispatch by the `type` field, not by request order.
 
 ---
 
-## Request envelope
+## Request Envelope
 
 ```json
 {
@@ -32,10 +32,12 @@ The `Response` topic also receives **unsolicited** push messages — `event_trig
 | Field | Type | Description |
 | --- | --- | --- |
 | `type` | `string` | The request type. See the index below. Case-insensitive on the wire. |
-| `req_id` | `integer` | Caller-assigned correlation ID. The matching response carries the same value. Use `0` if you don't need to correlate; reuse is allowed. |
+| `req_id` | `integer` | Caller-assigned correlation ID. The matching response carries the same value. Use `0` when correlation is unnecessary; reuse is allowed. |
 | `args` | `object` | Type-specific arguments. Omit the field if a request takes no arguments. |
 
-## Response envelope
+---
+
+## Response Envelope
 
 ```json
 {
@@ -55,39 +57,39 @@ The `Response` topic also receives **unsolicited** push messages — `event_trig
 | `success` | `boolean` | `true` if the request succeeded; `false` if it failed. |
 | `error` | `string` | Populated only on failure. Empty string or omitted on success. |
 
-If you publish a malformed request (missing `type`, unknown `type`, ill-formed JSON), Studio may not respond at all. Always set a sensible response timeout client-side rather than waiting indefinitely.
+Studio may not respond to a malformed request with a missing or unknown `type` or ill-formed JSON. Clients should set a response timeout instead of waiting indefinitely.
 
 ---
 
-## Request index
+## Request Index
 
 Discovery
-: [`list_assets`](#list_assets) — list this team's spacecraft.
-: [`list_entity`](#list_entity) — components & jammer status for one spacecraft.
-: [`list_stations`](#list_stations) — ground stations available to this team.
-: [`get_packet_schemas`](#get_packet_schemas) — XTCE schemas for every telemetry packet.
+: [`list_assets`](#list_assets): list this team's spacecraft.
+: [`list_entity`](#list_entity): components & jammer status for one spacecraft.
+: [`list_stations`](#list_stations): ground stations available to this team.
+: [`get_packet_schemas`](#get_packet_schemas): XTCE schemas for every telemetry packet.
 
 Telemetry / RF
-: [`get_telemetry`](#get_telemetry) — current frequency, key, bandwidth, and link budgets.
-: [`set_telemetry`](#set_telemetry) — change the team's RF link parameters.
-: [`transmit_bytes`](#transmit_bytes) — send arbitrary bytes off the ground transmitter at a chosen frequency.
+: [`get_telemetry`](#get_telemetry): current frequency, key, bandwidth, and link budgets.
+: [`set_telemetry`](#set_telemetry): change the team's RF link parameters.
+: [`transmit_bytes`](#transmit_bytes): send arbitrary bytes off the ground transmitter at a chosen frequency.
 
 AI assistant (optional, scenario-dependent)
-: [`chat_query`](#chat_query) — ask the assistant a question about your spacecraft.
-: [`chat_response`](#chat_response) — _(unsolicited)_ delivered when an answer is ready.
+: [`chat_query`](#chat_query): ask the assistant a question about the team's spacecraft.
+: [`chat_response`](#chat_response): _(unsolicited)_ delivered when an answer is ready.
 
 Scenario Q&A (optional, scenario-dependent)
-: [`list_questions`](#list_questions) — list scenario questions for this team.
-: [`submit_answer`](#submit_answer) — submit one or more answers.
+: [`list_questions`](#list_questions): list scenario questions for this team.
+: [`submit_answer`](#submit_answer): submit one or more answers.
 
 Push notifications
-: [`event_triggered`](#event_triggered) — _(unsolicited)_ a tracking event happened.
+: [`event_triggered`](#event_triggered): _(unsolicited)_ a tracking event happened.
 
 ---
 
 ## `list_assets`
 
-List the spacecraft owned by this team. The first call you typically make.
+Lists the spacecraft owned by this team. Clients typically make this call first.
 
 **Request**
 
@@ -133,7 +135,7 @@ No arguments.
 
 ## `list_entity`
 
-Static schematic of one spacecraft: its components and jammer status. This is **not** live telemetry — it doesn't show power, sensor readings, or pointing state. Use telemetry downlinks for that.
+Static schematic of one spacecraft: its components and jammer status. This is **not** live telemetry: it doesn't show power, sensor readings, or pointing state. Use telemetry downlinks for that.
 
 **Request**
 
@@ -172,8 +174,8 @@ Static schematic of one spacecraft: its components and jammer status. This is **
 | `components[]` | One entry per on-board component. |
 | `components[].name` | Friendly name. **Use this for `target` and `component` arguments in spacecraft commands.** Case-insensitive matching. |
 | `components[].class` | Component class (e.g. `Camera`, `Solar Panel`, `Battery`). |
-| `components[].component_id` | Index used as the **CCSDS APID-like discriminator** in telemetry messages, so you can tell which physical component a packet came from. |
-| `components[].is_imager` | `true` for cameras / CCDs — components that can produce imagery. Used by the Operator UI **Camera** panel and [`camera` / `capture`](spacecraft-commands.md#camera) flows. |
+| `components[].component_id` | Index used as the **CCSDS APID-like discriminator** in telemetry messages to identify the physical component that produced a packet. |
+| `components[].is_imager` | `true` for cameras / CCDs: components that can produce imagery. Used by the Operator UI **Camera** panel and [`camera` / `capture`](spacecraft-commands.md#camera) flows. |
 | `components[].is_sensor` | `true` when the component class inherits from **`Sensor`** (magnetometers, GPS, cameras, laser range finders, EM sensors, etc.). |
 | `components[].is_antenna` | `true` when the component class inherits from **`Antenna`** (receivers, transmitters, jammers, optical comms, etc.). |
 | `jammer` | Present only if the spacecraft has a jamming transmitter. |
@@ -217,7 +219,7 @@ No arguments.
 | `stations[].name` | Ground station name. Use this for `station` in [`guidance` (mode `ground`)](spacecraft-commands.md#guidance). |
 | `stations[].latitude` | Geodetic latitude in degrees. |
 | `stations[].longitude` | Geodetic longitude in degrees. |
-| `stations[].altitude` | Altitude above the ellipsoid in metres. |
+| `stations[].altitude` | Altitude above the ellipsoid in meters. |
 
 ---
 
@@ -233,7 +235,7 @@ Current RF link parameters and link-budget snapshot for one spacecraft.
 
 | Argument | Description |
 | --- | --- |
-| `asset_id` | Asset ID. Must be one of this team's own assets — [neutral](../scenarios/spacecraft.md#neutral-team-less-shared-craft) craft are read-only and return an error (`"... is neutral and does not expose telemetry."`). |
+| `asset_id` | Asset ID. Must be one of this team's own assets: [neutral](../scenarios/spacecraft.md#neutral-team-less-shared-craft) craft are read-only and return an error (`"... is neutral and does not expose telemetry."`). |
 
 **Response**
 
@@ -299,8 +301,8 @@ Change the team's RF frequency, Caesar key, and ground bandwidth. Internally thi
 | Argument | Default | Range | Unit | Description |
 | --- | --- | --- | --- | --- |
 | `frequency` | _(current)_ | `0 … 10000` | MHz | New RF carrier frequency. |
-| `key` | _(current)_ | `0 … 255` | — | New Caesar key. |
-| `bandwidth` | _(current)_ | — | MHz | New ground-receiver bandwidth. |
+| `key` | _(current)_ | `0 … 255` | None | New Caesar key. |
+| `bandwidth` | _(current)_ | None | MHz | New ground-receiver bandwidth. |
 
 **Response**
 
@@ -310,9 +312,9 @@ Change the team's RF frequency, Caesar key, and ground bandwidth. Internally thi
 
 No arguments on success. On failure, common `error` values:
 
-- `"Already changing telemetry settings. Please wait before making another change."` — a previous `set_telemetry` is still propagating; wait ~1 sim s.
-- `"Uplink not available. Cannot change telemetry settings at this time."` — the spacecraft is below the horizon or the link is jammed; try again on the next pass.
-- `"No changes made to telemetry settings."` — every requested value matched the current setting.
+- `"Already changing telemetry settings. Please wait before making another change."`: a previous `set_telemetry` is still propagating; wait ~1 sim s.
+- `"Uplink not available. Cannot change telemetry settings at this time."`: the spacecraft is below the horizon or the link is jammed; try again on the next pass.
+- `"No changes made to telemetry settings."`: every requested value matched the current setting.
 
 ### Notes
 
@@ -362,16 +364,16 @@ Transmit arbitrary bytes from the ground transmitter at a chosen frequency, **by
 
 Common errors:
 
-- `"Ground transmitter is not available."` — no transmitter configured for this team.
-- `"transmit_bytes requires a positive frequency in MHz."` — missing or invalid `frequency`.
-- `"Invalid base64 data."` / `"Hex data must have an even number of characters."` / `"Invalid hex digit."` — `data` couldn't be decoded against `encoding`.
-- `"Unknown encoding 'X'. Use base64, hex, utf8, or ascii."` — typo in `encoding`.
-- `"Already changing telemetry settings. Please wait before transmitting bytes."` — a frequency or encryption change is still in progress.
+- `"Ground transmitter is not available."`: no transmitter configured for this team.
+- `"transmit_bytes requires a positive frequency in MHz."`: missing or invalid `frequency`.
+- `"Invalid base64 data."` / `"Hex data must have an even number of characters."` / `"Invalid hex digit."`: `data` couldn't be decoded against `encoding`.
+- `"Unknown encoding 'X'. Use base64, hex, utf8, or ascii."`: typo in `encoding`.
+- `"Already changing telemetry settings. Please wait before transmitting bytes."`: a frequency or encryption change is still in progress.
 
 ### Notes
 
 - The transmitter retunes to `frequency` for the duration of the burst, then automatically returns to the team's nominal frequency and Caesar key. While retuned, the team's normal uplink to its own spacecraft is briefly unavailable.
-- `transmit_bytes` does **not** apply Caesar encryption — your bytes go on the wire exactly as supplied. If you want to talk to a spacecraft, you must construct the framing yourself.
+- `transmit_bytes` does **not** apply Caesar encryption. Bytes go on the wire exactly as supplied, so clients must construct the spacecraft framing.
 
 ---
 
@@ -416,7 +418,7 @@ No arguments.
 
 ## `chat_query`
 
-Sends a question to the AI assistant that has read access to your spacecraft's recent state and the simulation context. Only available in scenarios that explicitly enable the assistant.
+Sends a question to the AI assistant, which has read access to the team's spacecraft state and the simulation context. This request is available only in scenarios that explicitly enable the assistant.
 
 **Request**
 
@@ -436,7 +438,7 @@ Sends a question to the AI assistant that has read access to your spacecraft's r
 | --- | --- |
 | `asset_id` | The spacecraft the question is about. Must belong to this team. |
 | `prompt` | The question, in natural language. |
-| `messages[]` | Array of recent telemetry message JSON strings to give the assistant context. Empty array is allowed — the assistant will still see general scenario context. |
+| `messages[]` | Array of recent telemetry message JSON strings to give the assistant context. Empty array is allowed: the assistant will still see general scenario context. |
 
 **Immediate response**
 
@@ -448,14 +450,14 @@ The immediate response only acknowledges that the query was queued. The actual a
 
 If `success` is `false`, common `error` values:
 
-- `"Entity with ID '...' not found."` — bad `asset_id`.
-- `"Failed to send chat message."` — the AI subsystem is unavailable in the scenario.
+- `"Entity with ID '...' not found."`: bad `asset_id`.
+- `"Failed to send chat message."`: the AI subsystem is unavailable in the scenario.
 
 ---
 
-## `chat_response` (push)
+## `chat_response` (Push)
 
-Unsolicited message published on the team's `Response` topic when the AI assistant has produced an answer. Not in reply to a specific request — match by tracking the `req_id` of your last `chat_query`.
+Unsolicited message published on the team's `Response` topic when the AI assistant produces an answer. Match it by tracking the `req_id` of the latest `chat_query`.
 
 ```json
 {
@@ -474,7 +476,7 @@ Unsolicited message published on the team's `Response` topic when the AI assista
 | Field | Description |
 | --- | --- |
 | `valid` | `true` once the assistant has finished. `false` indicates the response is still being generated and a follow-up `chat_response` will arrive. |
-| `role` | `assistant` (model output) or `user` (echo of your prompt). |
+| `role` | `assistant` (model output) or `user` (echo of the submitted prompt). |
 | `message` | The reply text in rich-text style markdown. |
 | `timestamp` | Local datetime when the reply was created (`YYYY/MM/DD HH:MM:SS`). |
 
@@ -524,7 +526,7 @@ No arguments.
 
 | Field | Description |
 | --- | --- |
-| `questions[].id` | Stable integer identifier — pass to `submit_answer`. |
+| `questions[].id` | Stable integer identifier: pass to `submit_answer`. |
 | `questions[].section` | Logical grouping (e.g. `"Telemetry"`, `"Commanding"`). |
 | `questions[].title`, `description` | Display strings for a UI. |
 | `questions[].type` | `text`, `number`, `select`, or `checkbox`. Determines the shape of `value` in `submit_answer`. |
@@ -584,13 +586,13 @@ Submits one or more answers to scenario questions in a single call. Each submiss
 | `results[].score` | Present on accepted submissions; points awarded. |
 | `results[].error` | Present on rejected submissions (unknown ID, already answered, missing `value`, etc.). |
 
-The outer `success` is `true` as long as the request itself was well-formed — individual submissions can still be rejected. Inspect each `results[]` entry separately.
+The outer `success` is `true` as long as the request itself was well-formed: individual submissions can still be rejected. Inspect each `results[]` entry separately.
 
 ---
 
-## `event_triggered` (push)
+## `event_triggered` (Push)
 
-Unsolicited message that fires every time something noteworthy happens on this team's spacecraft or ground controller — commands sent, telemetry settings changed, components reset, etc. Not in reply to any request.
+Unsolicited message that fires every time something noteworthy happens on this team's spacecraft or ground controller: commands sent, telemetry settings changed, components reset, etc. Not in reply to any request.
 
 ```json
 {
@@ -616,7 +618,7 @@ Unsolicited message that fires every time something noteworthy happens on this t
 | `simulation_utc` | Simulation UTC string. |
 | `clock_time` | Wall-clock local time string. |
 | `trigger` | Origin of the event: `Scenario`, `Operator`, `Spacecraft`, or `Ground`. |
-| `team_id` | Always your team's ID — this push only fires for events scoped to this team. |
+| `team_id` | Always the subscribed team's ID; this push fires only for events scoped to that team. |
 | `asset_id` | Asset that triggered the event (may be empty for ground-controller events). |
 | `name` | Human-readable event name (`"Spacecraft Reboot"`, `"Telemetry Update"`, `"Command Sent"`, etc.). |
 | `arguments` | Free-form key-value bag of extra context. Schema depends on `name`. |
@@ -625,9 +627,9 @@ Use this stream to drive a live event log without polling [`admin_query_events`]
 
 ---
 
-## Common patterns
+## Common Patterns
 
-### Bootstrap (new client)
+### Bootstrap (New Client)
 
 1. Subscribe to `Session`, `Downlink`, `Response`.
 2. `list_assets` → cache asset IDs.
@@ -636,13 +638,13 @@ Use this stream to drive a live event log without polling [`admin_query_events`]
 5. `get_packet_schemas` → cache XTCE definitions.
 6. Begin sending uplinks and decoding telemetry.
 
-### Robust request handling
+### Robust Request Handling
 
-Wrap each request in a request-side timeout (e.g. 5 s), keyed by `req_id`. If you don't get a matching response in time, retry up to N times before surfacing an error. Studio does not guarantee delivery on flaky brokers; the application layer is expected to retry.
+Wrap each request in a request-side timeout (for example, 5 s), keyed by `req_id`. If no matching response arrives, retry a bounded number of times before surfacing an error. Studio does not guarantee delivery on unreliable brokers; the application layer is expected to retry.
 
-### Demultiplexing the Response topic
+### Demultiplexing the Response Topic
 
-Don't assume every message on `Response` is the answer to your most recent request. Always switch on `type`:
+Not every message on `Response` answers the most recent request. Always switch on `type`:
 
 ```python
 if msg["type"] in ("event_triggered", "chat_response"):
@@ -657,6 +659,6 @@ else:
 
 ## Next
 
-- [Spacecraft commands](spacecraft-commands.md) — what to do once you've discovered an asset.
-- [Admin requests](admin-requests.md) — instructor-side request types.
-- [Guides → Decoding telemetry](../guides/decoding-telemetry.md) — turning raw `Downlink` bytes into structured data using `get_packet_schemas`.
+- [Spacecraft commands](spacecraft-commands.md): actions available after discovering an asset.
+- [Admin requests](admin-requests.md): instructor-side request types.
+- [Guides → Decoding telemetry](../guides/decoding-telemetry.md): turning raw `Downlink` bytes into structured data using `get_packet_schemas`.

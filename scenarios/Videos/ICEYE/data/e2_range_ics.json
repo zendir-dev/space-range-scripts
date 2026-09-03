@@ -1,0 +1,824 @@
+{
+  "note": "Space Range pack: one shared IC epoch before Cosmos plane-change gaps, then time-compressed illustrative \u0394i burns preserving the May GP-derived step sequence and magnitudes. Exercise timing is not historical. TEME, not J2000. Not Spaceflux-fitted. ICEYE-X36 and Cosmos 2611 are catalog-only. Integrity ISR ~105 m/s is a third-party check, not a measurement.",
+  "schedule_kind": "compressed_exercise",
+  "compression_policy": "First burns are staggered by target offsets; each later burn for that spacecraft uses its immediately following equatorial node. The source catalog-timing manoeuvres remain embedded separately.",
+  "frame": "TEME",
+  "ic_epoch_utc": "2026-05-14T00:00:00Z",
+  "incl_jump_deg": 0.05,
+  "dirty_dn_rev_per_day": 0.001,
+  "source": "analysis/out/tle/e2_may_2026/omm_records.json",
+  "spacecraft": [
+    {
+      "norad_cat_id": "59103",
+      "catalog_name": "ICEYE-X36",
+      "in_e2_csv": false,
+      "is_chief": true,
+      "ic_epoch_utc": "2026-05-14T00:00:00Z",
+      "tle_epoch_utc": "2026-05-13T20:24:02.561760Z",
+      "r_teme_m": [
+        -950656.5877125754,
+        352323.13874028204,
+        6837541.9609691985
+      ],
+      "v_teme_m_s": [
+        -140.4979109376871,
+        7581.559773313818,
+        -408.2173753455856
+      ],
+      "set_classic_elements": {
+        "semi_major_axis_m": 6912420.632897464,
+        "eccentricity": 0.00025819623452983845,
+        "inclination_rad": 1.7075882726224398,
+        "raan_rad": 4.738328823853883,
+        "arg_of_periapsis_rad": 0.12321897654784367,
+        "true_anomaly_rad": 1.5021248678415318,
+        "orbiting_body": "earth"
+      },
+      "manoeuvres": [],
+      "catalogue_manoeuvres": [],
+      "sum_delta_i_deg": 0,
+      "sum_dv_m_s": 0
+    },
+    {
+      "norad_cat_id": "68758",
+      "catalog_name": "COSMOS 2610",
+      "in_e2_csv": true,
+      "is_chief": false,
+      "ic_epoch_utc": "2026-05-14T00:00:00Z",
+      "tle_epoch_utc": "2026-05-13T22:19:34.739616Z",
+      "r_teme_m": [
+        -65588.34924594745,
+        -6601335.820607024,
+        2115535.328992824
+      ],
+      "v_teme_m_s": [
+        -941.400988087247,
+        2318.0476362015806,
+        7156.845453104828
+      ],
+      "set_classic_elements": {
+        "semi_major_axis_m": 6930102.680364457,
+        "eccentricity": 0.0019282569010648913,
+        "inclination_rad": 1.692228420305822,
+        "raan_rad": 4.741569587079111,
+        "arg_of_periapsis_rad": 2.05389258963234,
+        "true_anomaly_rad": 4.541786509893219,
+        "orbiting_body": "earth"
+      },
+      "manoeuvres": [
+        {
+          "schedule_kind": "compressed_exercise",
+          "window_from_utc": "2026-05-15T01:25:44.380416Z",
+          "window_to_utc": "2026-05-15T15:46:38.271360Z",
+          "window_midpoint_utc": "2026-05-15T08:36:11.325888Z",
+          "suggested_utc": "2026-05-14T00:42:58.799286Z",
+          "source_catalog_node_utc": "2026-05-15T08:36:06.234512Z",
+          "exercise_elapsed_s": 2578.799286,
+          "delta_i_deg": 0.7678000000000083,
+          "dv_m_s": 101.77154130984863,
+          "relative_direction": "-N",
+          "dv_rtn_m_s": [
+            0.0,
+            0.0,
+            -101.77154130984863
+          ],
+          "dv_teme_m_s": [
+            100.97910636549365,
+            2.9474682321042622,
+            12.32798155535944
+          ],
+          "nearest_node": "descending",
+          "tle_epoch_utc": "2026-05-15T01:25:44.380416Z",
+          "dirty_mean_motion": false,
+          "delta_mean_motion_rev_per_day": -0.0007091800000011972,
+          "assumption": "Time-compressed exercise impulse at the first equatorial node after its assigned target. Catalog \u0394i, \u0394V, order, and source window are preserved; historical waits are not. RAAN and mean-motion changes are not fitted.",
+          "direction_definition": "RTN local orbital frame: R is radial outward, +N is r\u00d7v (orbit angular momentum), and T = N\u00d7R is transverse/prograde. N is normal to the orbital plane. This burn has zero R/T component. For the observed positive \u0394i, burn +N at an ascending node or -N at a descending node."
+        },
+        {
+          "schedule_kind": "compressed_exercise",
+          "window_from_utc": "2026-05-15T15:46:38.271360Z",
+          "window_to_utc": "2026-05-16T07:43:10.655904Z",
+          "window_midpoint_utc": "2026-05-15T23:44:54.463632Z",
+          "suggested_utc": "2026-05-14T01:30:53.527223Z",
+          "source_catalog_node_utc": "2026-05-15T23:44:56.177702Z",
+          "exercise_elapsed_s": 5453.527223,
+          "delta_i_deg": 0.07110000000000127,
+          "dv_m_s": 9.404728045026532,
+          "relative_direction": "+N",
+          "dv_rtn_m_s": [
+            0.0,
+            0.0,
+            9.404728045026532
+          ],
+          "dv_teme_m_s": [
+            -9.315401658809837,
+            -0.2719062531535319,
+            -1.2642264533886034
+          ],
+          "nearest_node": "ascending",
+          "tle_epoch_utc": "2026-05-15T15:46:38.271360Z",
+          "dirty_mean_motion": false,
+          "delta_mean_motion_rev_per_day": 0.0008790300000001139,
+          "assumption": "Time-compressed exercise impulse at the first equatorial node after its assigned target. Catalog \u0394i, \u0394V, order, and source window are preserved; historical waits are not. RAAN and mean-motion changes are not fitted.",
+          "direction_definition": "RTN local orbital frame: R is radial outward, +N is r\u00d7v (orbit angular momentum), and T = N\u00d7R is transverse/prograde. N is normal to the orbital plane. This burn has zero R/T component. For the observed positive \u0394i, burn +N at an ascending node or -N at a descending node."
+        }
+      ],
+      "catalogue_manoeuvres": [
+        {
+          "schedule_kind": "catalog_timing_reference",
+          "window_from_utc": "2026-05-15T01:25:44.380416Z",
+          "window_to_utc": "2026-05-15T15:46:38.271360Z",
+          "window_midpoint_utc": "2026-05-15T08:36:11.325888Z",
+          "suggested_utc": "2026-05-15T08:36:06.234512Z",
+          "source_catalog_node_utc": "2026-05-15T08:36:06.234512Z",
+          "exercise_elapsed_s": null,
+          "delta_i_deg": 0.7678000000000083,
+          "dv_m_s": 101.77154130984863,
+          "relative_direction": "-N",
+          "dv_rtn_m_s": [
+            0.0,
+            0.0,
+            -101.77154130984863
+          ],
+          "dv_teme_m_s": [
+            100.89265348568588,
+            5.115267439945206,
+            12.326927119820969
+          ],
+          "nearest_node": "descending",
+          "tle_epoch_utc": "2026-05-15T01:25:44.380416Z",
+          "dirty_mean_motion": false,
+          "delta_mean_motion_rev_per_day": -0.0007091800000011972,
+          "assumption": "Impulsive circular plane change at the equatorial node nearest the catalog-gap midpoint; \u0394v = 2 v sin(\u0394i/2) along signed TEME orbit-normal. Node time and midpoint are illustrative, not measured burn epochs. \u0394\u03a9 is not fitted.",
+          "direction_definition": "RTN local orbital frame: R is radial outward, +N is r\u00d7v (orbit angular momentum), and T = N\u00d7R is transverse/prograde. N is normal to the orbital plane. This burn has zero R/T component. For the observed positive \u0394i, burn +N at an ascending node or -N at a descending node."
+        },
+        {
+          "schedule_kind": "catalog_timing_reference",
+          "window_from_utc": "2026-05-15T15:46:38.271360Z",
+          "window_to_utc": "2026-05-16T07:43:10.655904Z",
+          "window_midpoint_utc": "2026-05-15T23:44:54.463632Z",
+          "suggested_utc": "2026-05-15T23:44:56.177702Z",
+          "source_catalog_node_utc": "2026-05-15T23:44:56.177702Z",
+          "exercise_elapsed_s": null,
+          "delta_i_deg": 0.07110000000000127,
+          "dv_m_s": 9.404728045026532,
+          "relative_direction": "+N",
+          "dv_rtn_m_s": [
+            0.0,
+            0.0,
+            9.404728045026532
+          ],
+          "dv_teme_m_s": [
+            -9.30163079070886,
+            -0.5751191225296907,
+            -1.264045975883049
+          ],
+          "nearest_node": "ascending",
+          "tle_epoch_utc": "2026-05-15T15:46:38.271360Z",
+          "dirty_mean_motion": false,
+          "delta_mean_motion_rev_per_day": 0.0008790300000001139,
+          "assumption": "Impulsive circular plane change at the equatorial node nearest the catalog-gap midpoint; \u0394v = 2 v sin(\u0394i/2) along signed TEME orbit-normal. Node time and midpoint are illustrative, not measured burn epochs. \u0394\u03a9 is not fitted.",
+          "direction_definition": "RTN local orbital frame: R is radial outward, +N is r\u00d7v (orbit angular momentum), and T = N\u00d7R is transverse/prograde. N is normal to the orbital plane. This burn has zero R/T component. For the observed positive \u0394i, burn +N at an ascending node or -N at a descending node."
+        }
+      ],
+      "sum_delta_i_deg": 0.8389000000000095,
+      "sum_dv_m_s": 111.17626935487516
+    },
+    {
+      "norad_cat_id": "68759",
+      "catalog_name": "COSMOS 2611",
+      "in_e2_csv": false,
+      "is_chief": false,
+      "ic_epoch_utc": "2026-05-14T00:00:00Z",
+      "tle_epoch_utc": "2026-05-13T22:22:41.870784Z",
+      "r_teme_m": [
+        110516.74179797516,
+        -6896976.331270728,
+        733765.9013990063
+      ],
+      "v_teme_m_s": [
+        -935.0233380774147,
+        791.5499846417395,
+        7478.315686153887
+      ],
+      "set_classic_elements": {
+        "semi_major_axis_m": 6932452.846940258,
+        "eccentricity": 0.0015625873282762513,
+        "inclination_rad": 1.6921082562997065,
+        "raan_rad": 4.741380252254849,
+        "arg_of_periapsis_rad": 2.0898614159240396,
+        "true_anomaly_rad": 4.300088806064118,
+        "orbiting_body": "earth"
+      },
+      "manoeuvres": [
+        {
+          "schedule_kind": "compressed_exercise",
+          "window_from_utc": "2026-05-20T01:04:33.627360Z",
+          "window_to_utc": "2026-05-20T09:02:55.526784Z",
+          "window_midpoint_utc": "2026-05-20T05:03:44.577072Z",
+          "suggested_utc": "2026-05-14T02:21:48.374177Z",
+          "source_catalog_node_utc": "2026-05-20T05:03:38.261303Z",
+          "exercise_elapsed_s": 8508.374177,
+          "delta_i_deg": 0.33159999999999457,
+          "dv_m_s": 43.955314709450526,
+          "relative_direction": "-N",
+          "dv_rtn_m_s": [
+            0.0,
+            0.0,
+            -43.955314709450526
+          ],
+          "dv_teme_m_s": [
+            43.6139400801358,
+            1.2647779600787954,
+            5.3192347762494245
+          ],
+          "nearest_node": "descending",
+          "tle_epoch_utc": "2026-05-20T01:04:33.627360Z",
+          "dirty_mean_motion": false,
+          "delta_mean_motion_rev_per_day": -0.0004900900000013308,
+          "assumption": "Time-compressed exercise impulse at the first equatorial node after its assigned target. Catalog \u0394i, \u0394V, order, and source window are preserved; historical waits are not. RAAN and mean-motion changes are not fitted.",
+          "direction_definition": "RTN local orbital frame: R is radial outward, +N is r\u00d7v (orbit angular momentum), and T = N\u00d7R is transverse/prograde. N is normal to the orbital plane. This burn has zero R/T component. For the observed positive \u0394i, burn +N at an ascending node or -N at a descending node."
+        },
+        {
+          "schedule_kind": "compressed_exercise",
+          "window_from_utc": "2026-05-20T09:02:55.527648Z",
+          "window_to_utc": "2026-05-20T23:23:59.244864Z",
+          "window_midpoint_utc": "2026-05-20T16:13:27.386256Z",
+          "suggested_utc": "2026-05-14T03:09:43.024293Z",
+          "source_catalog_node_utc": "2026-05-20T16:13:21.343231Z",
+          "exercise_elapsed_s": 11383.024293,
+          "delta_i_deg": 0.5194000000000045,
+          "dv_m_s": 68.8449766377241,
+          "relative_direction": "+N",
+          "dv_rtn_m_s": [
+            0.0,
+            0.0,
+            68.8449766377241
+          ],
+          "dv_teme_m_s": [
+            -68.26095820216774,
+            -1.979526621748246,
+            -8.726618355610327
+          ],
+          "nearest_node": "ascending",
+          "tle_epoch_utc": "2026-05-20T09:02:55.527648Z",
+          "dirty_mean_motion": false,
+          "delta_mean_motion_rev_per_day": -2.3280000000625023e-05,
+          "assumption": "Time-compressed exercise impulse at the first equatorial node after its assigned target. Catalog \u0394i, \u0394V, order, and source window are preserved; historical waits are not. RAAN and mean-motion changes are not fitted.",
+          "direction_definition": "RTN local orbital frame: R is radial outward, +N is r\u00d7v (orbit angular momentum), and T = N\u00d7R is transverse/prograde. N is normal to the orbital plane. This burn has zero R/T component. For the observed positive \u0394i, burn +N at an ascending node or -N at a descending node."
+        }
+      ],
+      "catalogue_manoeuvres": [
+        {
+          "schedule_kind": "catalog_timing_reference",
+          "window_from_utc": "2026-05-20T01:04:33.627360Z",
+          "window_to_utc": "2026-05-20T09:02:55.526784Z",
+          "window_midpoint_utc": "2026-05-20T05:03:44.577072Z",
+          "suggested_utc": "2026-05-20T05:03:38.261303Z",
+          "source_catalog_node_utc": "2026-05-20T05:03:38.261303Z",
+          "exercise_elapsed_s": null,
+          "delta_i_deg": 0.33159999999999457,
+          "dv_m_s": 43.955314709450526,
+          "relative_direction": "-N",
+          "dv_rtn_m_s": [
+            0.0,
+            0.0,
+            -43.955314709450526
+          ],
+          "dv_teme_m_s": [
+            43.281477166166574,
+            5.520605551762503,
+            5.32037027501736
+          ],
+          "nearest_node": "descending",
+          "tle_epoch_utc": "2026-05-20T01:04:33.627360Z",
+          "dirty_mean_motion": false,
+          "delta_mean_motion_rev_per_day": -0.0004900900000013308,
+          "assumption": "Impulsive circular plane change at the equatorial node nearest the catalog-gap midpoint; \u0394v = 2 v sin(\u0394i/2) along signed TEME orbit-normal. Node time and midpoint are illustrative, not measured burn epochs. \u0394\u03a9 is not fitted.",
+          "direction_definition": "RTN local orbital frame: R is radial outward, +N is r\u00d7v (orbit angular momentum), and T = N\u00d7R is transverse/prograde. N is normal to the orbital plane. This burn has zero R/T component. For the observed positive \u0394i, burn +N at an ascending node or -N at a descending node."
+        },
+        {
+          "schedule_kind": "catalog_timing_reference",
+          "window_from_utc": "2026-05-20T09:02:55.527648Z",
+          "window_to_utc": "2026-05-20T23:23:59.244864Z",
+          "window_midpoint_utc": "2026-05-20T16:13:27.386256Z",
+          "suggested_utc": "2026-05-20T16:13:21.343231Z",
+          "source_catalog_node_utc": "2026-05-20T16:13:21.343231Z",
+          "exercise_elapsed_s": null,
+          "delta_i_deg": 0.5194000000000045,
+          "dv_m_s": 68.8449766377241,
+          "relative_direction": "-N",
+          "dv_rtn_m_s": [
+            0.0,
+            0.0,
+            -68.8449766377241
+          ],
+          "dv_teme_m_s": [
+            67.67154352133589,
+            9.165845320313005,
+            8.728131830627744
+          ],
+          "nearest_node": "descending",
+          "tle_epoch_utc": "2026-05-20T09:02:55.527648Z",
+          "dirty_mean_motion": false,
+          "delta_mean_motion_rev_per_day": -2.3280000000625023e-05,
+          "assumption": "Impulsive circular plane change at the equatorial node nearest the catalog-gap midpoint; \u0394v = 2 v sin(\u0394i/2) along signed TEME orbit-normal. Node time and midpoint are illustrative, not measured burn epochs. \u0394\u03a9 is not fitted.",
+          "direction_definition": "RTN local orbital frame: R is radial outward, +N is r\u00d7v (orbit angular momentum), and T = N\u00d7R is transverse/prograde. N is normal to the orbital plane. This burn has zero R/T component. For the observed positive \u0394i, burn +N at an ascending node or -N at a descending node."
+        }
+      ],
+      "sum_delta_i_deg": 0.8509999999999991,
+      "sum_dv_m_s": 112.80029134717464
+    },
+    {
+      "norad_cat_id": "68762",
+      "catalog_name": "COSMOS 2612",
+      "in_e2_csv": true,
+      "is_chief": false,
+      "ic_epoch_utc": "2026-05-14T00:00:00Z",
+      "tle_epoch_utc": "2026-05-13T22:09:43.773120Z",
+      "r_teme_m": [
+        -571562.3841961257,
+        -3977471.0569957946,
+        5635173.995511091
+      ],
+      "v_teme_m_s": [
+        -707.6482770330539,
+        6215.10103662432,
+        4293.482672658056
+      ],
+      "set_classic_elements": {
+        "semi_major_axis_m": 6917592.79749624,
+        "eccentricity": 0.0023679786341779816,
+        "inclination_rad": 1.6923470315588214,
+        "raan_rad": 4.741818424126747,
+        "arg_of_periapsis_rad": 2.753080808250197,
+        "true_anomaly_rad": 4.491951771218956,
+        "orbiting_body": "earth"
+      },
+      "manoeuvres": [
+        {
+          "schedule_kind": "compressed_exercise",
+          "window_from_utc": "2026-05-15T17:11:32.011008Z",
+          "window_to_utc": "2026-05-16T04:20:53.271168Z",
+          "window_midpoint_utc": "2026-05-15T22:46:12.641088Z",
+          "suggested_utc": "2026-05-14T01:20:58.476106Z",
+          "source_catalog_node_utc": "2026-05-15T22:46:06.590019Z",
+          "exercise_elapsed_s": 4858.476106,
+          "delta_i_deg": 0.2896999999999963,
+          "dv_m_s": 38.41046312975038,
+          "relative_direction": "+N",
+          "dv_rtn_m_s": [
+            0.0,
+            0.0,
+            38.41046312975038
+          ],
+          "dv_teme_m_s": [
+            -38.11055361848685,
+            -1.1218963009264242,
+            -4.657330718804504
+          ],
+          "nearest_node": "ascending",
+          "tle_epoch_utc": "2026-05-15T17:11:32.011008Z",
+          "dirty_mean_motion": false,
+          "delta_mean_motion_rev_per_day": -7.744000000009521e-05,
+          "assumption": "Time-compressed exercise impulse at the first equatorial node after its assigned target. Catalog \u0394i, \u0394V, order, and source window are preserved; historical waits are not. RAAN and mean-motion changes are not fitted.",
+          "direction_definition": "RTN local orbital frame: R is radial outward, +N is r\u00d7v (orbit angular momentum), and T = N\u00d7R is transverse/prograde. N is normal to the orbital plane. This burn has zero R/T component. For the observed positive \u0394i, burn +N at an ascending node or -N at a descending node."
+        },
+        {
+          "schedule_kind": "compressed_exercise",
+          "window_from_utc": "2026-05-16T04:20:53.271168Z",
+          "window_to_utc": "2026-05-16T17:05:52.153152Z",
+          "window_midpoint_utc": "2026-05-16T10:43:22.712160Z",
+          "suggested_utc": "2026-05-14T02:08:41.592408Z",
+          "source_catalog_node_utc": "2026-05-16T10:43:22.611531Z",
+          "exercise_elapsed_s": 7721.592408,
+          "delta_i_deg": 0.5968000000000018,
+          "dv_m_s": 78.93851370808025,
+          "relative_direction": "-N",
+          "dv_rtn_m_s": [
+            0.0,
+            0.0,
+            -78.93851370808025
+          ],
+          "dv_teme_m_s": [
+            78.27278532027253,
+            2.304189784097617,
+            9.967483839272697
+          ],
+          "nearest_node": "descending",
+          "tle_epoch_utc": "2026-05-16T04:20:53.271168Z",
+          "dirty_mean_motion": false,
+          "delta_mean_motion_rev_per_day": -0.00026585999999895193,
+          "assumption": "Time-compressed exercise impulse at the first equatorial node after its assigned target. Catalog \u0394i, \u0394V, order, and source window are preserved; historical waits are not. RAAN and mean-motion changes are not fitted.",
+          "direction_definition": "RTN local orbital frame: R is radial outward, +N is r\u00d7v (orbit angular momentum), and T = N\u00d7R is transverse/prograde. N is normal to the orbital plane. This burn has zero R/T component. For the observed positive \u0394i, burn +N at an ascending node or -N at a descending node."
+        }
+      ],
+      "catalogue_manoeuvres": [
+        {
+          "schedule_kind": "catalog_timing_reference",
+          "window_from_utc": "2026-05-15T17:11:32.011008Z",
+          "window_to_utc": "2026-05-16T04:20:53.271168Z",
+          "window_midpoint_utc": "2026-05-15T22:46:12.641088Z",
+          "suggested_utc": "2026-05-15T22:46:06.590019Z",
+          "source_catalog_node_utc": "2026-05-15T22:46:06.590019Z",
+          "exercise_elapsed_s": null,
+          "delta_i_deg": 0.2896999999999963,
+          "dv_m_s": 38.41046312975038,
+          "relative_direction": "-N",
+          "dv_rtn_m_s": [
+            0.0,
+            0.0,
+            -38.41046312975038
+          ],
+          "dv_teme_m_s": [
+            38.05830290056253,
+            2.296886101319191,
+            4.653339919725804
+          ],
+          "nearest_node": "descending",
+          "tle_epoch_utc": "2026-05-15T17:11:32.011008Z",
+          "dirty_mean_motion": false,
+          "delta_mean_motion_rev_per_day": -7.744000000009521e-05,
+          "assumption": "Impulsive circular plane change at the equatorial node nearest the catalog-gap midpoint; \u0394v = 2 v sin(\u0394i/2) along signed TEME orbit-normal. Node time and midpoint are illustrative, not measured burn epochs. \u0394\u03a9 is not fitted.",
+          "direction_definition": "RTN local orbital frame: R is radial outward, +N is r\u00d7v (orbit angular momentum), and T = N\u00d7R is transverse/prograde. N is normal to the orbital plane. This burn has zero R/T component. For the observed positive \u0394i, burn +N at an ascending node or -N at a descending node."
+        },
+        {
+          "schedule_kind": "catalog_timing_reference",
+          "window_from_utc": "2026-05-16T04:20:53.271168Z",
+          "window_to_utc": "2026-05-16T17:05:52.153152Z",
+          "window_midpoint_utc": "2026-05-16T10:43:22.712160Z",
+          "suggested_utc": "2026-05-16T10:43:22.611531Z",
+          "source_catalog_node_utc": "2026-05-16T10:43:22.611531Z",
+          "exercise_elapsed_s": null,
+          "delta_i_deg": 0.5968000000000018,
+          "dv_m_s": 78.93851370808025,
+          "relative_direction": "+N",
+          "dv_rtn_m_s": [
+            0.0,
+            0.0,
+            78.93851370808025
+          ],
+          "dv_teme_m_s": [
+            -78.1244677875686,
+            -5.354843111292129,
+            -9.959022773514368
+          ],
+          "nearest_node": "ascending",
+          "tle_epoch_utc": "2026-05-16T04:20:53.271168Z",
+          "dirty_mean_motion": false,
+          "delta_mean_motion_rev_per_day": -0.00026585999999895193,
+          "assumption": "Impulsive circular plane change at the equatorial node nearest the catalog-gap midpoint; \u0394v = 2 v sin(\u0394i/2) along signed TEME orbit-normal. Node time and midpoint are illustrative, not measured burn epochs. \u0394\u03a9 is not fitted.",
+          "direction_definition": "RTN local orbital frame: R is radial outward, +N is r\u00d7v (orbit angular momentum), and T = N\u00d7R is transverse/prograde. N is normal to the orbital plane. This burn has zero R/T component. For the observed positive \u0394i, burn +N at an ascending node or -N at a descending node."
+        }
+      ],
+      "sum_delta_i_deg": 0.8864999999999981,
+      "sum_dv_m_s": 117.34897683783063
+    },
+    {
+      "norad_cat_id": "68763",
+      "catalog_name": "COSMOS 2613",
+      "in_e2_csv": true,
+      "is_chief": false,
+      "ic_epoch_utc": "2026-05-14T00:00:00Z",
+      "tle_epoch_utc": "2026-05-13T22:02:13.250688Z",
+      "r_teme_m": [
+        -809831.326231407,
+        -797913.0668609319,
+        6819630.567273118
+      ],
+      "v_teme_m_s": [
+        -325.49857562810564,
+        7538.150314523502,
+        832.7112413690377
+      ],
+      "set_classic_elements": {
+        "semi_major_axis_m": 6910115.082271008,
+        "eccentricity": 0.0014762037370889295,
+        "inclination_rad": 1.692362630089141,
+        "raan_rad": 4.7420589734094065,
+        "arg_of_periapsis_rad": 3.39454748297346,
+        "true_anomaly_rad": 4.347315338125469,
+        "orbiting_body": "earth"
+      },
+      "manoeuvres": [
+        {
+          "schedule_kind": "compressed_exercise",
+          "window_from_utc": "2026-05-14T01:13:24.100032Z",
+          "window_to_utc": "2026-05-14T07:35:46.141728Z",
+          "window_midpoint_utc": "2026-05-14T04:24:35.120880Z",
+          "suggested_utc": "2026-05-14T00:25:31.384735Z",
+          "source_catalog_node_utc": "2026-05-14T04:24:34.954982Z",
+          "exercise_elapsed_s": 1531.384735,
+          "delta_i_deg": 0.33620000000000516,
+          "dv_m_s": 44.47677537568054,
+          "relative_direction": "-N",
+          "dv_rtn_m_s": [
+            0.0,
+            0.0,
+            -44.47677537568054
+          ],
+          "dv_teme_m_s": [
+            44.12910214196532,
+            1.309694487018904,
+            5.393569533565618
+          ],
+          "nearest_node": "descending",
+          "tle_epoch_utc": "2026-05-14T01:13:24.100032Z",
+          "dirty_mean_motion": false,
+          "delta_mean_motion_rev_per_day": -0.0007045899999997829,
+          "assumption": "Time-compressed exercise impulse at the first equatorial node after its assigned target. Catalog \u0394i, \u0394V, order, and source window are preserved; historical waits are not. RAAN and mean-motion changes are not fitted.",
+          "direction_definition": "RTN local orbital frame: R is radial outward, +N is r\u00d7v (orbit angular momentum), and T = N\u00d7R is transverse/prograde. N is normal to the orbital plane. This burn has zero R/T component. For the observed positive \u0394i, burn +N at an ascending node or -N at a descending node."
+        },
+        {
+          "schedule_kind": "compressed_exercise",
+          "window_from_utc": "2026-05-14T07:35:46.141728Z",
+          "window_to_utc": "2026-05-14T15:33:43.989984Z",
+          "window_midpoint_utc": "2026-05-14T11:34:45.065856Z",
+          "suggested_utc": "2026-05-14T01:13:24.109497Z",
+          "source_catalog_node_utc": "2026-05-14T11:34:40.177526Z",
+          "exercise_elapsed_s": 4404.109497,
+          "delta_i_deg": 0.41449999999998965,
+          "dv_m_s": 54.95423592066301,
+          "relative_direction": "+N",
+          "dv_rtn_m_s": [
+            0.0,
+            0.0,
+            54.95423592066301
+          ],
+          "dv_teme_m_s": [
+            -54.48463572501786,
+            -1.6170332858059622,
+            -6.984104730643155
+          ],
+          "nearest_node": "ascending",
+          "tle_epoch_utc": "2026-05-14T07:35:46.141728Z",
+          "dirty_mean_motion": true,
+          "delta_mean_motion_rev_per_day": -0.00240973000000011,
+          "assumption": "Time-compressed exercise impulse at the first equatorial node after its assigned target. Catalog \u0394i, \u0394V, order, and source window are preserved; historical waits are not. RAAN and mean-motion changes are not fitted.",
+          "direction_definition": "RTN local orbital frame: R is radial outward, +N is r\u00d7v (orbit angular momentum), and T = N\u00d7R is transverse/prograde. N is normal to the orbital plane. This burn has zero R/T component. For the observed positive \u0394i, burn +N at an ascending node or -N at a descending node."
+        },
+        {
+          "schedule_kind": "compressed_exercise",
+          "window_from_utc": "2026-05-14T15:33:43.990848Z",
+          "window_to_utc": "2026-05-15T07:29:39.776352Z",
+          "window_midpoint_utc": "2026-05-14T23:31:41.883600Z",
+          "suggested_utc": "2026-05-14T02:01:06.796418Z",
+          "source_catalog_node_utc": "2026-05-14T23:31:46.710422Z",
+          "exercise_elapsed_s": 7266.796418,
+          "delta_i_deg": 0.06400000000000716,
+          "dv_m_s": 8.46794366246762,
+          "relative_direction": "-N",
+          "dv_rtn_m_s": [
+            0.0,
+            0.0,
+            -8.46794366246762
+          ],
+          "dv_teme_m_s": [
+            8.38758082571357,
+            0.2489325146820968,
+            1.1369214423088494
+          ],
+          "nearest_node": "descending",
+          "tle_epoch_utc": "2026-05-14T15:33:43.990848Z",
+          "dirty_mean_motion": true,
+          "delta_mean_motion_rev_per_day": 0.002545270000000599,
+          "assumption": "Time-compressed exercise impulse at the first equatorial node after its assigned target. Catalog \u0394i, \u0394V, order, and source window are preserved; historical waits are not. RAAN and mean-motion changes are not fitted.",
+          "direction_definition": "RTN local orbital frame: R is radial outward, +N is r\u00d7v (orbit angular momentum), and T = N\u00d7R is transverse/prograde. N is normal to the orbital plane. This burn has zero R/T component. For the observed positive \u0394i, burn +N at an ascending node or -N at a descending node."
+        }
+      ],
+      "catalogue_manoeuvres": [
+        {
+          "schedule_kind": "catalog_timing_reference",
+          "window_from_utc": "2026-05-14T01:13:24.100032Z",
+          "window_to_utc": "2026-05-14T07:35:46.141728Z",
+          "window_midpoint_utc": "2026-05-14T04:24:35.120880Z",
+          "suggested_utc": "2026-05-14T04:24:34.954982Z",
+          "source_catalog_node_utc": "2026-05-14T04:24:34.954982Z",
+          "exercise_elapsed_s": null,
+          "delta_i_deg": 0.33620000000000516,
+          "dv_m_s": 44.47677537568054,
+          "relative_direction": "+N",
+          "dv_rtn_m_s": [
+            0.0,
+            0.0,
+            44.47677537568054
+          ],
+          "dv_teme_m_s": [
+            -44.12597021756859,
+            -1.4386507375945876,
+            -5.386333097034678
+          ],
+          "nearest_node": "ascending",
+          "tle_epoch_utc": "2026-05-14T01:13:24.100032Z",
+          "dirty_mean_motion": false,
+          "delta_mean_motion_rev_per_day": -0.0007045899999997829,
+          "assumption": "Impulsive circular plane change at the equatorial node nearest the catalog-gap midpoint; \u0394v = 2 v sin(\u0394i/2) along signed TEME orbit-normal. Node time and midpoint are illustrative, not measured burn epochs. \u0394\u03a9 is not fitted.",
+          "direction_definition": "RTN local orbital frame: R is radial outward, +N is r\u00d7v (orbit angular momentum), and T = N\u00d7R is transverse/prograde. N is normal to the orbital plane. This burn has zero R/T component. For the observed positive \u0394i, burn +N at an ascending node or -N at a descending node."
+        },
+        {
+          "schedule_kind": "catalog_timing_reference",
+          "window_from_utc": "2026-05-14T07:35:46.141728Z",
+          "window_to_utc": "2026-05-14T15:33:43.989984Z",
+          "window_midpoint_utc": "2026-05-14T11:34:45.065856Z",
+          "suggested_utc": "2026-05-14T11:34:40.177526Z",
+          "source_catalog_node_utc": "2026-05-14T11:34:40.177526Z",
+          "exercise_elapsed_s": null,
+          "delta_i_deg": 0.41449999999998965,
+          "dv_m_s": 54.95423592066301,
+          "relative_direction": "-N",
+          "dv_rtn_m_s": [
+            0.0,
+            0.0,
+            -54.95423592066301
+          ],
+          "dv_teme_m_s": [
+            54.47132237932564,
+            2.0476973415048954,
+            6.9749565926290185
+          ],
+          "nearest_node": "descending",
+          "tle_epoch_utc": "2026-05-14T07:35:46.141728Z",
+          "dirty_mean_motion": true,
+          "delta_mean_motion_rev_per_day": -0.00240973000000011,
+          "assumption": "Impulsive circular plane change at the equatorial node nearest the catalog-gap midpoint; \u0394v = 2 v sin(\u0394i/2) along signed TEME orbit-normal. Node time and midpoint are illustrative, not measured burn epochs. \u0394\u03a9 is not fitted.",
+          "direction_definition": "RTN local orbital frame: R is radial outward, +N is r\u00d7v (orbit angular momentum), and T = N\u00d7R is transverse/prograde. N is normal to the orbital plane. This burn has zero R/T component. For the observed positive \u0394i, burn +N at an ascending node or -N at a descending node."
+        },
+        {
+          "schedule_kind": "catalog_timing_reference",
+          "window_from_utc": "2026-05-14T15:33:43.990848Z",
+          "window_to_utc": "2026-05-15T07:29:39.776352Z",
+          "window_midpoint_utc": "2026-05-14T23:31:41.883600Z",
+          "suggested_utc": "2026-05-14T23:31:46.710422Z",
+          "source_catalog_node_utc": "2026-05-14T23:31:46.710422Z",
+          "exercise_elapsed_s": null,
+          "delta_i_deg": 0.06400000000000716,
+          "dv_m_s": 8.46794366246762,
+          "relative_direction": "+N",
+          "dv_rtn_m_s": [
+            0.0,
+            0.0,
+            8.46794366246762
+          ],
+          "dv_teme_m_s": [
+            -8.382461464404997,
+            -0.38873006079562317,
+            -1.1354728567097496
+          ],
+          "nearest_node": "ascending",
+          "tle_epoch_utc": "2026-05-14T15:33:43.990848Z",
+          "dirty_mean_motion": true,
+          "delta_mean_motion_rev_per_day": 0.002545270000000599,
+          "assumption": "Impulsive circular plane change at the equatorial node nearest the catalog-gap midpoint; \u0394v = 2 v sin(\u0394i/2) along signed TEME orbit-normal. Node time and midpoint are illustrative, not measured burn epochs. \u0394\u03a9 is not fitted.",
+          "direction_definition": "RTN local orbital frame: R is radial outward, +N is r\u00d7v (orbit angular momentum), and T = N\u00d7R is transverse/prograde. N is normal to the orbital plane. This burn has zero R/T component. For the observed positive \u0394i, burn +N at an ascending node or -N at a descending node."
+        }
+      ],
+      "sum_delta_i_deg": 0.814700000000002,
+      "sum_dv_m_s": 107.89895495881116
+    },
+    {
+      "norad_cat_id": "68764",
+      "catalog_name": "COSMOS 2614",
+      "in_e2_csv": true,
+      "is_chief": false,
+      "ic_epoch_utc": "2026-05-14T00:00:00Z",
+      "tle_epoch_utc": "2026-05-13T21:58:46.436736Z",
+      "r_teme_m": [
+        -855218.7403600056,
+        773724.5021349931,
+        6814785.805897959
+      ],
+      "v_teme_m_s": [
+        -116.1373977324733,
+        7541.102180042971,
+        -877.9431140194943
+      ],
+      "set_classic_elements": {
+        "semi_major_axis_m": 6909520.673109098,
+        "eccentricity": 0.0009835576097311526,
+        "inclination_rad": 1.6922734355739648,
+        "raan_rad": 4.741999615263776,
+        "arg_of_periapsis_rad": 3.5820666435476753,
+        "true_anomaly_rad": 4.387732463325879,
+        "orbiting_body": "earth"
+      },
+      "manoeuvres": [
+        {
+          "schedule_kind": "compressed_exercise",
+          "window_from_utc": "2026-05-20T22:49:58.833696Z",
+          "window_to_utc": "2026-05-21T06:48:00.501696Z",
+          "window_midpoint_utc": "2026-05-21T02:48:59.667696Z",
+          "suggested_utc": "2026-05-14T02:45:30.480194Z",
+          "source_catalog_node_utc": "2026-05-21T02:48:48.756029Z",
+          "exercise_elapsed_s": 9930.480194,
+          "delta_i_deg": 0.33549999999999613,
+          "dv_m_s": 44.48328903090232,
+          "relative_direction": "+N",
+          "dv_rtn_m_s": [
+            0.0,
+            0.0,
+            44.48328903090232
+          ],
+          "dv_teme_m_s": [
+            -44.13612331565575,
+            -1.3072807249037046,
+            -5.390421020506576
+          ],
+          "nearest_node": "ascending",
+          "tle_epoch_utc": "2026-05-20T22:49:58.833696Z",
+          "dirty_mean_motion": true,
+          "delta_mean_motion_rev_per_day": -0.009853599999999574,
+          "assumption": "Time-compressed exercise impulse at the first equatorial node after its assigned target. Catalog \u0394i, \u0394V, order, and source window are preserved; historical waits are not. RAAN and mean-motion changes are not fitted.",
+          "direction_definition": "RTN local orbital frame: R is radial outward, +N is r\u00d7v (orbit angular momentum), and T = N\u00d7R is transverse/prograde. N is normal to the orbital plane. This burn has zero R/T component. For the observed positive \u0394i, burn +N at an ascending node or -N at a descending node."
+        },
+        {
+          "schedule_kind": "compressed_exercise",
+          "window_from_utc": "2026-05-21T06:48:00.502560Z",
+          "window_to_utc": "2026-05-21T22:44:47.728896Z",
+          "window_midpoint_utc": "2026-05-21T14:46:24.115728Z",
+          "suggested_utc": "2026-05-14T03:33:12.969361Z",
+          "source_catalog_node_utc": "2026-05-21T14:46:12.132963Z",
+          "exercise_elapsed_s": 12792.969361,
+          "delta_i_deg": 0.4819999999999993,
+          "dv_m_s": 63.787621120468586,
+          "relative_direction": "-N",
+          "dv_rtn_m_s": [
+            0.0,
+            0.0,
+            -63.787621120468586
+          ],
+          "dv_teme_m_s": [
+            63.24346977069573,
+            1.8732267991904465,
+            8.100318569682297
+          ],
+          "nearest_node": "descending",
+          "tle_epoch_utc": "2026-05-21T06:48:00.502560Z",
+          "dirty_mean_motion": true,
+          "delta_mean_motion_rev_per_day": -0.009672520000000517,
+          "assumption": "Time-compressed exercise impulse at the first equatorial node after its assigned target. Catalog \u0394i, \u0394V, order, and source window are preserved; historical waits are not. RAAN and mean-motion changes are not fitted.",
+          "direction_definition": "RTN local orbital frame: R is radial outward, +N is r\u00d7v (orbit angular momentum), and T = N\u00d7R is transverse/prograde. N is normal to the orbital plane. This burn has zero R/T component. For the observed positive \u0394i, burn +N at an ascending node or -N at a descending node."
+        }
+      ],
+      "catalogue_manoeuvres": [
+        {
+          "schedule_kind": "catalog_timing_reference",
+          "window_from_utc": "2026-05-20T22:49:58.833696Z",
+          "window_to_utc": "2026-05-21T06:48:00.501696Z",
+          "window_midpoint_utc": "2026-05-21T02:48:59.667696Z",
+          "suggested_utc": "2026-05-21T02:48:48.756029Z",
+          "source_catalog_node_utc": "2026-05-21T02:48:48.756029Z",
+          "exercise_elapsed_s": null,
+          "delta_i_deg": 0.33549999999999613,
+          "dv_m_s": 44.48328903090232,
+          "relative_direction": "-N",
+          "dv_rtn_m_s": [
+            0.0,
+            0.0,
+            -44.48328903090232
+          ],
+          "dv_teme_m_s": [
+            43.71189887586361,
+            6.248666709903153,
+            5.3839635977239535
+          ],
+          "nearest_node": "descending",
+          "tle_epoch_utc": "2026-05-20T22:49:58.833696Z",
+          "dirty_mean_motion": true,
+          "delta_mean_motion_rev_per_day": -0.009853599999999574,
+          "assumption": "Impulsive circular plane change at the equatorial node nearest the catalog-gap midpoint; \u0394v = 2 v sin(\u0394i/2) along signed TEME orbit-normal. Node time and midpoint are illustrative, not measured burn epochs. \u0394\u03a9 is not fitted.",
+          "direction_definition": "RTN local orbital frame: R is radial outward, +N is r\u00d7v (orbit angular momentum), and T = N\u00d7R is transverse/prograde. N is normal to the orbital plane. This burn has zero R/T component. For the observed positive \u0394i, burn +N at an ascending node or -N at a descending node."
+        },
+        {
+          "schedule_kind": "catalog_timing_reference",
+          "window_from_utc": "2026-05-21T06:48:00.502560Z",
+          "window_to_utc": "2026-05-21T22:44:47.728896Z",
+          "window_midpoint_utc": "2026-05-21T14:46:24.115728Z",
+          "suggested_utc": "2026-05-21T14:46:12.132963Z",
+          "source_catalog_node_utc": "2026-05-21T14:46:12.132963Z",
+          "exercise_elapsed_s": null,
+          "delta_i_deg": 0.4819999999999993,
+          "dv_m_s": 63.787621120468586,
+          "relative_direction": "+N",
+          "dv_rtn_m_s": [
+            0.0,
+            0.0,
+            63.787621120468586
+          ],
+          "dv_teme_m_s": [
+            -62.559682216538306,
+            -9.470235393193372,
+            -8.090822626389627
+          ],
+          "nearest_node": "ascending",
+          "tle_epoch_utc": "2026-05-21T06:48:00.502560Z",
+          "dirty_mean_motion": true,
+          "delta_mean_motion_rev_per_day": -0.009672520000000517,
+          "assumption": "Impulsive circular plane change at the equatorial node nearest the catalog-gap midpoint; \u0394v = 2 v sin(\u0394i/2) along signed TEME orbit-normal. Node time and midpoint are illustrative, not measured burn epochs. \u0394\u03a9 is not fitted.",
+          "direction_definition": "RTN local orbital frame: R is radial outward, +N is r\u00d7v (orbit angular momentum), and T = N\u00d7R is transverse/prograde. N is normal to the orbital plane. This burn has zero R/T component. For the observed positive \u0394i, burn +N at an ascending node or -N at a descending node."
+        }
+      ],
+      "sum_delta_i_deg": 0.8174999999999955,
+      "sum_dv_m_s": 108.27091015137091
+    }
+  ]
+}

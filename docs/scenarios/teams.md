@@ -1,4 +1,4 @@
-# `teams[]` — units of identity
+# `teams[]`: Units of Identity
 
 Each entry in `teams[]` is one team in the scenario. The order doesn't matter; the IDs do.
 
@@ -23,29 +23,35 @@ Each entry in `teams[]` is one team in the scenario. The order doesn't matter; t
 | --- | --- | --- | --- |
 | `enabled` | `bool` | `true` | If `false`, the team is parsed but not instantiated (no ground controller, no MQTT credentials, no downlink). Useful for keeping inactive teams in the file for later. |
 | `id` | `integer` | _(required)_ | Numeric team ID. Used in MQTT topic paths (`<GAME>/<ID>/...`) and in the `team_id` field of every event. **Must be unique** within the scenario. |
-| `password` | `string` | _(required)_ | 6-character alphanumeric XOR password. **Must be unique** per team. Teams use this to encrypt their MQTT traffic — see [Encryption](../concepts/encryption.md). |
+| `password` | `string` | _(required)_ | 6-character alphanumeric XOR password. **Must be unique** per team. Teams use this to encrypt their MQTT traffic: see [Encryption](../concepts/encryption.md). |
 | `name` | `string` | _(required)_ | Display name (`"Red Team"`, `"Blue Team"`). Used by the Operator UI, admin tools, and ground-controller responses. |
 | `key` | `integer` `0–255` | `0` | Initial Caesar key. Teams can rotate this at runtime via [`encryption`](../api-reference/spacecraft-commands.md#encryption). |
 | `frequency` | `number` (MHz) | `0` | Initial RF carrier frequency. Pick distinct values per team to avoid cross-talk. The shipped scenarios spread teams across `468–901 MHz`. |
 | `collection` | `string` | `""` | Name of an entry in [`assets.collections`](spacecraft.md#collections) listing the spacecraft this team controls. Empty = no spacecraft. Must match an `id` in `assets.collections[]`. |
-| `color` | `string` (hex) | `"#FFFFFF"` | Hex RGB. Used for ground tracks, asset markers, plot colours, and OperatorUI accents. Accepts `#RRGGBB` or `#RGB`. |
+| `color` | `string` (hex) | `"#FFFFFF"` | Hex RGB. Used for ground tracks, asset markers, plot colors, and **Operator UI** accents. Accepts `#RRGGBB` or `#RGB`. |
+
+---
 
 ## Notes
 
-- Teams can share a `collection` to share spacecraft, though that is rare in practice and complicates Q&A scoring. Sharing a collection still spawns a **separate copy** per team. If you instead want a single, genuinely shared craft that no team controls (e.g. a central docking station), use [`assets.neutral`](spacecraft.md#neutral-team-less-shared-craft) — it spawns once and every team can reference it as a target.
+- Teams can share a `collection` to share spacecraft, though that is rare in practice and complicates Q&A scoring. Sharing a collection still spawns a **separate copy** per team. If you instead want a single, genuinely shared craft that no team controls (e.g. a central docking station), use [`assets.neutral`](spacecraft.md#neutral-team-less-shared-craft): it spawns once and every team can reference it as a target.
 - Multiple teams can use the same `key` (Caesar key); it's per-team-scoped at the RF layer, so collisions don't cause cross-decryption.
 - `password` is the **strong** layer (XOR per byte against the password); don't reuse passwords between teams. The Caesar `key` is the weak layer used for over-the-air RF and is intended to be visible to anyone with an [`EM Sensor`](components.md#electromagnetic-sensor).
 - The number of teams is not bounded by the simulation, but practical exercises rarely exceed 12. Each team adds a ground controller, an MQTT credential set, and per-team telemetry bandwidth.
 
-## Authoring rules of thumb
+---
+
+## Authoring Rules of Thumb
 
 - **IDs**: small round numbers (`111111`, `222222`) are fine for tutorials. For competition / multi-event use, prefer larger random IDs to reduce muscle-memory mistakes.
 - **Passwords**: random 6-character alphanumeric. The Operator UI accepts the team password as the secret to log in, so make them unguessable.
 - **Frequencies**: spread across the band. Closer-spaced frequencies (within ~10 MHz) make jamming exercises more interesting; widely-spaced frequencies make accidents less likely. Two-team scenarios often use `473` and `474` (next-door); large competitions spread across `~430` MHz of the RF band.
-- **Colors**: use distinct hues. Teams identify each other by colour in the Operator UI, on plot lines, and on ground tracks. Avoid two teams with similar shades (e.g. `#00CED1` and `#00FFFF`).
-- **Collections**: keep collection names descriptive (`Main`, `Red`, `Rogue`, `Hub`) — they appear in admin tools.
+- **Colors**: use distinct hues. Teams identify each other by color in the Operator UI, on plot lines, and on ground tracks. Avoid two teams with similar shades (e.g. `#00CED1` and `#00FFFF`).
+- **Collections**: keep collection names descriptive (`Main`, `Red`, `Rogue`, `Hub`): they appear in admin tools.
 
-## Example: a multi-team competition team list
+---
+
+## Example: a Multi-Team Competition Team List
 
 From `Orbital Intel`:
 
@@ -58,4 +64,4 @@ From `Orbital Intel`:
 ]
 ```
 
-Note how the `Rogue` team has its own collection (a single rogue spacecraft) while every other team shares the `Main` collection (the same defender spacecraft, viewed from different identities). This is the standard "constructive-agent" shape — see the recipes in [recipes.md](recipes.md).
+Note how the `Rogue` team has its own collection (a single rogue spacecraft) while every other team shares the `Main` collection (the same defender spacecraft, viewed from different identities). This is the standard "constructive-agent" shape: see the recipes in [recipes.md](recipes.md).
