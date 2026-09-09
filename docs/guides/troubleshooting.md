@@ -234,10 +234,11 @@ If that throws, check whether `Commands` is the literal string `"[]"` (empty lis
 1. `Enabled: false` on the event.
 2. Trigger time hasn't been reached. Pausing extends real time but not simulation time: check the actual sim clock.
 3. The `Target` string doesn't match any component / error model in the loaded build.
+4. `Target Name` is set and no component of that class carries that name. The event resolves the class fine and then narrows to nothing, so it no-ops silently.
 
 **Diagnostic.** Run [`admin_get_scenario_events`](../api-reference/admin-requests.md#admin_get_scenario_events). The response lists every parsed event; if your event is missing, the JSON failed to parse it.
 
-**Fix.** Compare `Target` strings against the working examples in `orbital_intel.json`. Use exact spelling.
+**Fix.** Compare `Target` strings against the working examples in `orbital_intel.json`. Use exact spelling. When `Target Name` is set, check it against `components[].name` on the assets in `Assets`: the match ignores case and spaces but nothing else, so punctuation must line up.
 
 ### "I Changed the Scenario JSON but Studio Is Still Using the Old One."
 

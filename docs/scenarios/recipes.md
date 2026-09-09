@@ -315,6 +315,7 @@ When generating a scenario from a brief, follow this checklist top-to-bottom. Ea
 - For training scenarios, pair every fault with a recovery-prompting follow-up event (or document the recovery in `description`).
 - Sort events in the JSON in chronological `Time` order for readability.
 - Empty `Assets: []` means *every spacecraft*. Use a single-element list (`["ALPHA"]`) for per-team faults.
+- A class `Target` hits every component of that class. Add `Target Name` to fail one of them, which is what you want when operators are meant to work out *which* panel or wheel went bad.
 
 ### 6. Questions
 

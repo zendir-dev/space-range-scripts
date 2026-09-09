@@ -26,6 +26,7 @@ Every event uses the same outer shape. Field names are case-insensitive when loa
 | `Type` | `string` | `"Spacecraft"` | One of `Spacecraft`, `GPS`, `Cyber` (case-insensitive). The string `"failure"` is also accepted as an alias for `Spacecraft`. |
 | `Assets` | `string[]` | `[]` | Asset IDs the event applies to (matches `assets.space[].id`). Empty `[]` means **all** spacecraft. Used by `Spacecraft` and `Cyber`; ignored by `GPS`. |
 | `Target` | `string` | `""` | `Spacecraft`: component/error-model target. `Cyber`: currently must be `Spacecraft` (case-insensitive). `GPS`: ignored. |
+| `Target Name` | `string` | `""` | `Spacecraft`: narrows `Target` to the components carrying this name. Empty means every component `Target` resolves to. `GPS` and `Cyber`: ignored. |
 | `Data` | `object` | `{}` | A flat map of keys to string-or-number values. Schema depends on `Type`: see sections below. |
 
 Keep `Data` keys **flat**: do not nest objects inside `Data`. Avoid `.` in key names unless you intend a dotted lookup (unusual for events).
@@ -42,8 +43,9 @@ When a `Spacecraft` event fires:
 
 1. Studio first tries `Target` as a full **component name** (`components[].name`). Names that contain a hyphen: `"Thruster 4 (-X)"`, `"Solar Panel -X"`: match that one component and are not split.
 2. If the full string does not resolve, Studio splits `Target` on the first `-` into **component** and optional **error model**, then resolves the left side by name or **class alias** (`Battery`, `Solar Panel`, `Reaction Wheels`, …). See [`components.md`](./components.md) for aliases.
-3. Spaces are stripped from each `Data` key before matching (`"Bit Rate"` → `BitRate`).
-4. Values are applied to every matching component on every spacecraft listed in `Assets` (or all spacecraft if `Assets` is empty). Unknown `Target` strings do not fall through to every component.
+3. If `Target Name` is set, the components found so far are narrowed to those carrying that name. See [Restricting an Event to One Component](#restricting-an-event-to-one-component) below.
+4. Spaces are stripped from each `Data` key before matching (`"Bit Rate"` → `BitRate`).
+5. Values are applied to every matching component on every spacecraft listed in `Assets` (or all spacecraft if `Assets` is empty). Unknown `Target` strings do not fall through to every component.
 
 If there is **no** error-model suffix, `Data` keys set **direct properties** on the component (e.g. `Capacity`, `Bit Rate`, `Stuck Index`, `Fault State`).
 
@@ -73,6 +75,40 @@ Restrict the impact to specific spacecraft via `Assets`:
 ```
 
 If `Assets` is omitted or empty, the event runs on **every** spacecraft in the scenario. Use this for global anomalies (e.g. solar flare); use a single-element array for per-team faults.
+
+### Restricting an Event to One Component
+
+A class-based `Target` hits **every** component of that class on each spacecraft. A craft with four solar panels and `"Target": "SolarPanel-SolarPanelDegradationErrorModel"` degrades all four. That is usually what you want for a global anomaly, but not when the scenario calls for one failed panel that operators have to identify.
+
+`Target Name` narrows the match without giving up the class. When it is set, only components whose `components[].name` matches are affected: they still have to be of the class `Target` names, so the error model resolves the same way.
+
+```json
+{
+  "Enabled": true, "Name": "Single Panel Degraded", "Time": 600.0,
+  "Repeat": false, "Interval": 1.0,
+  "Type": "Spacecraft",
+  "Target": "SolarPanel-SolarPanelDegradationErrorModel",
+  "Target Name": "Solar Panel +X",
+  "Assets": ["SC_OPS"],
+  "Data": { "Degradation Rate": 250000.0 }
+}
+```
+
+The name match ignores **case and spaces**, so `"Solar Panel +X"`, `"solar panel +x"` and `"SolarPanel+X"` all reach the same component. This means a component renamed for presentation keeps working, but it also means two components whose names differ only by spacing cannot be told apart.
+
+| `Target` | `Target Name` | What gets touched |
+| --- | --- | --- |
+| `"SolarPanel"` | `""` | Every solar panel on every listed spacecraft. |
+| `"SolarPanel"` | `"Solar Panel +X"` | Only the panel named `Solar Panel +X`. |
+| `"SolarPanel"` | `"Battery A"` | Nothing. The name exists but is not a solar panel, so the event silently no-ops. |
+| `"Thruster 1 (+X)"` | `""` | The one thruster with that name, as before. `Target Name` is not needed when `Target` is already an instance name. |
+
+Points worth knowing:
+
+- If more than one component on a spacecraft shares the name, **all** of them are affected. The name is not required to be unique.
+- If nothing matches, the event no-ops for that spacecraft with no error. Check the name against `components[].name` in the asset definition when an event appears to do nothing.
+- `Target Name` is per-component, not per-spacecraft. Use `Assets` to restrict which spacecraft are involved, and `Target Name` to restrict which components on them.
+- Leaving `Target Name` out entirely is identical to leaving it empty: the event behaves exactly as it did before this field existed, so existing scenarios are unaffected.
 
 ### Spacecraft Event `Data`
 

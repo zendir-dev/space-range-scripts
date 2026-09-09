@@ -393,6 +393,7 @@ Studio fires these on the simulation timeline. They're how an instructor injects
 | `Interval` | `number` (sim s) | Repeat period. Ignored when `Repeat` is `false`. |
 | `Type` | `string` | `Spacecraft`, `GPS`, or `Cyber` (case-insensitive; `failure` is accepted as an alias for `Spacecraft`). Selects the action handler. |
 | `Target` | `string` | `Spacecraft`: component name, class alias, or `"<Component>-<ErrorModel>"`. Hyphenated names such as `"Thruster 4 (-X)"` match as a whole before any error-model split. `Cyber`: currently `Spacecraft`. `GPS`: ignored. |
+| `Target Name` | `string` | `Spacecraft`: narrows a class-based `Target` to the components with this `components[].name`, matched ignoring case and spaces. Omit or leave empty to affect every component of the class. Ignored by `GPS` and `Cyber`. |
 | `Assets` | `string[]` | Spacecraft IDs to target (`Spacecraft`/`Cyber`). Empty array = "every spacecraft". Ignored by `GPS`. |
 | `Data` | `object` | Type/target-specific parameters. `Spacecraft`: component/error-model properties. `GPS`: `Data.Type`=`Spoofing`/`Jamming`, with `Action` for jamming. `Cyber`: telemetry tamper schema (`APID`, optional `SubType`, `Offset Bytes`, `Payload`, `Encoding`, `Expiry Seconds`, `Clear On Reset`). |
 
@@ -406,6 +407,8 @@ The most useful Spacecraft `Target` forms:
 | `Battery-BatteryLeakageErrorModel` | Battery leak (`Power Leakage Rate`). |
 | `Transmitter-TransmitterPacketCorruptionErrorModel` | Packet corruption (`Packet Corruption Fraction`). |
 | `Computer-GuidanceComputerNoiseErrorModel` | Pointing error (`Noise Factor`, `Randomize`). |
+
+Each of these hits every component of that class on the spacecraft. To fail one panel out of four rather than all of them, add `Target Name` alongside `Target`; see [Scenario reference → restricting an event to one component](../scenarios/events.md#restricting-an-event-to-one-component).
 
 GPS events configure spoofing regions and jamming sources on the global GPS subsystem; see [Scenario reference → events](../scenarios/events.md#gps-events) for the full schema.
 
