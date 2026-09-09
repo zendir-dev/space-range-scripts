@@ -40,6 +40,10 @@ SMALLSAT_MESH = (
     "/ZendirAssetsSpace/Blueprints/Spacecraft/ZenSat/"
     "BP_Z_SC_ZenSat_Chassis"
 )
+ICEYE_MESH = (
+    "/ZendirAssetsSpace/Blueprints/Spacecraft/Landsat8/"
+    "BP_Z_SC_Landsat8_Chassis"
+)
 OVERWATCH_MESH = (
     "/ZendirAssetsSpace/Blueprints/Spacecraft/MRO/"
     "BP_Z_SC_MRO_Chassis"
@@ -200,6 +204,11 @@ OVERWATCH_SENSOR_POSITION = [2.285, -0.015, 1.448]
 OVERWATCH_SENSOR_ROTATION = [-180.0, 90.0, -180.0]
 OVERWATCH_OPTICAL_CAMERA = "OTC-450 Optical Tracking Camera"
 OVERWATCH_EVENT_CAMERA = "EVS-450 Neuromorphic Event Camera"
+
+# Measured against the Landsat 8 chassis. These do not transfer to another
+# chassis: swapping ICEYE_MESH means re-measuring the mount in Studio.
+ICEYE_CAMERA_POSITION = [-0.297, 0.215, 0.106]
+ICEYE_CAMERA_ROTATION = [180.0, -90.0, 0.0]
 
 def cumulative_burns(name: str, count: int | None = None) -> list[dict[str, Any]]:
     matches = [burn for burn in BURNS if burn["spacecraft"] == name]
@@ -380,15 +389,16 @@ def iceye_asset(*, include_camera: bool = True) -> dict[str, Any]:
                     "Focusing Distance": 600000.0,
                     "Resolution": [1024, 1024],
                 },
-                position=[0.008, -0.276, -0.014],
-                rotation=[90.0, 0.0, 0.0],
+                position=ICEYE_CAMERA_POSITION,
+                rotation=ICEYE_CAMERA_ROTATION,
             )
         )
     return asset(
         "SC_ICEYE_X36",
         "ICEYE-X36",
         scenario_orbit("ICEYE-X36", "initial"),
-        scale=0.7,
+        mesh=ICEYE_MESH,
+        scale=0.2,
         components=components,
         mass=100.0,
     )
@@ -912,6 +922,25 @@ def validate(scenarios: dict[str, dict[str, Any]]) -> None:
         asset_ids = {entry["id"] for entry in scenario["assets"]["space"]}
         assert len(asset_ids) == len(scenario["assets"]["space"])
         assert scenario["questions"] == []
+        iceye = next(
+            entry
+            for entry in scenario["assets"]["space"]
+            if entry["id"] == "SC_ICEYE_X36"
+        )
+        assert iceye["visualization"]["mesh"] == ICEYE_MESH
+        assert iceye["visualization"]["scale"] == 0.2
+
+        # The SAR mount is measured against the Landsat 8 chassis, so it has to
+        # be re-checked alongside the mesh. Section 4 carries no ICEYE camera.
+        iceye_cameras = [
+            entry for entry in iceye["components"] if entry["class"] == "Camera"
+        ]
+        if filename == "section_4.json":
+            assert not iceye_cameras
+        else:
+            assert len(iceye_cameras) == 1
+            assert iceye_cameras[0]["position"] == ICEYE_CAMERA_POSITION
+            assert iceye_cameras[0]["rotation"] == ICEYE_CAMERA_ROTATION
 
         # Section 1 ships without the Cosmos so the opening shot cannot leak
         # their labels. Every later section needs all five, and none of them

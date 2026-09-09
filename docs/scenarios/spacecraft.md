@@ -125,6 +125,24 @@ The `physics` block is **optional**: omit it and Studio falls back to a sensible
 
 `mesh` is a presentation-only field: telemetry and command semantics are unaffected.
 
+### Available spacecraft visual assets
+
+The following chassis blueprints are used by the bundled scenarios and can be
+assigned to `visualization.mesh`. Asset paths are case-sensitive.
+
+| Visual asset | `visualization.mesh` path | Typical use |
+| --- | --- | --- |
+| ZenSat | `/ZendirAssetsSpace/Blueprints/Spacecraft/ZenSat/BP_Z_SC_ZenSat_Chassis` | Small satellite or generic spacecraft |
+| Landsat 8 | `/ZendirAssetsSpace/Blueprints/Spacecraft/Landsat8/BP_Z_SC_Landsat8_Chassis` | Large Earth-observation spacecraft |
+| MRO | `/ZendirAssetsSpace/Blueprints/Spacecraft/MRO/BP_Z_SC_MRO_Chassis` | Large remote-sensing or surveillance spacecraft |
+| Gateway Core | `/ZendirAssetsSpace/Blueprints/Spacecraft/GatewayCore/BP_Z_SC_GatewayCore_Chassis` | Station or large orbital infrastructure |
+| Second Stage | `/ZendirAssetsSpace/Blueprints/Spacecraft/SecondStage/BP_Z_SC_SecondStage_Chassis` | Launch-vehicle upper stage or debris object |
+
+These assets have different native sizes. Set `scale` for the intended shot;
+for example, the bundled Landsat 8 scenarios use `0.2`. Changing a visual asset
+does not change the spacecraft's mass, inertia, components, or sensor mounting
+positions.
+
 ---
 
 ## `controller`: per-Spacecraft Tuning

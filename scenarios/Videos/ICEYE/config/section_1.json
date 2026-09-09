@@ -92,8 +92,8 @@
           ]
         },
         "visualization": {
-          "mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/ZenSat/BP_Z_SC_ZenSat_Chassis",
-          "scale": 0.7,
+          "mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/Landsat8/BP_Z_SC_Landsat8_Chassis",
+          "scale": 0.2,
           "offset": [
             0.0,
             0.0,
@@ -209,13 +209,13 @@
               ]
             },
             "position": [
-              0.008,
-              -0.276,
-              -0.014
+              -0.297,
+              0.215,
+              0.106
             ],
             "rotation": [
-              90.0,
-              0.0,
+              180.0,
+              -90.0,
               0.0
             ]
           }
