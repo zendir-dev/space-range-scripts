@@ -12,6 +12,8 @@ Three event types exist:
 
 There is no `Ground` or `Scenario` event type: older docs may mention them. Only `Spacecraft`, `GPS`, and `Cyber` are supported; other `Type` values fall back to `Spacecraft` with a warning.
 
+For the reverse relationship — a spacecraft parameter reaching a condition and *awarding points* rather than the clock reaching a time and changing the spacecraft — see [`objectives.md`](./objectives.md). Events and objectives share the same `Target` and `Target Name` resolution, so they pair naturally: break a component with an event, then score the team for dealing with it.
+
 ## Common Fields
 
 Every event uses the same outer shape. Field names are case-insensitive when loaded; the Studio **Add Event** templates use PascalCase, so prefer that for consistency:
@@ -677,6 +679,7 @@ Templates are available from Studio **Add Event → Cyber**.
 
 ## See Also
 
+- [`objectives.md`](./objectives.md): award points when a parameter reaches a condition, which is the natural counterpart to an event that breaks something.
 - [`questions.md`](./questions.md): define what teams have to figure out about your events.
 - [`components.md`](./components.md): class-alias table for `Target` strings.
 - Studio **Add Event** menu: canonical Spacecraft, GPS, and Cyber templates to copy from.

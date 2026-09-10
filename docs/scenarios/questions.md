@@ -12,6 +12,8 @@ Question IDs are **assigned automatically** in load order (1, 2, 3, …). Author
 
 The full structure of a question depends on its `type`. All the question types follow the same outer shape: only the `answer` block differs.
 
+Questions are one of two ways a scenario awards points. They score what a team **worked out**; [`objectives[]`](./objectives.md) score what a team **did** to their spacecraft. Both feed the same per-team total, so keep their point scales consistent.
+
 ## Common Fields
 
 | Key | JSON type | Default | Description |
@@ -240,5 +242,6 @@ A complete `questions` block from a real scenario:
 ## See Also
 
 - [`events.md`](./events.md): design fault events that questions can probe.
+- [`objectives.md`](./objectives.md): the other half of scoring, awarding points for what a team does rather than what they report.
 - [`README.md`](./README.md): note about question IDs being auto-assigned.
 - [ground-requests.md: submit_answer](../api-reference/ground-requests.md#submit_answer): how teams submit answers at runtime.

@@ -69,6 +69,7 @@ This documentation is for **users** of Space Range: operators, integrators, and 
 - [`objects.ground[]`](scenarios/ground-objects.md): vessels, text labels, and other passive ground actors.
 - [`objects.space[]`](scenarios/space-objects.md): passive orbital objects (bare spacecraft with no controller or components).
 - [`events[]`](scenarios/events.md): scripted Spacecraft, GPS, and Cyber events with full `Data` schemas.
+- [`objectives[]`](scenarios/objectives.md): point awards triggered by a spacecraft parameter reaching a condition.
 - [`questions[]`](scenarios/questions.md): Q&A scoring (text, number, select, checkbox).
 - [Recipes & agent checklist](scenarios/recipes.md): annotated end-to-end patterns and an agent-author checklist.
 
