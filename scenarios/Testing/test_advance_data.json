@@ -1,0 +1,1435 @@
+{
+  "metadata": {
+    "name": "Test Advance Data",
+    "description": "A dense four-team data-generation scenario spanning LEO, MEO, GEO and HEO operations, with independent refuellers, power and fuel buses, varied scheduled anomalies, broad ground coverage and mixed assessment questions."
+  },
+  "simulation": {
+    "epoch": "2026/09/14 08:00:00",
+    "speed": 3.0,
+    "step_size": 0.1,
+    "integrator": "Euler",
+    "end_time": 7200.0
+  },
+  "universe": {
+    "atmosphere": true,
+    "magnetosphere": true,
+    "gps": true,
+    "cloud_opacity": 0.8,
+    "cloud_contrast": 2.4,
+    "ambient_light": 0.25
+  },
+  "ground_stations": {
+    "locations": [
+      "Dubai",
+      "Singapore",
+      "Auckland",
+      "Salvador",
+      "Miami",
+      "Paris",
+      "Sydney",
+      "Los Angeles",
+      "Tokyo",
+      "Cape Town",
+      "London"
+    ],
+    "min_elevation": 5.0,
+    "max_range": 0.0,
+    "scale": 100.0
+  },
+  "teams": [
+    {
+      "enabled": true,
+      "id": 110101,
+      "password": "B7Q2LX",
+      "name": "Team Blue",
+      "key": 42,
+      "frequency": 468,
+      "collection": "BLUE_FLEET",
+      "color": "#168CFF"
+    },
+    {
+      "enabled": true,
+      "id": 220202,
+      "password": "R9M4KC",
+      "name": "Team Red",
+      "key": 87,
+      "frequency": 612,
+      "collection": "RED_FLEET",
+      "color": "#FF334D"
+    },
+    {
+      "enabled": true,
+      "id": 330303,
+      "password": "G5V8NP",
+      "name": "Team Green",
+      "key": 154,
+      "frequency": 745,
+      "collection": "GREEN_FLEET",
+      "color": "#21D66B"
+    },
+    {
+      "enabled": true,
+      "id": 440404,
+      "password": "Y3W6TZ",
+      "name": "Team Gold",
+      "key": 203,
+      "frequency": 889,
+      "collection": "GOLD_FLEET",
+      "color": "#FFC928"
+    }
+  ],
+  "assets": {
+    "space": [
+      {
+        "id": "BLUE_LEO_EO",
+        "name": "Blue Horizon",
+        "orbit": {
+          "planet": "Earth",
+          "values": [7078.0, 0.001, 51.6, 15.0, 0.0, 10.0],
+          "offset": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+        },
+        "physics": {
+          "override_mass": true,
+          "mass": 180.0,
+          "center_of_mass": [0.0, 0.0, 0.0],
+          "inertia_tensor": [[18.0, 0.0, 0.0], [0.0, 18.0, 0.0], [0.0, 0.0, 18.0]]
+        },
+        "visualization": {
+          "mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/Landsat8/BP_Z_SC_Landsat8_Chassis",
+          "scale": 0.2,
+          "offset": [0.0, 0.0, 0.0]
+        },
+        "controller": {
+          "safe_fraction": 0.12,
+          "capture_tax": 0.002,
+          "downlink_tax": 0.003,
+          "ping_interval": 15.0,
+          "reset_interval": 90.0,
+          "jamming_multiplier": 1.0,
+          "enable_rpo_software": false,
+          "enable_intercept": false
+        },
+        "power": {
+          "monitor": true,
+          "bus": [
+            {"source_component": "Solar Panel +X", "source_terminal": "out", "target_component": "Battery", "target_terminal": "out"},
+            {"source_component": "Solar Panel -X", "source_terminal": "out", "target_component": "Battery", "target_terminal": "out"},
+            {"source_component": "Battery", "source_terminal": "out", "target_component": "Payload Switch", "target_terminal": "in"},
+            {"source_component": "Payload Switch", "source_terminal": "out", "target_component": "Camera", "target_terminal": "in"},
+            {"source_component": "Battery", "source_terminal": "out", "target_component": "Transmitter", "target_terminal": "in"}
+          ]
+        },
+        "components": [
+          {"class": "Solar Panel", "name": "Solar Panel +X", "enabled": true, "data": {"Area": 1.5, "Efficiency": 0.34, "Mass": 8.0}},
+          {"class": "Solar Panel", "name": "Solar Panel -X", "enabled": true, "data": {"Area": 1.5, "Efficiency": 0.34, "Mass": 8.0}},
+          {"class": "Battery", "name": "Battery", "enabled": true, "data": {"Nominal Capacity": 180.0, "Charge Fraction": 0.82, "Mass": 12.0}},
+          {"class": "Power Switch", "name": "Payload Switch", "enabled": true, "data": {"Is Open": false, "Resistance": 0.01, "Mass": 0.2}},
+          {"class": "Reaction Wheels", "name": "Reaction Wheels", "enabled": true, "data": {"Mass": 9.0}},
+          {"class": "Computer", "name": "Computer", "enabled": true, "data": {"Mass": 2.0}},
+          {"class": "Camera", "name": "Camera", "enabled": true, "rotation": [90.0, 0.0, 0.0], "data": {"Mass": 5.0, "Sample Rate": 5.0, "Resolution": [2048, 2048], "Min Field Of View": 2.0, "Field Of View": 12.0, "Max Field Of View": 30.0}},
+          {"class": "GPS Sensor", "name": "GPS Sensor", "enabled": true, "data": {"Mass": 2.0}},
+          {"class": "Magnetometer", "name": "Magnetometer", "enabled": true, "data": {"Mass": 1.0}},
+          {"class": "Gyroscope", "name": "Gyroscope", "enabled": true, "data": {"Mass": 1.0}},
+          {"class": "Receiver", "name": "Receiver", "enabled": true, "data": {"Antenna Gain": 4.0, "Mass": 2.0}},
+          {"class": "Transmitter", "name": "Transmitter", "enabled": true, "data": {"Antenna Gain": 5.0, "Mass": 1.0}},
+          {"class": "Storage", "name": "Storage", "enabled": true, "data": {"Mass": 8.0}}
+        ]
+      },
+      {
+        "id": "BLUE_MEO_REFUELLER",
+        "name": "Blue Refueller",
+        "orbit": {
+          "planet": "Earth",
+          "values": [26560.0, 0.01, 55.0, 40.0, 0.0, 30.0],
+          "offset": [0.0, 0.0, 0.0, 0.0, 0.0, 0.002]
+        },
+        "physics": {
+          "override_mass": true,
+          "mass": 420.0,
+          "center_of_mass": [0.0, 0.0, 0.0],
+          "inertia_tensor": [[45.0, 0.0, 0.0], [0.0, 45.0, 0.0], [0.0, 0.0, 45.0]]
+        },
+        "visualization": {
+          "mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/ZenSat/BP_Z_SC_ZenSat_Chassis",
+          "scale": 1.2,
+          "offset": [0.0, 0.0, 0.12]
+        },
+        "controller": {
+          "safe_fraction": 0.1,
+          "capture_tax": 0.001,
+          "downlink_tax": 0.002,
+          "ping_interval": 15.0,
+          "reset_interval": 90.0,
+          "jamming_multiplier": 1.0,
+          "enable_rpo_software": true,
+          "enable_intercept": false
+        },
+        "power": {
+          "monitor": true,
+          "bus": [
+            {"source_component": "Solar Panel", "source_terminal": "out", "target_component": "Battery", "target_terminal": "out"},
+            {"source_component": "Battery", "source_terminal": "out", "target_component": "Pump Switch", "target_terminal": "in"},
+            {"source_component": "Pump Switch", "source_terminal": "out", "target_component": "Fuel Pump Controller", "target_terminal": "in"},
+            {"source_component": "Fuel Pump Controller", "source_terminal": "out", "target_component": "Fuel Pump", "target_terminal": "in"},
+            {"source_component": "Battery", "source_terminal": "out", "target_component": "Power Interconnect", "target_terminal": "in"}
+          ]
+        },
+        "fuel": {
+          "bus": [
+            {"source_component": "Depot Tank", "source_terminal": "out", "target_component": "Fuel Pump", "target_terminal": "in"},
+            {"source_component": "Fuel Pump", "source_terminal": "out", "target_component": "Transfer Valve", "target_terminal": "in"},
+            {"source_component": "Transfer Valve", "source_terminal": "out", "target_component": "Fuel Interconnect", "target_terminal": "in"}
+          ]
+        },
+        "components": [
+          {"class": "Solar Panel", "name": "Solar Panel", "enabled": true, "data": {"Area": 2.0, "Efficiency": 0.36, "Mass": 12.0}},
+          {"class": "Battery", "name": "Battery", "enabled": true, "data": {"Nominal Capacity": 300.0, "Charge Fraction": 0.9, "Mass": 18.0}},
+          {"class": "Power Switch", "name": "Pump Switch", "enabled": true, "data": {"Is Open": false, "Resistance": 0.01, "Mass": 0.4}},
+          {"class": "Power Sink", "name": "Fuel Pump Controller", "enabled": true, "data": {"Is Active": true, "Nominal Voltage Drop": 28.0, "Nominal Power": 20.0, "Mass": 0.8}},
+          {"class": "Fuel Source", "name": "Depot Tank", "enabled": true, "data": {"Capacity": 500.0, "Amount": 420.0, "Dry Mass": 35.0, "Maximum Outgoing Flow Rate": 4.0, "Desired Ingoing Flow Rate": 0.0}},
+          {"class": "Fuel Pump", "name": "Fuel Pump", "enabled": true, "data": {"Max Flow Rate": 2.0, "Efficiency": 0.88, "Max Speed": 1.0, "Is Pump Enabled": true, "Allow Flow When Disabled": false, "Mass": 3.0}},
+          {"class": "Fuel Valve", "name": "Transfer Valve", "enabled": true, "data": {"Commanded Percent Open": 0.0, "Max Flow Rate": 2.0, "Mass": 0.6}},
+          {"class": "Fuel Interconnect", "name": "Fuel Interconnect", "enabled": true, "position": [0.0, 0.36, 0.0], "data": {"Mass": 0.5, "Is Bidirectional": true, "Vent To Space When Unconnected": false}},
+          {"class": "Power Interconnect", "name": "Power Interconnect", "enabled": true, "position": [0.0, 0.36, 0.0], "data": {"Is Open": true, "Mass": 0.2}},
+          {"class": "Docking Adapter", "name": "Docking Adapter", "enabled": true, "position": [0.0, 0.36, 0.0], "rotation": [-90.0, 0.0, 0.0], "data": {"Mass": 5.0, "Capture Distance": 0.05, "Capture Angle": 20.0, "Separation Force": 2.0, "Separation Duration": 1.0}},
+          {"class": "External Force Torque", "name": "External Force Torque", "enabled": true, "data": {"Max Force": 5000.0, "Max Torque": 2000.0}},
+          {"class": "Reaction Wheels", "name": "Reaction Wheels", "enabled": true, "data": {"Mass": 12.0}},
+          {"class": "Computer", "name": "Computer", "enabled": true, "data": {"Mass": 3.0}},
+          {"class": "GPS Sensor", "name": "GPS Sensor", "enabled": true, "data": {"Mass": 2.0}},
+          {"class": "Receiver", "name": "Receiver", "enabled": true, "data": {"Antenna Gain": 6.0, "Mass": 2.0}},
+          {"class": "Transmitter", "name": "Transmitter", "enabled": true, "data": {"Antenna Gain": 6.0, "Mass": 2.0}},
+          {"class": "Storage", "name": "Storage", "enabled": true, "data": {"Mass": 5.0}}
+        ]
+      },
+      {
+        "id": "RED_GEO_COMMS",
+        "name": "Red Meridian",
+        "orbit": {
+          "planet": "Earth",
+          "values": [42164.0, 0.0001, 0.1, 75.0, 0.0, 0.0],
+          "offset": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+        },
+        "physics": {
+          "override_mass": true,
+          "mass": 780.0,
+          "center_of_mass": [0.0, 0.0, 0.0],
+          "inertia_tensor": [[90.0, 0.0, 0.0], [0.0, 90.0, 0.0], [0.0, 0.0, 90.0]]
+        },
+        "visualization": {
+          "mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/MRO/BP_Z_SC_MRO_Chassis",
+          "scale": 0.55,
+          "offset": [0.0, 0.0, 0.0]
+        },
+        "controller": {
+          "safe_fraction": 0.15,
+          "capture_tax": 0.001,
+          "downlink_tax": 0.001,
+          "ping_interval": 20.0,
+          "reset_interval": 120.0,
+          "jamming_multiplier": 10.0,
+          "enable_rpo_software": false,
+          "enable_intercept": true
+        },
+        "power": {
+          "monitor": true,
+          "bus": [
+            {"source_component": "Solar Panel +X", "source_terminal": "out", "target_component": "Battery", "target_terminal": "out"},
+            {"source_component": "Solar Panel -X", "source_terminal": "out", "target_component": "Battery", "target_terminal": "out"},
+            {"source_component": "Battery", "source_terminal": "out", "target_component": "Communications Fuse", "target_terminal": "in"},
+            {"source_component": "Communications Fuse", "source_terminal": "out", "target_component": "Transmitter", "target_terminal": "in"},
+            {"source_component": "Communications Fuse", "source_terminal": "out", "target_component": "Jammer", "target_terminal": "in"}
+          ]
+        },
+        "components": [
+          {"class": "Solar Panel", "name": "Solar Panel +X", "enabled": true, "data": {"Area": 6.0, "Efficiency": 0.38, "Mass": 30.0}},
+          {"class": "Solar Panel", "name": "Solar Panel -X", "enabled": true, "data": {"Area": 6.0, "Efficiency": 0.38, "Mass": 30.0}},
+          {"class": "Battery", "name": "Battery", "enabled": true, "data": {"Nominal Capacity": 1200.0, "Charge Fraction": 0.96, "Nominal Voltage": 48.0, "Mass": 45.0}},
+          {"class": "Power Fuse", "name": "Communications Fuse", "enabled": true, "data": {"Current Threshold": 40.0, "Threshold Duration": 20.0, "Reset Duration": 120.0, "Resistance": 0.01, "Mass": 0.3}},
+          {"class": "Reaction Wheels", "name": "Reaction Wheels", "enabled": true, "data": {"Mass": 20.0}},
+          {"class": "Computer", "name": "Computer", "enabled": true, "data": {"Mass": 4.0}},
+          {"class": "GPS Sensor", "name": "GPS Sensor", "enabled": true, "data": {"Mass": 2.0}},
+          {"class": "EM Sensor", "name": "EM Sensor", "enabled": true, "data": {"Mass": 4.0}},
+          {"class": "Receiver", "name": "Receiver", "enabled": true, "data": {"Antenna Gain": 12.0, "Mass": 5.0}},
+          {"class": "Transmitter", "name": "Transmitter", "enabled": true, "data": {"Antenna Gain": 15.0, "Mass": 8.0}},
+          {"class": "Jammer", "name": "Jammer", "enabled": true, "data": {"Power": 25.0, "Antenna Gain": 8.0, "Mass": 12.0}},
+          {"class": "Storage", "name": "Storage", "enabled": true, "data": {"Mass": 20.0}}
+        ]
+      },
+      {
+        "id": "RED_LEO_SIGINT",
+        "name": "Red Watch",
+        "orbit": {
+          "planet": "Earth",
+          "values": [6978.0, 0.003, 97.8, 125.0, 20.0, 190.0],
+          "offset": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+        },
+        "physics": {
+          "override_mass": true,
+          "mass": 140.0,
+          "center_of_mass": [0.0, 0.0, 0.0],
+          "inertia_tensor": [[14.0, 0.0, 0.0], [0.0, 14.0, 0.0], [0.0, 0.0, 14.0]]
+        },
+        "visualization": {
+          "mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/ZenSat/BP_Z_SC_ZenSat_Chassis",
+          "scale": 0.9,
+          "offset": [0.0, 0.0, 0.12]
+        },
+        "controller": {
+          "safe_fraction": 0.1,
+          "capture_tax": 0.001,
+          "downlink_tax": 0.004,
+          "ping_interval": 10.0,
+          "reset_interval": 75.0,
+          "jamming_multiplier": 50.0,
+          "enable_rpo_software": false,
+          "enable_intercept": true
+        },
+        "components": [
+          {"class": "Solar Panel", "name": "Solar Panel", "enabled": true, "data": {"Area": 1.0, "Efficiency": 0.33, "Mass": 7.0}},
+          {"class": "Battery", "name": "Battery", "enabled": true, "data": {"Nominal Capacity": 110.0, "Charge Fraction": 0.75, "Mass": 7.0}},
+          {"class": "Reaction Wheels", "name": "Reaction Wheels", "enabled": true, "data": {"Mass": 7.0}},
+          {"class": "Computer", "name": "Computer", "enabled": true, "data": {"Mass": 2.0}},
+          {"class": "GPS Sensor", "name": "GPS Sensor", "enabled": true, "data": {"Mass": 2.0}},
+          {"class": "EM Sensor", "name": "EM Sensor", "enabled": true, "data": {"Mass": 3.0}},
+          {"class": "Magnetometer", "name": "Magnetometer", "enabled": true, "data": {"Mass": 1.0}},
+          {"class": "Receiver", "name": "Receiver", "enabled": true, "data": {"Antenna Gain": 9.0, "Mass": 3.0}},
+          {"class": "Transmitter", "name": "Transmitter", "enabled": true, "data": {"Antenna Gain": 5.0, "Mass": 2.0}},
+          {"class": "Jammer", "name": "Jammer", "enabled": true, "data": {"Power": 8.0, "Antenna Gain": 6.0, "Mass": 5.0}},
+          {"class": "Storage", "name": "Storage", "enabled": true, "data": {"Mass": 10.0}}
+        ]
+      },
+      {
+        "id": "GREEN_MEO_NAV",
+        "name": "Green Pathfinder",
+        "orbit": {
+          "planet": "Earth",
+          "values": [26560.0, 0.005, 55.0, 160.0, 0.0, 145.0],
+          "offset": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+        },
+        "physics": {
+          "override_mass": true,
+          "mass": 260.0,
+          "center_of_mass": [0.0, 0.0, 0.0],
+          "inertia_tensor": [[28.0, 0.0, 0.0], [0.0, 28.0, 0.0], [0.0, 0.0, 28.0]]
+        },
+        "visualization": {
+          "mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/ZenSat/BP_Z_SC_ZenSat_Chassis",
+          "scale": 1.0,
+          "offset": [0.0, 0.0, 0.12]
+        },
+        "controller": {
+          "safe_fraction": 0.12,
+          "capture_tax": 0.001,
+          "downlink_tax": 0.002,
+          "ping_interval": 15.0,
+          "reset_interval": 90.0,
+          "jamming_multiplier": 1.0,
+          "enable_rpo_software": false,
+          "enable_intercept": false
+        },
+        "power": {
+          "monitor": true,
+          "bus": [
+            {"source_component": "Solar Panel", "source_terminal": "out", "target_component": "Battery A", "target_terminal": "out"},
+            {"source_component": "Battery A", "source_terminal": "out", "target_component": "Battery B", "target_terminal": "in"},
+            {"source_component": "Battery B", "source_terminal": "out", "target_component": "Navigation Regulator", "target_terminal": "in"},
+            {"source_component": "Navigation Regulator", "source_terminal": "out", "target_component": "GPS Sensor", "target_terminal": "in"}
+          ]
+        },
+        "components": [
+          {"class": "Solar Panel", "name": "Solar Panel", "enabled": true, "data": {"Area": 2.5, "Efficiency": 0.36, "Mass": 15.0}},
+          {"class": "Battery", "name": "Battery A", "enabled": true, "data": {"Nominal Capacity": 220.0, "Charge Fraction": 0.88, "Mass": 12.0}},
+          {"class": "Battery", "name": "Battery B", "enabled": true, "data": {"Nominal Capacity": 220.0, "Charge Fraction": 0.84, "Mass": 12.0}},
+          {"class": "Power Voltage Regulator", "name": "Navigation Regulator", "enabled": true, "data": {"Regulation Voltage": 12.0, "Resistance": 0.1, "Mass": 0.3}},
+          {"class": "Reaction Wheels", "name": "Reaction Wheels", "enabled": true, "data": {"Mass": 10.0}},
+          {"class": "Computer", "name": "Computer", "enabled": true, "data": {"Mass": 3.0}},
+          {"class": "GPS Sensor", "name": "GPS Sensor", "enabled": true, "data": {"Mass": 3.0}},
+          {"class": "Magnetometer", "name": "Magnetometer", "enabled": true, "data": {"Mass": 1.0}},
+          {"class": "Gyroscope", "name": "Gyroscope", "enabled": true, "data": {"Mass": 1.0}},
+          {"class": "Receiver", "name": "Receiver", "enabled": true, "data": {"Antenna Gain": 7.0, "Mass": 3.0}},
+          {"class": "Transmitter", "name": "Transmitter", "enabled": true, "data": {"Antenna Gain": 7.0, "Mass": 3.0}},
+          {"class": "Storage", "name": "Storage", "enabled": true, "data": {"Mass": 8.0}}
+        ]
+      },
+      {
+        "id": "GREEN_LEO_POWERLAB",
+        "name": "Green Power Lab",
+        "orbit": {
+          "planet": "Earth",
+          "values": [7178.0, 0.0, 98.6, 90.0, 0.0, 270.0],
+          "offset": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+        },
+        "physics": {
+          "override_mass": true,
+          "mass": 210.0,
+          "center_of_mass": [0.0, 0.0, 0.0],
+          "inertia_tensor": [[22.0, 0.0, 0.0], [0.0, 22.0, 0.0], [0.0, 0.0, 22.0]]
+        },
+        "visualization": {
+          "mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/Landsat8/BP_Z_SC_Landsat8_Chassis",
+          "scale": 0.2,
+          "offset": [0.0, 0.0, 0.0]
+        },
+        "controller": {
+          "safe_fraction": 0.2,
+          "capture_tax": 0.003,
+          "downlink_tax": 0.004,
+          "ping_interval": 12.0,
+          "reset_interval": 75.0,
+          "jamming_multiplier": 1.0,
+          "enable_rpo_software": false,
+          "enable_intercept": false
+        },
+        "power": {
+          "monitor": true,
+          "bus": [
+            {"source_component": "Solar Panel +X", "source_terminal": "out", "target_component": "Battery", "target_terminal": "out"},
+            {"source_component": "Solar Panel -X", "source_terminal": "out", "target_component": "Battery", "target_terminal": "out"},
+            {"source_component": "Battery", "source_terminal": "out", "target_component": "Main Bus Switch", "target_terminal": "in"},
+            {"source_component": "Main Bus Switch", "source_terminal": "out", "target_component": "Main Bus Fuse", "target_terminal": "in"},
+            {"source_component": "Main Bus Fuse", "source_terminal": "out", "target_component": "Camera Limiter", "target_terminal": "in"},
+            {"source_component": "Camera Limiter", "source_terminal": "out", "target_component": "Camera", "target_terminal": "in"},
+            {"source_component": "Main Bus Fuse", "source_terminal": "out", "target_component": "Transmitter Diode", "target_terminal": "in"},
+            {"source_component": "Transmitter Diode", "source_terminal": "out", "target_component": "Transmitter", "target_terminal": "in"}
+          ]
+        },
+        "components": [
+          {"class": "Solar Panel", "name": "Solar Panel +X", "enabled": true, "data": {"Area": 1.8, "Efficiency": 0.35, "Mass": 9.0}},
+          {"class": "Solar Panel", "name": "Solar Panel -X", "enabled": true, "data": {"Area": 1.8, "Efficiency": 0.35, "Mass": 9.0}},
+          {"class": "Battery", "name": "Battery", "enabled": true, "data": {"Nominal Capacity": 250.0, "Charge Fraction": 0.68, "Mass": 15.0}},
+          {"class": "Power Switch", "name": "Main Bus Switch", "enabled": true, "data": {"Is Open": false, "Resistance": 0.01, "Mass": 0.2}},
+          {"class": "Power Fuse", "name": "Main Bus Fuse", "enabled": true, "data": {"Current Threshold": 30.0, "Threshold Duration": 10.0, "Reset Duration": 90.0, "Resistance": 0.01, "Mass": 0.2}},
+          {"class": "Power Current Limiter", "name": "Camera Limiter", "enabled": true, "data": {"Current Limit": 3.0, "Resistance": 0.01, "Mass": 0.2}},
+          {"class": "Power Diode", "name": "Transmitter Diode", "enabled": true, "data": {"Resistance": 0.1, "Mass": 0.1}},
+          {"class": "Reaction Wheels", "name": "Reaction Wheels", "enabled": true, "data": {"Mass": 9.0}},
+          {"class": "Computer", "name": "Computer", "enabled": true, "data": {"Mass": 2.0}},
+          {"class": "Camera", "name": "Camera", "enabled": true, "data": {"Mass": 5.0, "Resolution": [1024, 1024]}},
+          {"class": "GPS Sensor", "name": "GPS Sensor", "enabled": true, "data": {"Mass": 2.0}},
+          {"class": "Receiver", "name": "Receiver", "enabled": true, "data": {"Antenna Gain": 4.0, "Mass": 2.0}},
+          {"class": "Transmitter", "name": "Transmitter", "enabled": true, "data": {"Antenna Gain": 5.0, "Mass": 2.0}},
+          {"class": "Storage", "name": "Storage", "enabled": true, "data": {"Mass": 7.0}}
+        ]
+      },
+      {
+        "id": "GOLD_GEO_WEATHER",
+        "name": "Gold Sentinel",
+        "orbit": {
+          "planet": "Earth",
+          "values": [42164.0, 0.0002, 0.05, 245.0, 0.0, 180.0],
+          "offset": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+        },
+        "physics": {
+          "override_mass": true,
+          "mass": 900.0,
+          "center_of_mass": [0.0, 0.0, 0.0],
+          "inertia_tensor": [[110.0, 0.0, 0.0], [0.0, 110.0, 0.0], [0.0, 0.0, 110.0]]
+        },
+        "visualization": {
+          "mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/MRO/BP_Z_SC_MRO_Chassis",
+          "scale": 0.65,
+          "offset": [0.0, 0.0, 0.0]
+        },
+        "controller": {
+          "safe_fraction": 0.15,
+          "capture_tax": 0.002,
+          "downlink_tax": 0.002,
+          "ping_interval": 20.0,
+          "reset_interval": 120.0,
+          "jamming_multiplier": 1.0,
+          "enable_rpo_software": false,
+          "enable_intercept": false
+        },
+        "components": [
+          {"class": "Solar Panel", "name": "Solar Panel +X", "enabled": true, "data": {"Area": 7.0, "Efficiency": 0.39, "Mass": 35.0}},
+          {"class": "Solar Panel", "name": "Solar Panel -X", "enabled": true, "data": {"Area": 7.0, "Efficiency": 0.39, "Mass": 35.0}},
+          {"class": "Battery", "name": "Battery", "enabled": true, "data": {"Nominal Capacity": 1500.0, "Charge Fraction": 0.92, "Mass": 55.0}},
+          {"class": "Reaction Wheels", "name": "Reaction Wheels", "enabled": true, "data": {"Mass": 24.0}},
+          {"class": "Computer", "name": "Computer", "enabled": true, "data": {"Mass": 5.0}},
+          {"class": "Camera", "name": "Camera", "enabled": true, "rotation": [90.0, 0.0, 0.0], "data": {"Mass": 15.0, "Sample Rate": 2.0, "Resolution": [4096, 4096], "Min Field Of View": 5.0, "Field Of View": 20.0, "Max Field Of View": 45.0}},
+          {"class": "GPS Sensor", "name": "GPS Sensor", "enabled": true, "data": {"Mass": 2.0}},
+          {"class": "Magnetometer", "name": "Magnetometer", "enabled": true, "data": {"Mass": 2.0}},
+          {"class": "Receiver", "name": "Receiver", "enabled": true, "data": {"Antenna Gain": 14.0, "Mass": 6.0}},
+          {"class": "Transmitter", "name": "Transmitter", "enabled": true, "data": {"Antenna Gain": 16.0, "Mass": 8.0}},
+          {"class": "Storage", "name": "Storage", "enabled": true, "data": {"Mass": 30.0}}
+        ]
+      },
+      {
+        "id": "GOLD_MEO_REFUELLER",
+        "name": "Gold Refueller",
+        "orbit": {
+          "planet": "Earth",
+          "values": [26560.0, 0.01, 55.0, 40.0, 0.0, 30.0],
+          "offset": [0.0, 0.0, 0.0, 0.0, 0.0, -0.002]
+        },
+        "physics": {
+          "override_mass": true,
+          "mass": 390.0,
+          "center_of_mass": [0.0, 0.0, 0.0],
+          "inertia_tensor": [[42.0, 0.0, 0.0], [0.0, 42.0, 0.0], [0.0, 0.0, 42.0]]
+        },
+        "visualization": {
+          "mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/ZenSat/BP_Z_SC_ZenSat_Chassis",
+          "scale": 1.15,
+          "offset": [0.0, 0.0, 0.12]
+        },
+        "controller": {
+          "safe_fraction": 0.1,
+          "capture_tax": 0.001,
+          "downlink_tax": 0.002,
+          "ping_interval": 15.0,
+          "reset_interval": 90.0,
+          "jamming_multiplier": 1.0,
+          "enable_rpo_software": true,
+          "enable_intercept": false
+        },
+        "fuel": {
+          "bus": [
+            {"source_component": "Service Tank", "source_terminal": "out", "target_component": "Transfer Valve", "target_terminal": "in"},
+            {"source_component": "Transfer Valve", "source_terminal": "out", "target_component": "Fuel Interconnect", "target_terminal": "in"}
+          ]
+        },
+        "components": [
+          {"class": "Solar Panel", "name": "Solar Panel", "enabled": true, "data": {"Area": 2.0, "Efficiency": 0.36, "Mass": 12.0}},
+          {"class": "Battery", "name": "Battery", "enabled": true, "data": {"Nominal Capacity": 280.0, "Charge Fraction": 0.86, "Mass": 16.0}},
+          {"class": "Fuel Source", "name": "Service Tank", "enabled": true, "data": {"Capacity": 400.0, "Amount": 330.0, "Dry Mass": 30.0, "Maximum Outgoing Flow Rate": 3.0, "Desired Ingoing Flow Rate": 0.0}},
+          {"class": "Fuel Valve", "name": "Transfer Valve", "enabled": true, "data": {"Commanded Percent Open": 0.0, "Max Flow Rate": 1.5, "Mass": 0.6}},
+          {"class": "Fuel Interconnect", "name": "Fuel Interconnect", "enabled": true, "position": [0.0, 0.36, 0.0], "data": {"Mass": 0.5, "Is Bidirectional": true, "Vent To Space When Unconnected": false}},
+          {"class": "Power Interconnect", "name": "Power Interconnect", "enabled": true, "position": [0.0, 0.36, 0.0], "data": {"Is Open": true, "Mass": 0.2}},
+          {"class": "Docking Adapter", "name": "Docking Adapter", "enabled": true, "position": [0.0, 0.36, 0.0], "rotation": [-90.0, 0.0, 0.0], "data": {"Mass": 5.0, "Capture Distance": 0.05, "Capture Angle": 20.0, "Separation Force": 2.0, "Separation Duration": 1.0}},
+          {"class": "External Force Torque", "name": "External Force Torque", "enabled": true, "data": {"Max Force": 5000.0, "Max Torque": 2000.0}},
+          {"class": "Reaction Wheels", "name": "Reaction Wheels", "enabled": true, "data": {"Mass": 12.0}},
+          {"class": "Computer", "name": "Computer", "enabled": true, "data": {"Mass": 3.0}},
+          {"class": "GPS Sensor", "name": "GPS Sensor", "enabled": true, "data": {"Mass": 2.0}},
+          {"class": "Receiver", "name": "Receiver", "enabled": true, "data": {"Antenna Gain": 6.0, "Mass": 2.0}},
+          {"class": "Transmitter", "name": "Transmitter", "enabled": true, "data": {"Antenna Gain": 6.0, "Mass": 2.0}},
+          {"class": "Storage", "name": "Storage", "enabled": true, "data": {"Mass": 5.0}}
+        ]
+      },
+      {
+        "id": "NEUTRAL_MEO_HUB",
+        "name": "MEO Logistics Hub",
+        "orbit": {
+          "planet": "Earth",
+          "values": [26560.0, 0.01, 55.0, 40.0, 0.0, 30.0],
+          "offset": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+        },
+        "physics": {
+          "override_mass": true,
+          "mass": 12000.0,
+          "center_of_mass": [0.0, 0.0, 0.0],
+          "inertia_tensor": [[250000.0, 0.0, 0.0], [0.0, 250000.0, 0.0], [0.0, 0.0, 250000.0]]
+        },
+        "visualization": {
+          "mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/GatewayCore/BP_Z_SC_GatewayCore_Chassis",
+          "scale": 0.2,
+          "offset": [0.0, 0.0, 0.0]
+        },
+        "controller": {
+          "safe_fraction": 0.05,
+          "capture_tax": 0.0,
+          "downlink_tax": 0.0,
+          "ping_interval": 60.0,
+          "reset_interval": 180.0,
+          "jamming_multiplier": 1.0,
+          "enable_rpo_software": false,
+          "enable_intercept": false
+        },
+        "power": {
+          "monitor": true,
+          "bus": [
+            {"source_component": "Hub Solar Array", "source_terminal": "out", "target_component": "Hub Battery", "target_terminal": "out"},
+            {"source_component": "Hub Battery", "source_terminal": "out", "target_component": "Blue Power Port", "target_terminal": "in"},
+            {"source_component": "Hub Battery", "source_terminal": "out", "target_component": "Gold Power Port", "target_terminal": "in"}
+          ]
+        },
+        "fuel": {
+          "bus": [
+            {"source_component": "Blue Fuel Port", "source_terminal": "out", "target_component": "Blue Hub Tank", "target_terminal": "in"},
+            {"source_component": "Gold Fuel Port", "source_terminal": "out", "target_component": "Gold Hub Tank", "target_terminal": "in"}
+          ]
+        },
+        "components": [
+          {"class": "Solar Panel", "name": "Hub Solar Array", "enabled": true, "data": {"Area": 30.0, "Efficiency": 0.4, "Mass": 200.0}},
+          {"class": "Battery", "name": "Hub Battery", "enabled": true, "data": {"Nominal Capacity": 10000.0, "Charge Fraction": 1.0, "Nominal Voltage": 240.0, "Mass": 300.0}},
+          {"class": "Computer", "name": "Hub Computer", "enabled": true, "data": {"Mass": 20.0}},
+          {"class": "Receiver", "name": "Hub Receiver", "enabled": true, "data": {"Antenna Gain": 12.0, "Mass": 10.0}},
+          {"class": "Transmitter", "name": "Hub Transmitter", "enabled": true, "data": {"Antenna Gain": 12.0, "Mass": 10.0}},
+          {"class": "Docking Adapter", "name": "Blue Docking Port", "enabled": true, "position": [-1.0, 0.5, 0.0], "data": {"Mass": 8.0, "Capture Distance": 0.05, "Capture Angle": 20.0}},
+          {"class": "Docking Adapter", "name": "Gold Docking Port", "enabled": true, "position": [1.0, 0.5, 0.0], "data": {"Mass": 8.0, "Capture Distance": 0.05, "Capture Angle": 20.0}},
+          {"class": "Fuel Interconnect", "name": "Blue Fuel Port", "enabled": true, "position": [-1.0, 0.5, 0.0], "data": {"Mass": 1.0, "Is Bidirectional": true, "Vent To Space When Unconnected": false}},
+          {"class": "Fuel Interconnect", "name": "Gold Fuel Port", "enabled": true, "position": [1.0, 0.5, 0.0], "data": {"Mass": 1.0, "Is Bidirectional": true, "Vent To Space When Unconnected": false}},
+          {"class": "Fuel Source", "name": "Blue Hub Tank", "enabled": true, "data": {"Capacity": 1000.0, "Amount": 500.0, "Dry Mass": 80.0, "Maximum Outgoing Flow Rate": 10.0, "Desired Ingoing Flow Rate": 2.0}},
+          {"class": "Fuel Source", "name": "Gold Hub Tank", "enabled": true, "data": {"Capacity": 1000.0, "Amount": 500.0, "Dry Mass": 80.0, "Maximum Outgoing Flow Rate": 10.0, "Desired Ingoing Flow Rate": 2.0}},
+          {"class": "Power Interconnect", "name": "Blue Power Port", "enabled": true, "position": [-1.0, 0.5, 0.0], "data": {"Is Open": true, "Mass": 0.5}},
+          {"class": "Power Interconnect", "name": "Gold Power Port", "enabled": true, "position": [1.0, 0.5, 0.0], "data": {"Is Open": true, "Mass": 0.5}}
+        ]
+      }
+    ],
+    "collections": [
+      {"id": "BLUE_FLEET", "space_assets": ["BLUE_LEO_EO", "BLUE_MEO_REFUELLER"]},
+      {"id": "RED_FLEET", "space_assets": ["RED_GEO_COMMS", "RED_LEO_SIGINT"]},
+      {"id": "GREEN_FLEET", "space_assets": ["GREEN_MEO_NAV", "GREEN_LEO_POWERLAB"]},
+      {"id": "GOLD_FLEET", "space_assets": ["GOLD_GEO_WEATHER", "GOLD_MEO_REFUELLER"]}
+    ],
+    "neutral": ["NEUTRAL_MEO_HUB"]
+  },
+  "docking": [],
+  "objects": {
+    "ground": [
+      {"id": "PORT_ALPHA", "type": "vessel", "name": "Research Vessel Alpha", "planet": "Earth", "latitude": -33.8, "longitude": 151.4, "altitude": 0.001, "scale": 150.0, "color": "#00FF66", "data": {"heading": 45.0, "speed": 8.0}},
+      {"id": "PORT_BRAVO", "type": "vessel", "name": "Cargo Vessel Bravo", "planet": "Earth", "latitude": 1.2, "longitude": 103.8, "altitude": 0.001, "scale": 160.0, "color": "#FFD54A", "data": {"heading": 120.0, "speed": 12.0}},
+      {"id": "PORT_CHARLIE", "type": "vessel", "name": "Patrol Vessel Charlie", "planet": "Earth", "latitude": 25.5, "longitude": 55.3, "altitude": 0.001, "scale": 140.0, "color": "#FF334D", "data": {"heading": 290.0, "speed": 15.0}},
+      {"id": "MARKER_TRAINING", "type": "text", "name": "Training Marker", "planet": "Earth", "latitude": 19.8, "longitude": 63.6, "altitude": 3.0, "scale": 100000.0, "color": "#FFFFFF", "data": {"text": "ADVANCE"}}
+    ],
+    "space": [
+      {"name": "Tumbling Upper Stage", "orbit": [7100.0, 0.01, 51.6, 20.0, 0.0, 75.0], "planet": "Earth", "dynamic_type": "Orbit", "attitude": [0.0, 0.0, 0.0], "attitude_rate": [4.0, 1.0, 0.0], "mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/SecondStage/BP_Z_SC_SecondStage_Chassis", "scale": 0.2, "color": "#BBBBBB", "reflectivity": 0.7},
+      {"name": "Defunct Weather Satellite", "orbit": [42164.0, 0.002, 0.2, 250.0, 0.0, 182.0], "planet": "Earth", "dynamic_type": "Orbit", "attitude": [15.0, 30.0, 5.0], "attitude_rate": [0.0, 0.2, 0.0], "mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/ZenSat/BP_Z_SC_ZenSat_Chassis", "scale": 0.8, "color": "#888888", "reflectivity": 0.3}
+    ]
+  },
+  "events": [
+    {
+      "Enabled": true,
+      "Name": "Blue Storage Capacity Drop",
+      "Time": 300.0,
+      "Repeat": false,
+      "Interval": 1.0,
+      "Type": "Spacecraft",
+      "Target": "Storage",
+      "Assets": ["BLUE_LEO_EO"],
+      "Data": {"Capacity": 150000}
+    },
+    {
+      "Enabled": true,
+      "Name": "Green Guidance Noise",
+      "Time": 600.0,
+      "Repeat": false,
+      "Interval": 1.0,
+      "Type": "Spacecraft",
+      "Target": "Computer-GuidanceComputerNoiseErrorModel",
+      "Assets": ["GREEN_LEO_POWERLAB"],
+      "Data": {"Noise Factor": 0.005, "Randomize": true}
+    },
+    {
+      "Enabled": true,
+      "Name": "Red Transmitter Bit Rate Reduction",
+      "Time": 900.0,
+      "Repeat": false,
+      "Interval": 1.0,
+      "Type": "Spacecraft",
+      "Target": "Transmitter",
+      "Assets": ["RED_GEO_COMMS"],
+      "Data": {"Bit Rate": 500.0}
+    },
+    {
+      "Enabled": true,
+      "Name": "GPS Jammer Added Near Dubai",
+      "Time": 1200.0,
+      "Repeat": false,
+      "Interval": 1.0,
+      "Type": "GPS",
+      "Target": "",
+      "Assets": [],
+      "Data": {"Type": "Jamming", "Action": "add", "Jammer Latitude": 25.2, "Jammer Longitude": 55.3, "Jammer Altitude": 0.0, "ERP": 250000.0, "Path Loss Exponent": 2.0}
+    },
+    {
+      "Enabled": true,
+      "Name": "Blue Battery Leak",
+      "Time": 1500.0,
+      "Repeat": false,
+      "Interval": 1.0,
+      "Type": "Spacecraft",
+      "Target": "Battery-BatteryLeakageErrorModel",
+      "Assets": ["BLUE_LEO_EO"],
+      "Data": {"Power Leakage Rate": 0.00005}
+    },
+    {
+      "Enabled": true,
+      "Name": "Green Reaction Wheel Stuck",
+      "Time": 1800.0,
+      "Repeat": false,
+      "Interval": 1.0,
+      "Type": "Spacecraft",
+      "Target": "Reaction Wheels",
+      "Assets": ["GREEN_MEO_NAV"],
+      "Data": {"Stuck Index": 2}
+    },
+    {
+      "Enabled": true,
+      "Name": "Red Ping Telemetry ASCII Overlay",
+      "Time": 2100.0,
+      "Repeat": false,
+      "Interval": 1.0,
+      "Type": "Cyber",
+      "Target": "Spacecraft",
+      "Assets": ["RED_LEO_SIGINT"],
+      "Data": {"APID": 100, "SubType": 0, "Offset Bytes": 0, "Payload": "ANOMALY", "Encoding": "ascii", "Expiry Seconds": 300.0, "Clear On Reset": true}
+    },
+    {
+      "Enabled": true,
+      "Name": "Gold Solar Panel Degradation",
+      "Time": 2400.0,
+      "Repeat": false,
+      "Interval": 1.0,
+      "Type": "Spacecraft",
+      "Target": "Solar Panel-SolarPanelDegradationErrorModel",
+      "Assets": ["GOLD_GEO_WEATHER"],
+      "Data": {"Degradation Rate": 0.0002}
+    },
+    {
+      "Enabled": true,
+      "Name": "GPS Spoofing Region Enabled",
+      "Time": 2700.0,
+      "Repeat": false,
+      "Interval": 1.0,
+      "Type": "GPS",
+      "Target": "",
+      "Assets": [],
+      "Data": {"Type": "Spoofing", "Enabled": true, "Origin Latitude": -33.86, "Origin Longitude": 151.21, "Origin Altitude": 700000.0, "Radius": 2500000.0, "Spoof Latitude": -31.0, "Spoof Longitude": 149.0, "Spoof Altitude": 500000.0}
+    },
+    {
+      "Enabled": true,
+      "Name": "Blue Refueller Packet Corruption",
+      "Time": 3000.0,
+      "Repeat": false,
+      "Interval": 1.0,
+      "Type": "Spacecraft",
+      "Target": "Transmitter-TransmitterPacketCorruptionErrorModel",
+      "Assets": ["BLUE_MEO_REFUELLER"],
+      "Data": {"Packet Corruption Fraction": 0.2}
+    },
+    {
+      "Enabled": true,
+      "Name": "Red EM Sensor Fault",
+      "Time": 3300.0,
+      "Repeat": false,
+      "Interval": 1.0,
+      "Type": "Spacecraft",
+      "Target": "EM Sensor",
+      "Assets": ["RED_LEO_SIGINT"],
+      "Data": {"Fault State": 3}
+    },
+    {
+      "Enabled": true,
+      "Name": "Green GPS Sensor Fault",
+      "Time": 3600.0,
+      "Repeat": false,
+      "Interval": 1.0,
+      "Type": "Spacecraft",
+      "Target": "GPS Sensor",
+      "Assets": ["GREEN_MEO_NAV"],
+      "Data": {"Fault State": 4}
+    },
+    {
+      "Enabled": true,
+      "Name": "GPS Jammer Power Increased",
+      "Time": 3900.0,
+      "Repeat": false,
+      "Interval": 1.0,
+      "Type": "GPS",
+      "Target": "",
+      "Assets": [],
+      "Data": {"Type": "Jamming", "Action": "update", "Index": 0, "ERP": 750000.0, "Enabled": true}
+    },
+    {
+      "Enabled": true,
+      "Name": "Gold Battery Power Spikes",
+      "Time": 4200.0,
+      "Repeat": true,
+      "Interval": 300.0,
+      "Type": "Spacecraft",
+      "Target": "Battery-IntermittentConnectionErrorModel",
+      "Assets": ["GOLD_MEO_REFUELLER"],
+      "Data": {"Intermittent Mean": 1, "Intermittent Std": 2}
+    },
+    {
+      "Enabled": true,
+      "Name": "Green Reaction Wheel Restored",
+      "Time": 4500.0,
+      "Repeat": false,
+      "Interval": 1.0,
+      "Type": "Spacecraft",
+      "Target": "Reaction Wheels",
+      "Assets": ["GREEN_MEO_NAV"],
+      "Data": {"Nominal Index": 2}
+    },
+    {
+      "Enabled": true,
+      "Name": "GPS Spoofing Region Cleared",
+      "Time": 4800.0,
+      "Repeat": false,
+      "Interval": 1.0,
+      "Type": "GPS",
+      "Target": "",
+      "Assets": [],
+      "Data": {"Type": "Spoofing", "Enabled": false}
+    },
+    {
+      "Enabled": true,
+      "Name": "Gold Magnetometer Fault",
+      "Time": 5100.0,
+      "Repeat": false,
+      "Interval": 1.0,
+      "Type": "Spacecraft",
+      "Target": "Magnetometer",
+      "Assets": ["GOLD_GEO_WEATHER"],
+      "Data": {"Fault State": 3}
+    },
+    {
+      "Enabled": true,
+      "Name": "Blue Storage Corruption",
+      "Time": 5400.0,
+      "Repeat": false,
+      "Interval": 1.0,
+      "Type": "Spacecraft",
+      "Target": "Storage",
+      "Assets": ["BLUE_LEO_EO"],
+      "Data": {"Corruption Fraction": 0.1, "Corruption Intensity": 0.2}
+    },
+    {
+      "Enabled": true,
+      "Name": "GPS Jammer Removed",
+      "Time": 5700.0,
+      "Repeat": false,
+      "Interval": 1.0,
+      "Type": "GPS",
+      "Target": "",
+      "Assets": [],
+      "Data": {"Type": "Jamming", "Action": "remove", "Index": 0}
+    },
+    {
+      "Enabled": true,
+      "Name": "Green Ping Telemetry Hex Overlay",
+      "Time": 6000.0,
+      "Repeat": false,
+      "Interval": 1.0,
+      "Type": "Cyber",
+      "Target": "Spacecraft",
+      "Assets": ["GREEN_LEO_POWERLAB"],
+      "Data": {"APID": 100, "SubType": -1, "Offset Bytes": 12, "Payload": "46 4C 41 47 7B 50 4F 57 45 52 7D", "Encoding": "hex", "Expiry Seconds": 600.0, "Clear On Reset": false}
+    },
+    {
+      "Enabled": true,
+      "Name": "Red Guidance Noise",
+      "Time": 6300.0,
+      "Repeat": false,
+      "Interval": 1.0,
+      "Type": "Spacecraft",
+      "Target": "Computer-GuidanceComputerNoiseErrorModel",
+      "Assets": ["RED_GEO_COMMS"],
+      "Data": {"Noise Factor": 0.01, "Randomize": true}
+    },
+    {
+      "Enabled": true,
+      "Name": "Blue Magnetometer Fault",
+      "Time": 6600.0,
+      "Repeat": false,
+      "Interval": 1.0,
+      "Type": "Spacecraft",
+      "Target": "Magnetometer",
+      "Assets": ["BLUE_LEO_EO"],
+      "Data": {"Fault State": 3}
+    }
+  ],
+  "questions": [
+    {
+      "section": "Scenario Orientation",
+      "title": "How many teams are operating in this scenario?",
+      "description": "Use the scenario roster or information stream to count the enabled teams.",
+      "type": "number",
+      "answer": {"unit": "teams", "value": 4, "tolerance": 0, "reason": "Four teams are enabled: Blue, Red, Green and Gold.", "score": 3}
+    },
+    {
+      "section": "Scenario Orientation",
+      "title": "How many controllable spacecraft does each team operate?",
+      "description": "Count the spacecraft returned for your team.",
+      "type": "number",
+      "answer": {"unit": "spacecraft", "value": 2, "tolerance": 0, "reason": "Every team collection contains two spacecraft.", "score": 3}
+    },
+    {
+      "section": "Scenario Orientation",
+      "title": "What is the name of the neutral logistics facility?",
+      "description": "Inspect the shared neutral assets and provide the hub name.",
+      "type": "text",
+      "answer": {"value": "MEO Logistics Hub", "reason": "The only neutral controlled asset is named MEO Logistics Hub.", "score": 4}
+    },
+    {
+      "section": "Orbital Operations",
+      "title": "What semi-major axis identifies the primary LEO group?",
+      "description": "Use GPS telemetry from Blue Horizon and report the approximate semi-major axis.",
+      "type": "number",
+      "answer": {"unit": "km", "value": 7078.0, "tolerance": 100.0, "reason": "Blue Horizon begins at a semi-major axis of 7078 km.", "score": 5}
+    },
+    {
+      "section": "Orbital Operations",
+      "title": "What semi-major axis is used by the MEO logistics group?",
+      "description": "Use GPS telemetry from either refueller or the hub.",
+      "type": "number",
+      "answer": {"unit": "km", "value": 26560.0, "tolerance": 100.0, "reason": "The hub and both refuellers share a nominal MEO semi-major axis of 26560 km.", "score": 5}
+    },
+    {
+      "section": "Orbital Operations",
+      "title": "Which spacecraft are in geosynchronous-altitude orbits?",
+      "description": "Select all team spacecraft configured near a 42164 km semi-major axis.",
+      "type": "checkbox",
+      "answer": {
+        "options": ["Blue Horizon", "Red Meridian", "Green Pathfinder", "Gold Sentinel"],
+        "value": [1, 3],
+        "reason": ["Red Meridian and Gold Sentinel are the two GEO spacecraft."],
+        "score": 6
+      }
+    },
+    {
+      "section": "Power Systems",
+      "title": "What is Blue Horizon's initial battery charge fraction?",
+      "description": "Read Battery telemetry near scenario start.",
+      "type": "number",
+      "answer": {"unit": "fraction", "value": 0.82, "tolerance": 0.02, "reason": "Blue Horizon starts with a charge fraction of 0.82.", "score": 4}
+    },
+    {
+      "section": "Power Systems",
+      "title": "Which Green spacecraft has the detailed protected power bus?",
+      "description": "Look for a main bus switch, fuse, limiter and diode.",
+      "type": "select",
+      "answer": {
+        "options": ["Green Pathfinder", "Green Power Lab", "MEO Logistics Hub", "Gold Sentinel"],
+        "value": 1,
+        "reason": ["Green Power Lab contains the detailed switch, fuse, limiter and diode network.", "Correct.", "The hub has interconnects but is neutral.", "Gold Sentinel belongs to another team."],
+        "score": 5
+      }
+    },
+    {
+      "section": "Power Systems",
+      "title": "Which components feed Blue Horizon's battery?",
+      "description": "Select every direct source connected to the battery in the power bus.",
+      "type": "checkbox",
+      "answer": {
+        "options": ["Solar Panel +X", "Solar Panel -X", "Payload Switch", "Transmitter"],
+        "value": [0, 1],
+        "reason": ["Both solar panels feed the battery directly."],
+        "score": 5
+      }
+    },
+    {
+      "section": "Fuel Operations",
+      "title": "How much fuel is initially stored in the Blue Refueller depot tank?",
+      "description": "Read the Depot Tank fuel telemetry before commanding any valves.",
+      "type": "number",
+      "answer": {"unit": "kg", "value": 420.0, "tolerance": 1.0, "reason": "The Blue Refueller Depot Tank begins with 420 kg.", "score": 5}
+    },
+    {
+      "section": "Fuel Operations",
+      "title": "Are either of the refuellers initially connected to the neutral hub?",
+      "description": "Inspect docking and interconnect status at scenario start.",
+      "type": "select",
+      "answer": {
+        "options": ["Yes, both", "Blue only", "Gold only", "No, neither"],
+        "value": 3,
+        "reason": ["Neither refueller starts connected.", "Neither refueller starts connected.", "Neither refueller starts connected.", "Correct."],
+        "score": 5
+      }
+    },
+    {
+      "section": "Fuel Operations",
+      "title": "Which sequence describes the Blue Refueller fuel bus?",
+      "description": "Trace the configured flow path from source to external transfer point.",
+      "type": "select",
+      "answer": {
+        "options": [
+          "Depot Tank, Fuel Pump, Transfer Valve, Fuel Interconnect",
+          "Depot Tank, Battery, Docking Adapter",
+          "Fuel Interconnect, Depot Tank, Solar Panel",
+          "Transfer Valve, Receiver, Hub Tank"
+        ],
+        "value": 0,
+        "reason": ["Correct.", "Electrical components are not in the fuel path.", "The flow order is reversed and incomplete.", "The receiver is not part of the fuel bus."],
+        "score": 6
+      }
+    },
+    {
+      "section": "Anomaly Detection",
+      "title": "Which spacecraft experiences a stuck reaction wheel?",
+      "description": "Correlate attitude-control telemetry with the scheduled anomaly timeline.",
+      "type": "text",
+      "answer": {"value": "Green Pathfinder", "reason": "Green Pathfinder receives the stuck wheel event at 1800 seconds.", "score": 5}
+    },
+    {
+      "section": "Anomaly Detection",
+      "title": "At what simulation time is the Green reaction wheel restored?",
+      "description": "Report the elapsed scenario time when wheel index 2 returns to nominal.",
+      "type": "number",
+      "answer": {"unit": "s", "value": 4500.0, "tolerance": 5.0, "reason": "The recovery event occurs at 4500 simulated seconds.", "score": 5}
+    },
+    {
+      "section": "Anomaly Detection",
+      "title": "Which anomaly types occur during the scenario?",
+      "description": "Select every event family represented in the timeline.",
+      "type": "checkbox",
+      "answer": {
+        "options": ["Spacecraft component faults", "GPS environmental events", "Cyber telemetry overlays", "Ground station destruction"],
+        "value": [0, 1, 2],
+        "reason": ["Spacecraft, GPS and Cyber events are all present; ground station destruction is not a supported event type."],
+        "score": 6
+      }
+    },
+    {
+      "section": "Anomaly Detection",
+      "title": "Which spacecraft receives packet corruption at 3000 seconds?",
+      "description": "Use transmitter telemetry and packet quality to identify the affected asset.",
+      "type": "select",
+      "answer": {
+        "options": ["Blue Horizon", "Blue Refueller", "Red Meridian", "Gold Refueller"],
+        "value": 1,
+        "reason": ["The packet corruption targets Blue Refueller.", "Correct.", "Red Meridian has a bit-rate reduction instead.", "Gold Refueller receives intermittent battery faults."],
+        "score": 5
+      }
+    },
+    {
+      "section": "GPS Environment",
+      "title": "Near which ground station is the first GPS jammer placed?",
+      "description": "Use the jammer geodetic location and the ground network list.",
+      "type": "text",
+      "answer": {"value": "Dubai", "reason": "The jammer is placed at approximately 25.2 N, 55.3 E, near Dubai.", "score": 4}
+    },
+    {
+      "section": "GPS Environment",
+      "title": "For how long is the spoofing region active?",
+      "description": "Measure from spoofing enable to spoofing clear.",
+      "type": "number",
+      "answer": {"unit": "s", "value": 2100.0, "tolerance": 5.0, "reason": "Spoofing is enabled at 2700 seconds and cleared at 4800 seconds.", "score": 5}
+    },
+    {
+      "section": "Cyber Operations",
+      "title": "What ASCII word is overlaid on Red Watch ping telemetry?",
+      "description": "Inspect affected APID 100 user data during the cyber event window.",
+      "type": "text",
+      "answer": {"value": "ANOMALY", "reason": "The ASCII payload is ANOMALY.", "score": 5}
+    },
+    {
+      "section": "Cyber Operations",
+      "title": "Which APID is targeted by both cyber events?",
+      "description": "Inspect packet headers for the affected telemetry.",
+      "type": "number",
+      "answer": {"unit": "APID", "value": 100, "tolerance": 0, "reason": "Both overlays target APID 100.", "score": 4}
+    },
+    {
+      "section": "Ground Observation",
+      "title": "What word is displayed in the Arabian Sea training marker?",
+      "description": "Use an Earth-observation camera to inspect the text marker west of India.",
+      "type": "text",
+      "answer": {"value": "ADVANCE", "reason": "The marker spells ADVANCE.", "score": 5}
+    },
+    {
+      "section": "Ground Observation",
+      "title": "Which vessel is moving fastest?",
+      "description": "Compare the configured speeds of the three visible vessels.",
+      "type": "select",
+      "answer": {
+        "options": ["Research Vessel Alpha", "Cargo Vessel Bravo", "Patrol Vessel Charlie"],
+        "value": 2,
+        "reason": ["Patrol Vessel Charlie is fastest at 15 m/s.", "Patrol Vessel Charlie is fastest at 15 m/s.", "Correct."],
+        "score": 4
+      }
+    },
+    {
+      "section": "Ground Network",
+      "title": "How many ground stations are available?",
+      "description": "Count the configured shared ground station locations.",
+      "type": "number",
+      "answer": {"unit": "stations", "value": 11, "tolerance": 0, "reason": "The scenario defines 11 ground stations.", "score": 4}
+    },
+    {
+      "section": "Ground Network",
+      "title": "Which stations are in the Southern Hemisphere?",
+      "description": "Select all clearly Southern Hemisphere stations from this subset.",
+      "type": "checkbox",
+      "answer": {
+        "options": ["Auckland", "Cape Town", "London", "Miami", "Salvador", "Sydney"],
+        "value": [0, 1, 4, 5],
+        "reason": ["Auckland, Cape Town, Salvador and Sydney are south of the equator."],
+        "score": 6
+      }
+    },
+    {
+      "section": "Session Timing",
+      "title": "What is the configured simulated session duration?",
+      "description": "Report the hard stop duration in simulated hours.",
+      "type": "number",
+      "answer": {"unit": "hours", "value": 2.0, "tolerance": 0.01, "reason": "The end time is 7200 seconds, or two simulated hours.", "score": 4}
+    },
+    {
+      "section": "Session Timing",
+      "title": "What is the default simulation speed multiplier?",
+      "description": "Read the configured timeline speed.",
+      "type": "number",
+      "answer": {"unit": "x", "value": 3.0, "tolerance": 0.01, "reason": "The scenario starts at 3x speed.", "score": 4}
+    },
+    {
+      "section": "Scenario Orientation",
+      "title": "Which teams operate a MEO refueller?",
+      "description": "Identify every team that controls a spacecraft with a fuel interconnect and docking adapter in MEO.",
+      "type": "checkbox",
+      "answer": {
+        "options": ["Team Blue", "Team Red", "Team Green", "Team Gold"],
+        "value": [0, 3],
+        "reason": ["Blue Refueller and Gold Refueller are the two MEO tanker spacecraft."],
+        "score": 6
+      }
+    },
+    {
+      "section": "Scenario Orientation",
+      "title": "Which spacecraft is the shared logistics node?",
+      "description": "The hub is not assigned to any team collection. Select its display name.",
+      "type": "select",
+      "answer": {
+        "options": ["Blue Refueller", "Green Pathfinder", "MEO Logistics Hub", "Gold Sentinel"],
+        "value": 2,
+        "reason": ["Blue Refueller is a team tanker.", "Green Pathfinder is a team navigation satellite.", "Correct.", "Gold Sentinel is a GEO weather spacecraft."],
+        "score": 4
+      }
+    },
+    {
+      "section": "Scenario Orientation",
+      "title": "Which spacecraft carry an RF jammer payload?",
+      "description": "Inspect component lists and select every spacecraft that includes a Jammer.",
+      "type": "checkbox",
+      "answer": {
+        "options": ["Blue Horizon", "Red Meridian", "Red Watch", "Green Pathfinder", "Gold Sentinel"],
+        "value": [1, 2],
+        "reason": ["Red Meridian and Red Watch are the two jammer-equipped spacecraft."],
+        "score": 6
+      }
+    },
+    {
+      "section": "Orbital Operations",
+      "title": "Which spacecraft are in low Earth orbit?",
+      "description": "Select every team spacecraft with a semi-major axis near 7000 km.",
+      "type": "checkbox",
+      "answer": {
+        "options": ["Blue Horizon", "Blue Refueller", "Red Watch", "Green Pathfinder", "Green Power Lab", "Gold Sentinel"],
+        "value": [0, 2, 4],
+        "reason": ["Blue Horizon, Red Watch and Green Power Lab are the LEO spacecraft."],
+        "score": 6
+      }
+    },
+    {
+      "section": "Orbital Operations",
+      "title": "Which orbit class best describes Green Pathfinder?",
+      "description": "Use GPS telemetry and the scenario fleet list to classify the orbit.",
+      "type": "select",
+      "answer": {
+        "options": ["LEO Earth observation", "MEO navigation", "GEO communications", "HEO lunar transfer"],
+        "value": 1,
+        "reason": ["Green Pathfinder is not in LEO.", "Correct: 26560 km MEO at 55 degrees inclination.", "GEO is used by Red Meridian and Gold Sentinel.", "There is no lunar-transfer spacecraft in this scenario."],
+        "score": 5
+      }
+    },
+    {
+      "section": "Orbital Operations",
+      "title": "Which spacecraft share the MEO logistics orbit with the hub?",
+      "description": "Match Keplerian elements near 26560 km, 55 degrees inclination and the same RAAN as the hub.",
+      "type": "checkbox",
+      "answer": {
+        "options": ["Blue Refueller", "Green Pathfinder", "Gold Refueller", "Red Meridian"],
+        "value": [0, 2],
+        "reason": ["Blue Refueller and Gold Refueller are co-orbital with the hub; Green Pathfinder is MEO but on a different RAAN, and Red Meridian is GEO."],
+        "score": 6
+      }
+    },
+    {
+      "section": "Power Systems",
+      "title": "Which Green Power Lab components sit on the protected payload branch?",
+      "description": "Trace the camera branch of the power bus after the main fuse.",
+      "type": "checkbox",
+      "answer": {
+        "options": ["Camera Limiter", "Camera", "Transmitter Diode", "Fuel Pump"],
+        "value": [0, 1],
+        "reason": ["The camera branch is Main Bus Fuse to Camera Limiter to Camera. The diode is on the transmitter branch, and there is no fuel pump on this spacecraft."],
+        "score": 6
+      }
+    },
+    {
+      "section": "Power Systems",
+      "title": "How is Green Pathfinder's battery stack wired?",
+      "description": "Inspect the power bus from solar generation through storage.",
+      "type": "select",
+      "answer": {
+        "options": [
+          "A single battery with no regulator",
+          "Two batteries in series feeding a 12 V navigation regulator",
+          "Two batteries in parallel with a diode OR-ing both to the transmitter",
+          "Hub battery sharing through a power interconnect"
+        ],
+        "value": 1,
+        "reason": ["There are two named batteries.", "Correct: Solar Panel to Battery A to Battery B to Navigation Regulator to GPS Sensor.", "The batteries are series, not parallel.", "Pathfinder is not docked to the hub."],
+        "score": 6
+      }
+    },
+    {
+      "section": "Power Systems",
+      "title": "Which Blue Horizon load is gated by Payload Switch?",
+      "description": "Follow the power bus from the battery through the switch.",
+      "type": "select",
+      "answer": {
+        "options": ["Camera", "Transmitter", "GPS Sensor", "Reaction Wheels"],
+        "value": 0,
+        "reason": ["Correct: Payload Switch feeds the Camera.", "The transmitter is wired directly from the battery.", "The GPS sensor is not on the explicit bus.", "Reaction wheels are not on the explicit bus."],
+        "score": 5
+      }
+    },
+    {
+      "section": "Power Systems",
+      "title": "Which spacecraft include a Power Interconnect for cross-hull transfer?",
+      "description": "Select every asset that has a Power Interconnect component.",
+      "type": "checkbox",
+      "answer": {
+        "options": ["Blue Horizon", "Blue Refueller", "Green Power Lab", "Gold Refueller", "MEO Logistics Hub"],
+        "value": [1, 3, 4],
+        "reason": ["Blue Refueller, Gold Refueller and the hub carry power interconnects. Blue Horizon and Green Power Lab only have on-board buses."],
+        "score": 6
+      }
+    },
+    {
+      "section": "Fuel Operations",
+      "title": "Which components are required on a tanker before it can transfer fuel to the hub?",
+      "description": "Select every component class used for docked propellant transfer in this scenario.",
+      "type": "checkbox",
+      "answer": {
+        "options": ["Fuel Source", "Fuel Valve", "Fuel Interconnect", "Docking Adapter", "Jammer"],
+        "value": [0, 1, 2, 3],
+        "reason": ["Tanks, valves, interconnects and docking adapters are required. A jammer is not part of the fuel path."],
+        "score": 6
+      }
+    },
+    {
+      "section": "Fuel Operations",
+      "title": "Which statement about the hub tanks is correct at scenario start?",
+      "description": "Compare Blue Hub Tank and Gold Hub Tank telemetry before any transfer.",
+      "type": "select",
+      "answer": {
+        "options": [
+          "Both hub tanks are empty",
+          "Both hub tanks start at 500 kg of a 1000 kg capacity",
+          "Only the Blue hub tank contains fuel",
+          "The hub has a single shared tank"
+        ],
+        "value": 1,
+        "reason": ["Both tanks start half full.", "Correct.", "Both tanks start with 500 kg.", "The hub has separate Blue and Gold tanks."],
+        "score": 5
+      }
+    },
+    {
+      "section": "Fuel Operations",
+      "title": "Which Blue Refueller power components support the fuel pump?",
+      "description": "Trace the electrical path that enables pumping.",
+      "type": "checkbox",
+      "answer": {
+        "options": ["Pump Switch", "Fuel Pump Controller", "Fuel Pump", "Communications Fuse"],
+        "value": [0, 1, 2],
+        "reason": ["Battery feeds Pump Switch, Fuel Pump Controller and Fuel Pump. Communications Fuse belongs to Red Meridian."],
+        "score": 6
+      }
+    },
+    {
+      "section": "Anomaly Detection",
+      "title": "Which spacecraft suffer magnetometer faults?",
+      "description": "Use magnetometer telemetry and the event timeline. Select every affected spacecraft.",
+      "type": "checkbox",
+      "answer": {
+        "options": ["Blue Horizon", "Red Watch", "Green Pathfinder", "Gold Sentinel"],
+        "value": [0, 3],
+        "reason": ["Blue Horizon faults at 6600 s and Gold Sentinel at 5100 s."],
+        "score": 6
+      }
+    },
+    {
+      "section": "Anomaly Detection",
+      "title": "What is the first scheduled spacecraft anomaly?",
+      "description": "Identify the earliest enabled spacecraft event after session start.",
+      "type": "select",
+      "answer": {
+        "options": [
+          "Blue Horizon storage capacity drop",
+          "Green Power Lab guidance noise",
+          "Red Meridian transmitter bit-rate reduction",
+          "Gold Sentinel solar-panel degradation"
+        ],
+        "value": 0,
+        "reason": ["Correct: storage capacity drops at 300 s.", "Guidance noise is at 600 s.", "Bit-rate reduction is at 900 s.", "Solar degradation is at 2400 s."],
+        "score": 5
+      }
+    },
+    {
+      "section": "Anomaly Detection",
+      "title": "Which Red spacecraft is affected by a sensor fault rather than a communications fault?",
+      "description": "Compare the Red Meridian and Red Watch event timeline.",
+      "type": "select",
+      "answer": {
+        "options": ["Red Meridian", "Red Watch", "Both equally", "Neither"],
+        "value": 1,
+        "reason": ["Red Meridian has transmitter and guidance faults.", "Correct: Red Watch receives an EM-sensor fault.", "The faults are different.", "Red Watch does receive a sensor fault."],
+        "score": 5
+      }
+    },
+    {
+      "section": "Anomaly Detection",
+      "title": "Which Gold spacecraft is associated with an intermittent battery connection?",
+      "description": "Look for repeating power-spike telemetry after 4200 seconds.",
+      "type": "select",
+      "answer": {
+        "options": ["Gold Sentinel", "Gold Refueller", "MEO Logistics Hub", "Green Pathfinder"],
+        "value": 1,
+        "reason": ["Gold Sentinel has solar degradation and a magnetometer fault.", "Correct.", "The hub is not targeted by that event.", "Green Pathfinder has a stuck wheel, not battery spikes."],
+        "score": 5
+      }
+    },
+    {
+      "section": "GPS Environment",
+      "title": "Which GPS environment actions occur during the session?",
+      "description": "Select every GPS event family that is scheduled.",
+      "type": "checkbox",
+      "answer": {
+        "options": ["Add a jammer", "Increase jammer ERP", "Enable spoofing", "Clear spoofing", "Remove a jammer", "Disable the GPS constellation"],
+        "value": [0, 1, 2, 3, 4],
+        "reason": ["Jamming is added, updated and removed, and spoofing is enabled then cleared. The constellation itself remains on."],
+        "score": 6
+      }
+    },
+    {
+      "section": "GPS Environment",
+      "title": "Which spacecraft receives a GPS sensor fault?",
+      "description": "This is a component fault on a GPS Sensor, not a global GPS environment event.",
+      "type": "select",
+      "answer": {
+        "options": ["Blue Horizon", "Green Pathfinder", "Red Meridian", "Gold Sentinel"],
+        "value": 1,
+        "reason": ["Blue Horizon has storage and magnetometer faults.", "Correct: Green Pathfinder GPS Sensor fault at 3600 s.", "Red Meridian has transmitter and guidance faults.", "Gold Sentinel has solar and magnetometer faults."],
+        "score": 5
+      }
+    },
+    {
+      "section": "Cyber Operations",
+      "title": "Which spacecraft receive cyber telemetry overlays?",
+      "description": "Select every asset targeted by a Cyber event.",
+      "type": "checkbox",
+      "answer": {
+        "options": ["Red Watch", "Green Power Lab", "Blue Horizon", "Gold Sentinel"],
+        "value": [0, 1],
+        "reason": ["ASCII overlay hits Red Watch and hex overlay hits Green Power Lab."],
+        "score": 6
+      }
+    },
+    {
+      "section": "Cyber Operations",
+      "title": "How can the Red Watch ASCII overlay be cleared?",
+      "description": "Read the cyber-event configuration for Clear On Reset and expiry.",
+      "type": "select",
+      "answer": {
+        "options": [
+          "It cannot be cleared",
+          "A reset can clear it, and it also expires after 300 seconds",
+          "Only a transmitter bit-rate change clears it",
+          "It remains forever with no expiry"
+        ],
+        "value": 1,
+        "reason": ["It is resettable and time-limited.", "Correct.", "Bit-rate is a separate spacecraft event on Red Meridian.", "Expiry is 300 seconds and Clear On Reset is true."],
+        "score": 5
+      }
+    },
+    {
+      "section": "Ground Observation",
+      "title": "Which ground objects are vessels rather than text markers?",
+      "description": "Use imagery or the ground-object list and select every vessel.",
+      "type": "checkbox",
+      "answer": {
+        "options": ["Research Vessel Alpha", "Cargo Vessel Bravo", "Patrol Vessel Charlie", "Training Marker"],
+        "value": [0, 1, 2],
+        "reason": ["The three named vessels are ships; Training Marker is a text object spelling ADVANCE."],
+        "score": 5
+      }
+    },
+    {
+      "section": "Ground Observation",
+      "title": "Near which region is Cargo Vessel Bravo placed?",
+      "description": "Use camera imagery or geodetic coordinates around 1.2 N, 103.8 E.",
+      "type": "select",
+      "answer": {
+        "options": ["Sydney Harbour", "Singapore Strait", "Persian Gulf", "Arabian Sea training marker"],
+        "value": 1,
+        "reason": ["Research Vessel Alpha is near Sydney.", "Correct.", "Patrol Vessel Charlie is near Dubai.", "The ADVANCE marker is in the Arabian Sea."],
+        "score": 5
+      }
+    },
+    {
+      "section": "Ground Network",
+      "title": "Which of these stations are in the configured ground network?",
+      "description": "Select every location that is actually instantiated.",
+      "type": "checkbox",
+      "answer": {
+        "options": ["Dubai", "Canberra", "Tokyo", "Madrid", "London", "Singapore"],
+        "value": [0, 2, 4, 5],
+        "reason": ["Dubai, Tokyo, London and Singapore are in the list. Canberra and Madrid are not."],
+        "score": 6
+      }
+    },
+    {
+      "section": "Ground Network",
+      "title": "What minimum elevation is required for a ground-station pass?",
+      "description": "Read the ground-station configuration used by every team.",
+      "type": "select",
+      "answer": {
+        "options": ["0 degrees", "5 degrees", "10 degrees", "15 degrees"],
+        "value": 1,
+        "reason": ["0 degrees would count the horizon.", "Correct.", "10 degrees is not configured.", "15 degrees is not configured."],
+        "score": 4
+      }
+    },
+    {
+      "section": "Space Objects",
+      "title": "Which passive space objects are present?",
+      "description": "These objects have no team controller. Select every one that exists.",
+      "type": "checkbox",
+      "answer": {
+        "options": ["Tumbling Upper Stage", "Defunct Weather Satellite", "Lunar Gateway", "ISS"],
+        "value": [0, 1],
+        "reason": ["The two passive objects are the tumbling upper stage in LEO and the defunct weather satellite near GEO."],
+        "score": 5
+      }
+    },
+    {
+      "section": "Space Objects",
+      "title": "Which passive object is tumbling?",
+      "description": "Compare attitude-rate telemetry or visual motion of the two space objects.",
+      "type": "select",
+      "answer": {
+        "options": ["Tumbling Upper Stage", "Defunct Weather Satellite", "MEO Logistics Hub", "Gold Sentinel"],
+        "value": 0,
+        "reason": ["Correct: the upper stage has a 4 deg/s body rate.", "The weather satellite has only a small residual rate.", "The hub is a controlled neutral asset.", "Gold Sentinel is a team spacecraft."],
+        "score": 4
+      }
+    },
+    {
+      "section": "Communications",
+      "title": "Which spacecraft are configured to record uplink intercepts?",
+      "description": "Inspect controller flags for enable_intercept.",
+      "type": "checkbox",
+      "answer": {
+        "options": ["Red Meridian", "Red Watch", "Blue Horizon", "Green Pathfinder"],
+        "value": [0, 1],
+        "reason": ["Only the two Red spacecraft have intercept recording enabled."],
+        "score": 6
+      }
+    },
+    {
+      "section": "Communications",
+      "title": "Which spacecraft has RPO software installed?",
+      "description": "Rendezvous and proximity operations software is required before a tanker can fly an automatic approach.",
+      "type": "checkbox",
+      "answer": {
+        "options": ["Blue Refueller", "Gold Refueller", "Green Power Lab", "Red Meridian"],
+        "value": [0, 1],
+        "reason": ["Both refuellers have enable_rpo_software set true."],
+        "score": 6
+      }
+    }
+  ]
+}
