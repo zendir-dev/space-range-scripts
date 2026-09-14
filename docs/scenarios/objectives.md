@@ -22,6 +22,7 @@ Charge the battery back above 80% and the team earns 25 points:
   {
     "enabled": true,
     "name": "Battery Recovered",
+    "description": "Restore the battery to at least 80% charge.",
     "type": "spacecraft",
     "assets": [],
     "target": "Battery",
@@ -31,7 +32,6 @@ Charge the battery back above 80% and the team earns 25 points:
     "value": "0.8",
     "award": {
       "points": 25.0,
-      "reason": "Restored the battery to a safe state of charge.",
       "repeatable": false
     }
   }
@@ -47,7 +47,8 @@ Keys are case-insensitive when loaded. Studio writes them in lowercase (unlike t
 | Key | JSON type | Default | Description |
 | --- | --- | --- | --- |
 | `enabled` | `boolean` | `true` | A disabled objective still generates its events, so it stays visible and editable on the timeline, but they never fire and it can never pay out. |
-| `name` | `string` | `"Objective"` | Human-readable label. Shown on the timeline under each spacecraft, and used as the award `reason` when none is given. |
+| `name` | `string` | `"Objective"` | Human-readable label. Shown on the timeline under each spacecraft, and used as the award reason when `description` is empty. |
+| `description` | `string` | `""` | What a team needs to do to achieve the objective. Shown to operators unless `hidden` is true, and recorded against the award. |
 | `type` | `string` | `"spacecraft"` | Only `spacecraft` does anything today. See [Type](#type) below. |
 | `assets` | `string[]` | `[]` | Asset IDs the objective applies to (matches `assets.space[].id`). Empty `[]` means **every** spacecraft. |
 | `target` | `string` | `""` | The component to watch, as an instance name or a class alias, optionally with a `-Model` suffix. **Required**: an objective with no target never binds. |
@@ -56,14 +57,14 @@ Keys are case-insensitive when loaded. Studio writes them in lowercase (unlike t
 | `operation` | `string` | `">="` | The comparison. Symbols and long names both work: see [Operators](#operators). |
 | `value` | `string` | `""` | The value compared against, written as a string. See [Writing the Value](#writing-the-value). |
 | `award.points` | `number` | `0.0` | Points added to the owning team's score. Negative values subtract, which is how a penalty is written. |
-| `award.reason` | `string` | `""` | Explanation recorded against the award and shown in the score log. Falls back to `name` when empty. |
 | `award.repeatable` | `boolean` | `false` | Whether a team can earn the objective more than once in a run. See [Repeatable](#repeatable). |
+| `hidden` | `boolean` | `false` | A hidden objective still scores in Studio, but is withheld from operator-facing lists so it can be a secret bonus. |
 | `id` | `string` (GUID) | _(generated)_ | Reserved. Studio writes this into its own saved configuration so it can pair the file back up with what it has already built. **Leave it out of hand-authored scenarios**; one is generated on load. |
 
 `award` is a nested object. The flattened form loads identically if you prefer it:
 
 ```json
-"award.points": 25.0, "award.reason": "...", "award.repeatable": false
+"award.points": 25.0, "award.repeatable": false
 ```
 
 ### Type
@@ -242,20 +243,25 @@ Once-only is scoped to **the team**, not the craft and not the generated event. 
 
 The award history clears when the simulation run is reset, which re-arms every once-only objective for the next run.
 
-### Points and Reason
+### Hidden
+
+`"hidden": true` keeps the objective in Studio and still pays the team when the condition is met, but withholds it from operator-facing lists. Use it for a secret bonus that should not appear on a checklist. Disabled (`"enabled": false`) is the other way to keep an objective out of play: that one never scores either.
+
+### Points
 
 `award.points` is added to the team's score, and negative values subtract, so a penalty is written as an objective with negative points and a condition describing the thing you do not want:
 
 ```json
 {
   "name": "Battery Depleted",
+  "description": "Do not let the battery fall below 5% charge.",
   "target": "Battery", "variable": "Charge Fraction",
   "operation": "<=", "value": "0.05",
-  "award": { "points": -20.0, "reason": "Allowed the battery to run flat.", "repeatable": false }
+  "award": { "points": -20.0, "repeatable": false }
 }
 ```
 
-`award.reason` is what appears in the score log next to the points. Write it as a statement of what the team did, since that is what an instructor reads back afterwards. When it is empty the objective `name` is used, which is usually terser than you want.
+`description` is what the team is told, and what appears in the score log next to the points. When it is empty the objective `name` is used.
 
 ---
 
@@ -270,14 +276,11 @@ A bool variable, which is the cleanest kind of objective to write: there is no t
 ```json
 {
   "enabled": true, "name": "Docked With the Hub",
+  "description": "Complete the docking approach and capture the hub.",
   "type": "spacecraft", "assets": ["SC_SERVICER"],
   "target": "Docking Adapter",
   "variable": "Is Docked", "operation": "==", "value": "true",
-  "award": {
-    "points": 100.0,
-    "reason": "Completed the docking approach and captured the hub.",
-    "repeatable": false
-  }
+  "award": { "points": 100.0, "repeatable": false }
 }
 ```
 
@@ -288,14 +291,11 @@ Pairs with the single-panel degradation event in [`events.md`](./events.md#restr
 ```json
 {
   "enabled": true, "name": "Degraded Panel Identified",
+  "description": "Isolate panel +X after its efficiency drops past 0.3.",
   "type": "spacecraft", "assets": [],
   "target": "Solar Panel", "target name": "Solar Panel +X",
   "variable": "Efficiency", "operation": "<=", "value": "0.3",
-  "award": {
-    "points": 30.0,
-    "reason": "Panel +X degraded past the reporting threshold.",
-    "repeatable": false
-  }
+  "award": { "points": 30.0, "repeatable": false }
 }
 ```
 
@@ -304,14 +304,11 @@ Pairs with the single-panel degradation event in [`events.md`](./events.md#restr
 ```json
 {
   "enabled": true, "name": "Tank Refuelled",
+  "description": "Transfer propellant into the client Main Tank until it holds at least 40 kg.",
   "type": "spacecraft", "assets": ["SC_CLIENT"],
   "target": "Fuel Source", "target name": "Main Tank",
   "variable": "Amount", "operation": ">=", "value": "40.0",
-  "award": {
-    "points": 50.0,
-    "reason": "Transferred propellant to the client tank.",
-    "repeatable": false
-  }
+  "award": { "points": 50.0, "repeatable": false }
 }
 ```
 
@@ -324,14 +321,11 @@ Scoping to `SC_CLIENT` matters here: without it, the supply tank on the tanker w
 ```json
 {
   "enabled": true, "name": "GPS Sensor Healthy",
+  "description": "Clear the GPS sensor fault so its fault state is healthy (0).",
   "type": "spacecraft", "assets": [],
   "target": "GPS Sensor",
   "variable": "Fault State", "operation": "==", "value": "0",
-  "award": {
-    "points": 20.0,
-    "reason": "Cleared the GPS sensor fault.",
-    "repeatable": false
-  }
+  "award": { "points": 20.0, "repeatable": false }
 }
 ```
 
@@ -344,14 +338,11 @@ Note that this is true from the start of the scenario unless the sensor begins f
 ```json
 {
   "enabled": true, "name": "Storage Flushed",
+  "description": "Downlink stored imagery until allocated storage is at most 1000 bytes.",
   "type": "spacecraft", "assets": [],
   "target": "Storage",
   "variable": "Allocated", "operation": "<=", "value": "1000",
-  "award": {
-    "points": 10.0,
-    "reason": "Downlinked the stored imagery.",
-    "repeatable": true
-  }
+  "award": { "points": 10.0, "repeatable": true }
 }
 ```
 
@@ -367,6 +358,7 @@ Storage starts empty, so this condition holds at `t=0` and would be claimed imme
 - **Pair objectives with events.** The strongest scenarios break something, then pay for fixing it. The event and the objective should agree on `target` and `target name` so they refer to the same hardware.
 - **Prefer `>=` and `<=` over `>` and `<`.** A threshold that has to be *exceeded* rather than *reached* is usually an accident, and is invisible in review.
 - **Keep points on a consistent scale** across objectives and [`questions[]`](./questions.md), since they land in the same score.
+- **Use `"hidden": true` for a secret bonus.** Studio still scores it; operators are not told it exists.
 - **Disable, don't delete,** while iterating. `"enabled": false` keeps the objective in the file next to its related entries.
 
 ---

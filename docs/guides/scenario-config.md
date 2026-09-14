@@ -428,6 +428,7 @@ Optional. An objective is the mirror image of an event. An event runs on the clo
   {
     "enabled":     true,
     "name":        "Battery Recovered",
+    "description": "Restore the battery to at least 80% charge.",
     "type":        "spacecraft",
     "assets":      [],
     "target":      "Battery",
@@ -437,7 +438,6 @@ Optional. An objective is the mirror image of an event. An event runs on the clo
     "value":       "0.8",
     "award": {
       "points":     25.0,
-      "reason":     "Restored the battery to a safe state of charge.",
       "repeatable": false
     }
   }
@@ -448,6 +448,7 @@ Optional. An objective is the mirror image of an event. An event runs on the clo
 | --- | --- | --- |
 | `enabled` | `bool` | Set `false` to keep the objective in the file but inactive. |
 | `name` | `string` | Label shown on the timeline, and the fallback award reason. |
+| `description` | `string` | What the team needs to do. Shown to operators unless `hidden` is true. |
 | `type` | `string` | Only `spacecraft` is implemented. Reserved for the same set as an event's `Type`. |
 | `assets` | `string[]` | Spacecraft IDs the objective applies to. Empty array = "every spacecraft". |
 | `target` | `string` | Component name, class alias, or `"<Component>-<Model>"` to watch a model on it. Resolves exactly like an event's `Target`. |
@@ -456,8 +457,8 @@ Optional. An objective is the mirror image of an event. An event runs on the clo
 | `operation` | `string` | One of `>=`, `<=`, `>`, `<`, `==`, `!=`, `passes`. Long names such as `larger_equal` also work. |
 | `value` | `string` | Threshold, written as a string. For a bool, only the text `"true"` means true. |
 | `award.points` | `number` | Points added to the owning team's score. Negative values are how a penalty is written. |
-| `award.reason` | `string` | Explanation recorded in the score log. Falls back to `name`. |
 | `award.repeatable` | `bool` | `false` (default) means the team earns it at most once per run. |
+| `hidden` | `bool` | `true` still scores in Studio, but withholds the objective from operator-facing lists. |
 
 Three things surprise people the first time:
 
