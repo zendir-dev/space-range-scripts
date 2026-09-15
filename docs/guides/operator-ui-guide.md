@@ -341,6 +341,31 @@ Under the hood, **Repair** issues a `reset` command targeted at the component. T
 
 ---
 
+## Objectives
+
+Scenario objectives score what the team accomplishes on its spacecraft. The objective list is
+team-specific: it contains only enabled objectives that have a working scoring binding for at least
+one of that team's spacecraft.
+
+For an ordinary objective, show:
+
+- Its name and description.
+- The points gained or lost each time it is achieved.
+- Whether it is repeatable.
+- Whether it has been completed, and the completion count for a repeatable objective.
+
+A hidden objective deliberately omits its name and description before completion. The UI can label
+these entries `Hidden Objective #1`, `Hidden Objective #2`, and so on, while still showing the point
+value. When the team earns one, an `objective_completed` push carries the real details immediately
+and the list remains revealed until the current run ends. Another team's completion does not reveal
+it.
+
+Behind the scenes the UI calls
+[`list_objectives`](../api-reference/ground-requests.md#list_objectives) and listens for
+[`objective_completed`](../api-reference/ground-requests.md#objective_completed-push).
+
+---
+
 ## Questions
 
 Scenario Q&A. Only present if the loaded scenario defines `questions[]`.
@@ -437,7 +462,7 @@ A pattern that fits most exercises:
 5. During passes, watch **Plot** for power & memory, and **Map** for ground-track.
 6. After a `capture`, switch to **Image** to confirm what you got.
 7. When the simulation surprises you, dive into **Log** + **Data** to reconstruct what happened.
-8. If the scenario has a Q&A, periodically check **Questions** for unanswered items as you discover the relevant facts.
+8. Check **Objectives** for operational goals and **Questions** for unanswered items as you discover the relevant facts.
 
 Most missed objectives in our experience trace back to operators forgetting to issue a `downlink` after a sequence of captures. **The downlink is what flushes onboard storage**: without it, you have great imagery the rest of the world will never see.
 

@@ -58,7 +58,7 @@ Keys are case-insensitive when loaded. Studio writes them in lowercase (unlike t
 | `value` | `string` | `""` | The value compared against, written as a string. See [Writing the Value](#writing-the-value). |
 | `award.points` | `number` | `0.0` | Points added to the owning team's score. Negative values subtract, which is how a penalty is written. |
 | `award.repeatable` | `boolean` | `false` | Whether a team can earn the objective more than once in a run. See [Repeatable](#repeatable). |
-| `hidden` | `boolean` | `false` | A hidden objective still scores in Studio, but is withheld from operator-facing lists so it can be a secret bonus. |
+| `hidden` | `boolean` | `false` | A hidden objective still scores in Studio. Operators see that a secret objective exists and how many points it is worth, but its name and description are withheld until their team completes it. |
 | `id` | `string` (GUID) | _(generated)_ | Reserved. Studio writes this into its own saved configuration so it can pair the file back up with what it has already built. **Leave it out of hand-authored scenarios**; one is generated on load. |
 
 `award` is a nested object. The flattened form loads identically if you prefer it:
@@ -245,7 +245,22 @@ The award history clears when the simulation run is reset, which re-arms every o
 
 ### Hidden
 
-`"hidden": true` keeps the objective in Studio and still pays the team when the condition is met, but withholds it from operator-facing lists. Use it for a secret bonus that should not appear on a checklist. Disabled (`"enabled": false`) is the other way to keep an objective out of play: that one never scores either.
+`"hidden": true` keeps the objective in Studio and still pays the team when the condition is met.
+The operator API reports that an objective exists and includes its points, repeatability and
+completion state, but omits its name and description. A client can present those entries as
+`Hidden Objective #1`, `Hidden Objective #2`, and so on.
+
+When a team completes a hidden objective, that team receives its real name and description in an
+`objective_completed` push. Later `list_objectives` responses also include those details for the
+remainder of the current run. Disclosure is per team: one team finding a secret does not reveal it
+to the others. Stopping or resetting the run clears the award history and redacts it again.
+
+Disabled (`"enabled": false`) is different: it never scores and is omitted from the operator
+objective list entirely.
+
+See the [`list_objectives`](../api-reference/ground-requests.md#list_objectives) and
+[`objective_completed`](../api-reference/ground-requests.md#objective_completed-push) wire formats
+for the exact client contract.
 
 ### Points
 
@@ -358,7 +373,7 @@ Storage starts empty, so this condition holds at `t=0` and would be claimed imme
 - **Pair objectives with events.** The strongest scenarios break something, then pay for fixing it. The event and the objective should agree on `target` and `target name` so they refer to the same hardware.
 - **Prefer `>=` and `<=` over `>` and `<`.** A threshold that has to be *exceeded* rather than *reached* is usually an accident, and is invisible in review.
 - **Keep points on a consistent scale** across objectives and [`questions[]`](./questions.md), since they land in the same score.
-- **Use `"hidden": true` for a secret bonus.** Studio still scores it; operators are not told it exists.
+- **Use `"hidden": true` for a secret bonus.** Operators see its point value but not its identity until their team earns it.
 - **Disable, don't delete,** while iterating. `"enabled": false` keeps the objective in the file next to its related entries.
 
 ---
@@ -386,5 +401,6 @@ Work down this list; it is roughly ordered by how often each one is the answer.
 
 - [`events.md`](./events.md): the other half of the pairing, and the shared `Target` / `Target Name` rules.
 - [`questions.md`](./questions.md): the other input to a team's score.
+- [`ground-requests.md`](../api-reference/ground-requests.md#list_objectives): how operators list objectives and receive completion notifications.
 - [`components.md`](./components.md): class aliases for `target`, and the configurable properties of every component.
 - [`teams.md`](./teams.md): how a team comes to own a spacecraft, which is what decides who an objective pays.

@@ -458,7 +458,7 @@ Optional. An objective is the mirror image of an event. An event runs on the clo
 | `value` | `string` | Threshold, written as a string. For a bool, only the text `"true"` means true. |
 | `award.points` | `number` | Points added to the owning team's score. Negative values are how a penalty is written. |
 | `award.repeatable` | `bool` | `false` (default) means the team earns it at most once per run. |
-| `hidden` | `bool` | `true` still scores in Studio, but withholds the objective from operator-facing lists. |
+| `hidden` | `bool` | `true` still scores in Studio. Operators see its point value, but its name and description are withheld until their team completes it. |
 
 Three things surprise people the first time:
 

@@ -1,6 +1,6 @@
 # Ground Requests
 
-The ground controller exposes a request/response application programming interface (API) for everything that is not a spacecraft uplink: discovering assets, querying link budgets, transmitting raw bytes, talking to the artificial intelligence (AI) assistant, and submitting scenario answers. This page documents every request type the team-side ground controller accepts.
+The ground controller exposes a request/response application programming interface (API) for everything that is not a spacecraft uplink: discovering assets, querying link budgets, transmitting raw bytes, talking to the artificial intelligence (AI) assistant, reading scenario objectives, and submitting scenario answers. This page documents every request type the team-side ground controller accepts.
 
 For the topic plumbing, see [MQTT topics](mqtt-topics.md). For the underlying simulation concepts, see [Concepts → Teams and assets](../concepts/teams-and-assets.md).
 
@@ -15,7 +15,8 @@ Zendir/SpaceRange/<GAME>/<TEAM>/Response    (Studio → client)
 
 Both topics are XOR-encrypted with the team password.
 
-The `Response` topic also receives **unsolicited** push messages: `event_triggered` and `chat_response`. Dispatch by the `type` field, not by request order.
+The `Response` topic also receives **unsolicited** push messages: `event_triggered`,
+`objective_completed`, and `chat_response`. Dispatch by the `type` field, not by request order.
 
 ---
 
@@ -82,8 +83,12 @@ Scenario Q&A (optional, scenario-dependent)
 : [`list_questions`](#list_questions): list scenario questions for this team.
 : [`submit_answer`](#submit_answer): submit one or more answers.
 
+Scenario objectives (optional, scenario-dependent)
+: [`list_objectives`](#list_objectives): list operational objectives and their completion state.
+
 Push notifications
 : [`event_triggered`](#event_triggered): _(unsolicited)_ a tracking event happened.
+: [`objective_completed`](#objective_completed-push): _(unsolicited)_ this team earned an objective.
 
 ---
 
@@ -535,6 +540,70 @@ No arguments.
 
 ---
 
+## `list_objectives`
+
+Lists the enabled scenario objectives that can award this team. An objective is included only when
+Studio has materialized at least one scoring event for the team's spacecraft, so objectives for
+other asset sets and objectives whose target did not resolve are left out.
+
+This request is available before and during a run.
+
+**Request**
+
+```json
+{ "type": "list_objectives", "req_id": 0 }
+```
+
+No arguments.
+
+**Response**
+
+```json
+{
+  "type": "list_objectives",
+  "req_id": 0,
+  "args": {
+    "objectives": [
+      {
+        "id":               "f1487ba3-d106-4055-9b75-f1b404af27e0",
+        "hidden":           false,
+        "name":             "Battery Recovered",
+        "description":      "Restore battery charge to at least 80%.",
+        "points":           25,
+        "repeatable":       false,
+        "completed":        false,
+        "completion_count": 0
+      },
+      {
+        "id":               "8f65b5c4-f348-4ff6-a811-bf0acf411a4a",
+        "hidden":           true,
+        "points":           50,
+        "repeatable":       false,
+        "completed":        false,
+        "completion_count": 0
+      }
+    ]
+  },
+  "success": true
+}
+```
+
+- `id` is an opaque runtime identifier for correlating list entries and completion pushes. It does
+  not need to appear in a hand-authored scenario.
+- `points` is the score applied each time the objective pays. It may be negative for a penalty.
+- `completed` means this team has earned the objective at least once during the current run.
+- `completion_count` is the number of successful awards during the current run. It can exceed one
+  only when `repeatable` is `true`.
+- An unrevealed hidden objective includes `id`, `hidden`, `points`, `repeatable`, `completed`, and
+  `completion_count`, but **omits** `name` and `description`. A UI may label these entries
+  `Hidden Objective #1`, `Hidden Objective #2`, and so on.
+- After this team completes a hidden objective, subsequent responses include its real `name` and
+  `description`. `hidden` remains `true`, allowing the UI to show that it was a revealed secret.
+- Hidden-objective disclosure is per team and lasts for the current run. Stopping or resetting the
+  simulation clears awards, so the objective is redacted again for the next run.
+
+---
+
 ## `submit_answer`
 
 Submits one or more answers to scenario questions in a single call. Each submission is graded independently.
@@ -587,6 +656,40 @@ Submits one or more answers to scenario questions in a single call. Each submiss
 | `results[].error` | Present on rejected submissions (unknown ID, already answered, missing `value`, etc.). |
 
 The outer `success` is `true` as long as the request itself was well-formed: individual submissions can still be rejected. Inspect each `results[]` entry separately.
+
+---
+
+## `objective_completed` (Push)
+
+Unsolicited message published when this team earns an objective. It always includes the real name
+and description, including for a previously hidden objective, because the award has already
+succeeded by the time this message is sent.
+
+```json
+{
+  "type": "objective_completed",
+  "req_id": 0,
+  "args": {
+    "id":               "8f65b5c4-f348-4ff6-a811-bf0acf411a4a",
+    "hidden":           true,
+    "name":             "Emergency Recovery",
+    "description":      "Recover the spacecraft after complete power loss.",
+    "points":           50,
+    "repeatable":       false,
+    "completed":        true,
+    "completion_count": 1,
+    "simulation_time":  312.5,
+    "simulation_utc":   "2026-01-25T13:10:24Z",
+    "clock_time":       "2026-01-25T13:05:12Z"
+  },
+  "success": true
+}
+```
+
+The `id` matches the entry returned by [`list_objectives`](#list_objectives). For a repeatable
+objective, another successful award produces another push with an increased `completion_count`.
+Objective awards use this dedicated message instead of also producing a generic
+[`event_triggered`](#event_triggered-push) message for the team.
 
 ---
 
