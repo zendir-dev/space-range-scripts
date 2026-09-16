@@ -276,6 +276,17 @@ for the exact client contract.
 }
 ```
 
+Penalty values are exposed as a **positive magnitude** in leaderboard payloads. An award of `-10`
+therefore produces `objectives.penalty: 10`, increments `objectives.penalty_count`, and reduces both
+`objectives.net` and `total.net` by 10. Positive objectives accumulate under
+`objectives.earned`. Teams rank by total net score first, then lower total penalties, then higher
+gross points, then team ID; see the [Info score schema](../api-reference/info-stream.md#score-object).
+
+Both rewards and penalties produce an
+[`objective_completed`](../api-reference/ground-requests.md#objective_completed-push) message.
+Its `award_type` is `reward`, `penalty`, or `neutral`, and its `team_score` contains the standings
+immediately after the award.
+
 `description` is what the team is told, and what appears in the score log next to the points. When it is empty the objective `name` is used.
 
 ---

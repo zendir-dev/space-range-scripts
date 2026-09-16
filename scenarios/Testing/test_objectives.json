@@ -1,7 +1,7 @@
 {
 	"metadata": {
 		"name": "Test Objectives",
-		"description": "Single-team Microsat harness for operator-facing objectives and questions. Battery starts at 80% so Charge Fraction > 0.9 is not claimed at t=0. Solar-panel generation and a hidden stretch goal cover the visible, immediate, and secret-completion paths. Includes one question of each type (text, number, select, checkbox)."
+		"description": "Single-team Microsat harness for operator-facing objectives, penalties, and questions. Battery starts at 80% so Charge Fraction > 0.9 and the low-charge penalty are not claimed at t=0. Solar-panel generation and a hidden stretch goal cover the visible, immediate, and secret-completion paths. Includes one question of each type (text, number, select, checkbox)."
 	},
 	"simulation": {
 		"epoch": "2026/04/27 12:00:00",
@@ -183,7 +183,7 @@
 						],
 						"data": {
 							"Nominal Capacity": 5.0,
-							"Charge Fraction": 0.5,
+							"Charge Fraction": 0.8,
 							"Mass": 5.0
 						}
 					},
@@ -359,6 +359,23 @@
 				"repeatable": false
 			},
 			"hidden": true
+		},
+		{
+			"enabled": true,
+			"name": "Battery Depleted",
+			"description": "Avoid letting the battery charge fraction fall below 75%.",
+			"type": "spacecraft",
+			"assets": [],
+			"target": "Battery",
+			"target name": "",
+			"variable": "Charge Fraction",
+			"operation": "<",
+			"value": "0.75",
+			"award": {
+				"points": -10.0,
+				"repeatable": false
+			},
+			"hidden": false
 		}
 	],
 	"questions": [

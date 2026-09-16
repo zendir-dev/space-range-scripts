@@ -350,7 +350,8 @@ one of that team's spacecraft.
 For an ordinary objective, show:
 
 - Its name and description.
-- The points gained or lost each time it is achieved.
+- The signed points gained or lost each time it is achieved. Visually distinguish negative
+  penalties from positive rewards.
 - Whether it is repeatable.
 - Whether it has been completed, and the completion count for a repeatable objective.
 
@@ -363,6 +364,23 @@ it.
 Behind the scenes the UI calls
 [`list_objectives`](../api-reference/ground-requests.md#list_objectives) and listens for
 [`objective_completed`](../api-reference/ground-requests.md#objective_completed-push).
+
+---
+
+## Score and Leaderboard
+
+Use [`score_updated`](../api-reference/ground-requests.md#score_updated-push) for immediate updates
+to the current team's score card, and use the public [`Info`](../api-reference/info-stream.md)
+stream for the full leaderboard. Both carry the same nested score schema.
+
+Display `total.net` as the primary score and `rank` as the standing. Show `total.penalty` and
+`total.penalty_count` separately so teams can see the cost of undesirable actions. The
+`questions`, `objectives`, and `operations` blocks support an optional score breakdown.
+
+Do not calculate net as legacy `correct - incorrect`: `incorrect` means question points missed and
+is not a score deduction. Objective penalties are already included in `total.net`. Replace cached
+entries when a push arrives even if the raw score did not change, because another team may have
+changed this team's rank.
 
 ---
 

@@ -29,7 +29,7 @@ Studio publishes a fresh Info payload when any of these change:
 
 - **Game metadata**: e.g. display `name`, `description`, or `duration`
 - **Team roster**: teams added or removed
-- **Scores**: any team's `correct` or `incorrect` point totals change (after a graded question submission)
+- **Scores**: a question is graded, an objective reward or penalty fires, or a run resets
 
 Between those events, **no repeat publishes** are sent. Clients that subscribe after traffic starts should read the **most recent** message on the topic for current game and score state.
 
@@ -53,7 +53,12 @@ Between those events, **no repeat publishes** are sent. Clients that subscribe a
       "color": "0098FFFF",
       "score": {
         "correct": 10,
-        "incorrect": 5
+        "incorrect": 5,
+        "rank": 1,
+        "questions": { "earned": 10, "missed": 5, "penalty": 0, "net": 10 },
+        "objectives": { "earned": 25, "penalty": 0, "penalty_count": 0, "net": 25 },
+        "operations": { "earned": 0, "penalty": 0, "penalty_count": 0, "net": 0 },
+        "total": { "earned": 35, "penalty": 0, "penalty_count": 0, "net": 35 }
       }
     },
     {
@@ -62,7 +67,12 @@ Between those events, **no repeat publishes** are sent. Clients that subscribe a
       "color": "FF558DFF",
       "score": {
         "correct": 23,
-        "incorrect": 1
+        "incorrect": 1,
+        "rank": 2,
+        "questions": { "earned": 23, "missed": 1, "penalty": 0, "net": 23 },
+        "objectives": { "earned": 20, "penalty": 10, "penalty_count": 1, "net": 10 },
+        "operations": { "earned": 0, "penalty": 0, "penalty_count": 0, "net": 0 },
+        "total": { "earned": 43, "penalty": 10, "penalty_count": 1, "net": 33 }
       }
     }
   ]
@@ -86,20 +96,38 @@ Between those events, **no repeat publishes** are sent. Clients that subscribe a
 | `id` | `integer` | Team numeric ID: matches `teams[].id` in scenario JSON and `<TEAM>` in MQTT team topics. |
 | `name` | `string` | Display name (e.g. `Team Blue`, `Rogue`). |
 | `color` | `string` | Team color as **8 hex digits** `AARRGGBB` (alpha, red, green, blue), no `#` prefix. Example: `0098FFFF`. |
-| `score` | `string` | JSON **string** (escaped) encoding point totals: parse it as JSON (see below). |
+| `score` | `object` | Live question, objective, operation, penalty, net, and rank totals. |
 
 ### `score` Object
 
-The `score` field is a nest JSON object containing score information.
+The `score` field is a nested JSON object containing score information.
 
 | Key | Type | Meaning |
 | --- | --- | --- |
-| `correct` | `number` (int) | **Points earned** from fully correct question submissions. |
-| `incorrect` | `number` (int) | **Points lost** from wrong or partial submissions (penalties), not a count of wrong answers unless scoring is 1 point per miss. |
+| `correct` | `number` | Legacy alias for `questions.earned`. |
+| `incorrect` | `number` | Legacy alias for `questions.missed`. These are points not earned, not a deduction from `total.net`. |
+| `rank` | `integer` | Current leaderboard rank, starting at 1. |
+| `questions.earned` | `number` | Points actually earned from question submissions. |
+| `questions.missed` | `number` | Available question points missed through wrong or partial answers. |
+| `questions.penalty` | `number` | Magnitude of any actual negative question awards. Normally zero. |
+| `questions.net` | `number` | Question rewards minus actual question penalties. |
+| `objectives.earned` | `number` | Positive points earned from objectives. |
+| `objectives.penalty` | `number` | Positive magnitude of negative objective awards. |
+| `objectives.penalty_count` | `integer` | Number of negative objective awards triggered. |
+| `objectives.net` | `number` | Objective rewards minus objective penalties. |
+| `operations.*` | object | The same earned/penalty/net breakdown for other score actions. |
+| `total.earned` | `number` | All positive awards in the score ledger. |
+| `total.penalty` | `number` | Positive magnitude of all negative awards. |
+| `total.penalty_count` | `integer` | Number of negative awards. |
+| `total.net` | `number` | The leaderboard score: `total.earned - total.penalty`. |
 
-Example: `"score": {"correct": 10, "incorrect": 5}"` → 10 points on the board, 5 points deducted for incorrect/partial answers. Net display is often `correct - incorrect` but the wire format keeps both fields separate.
+Teams rank by `total.net` descending. Ties prefer lower `total.penalty`, then higher
+`total.earned`, then lower team ID. This rewards a clean run when two teams finish on the same net
+score without allowing penalty avoidance to outweigh a genuinely higher score.
 
-Scoring rules come from scenario [`questions[]`](../scenarios/questions.md) (`answer.score` and evaluation logic); Info only reflects the running totals.
+Scoring rules come from scenario [`questions[]`](../scenarios/questions.md) and
+[`objectives[]`](../scenarios/objectives.md). A negative objective is a real penalty and reduces
+`total.net`; an incorrect question records missed points but does not create a negative award.
 
 ---
 
@@ -119,9 +147,12 @@ def on_info(client, userdata, msg):
     print(f"{g['name']} ({g['id']}): duration {g['duration']}s")
 
     for team in info["teams"]:
-        pts = json.loads(team["score"])
-        net = pts["correct"] - pts["incorrect"]
-        print(f"  {team['name']:12}  +{pts['correct']} / -{pts['incorrect']}  (net {net})")
+        pts = team["score"]
+        print(
+            f"  #{pts['rank']} {team['name']:12}  "
+            f"+{pts['total']['earned']} / -{pts['total']['penalty']}  "
+            f"(net {pts['total']['net']})"
+        )
 
 client = mqtt.Client()
 client.on_message = on_info
@@ -144,9 +175,10 @@ client.on("message", (topic, payload) => {
 
   const info = JSON.parse(payload.toString("ascii"));
   for (const team of info.teams) {
-    const pts = JSON.parse(team.score);
+    const pts = team.score;
     console.log(
-      `${team.name}: +${pts.correct} / -${pts.incorrect}`
+      `#${pts.rank} ${team.name}: ` +
+      `+${pts.total.earned} / -${pts.total.penalty} (net ${pts.total.net})`
     );
   }
 });

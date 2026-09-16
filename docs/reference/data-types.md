@@ -48,7 +48,7 @@ Every entity in Space Range has at least one identifier. Each identifier has a s
 | **Instance** | integer | `12345678` | `instance` field of Session topic; changes on simulation reset: clear UI caches when it changes. |
 | **Session state** | string | `running` | `state` on Session topic: `running`, `standby`, `paused`, `ended`. Replaces deprecated `running` boolean. |
 | **Session timestamp** | number (UNIX s) | `213214214121.0` | Real-time wall clock at publish (`timestamp`). Not simulation time. |
-| **Team score (Info)** | JSON string on wire | `{"correct":10,"incorrect":5}` | `teams[].score` on [Info](../api-reference/info-stream.md): parse as JSON; `correct` = points earned, `incorrect` = points lost. |
+| **Team score (Info)** | JSON object | `{"rank":1,"total":{"net":35}}` | `teams[].score` on [Info](../api-reference/info-stream.md): unified question/objective/operation score, penalties, and rank. `correct`/`incorrect` remain legacy question aliases. |
 | **Team color (Info)** | 8 hex digits | `0098FFFF` | `AARRGGBB` without `#`; on Info and often mirrored in scenario `teams[].color`. |
 
 ### Asset ID Derivation

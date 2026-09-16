@@ -17,7 +17,9 @@ Zendir/SpaceRange/<GAME>/Admin/Response    (Studio → admin client)
 
 Both topics are XOR-encrypted with the **admin password**. The team-side topics under `<GAME>/<TEAM>/...` are **not** accessible with the admin password. Reading a team's `Downlink` or `Response` requires a separate subscription using that team's password.
 
-The `Admin/Response` topic also receives the unsolicited [`admin_event_triggered`](#admin_event_triggered) push.
+The `Admin/Response` topic also receives unsolicited
+[`admin_event_triggered`](#admin_event_triggered) and
+[`admin_score_updated`](#admin_score_updated-push) pushes.
 
 ---
 
@@ -62,6 +64,7 @@ Scenario events
 
 Push notifications
 : [`admin_event_triggered`](#admin_event_triggered): _(unsolicited)_ a tracking event happened, on **any** team.
+: [`admin_score_updated`](#admin_score_updated-push): _(unsolicited)_ a team's score or rank changed.
 
 ---
 
@@ -207,6 +210,17 @@ Pulls historical telemetry snapshots from Studio's on-disk database. The simulat
         "communications.key": 12,
         "location.latitude": 15.2,
         "power.battery_percent": 45.0,
+        "questions.score": 10.0,
+        "questions.missed": 5.0,
+        "objectives.earned": 25.0,
+        "objectives.penalty": 10.0,
+        "objectives.penalty_count": 1,
+        "objectives.score": 15.0,
+        "score.earned": 35.0,
+        "score.penalty": 10.0,
+        "score.penalty_count": 1,
+        "score.total": 25.0,
+        "score.rank": 2,
         "computer.pointing_mode": "Sun",
         "uplink.IsConnected": true,
         "downlink.IsConnected": true,
@@ -235,6 +249,9 @@ The full set of `<category>.<property>` keys available in each sample:
 | `rotation.*` | `euler_x/y/z`, `attitude_rate_x/y/z` | Attitude in degrees and degrees/s. |
 | `power.*` | `battery_percent`, `battery_capacity`, `sunlight_percent`, `power_generated` | Power-system snapshot. |
 | `storage.*` | `storage_percent`, `storage_used` | On-board storage utilization. |
+| `questions.*` | `score`, `missed` | Question points earned and available points missed. |
+| `objectives.*` | `earned`, `penalty`, `penalty_count`, `score` | Objective rewards, positive penalty magnitude/count, and objective net score. |
+| `score.*` | `earned`, `penalty`, `penalty_count`, `total`, `rank` | Unified gross points, penalty magnitude/count, net leaderboard score, and current rank. |
 | `computer.*` | `state`, `navigation_mode`, `pointing_mode`, `controller_mode`, `mapping_mode` | ADCS / computer status strings. |
 | `uplink.*` / `downlink.*` | `IsConnected`, `Frequency`, `Distance`, `SignalPower`, `InterferencePower`, `EffectiveSignalToNoise`, `BitErrorRate`, `TransmissionRate`, … | Live link-budget snapshots, same shape as `get_telemetry`. |
 | `jammer.*` | `is_active`, `frequency`, `power` | Present only if the spacecraft has a jamming transmitter. |
@@ -480,6 +497,38 @@ Use this message to build a live cross-team event timeline without polling. Comb
 
 ---
 
+## `admin_score_updated` (Push)
+
+Unsolicited message published whenever a team's score or rank changes. All ranked teams are emitted
+after each scoring change because one team's award can move several teams in the standings.
+
+```json
+{
+  "type": "admin_score_updated",
+  "req_id": 0,
+  "args": {
+    "team_id": 111111,
+    "score": {
+      "correct": 10,
+      "incorrect": 5,
+      "rank": 2,
+      "questions": { "earned": 10, "missed": 5, "penalty": 0, "net": 10 },
+      "objectives": { "earned": 25, "penalty": 10, "penalty_count": 1, "net": 15 },
+      "operations": { "earned": 0, "penalty": 0, "penalty_count": 0, "net": 0 },
+      "total": { "earned": 35, "penalty": 10, "penalty_count": 1, "net": 25 }
+    }
+  },
+  "success": true
+}
+```
+
+The nested `score` has the same schema and ranking rules as the public
+[`Info`](info-stream.md#score-object) stream. Admin clients should merge entries by `team_id`;
+receiving an update does not imply that particular team's points changed, since its rank may have
+moved because another team scored.
+
+---
+
 ## Common Patterns
 
 ### Bootstrap (Admin Client)
@@ -490,7 +539,7 @@ Use this message to build a live cross-team event timeline without polling. Comb
 4. For each team, `admin_list_team` → cache asset/component lists.
 5. `admin_get_scenario_events` → display the scripted timeline.
 6. `admin_query_events` → backfill tracking events that fired before the client connected.
-7. The live `admin_event_triggered` stream supplies updates; periodic `admin_query_data` polls drive per-team telemetry dashboards.
+7. The live `admin_event_triggered` and `admin_score_updated` streams supply event and leaderboard updates; periodic `admin_query_data` polls drive per-team telemetry dashboards.
 
 ### Pausing for a Debrief
 

@@ -16,7 +16,8 @@ Zendir/SpaceRange/<GAME>/<TEAM>/Response    (Studio → client)
 Both topics are XOR-encrypted with the team password.
 
 The `Response` topic also receives **unsolicited** push messages: `event_triggered`,
-`objective_completed`, and `chat_response`. Dispatch by the `type` field, not by request order.
+`objective_completed`, `score_updated`, and `chat_response`. Dispatch by the `type` field, not by
+request order.
 
 ---
 
@@ -89,6 +90,7 @@ Scenario objectives (optional, scenario-dependent)
 Push notifications
 : [`event_triggered`](#event_triggered): _(unsolicited)_ a tracking event happened.
 : [`objective_completed`](#objective_completed-push): _(unsolicited)_ this team earned an objective.
+: [`score_updated`](#score_updated-push): _(unsolicited)_ this team's score or rank changed.
 
 ---
 
@@ -675,9 +677,19 @@ succeeded by the time this message is sent.
     "name":             "Emergency Recovery",
     "description":      "Recover the spacecraft after complete power loss.",
     "points":           50,
+    "award_type":       "reward",
     "repeatable":       false,
     "completed":        true,
     "completion_count": 1,
+    "team_score": {
+      "correct": 10,
+      "incorrect": 5,
+      "rank": 1,
+      "questions": { "earned": 10, "missed": 5, "penalty": 0, "net": 10 },
+      "objectives": { "earned": 50, "penalty": 0, "penalty_count": 0, "net": 50 },
+      "operations": { "earned": 0, "penalty": 0, "penalty_count": 0, "net": 0 },
+      "total": { "earned": 60, "penalty": 0, "penalty_count": 0, "net": 60 }
+    },
     "simulation_time":  312.5,
     "simulation_utc":   "2026-01-25T13:10:24Z",
     "clock_time":       "2026-01-25T13:05:12Z"
@@ -688,8 +700,39 @@ succeeded by the time this message is sent.
 
 The `id` matches the entry returned by [`list_objectives`](#list_objectives). For a repeatable
 objective, another successful award produces another push with an increased `completion_count`.
+`award_type` is `reward` for positive points, `penalty` for negative points, and `neutral` for zero.
+`team_score` is the complete post-award leaderboard summary.
 Objective awards use this dedicated message instead of also producing a generic
 [`event_triggered`](#event_triggered-push) message for the team.
+
+---
+
+## `score_updated` (Push)
+
+Unsolicited message published when this team's score **or rank** changes. Because rank is relative,
+a team can receive this push after another team scores even when its own totals did not move.
+
+```json
+{
+  "type": "score_updated",
+  "req_id": 0,
+  "args": {
+    "correct": 10,
+    "incorrect": 5,
+    "rank": 2,
+    "questions": { "earned": 10, "missed": 5, "penalty": 0, "net": 10 },
+    "objectives": { "earned": 25, "penalty": 10, "penalty_count": 1, "net": 15 },
+    "operations": { "earned": 0, "penalty": 0, "penalty_count": 0, "net": 0 },
+    "total": { "earned": 35, "penalty": 10, "penalty_count": 1, "net": 25 }
+  },
+  "success": true
+}
+```
+
+The score object is identical to `teams[].score` on the public
+[`Info`](info-stream.md#score-object) stream. `correct` and `incorrect` are retained for older
+question-only clients; new leaderboard displays should use `total.net`, `total.penalty`, and
+`rank`.
 
 ---
 

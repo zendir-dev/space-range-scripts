@@ -1,6 +1,6 @@
 # `questions[]`: Scenario Questions and Answers
 
-The `questions[]` array holds the assessment that operators submit answers against during the run. Studio loads each entry, scores submissions against the configured `answer`, and exposes the list to teams via [`list_questions`](../api-reference/ground-requests.md#list_questions). Running **correct** and **incorrect** point totals per team are also published on the Message Queuing Telemetry Transport (MQTT) [Info](../api-reference/info-stream.md) topic when scores change.
+The `questions[]` array holds the assessment that operators submit answers against during the run. Studio loads each entry, scores submissions against the configured `answer`, and exposes the list to teams via [`list_questions`](../api-reference/ground-requests.md#list_questions). The live unified leaderboard is published on the Message Queuing Telemetry Transport (MQTT) [Info](../api-reference/info-stream.md) topic and through score-update pushes.
 
 Question IDs are **assigned automatically** in load order (1, 2, 3, …). Authors do not write `id` into the JSON.
 
@@ -13,6 +13,12 @@ Question IDs are **assigned automatically** in load order (1, 2, 3, …). Author
 The full structure of a question depends on its `type`. All the question types follow the same outer shape: only the `answer` block differs.
 
 Questions are one of two ways a scenario awards points. They score what a team **worked out**; [`objectives[]`](./objectives.md) score what a team **did** to their spacecraft. Both feed the same per-team total, so keep their point scales consistent.
+
+Leaderboard payloads expose question points as `questions.earned` and points not won as
+`questions.missed`. The older `correct` and `incorrect` fields remain aliases for those two values.
+Crucially, a missed question is an opportunity missed, not a negative score award: it does not
+increase `total.penalty` or reduce `total.net`. Use a negative
+[`objective`](./objectives.md#points) when a scenario action must deduct points.
 
 ## Common Fields
 
