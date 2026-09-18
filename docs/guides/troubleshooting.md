@@ -251,6 +251,7 @@ If that throws, check whether `Commands` is the literal string `"[]"` (empty lis
 5. `"operation": "=="` against a continuously varying float. The tolerance is `1e-6`, so it effectively never matches.
 6. A bool `value` that isn't the literal text `"true"`. `"1"` reads as false.
 7. It already fired. With `"repeatable": false` a team earns the objective once per run, no matter how many of their craft satisfy it.
+8. Its `min_time` / `max_time` window is not currently active.
 
 **Diagnostic.** Look at the Studio timeline. A bound objective appears as a row under every spacecraft it applies to; an objective you cannot find anywhere never bound. Then check the score log for an award claimed earlier than you expected.
 
@@ -260,7 +261,7 @@ If that throws, check whether `Commands` is the literal string `"[]"` (empty lis
 
 The condition was already true when the run began. `"Charge Fraction >= 0.2"` is free points on a battery that starts at `0.5`.
 
-**Fix.** Either pair the objective with the event that puts the craft into the state teams have to recover from, or pick a threshold the scenario cannot start on the correct side of. Resetting the run clears the award history, so you can retest immediately.
+**Fix.** Either pair the objective with the event that puts the craft into the state teams have to recover from, pick a threshold the scenario cannot start on the correct side of, or add `min_time` so scoring begins later. Resetting the run clears the award history, so you can retest immediately.
 
 ### "I Changed the Scenario JSON but Studio Is Still Using the Old One."
 

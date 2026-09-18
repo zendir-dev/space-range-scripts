@@ -456,6 +456,8 @@ Optional. An objective is the mirror image of an event. An event runs on the clo
 | `variable` | `string` | Reflected property on the target to compare. Spaces are stripped, so `"Charge Fraction"` and `"ChargeFraction"` are the same. |
 | `operation` | `string` | One of `>=`, `<=`, `>`, `<`, `==`, `!=`, `passes`. Long names such as `larger_equal` also work. |
 | `value` | `string` | Threshold, written as a string. For a bool, only the text `"true"` means true. |
+| `min_time` | `number` | Optional simulation time after which the objective may score. Omit it for no lower bound. |
+| `max_time` | `number` | Optional simulation time before which the objective may score. Omit it for no upper bound. |
 | `award.points` | `number` | Points added to the owning team's score. Negative values are how a penalty is written. |
 | `award.repeatable` | `bool` | `false` (default) means the team earns it at most once per run. |
 | `hidden` | `bool` | `true` still scores in Studio. Operators see its point value, but its name and description are withheld until their team completes it. |
@@ -465,6 +467,7 @@ Three things surprise people the first time:
 - **You write one objective, not one per team.** Studio expands it into a watcher on every matching component of every craft it applies to, and pays whichever team owns the craft. A once-only objective is claimed once *per team*, no matter how many of their craft or components satisfy it.
 - **It fires on the transition, not while the condition holds.** Points are awarded on the step the condition becomes true, and the objective re-arms only after the condition stops holding.
 - **A condition that already holds at `t=0` is claimed immediately.** "Battery above 20%" is free points if the battery starts at 50%. Pair recovery objectives with the event that causes the fault.
+- **Time bounds gate the condition.** `min_time` alone means `time > min_time`, `max_time` alone means `time < max_time`, and both form an inclusive range. The generated native event combines the timer and parameter condition with AND. See [the full objective time-window reference](../scenarios/objectives.md#limiting-an-objective-by-time).
 
 The full reference, including which variable types can be watched and a troubleshooting list for an objective that never scores, is at [Scenario reference → objectives](../scenarios/objectives.md).
 

@@ -56,6 +56,8 @@ Keys are case-insensitive when loaded. Studio writes them in lowercase (unlike t
 | `variable` | `string` | `""` | The reflected variable on the target that is compared. **Required.** See [Choosing a Variable](#choosing-a-variable). |
 | `operation` | `string` | `">="` | The comparison. Symbols and long names both work: see [Operators](#operators). |
 | `value` | `string` | `""` | The value compared against, written as a string. See [Writing the Value](#writing-the-value). |
+| `min_time` | `number` (s) | _(omitted)_ | Optional lower simulation-time bound. The objective can score only after this time. |
+| `max_time` | `number` (s) | _(omitted)_ | Optional upper simulation-time bound. The objective can score only before this time. |
 | `award.points` | `number` | `0.0` | Points added to the owning team's score. Negative values subtract, which is how a penalty is written. |
 | `award.repeatable` | `boolean` | `false` | Whether a team can earn the objective more than once in a run. See [Repeatable](#repeatable). |
 | `hidden` | `boolean` | `false` | A hidden objective still scores in Studio. Operators see that a secret objective exists and how many points it is worth, but its name and description are withheld until their team completes it. |
@@ -108,7 +110,7 @@ An objective where *no* craft binds at all is not discarded: Studio keeps the au
 
 ### On the Timeline
 
-Generated events appear on the Studio timeline **under the spacecraft that owns the component**, alongside that craft's eclipses and scripted events, labelled with the objective `name`. The team is implied by which craft's row the event sits on, so the name stays the same for every team.
+Generated events appear on the Studio timeline **under the spacecraft that owns the component**, alongside that craft's eclipses and scripted events, labelled with the objective `name`. The team is implied by which craft's row the event sits on, so the name stays the same for every team. A time-limited objective also shows the native timer ghost for its permitted interval.
 
 ---
 
@@ -225,6 +227,48 @@ The condition is evaluated every simulation step while the simulation is **runni
 - A disabled objective, or one whose simulation is paused or stopped, never fires.
 
 So `award.repeatable` controls what happens across *separate entries* into the condition, not what happens while it holds.
+
+---
+
+## Limiting an Objective by Time
+
+`min_time` and `max_time` optionally gate the parameter condition by elapsed simulation time:
+
+```json
+{
+  "name": "Recover During Contact",
+  "target": "Battery",
+  "variable": "Charge Fraction",
+  "operation": ">=",
+  "value": "0.9",
+  "min_time": 300.0,
+  "max_time": 900.0,
+  "award": { "points": 25.0, "repeatable": false }
+}
+```
+
+| Keys present | Permitted time |
+| --- | --- |
+| Neither | Any simulation time. This is the original objective behaviour. |
+| `min_time` only | Strictly after `min_time` (`time > min_time`). |
+| `max_time` only | Strictly before `max_time` (`time < max_time`). |
+| Both | Between the two values, including both endpoints. Endpoint order is normalized. |
+
+Studio implements this as one sustained timer trigger combined with the parameter flag using the
+native **AND** event operator. The objective awards when their combined condition becomes true:
+
+- If the parameter condition is already true when the permitted window opens, it awards as the
+  timer enters the window.
+- If the time window is already active, it awards when the parameter condition becomes true.
+- It rearms when either the parameter condition or the timer condition becomes false.
+
+The keys themselves control whether a bound exists. `0` is a valid time, so write
+`"min_time": 0` when that is intentional and omit `min_time` entirely to disable the lower bound.
+The Blueprint objective struct exposes the same distinction through `bHasMinTime` / `MinTime` and
+`bHasMaxTime` / `MaxTime`; the boolean fields are UI state and are not written into scenario JSON.
+
+There is no repeat interval for a time gate. `award.repeatable` still controls whether separate
+entries into the complete AND condition can pay more than once.
 
 ---
 
@@ -380,6 +424,7 @@ Storage starts empty, so this condition holds at `t=0` and would be claimed imme
 
 - **Check the variable name in Studio first.** The single most common reason an objective never scores is a variable that does not exist on the target. The objective binds nothing and says nothing about it.
 - **Ask whether the condition already holds at `t=0`.** A once-only objective whose condition is true at the start is claimed in the first simulation step, by whichever team gets there first, for doing nothing. Either invert the condition, or make sure an event puts the craft into the state the team has to recover from.
+- **Use `min_time` when scoring should not begin immediately.** This gates an already-true parameter condition until the intended part of the exercise instead of changing the condition itself.
 - **Scope with `assets` when craft differ.** An objective across a mixed fleet binds to whatever resolves, which is rarely what you meant when only one craft is supposed to be doing the task.
 - **Pair objectives with events.** The strongest scenarios break something, then pay for fixing it. The event and the objective should agree on `target` and `target name` so they refer to the same hardware.
 - **Prefer `>=` and `<=` over `>` and `<`.** A threshold that has to be *exceeded* rather than *reached* is usually an accident, and is invisible in review.
@@ -403,8 +448,9 @@ Work down this list; it is roughly ordered by how often each one is the answer.
 8. **The operator never evaluates.** Only `>=`, `<=`, `>`, `<`, `==`, `!=` and `passes` do anything.
 9. **`==` on a float.** The tolerance is `1e-6`. Use a threshold comparison instead.
 10. **A bool `value` that is not the text `true`.** `"1"`, `"yes"` and `"True "` with a trailing space all read as false.
-11. **It already fired.** With `"repeatable": false` the team gets it once per run. Check the score log for an award that was claimed earlier than you expected, then reset the run.
-12. **`"enabled": false`,** or the simulation is not running.
+11. **The time window is inactive.** The objective cannot score before `min_time` or after `max_time`; check the simulation clock and remember that a one-sided bound is strict.
+12. **It already fired.** With `"repeatable": false` the team gets it once per run. Check the score log for an award that was claimed earlier than you expected, then reset the run.
+13. **`"enabled": false`,** or the simulation is not running.
 
 ---
 
