@@ -493,6 +493,11 @@ Unsolicited message published on `Admin/Response` whenever any team triggers a t
 | `name` | Event name. |
 | `arguments` | Event-specific context. |
 
+For a `Score Awarded` entry with `arguments.AwardKind: "Objective"`, the arguments include the full
+`ObjectiveID`, `ObjectiveName`, and `ObjectiveDescription` even when the objective was hidden from
+the team. A configured lower or upper time bound is included as `ObjectiveMinTime` or
+`ObjectiveMaxTime` respectively, in simulation seconds. Omitted keys mean that side was unbounded.
+
 Use this message to build a live cross-team event timeline without polling. Combine it with `admin_query_events` at startup to backfill earlier events and build a complete event log.
 
 ---

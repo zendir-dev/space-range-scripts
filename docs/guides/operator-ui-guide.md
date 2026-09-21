@@ -352,12 +352,14 @@ For an ordinary objective, show:
 - Its name and description.
 - The signed points gained or lost each time it is achieved. Visually distinguish negative
   penalties from positive rewards.
+- Its optional `min_time` / `max_time` window in simulation seconds. Present a single upper bound
+  as a deadline, a single lower bound as "available after", and both as an active interval.
 - Whether it is repeatable.
 - Whether it has been completed, and the completion count for a repeatable objective.
 
 A hidden objective deliberately omits its name and description before completion. The UI can label
 these entries `Hidden Objective #1`, `Hidden Objective #2`, and so on, while still showing the point
-value. When the team earns one, an `objective_completed` push carries the real details immediately
+value and any configured time window. When the team earns one, an `objective_completed` push carries the real details immediately
 and the list remains revealed until the current run ends. Another team's completion does not reveal
 it.
 

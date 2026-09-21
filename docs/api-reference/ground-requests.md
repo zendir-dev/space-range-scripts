@@ -572,6 +572,8 @@ No arguments.
         "name":             "Battery Recovered",
         "description":      "Restore battery charge to at least 80%.",
         "points":           25,
+        "min_time":         300,
+        "max_time":         900,
         "repeatable":       false,
         "completed":        false,
         "completion_count": 0
@@ -580,6 +582,7 @@ No arguments.
         "id":               "8f65b5c4-f348-4ff6-a811-bf0acf411a4a",
         "hidden":           true,
         "points":           50,
+        "max_time":         1200,
         "repeatable":       false,
         "completed":        false,
         "completion_count": 0
@@ -593,11 +596,14 @@ No arguments.
 - `id` is an opaque runtime identifier for correlating list entries and completion pushes. It does
   not need to appear in a hand-authored scenario.
 - `points` is the score applied each time the objective pays. It may be negative for a penalty.
+- `min_time` and `max_time` are optional simulation-time bounds in seconds. Omission means that side
+  is unbounded. A lower-only objective is active strictly after `min_time`, an upper-only objective
+  strictly before `max_time`, and a two-sided range includes both endpoints.
 - `completed` means this team has earned the objective at least once during the current run.
 - `completion_count` is the number of successful awards during the current run. It can exceed one
   only when `repeatable` is `true`.
-- An unrevealed hidden objective includes `id`, `hidden`, `points`, `repeatable`, `completed`, and
-  `completion_count`, but **omits** `name` and `description`. A UI may label these entries
+- An unrevealed hidden objective includes `id`, `hidden`, `points`, any configured time bounds,
+  `repeatable`, `completed`, and `completion_count`, but **omits** `name` and `description`. A UI may label these entries
   `Hidden Objective #1`, `Hidden Objective #2`, and so on.
 - After this team completes a hidden objective, subsequent responses include its real `name` and
   `description`. `hidden` remains `true`, allowing the UI to show that it was a revealed secret.
@@ -677,6 +683,8 @@ succeeded by the time this message is sent.
     "name":             "Emergency Recovery",
     "description":      "Recover the spacecraft after complete power loss.",
     "points":           50,
+    "min_time":         300,
+    "max_time":         900,
     "award_type":       "reward",
     "repeatable":       false,
     "completed":        true,
@@ -702,6 +710,9 @@ The `id` matches the entry returned by [`list_objectives`](#list_objectives). Fo
 objective, another successful award produces another push with an increased `completion_count`.
 `award_type` is `reward` for positive points, `penalty` for negative points, and `neutral` for zero.
 `team_score` is the complete post-award leaderboard summary.
+Optional `min_time` / `max_time` use the same simulation-second semantics as
+[`list_objectives`](#list_objectives), allowing the completion UI to retain or explain the
+objective's permitted window.
 Objective awards use this dedicated message instead of also producing a generic
 [`event_triggered`](#event_triggered-push) message for the team.
 
