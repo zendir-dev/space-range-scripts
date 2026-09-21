@@ -115,6 +115,9 @@ The publish/subscribe messaging protocol Space Range uses for all client traffic
 
 ## O
 
+**Objective (scenario objective)**
+A scoring rule in the `objectives[]` section of a scenario. It watches one variable on one kind of component and awards points to the team owning the spacecraft when the value satisfies a condition. The inverse of a scenario event, which acts on the clock and changes the spacecraft rather than watching it. See [`objectives.md`](../scenarios/objectives.md).
+
 **Operator**
 The role of a person controlling spacecraft for a single team. Holds that team's password and uses the per-team uplink/downlink/request/response topics.
 

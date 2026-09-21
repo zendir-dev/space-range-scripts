@@ -1,0 +1,451 @@
+{
+	"metadata": {
+		"name": "Test Objectives",
+		"description": "Single-team Microsat harness for operator-facing objectives, penalties, and questions. Battery starts at 80% so Charge Fraction > 0.9 and the low-charge penalty are not claimed at t=0. Solar-panel generation and a hidden stretch goal cover the visible, immediate, and secret-completion paths. Includes one question of each type (text, number, select, checkbox)."
+	},
+	"simulation": {
+		"epoch": "2026/04/27 12:00:00",
+		"speed": 10.0,
+		"step_size": 0.1,
+		"integrator": "Euler",
+		"end_time": 1800.0
+	},
+	"universe": {
+		"atmosphere": false,
+		"magnetosphere": false,
+		"gps": true,
+		"cloud_opacity": 0.7,
+		"cloud_contrast": 2.5,
+		"ambient_light": 0.25
+	},
+	"ground_stations": {
+		"locations": [
+			"Paris"
+		],
+		"min_elevation": 0,
+		"max_range": 0,
+		"scale": 100
+	},
+	"teams": [
+		{
+			"enabled": true,
+			"id": 111111,
+			"password": "AAAAAA",
+			"name": "Team Blue",
+			"key": 42,
+			"frequency": 612,
+			"collection": "Main",
+			"color": "#0050FF"
+		}
+	],
+	"assets": {
+		"space": [
+			{
+				"id": "SC_001",
+				"name": "Microsat",
+				"orbit": {
+					"planet": "Earth",
+					"values": [
+						14000.0,
+						0.0,
+						45.0,
+						290.0,
+						0.0,
+						80.0
+					],
+					"offset": [
+						0.0,
+						0.0,
+						0.0,
+						2.0,
+						0.0,
+						2.0
+					]
+				},
+				"physics": {
+					"override_mass": true,
+					"mass": 100.0,
+					"center_of_mass": [
+						0.0,
+						0.0,
+						0.0
+					],
+					"inertia_tensor": [
+						[
+							10.0,
+							0.0,
+							0.0
+						],
+						[
+							0.0,
+							10.0,
+							0.0
+						],
+						[
+							0.0,
+							0.0,
+							10.0
+						]
+					],
+					"attitude": [
+						53.0,
+						-48.0,
+						0.0
+					]
+				},
+				"visualization": {
+					"mesh": "/ZendirAssetsSpace/Blueprints/Spacecraft/ZenSat/BP_Z_SC_ZenSat_Chassis",
+					"scale": 1.0,
+					"offset": [
+						0.0,
+						0.0,
+						0.12
+					]
+				},
+				"controller": {
+					"safe_fraction": 0.1,
+					"capture_tax": 0.001,
+					"downlink_tax": 0.01,
+					"ping_interval": 20.0,
+					"reset_interval": 60.0,
+					"jamming_multiplier": 100.0,
+					"enable_rpo_software": false
+				},
+				"power": {
+					"bus": [
+						{
+							"source_component": "Solar Panel",
+							"source_terminal": "out",
+							"target_component": "Battery",
+							"target_terminal": "out"
+						}
+					]
+				},
+				"components": [
+					{
+						"class": "Solar Panel",
+						"name": "Solar Panel",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.8,
+							0.276313,
+							-0.2
+						],
+						"rotation": [
+							35.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Area": 0.3,
+							"Efficiency": 0.4,
+							"Mass": 10.0
+						}
+					},
+					{
+						"class": "Reaction Wheels",
+						"name": "Reaction Wheels",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Mass": 9.0
+						}
+					},
+					{
+						"class": "Computer",
+						"name": "Computer",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Battery",
+						"name": "Battery",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Nominal Capacity": 5.0,
+							"Charge Fraction": 0.8,
+							"Mass": 5.0
+						}
+					},
+					{
+						"class": "Camera",
+						"name": "Camera",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							-0.36,
+							-0.16
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Mass": 5.0,
+							"Resolution": [
+								1024,
+								1024
+							]
+						}
+					},
+					{
+						"class": "GPS Sensor",
+						"name": "GPS Sensor",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							0.2
+						],
+						"data": {
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Receiver",
+						"name": "Receiver",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							-0.36,
+							-0.16
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Antenna Gain": 3.0,
+							"Mass": 2.0
+						}
+					},
+					{
+						"class": "Transmitter",
+						"name": "Transmitter",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							-0.36,
+							-0.16
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Mass": 1.0
+						}
+					},
+					{
+						"class": "Storage",
+						"name": "Storage",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							0.0,
+							-0.2
+						],
+						"data": {
+							"Mass": 4.0
+						}
+					},
+					{
+						"class": "EM Sensor",
+						"name": "EM Sensor",
+						"mesh": "None",
+						"enabled": true,
+						"position": [
+							0.0,
+							-0.36,
+							-0.16
+						],
+						"rotation": [
+							90.0,
+							0.0,
+							0.0
+						],
+						"data": {
+							"Mass": 2.0
+						}
+					}
+				]
+			}
+		],
+		"collections": [
+			{
+				"id": "Main",
+				"space_assets": [
+					"SC_001"
+				]
+			}
+		]
+	},
+	"objectives": [
+		{
+			"enabled": true,
+			"name": "Battery Recovered",
+			"description": "Charge the battery above 90%.",
+			"type": "spacecraft",
+			"assets": [],
+			"target": "Battery",
+			"target name": "",
+			"variable": "Charge Fraction",
+			"operation": ">",
+			"value": "0.9",
+			"award": {
+				"points": 25.0,
+				"repeatable": false
+			},
+			"hidden": false
+		},
+		{
+			"enabled": true,
+			"name": "Panel Generating",
+			"description": "Get a solar panel producing more than 0.1 W net power.",
+			"type": "spacecraft",
+			"assets": [],
+			"target": "Solar Panel",
+			"target name": "",
+			"variable": "Net Power",
+			"operation": ">",
+			"value": "0.1",
+			"award": {
+				"points": 10.0,
+				"repeatable": false
+			},
+			"hidden": false
+		},
+		{
+			"enabled": true,
+			"name": "Fully Charged",
+			"description": "Bring the battery all the way above 99% charge.",
+			"type": "spacecraft",
+			"assets": [],
+			"target": "Battery",
+			"target name": "",
+			"variable": "Charge Fraction",
+			"operation": ">=",
+			"value": "1.0",
+			"award": {
+				"points": 15.0,
+				"repeatable": false
+			},
+			"hidden": true
+		},
+		{
+			"enabled": true,
+			"name": "Battery Depleted",
+			"description": "Avoid letting the battery charge fraction fall below 75%.",
+			"type": "spacecraft",
+			"assets": [],
+			"target": "Battery",
+			"target name": "",
+			"variable": "Charge Fraction",
+			"operation": "<",
+			"value": "0.75",
+			"award": {
+				"points": -20.0,
+				"repeatable": false
+			},
+			"hidden": false
+		}
+	],
+	"questions": [
+		{
+			"section": "Power",
+			"title": "What component stores electrical energy on the spacecraft?",
+			"description": "Name the component that holds charge for the rest of the bus.",
+			"type": "text",
+			"answer": {
+				"value": "Battery",
+				"reason": "The Battery is the energy store on the power bus.",
+				"score": 5
+			}
+		},
+		{
+			"section": "Power",
+			"title": "What is the battery's starting charge fraction?",
+			"description": "Give the initial Charge Fraction as a value between 0 and 1.",
+			"type": "number",
+			"answer": {
+				"value": 0.8,
+				"tolerance": 0.01,
+				"unit": "",
+				"reason": "The battery starts at 80% charge (0.8).",
+				"score": 5
+			}
+		},
+		{
+			"section": "Power",
+			"title": "Which component generates electrical power?",
+			"description": "Pick the source that feeds the battery on this Microsat.",
+			"type": "select",
+			"answer": {
+				"options": [
+					"Reaction Wheels",
+					"Solar Panel",
+					"Transmitter",
+					"Storage"
+				],
+				"value": 1,
+				"reason": [
+					"Reaction wheels consume power; they do not generate it.",
+					"The solar panels generate power into the battery.",
+					"The transmitter is a load, not a source.",
+					"Storage holds data, not electrical energy."
+				],
+				"score": 5
+			}
+		},
+		{
+			"section": "Power",
+			"title": "Which components sit on the power bus as sources?",
+			"description": "Select every component that generates or stores electrical energy on this spacecraft.",
+			"type": "checkbox",
+			"answer": {
+				"options": [
+					"Camera",
+					"Solar Panel",
+					"Battery",
+					"GPS Sensor"
+				],
+				"value": [
+					1,
+					2
+				],
+				"reason": [
+					"The solar panels generate power and the battery stores it. The camera and GPS sensor are loads."
+				],
+				"score": 5
+			}
+		}
+	]
+}

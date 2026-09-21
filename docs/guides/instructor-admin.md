@@ -344,7 +344,11 @@ for t in teams:
 
 When the exercise is over, what you usually want is:
 
-1. **Final score per team**: call `admin_query_events` filtered by `type: "question_answered"` and aggregate.
+1. **Final score per team**: retain the latest
+   [`admin_score_updated`](../api-reference/admin-requests.md#admin_score_updated-push) entry for
+   each team, or read `teams[].score` from the public
+   [`Info`](../api-reference/info-stream.md) stream. `total.net` is the ranked score;
+   `total.penalty` and the question/objective breakdown explain how it was reached.
 2. **Command history**: `admin_query_events` for each team filtered by command-related types.
 3. **Telemetry over time**: `admin_query_data` per asset, full time range, all fields.
 4. **Captured imagery**: these aren't in the structured database; they'll be in your team operators' clients (the Operator UI's **Image** view) or in any custom storage you configured. Make sure operators export imagery before disconnecting if you need it for review.

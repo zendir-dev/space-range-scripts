@@ -8,9 +8,9 @@ If you have not authored a scenario before, read [Scenario configuration](../gui
 
 ## What a Scenario Is
 
-A scenario is a single JSON file Studio loads to set up an exercise: simulation parameters, the universe model, ground stations, teams and their credentials, spacecraft and their components, ground decorations (vessels, text), scripted failure events, and (optionally) Q&A questions for scoring.
+A scenario is a single JSON file Studio loads to set up an exercise: simulation parameters, the universe model, ground stations, teams and their credentials, spacecraft and their components, ground decorations (vessels, text), scripted failure events, and (optionally) scored objectives and Q&A questions.
 
-Studio loads the JSON and builds the simulation: teams, spacecraft, ground objects, scripted events, and scoring questions.
+Studio loads the JSON and builds the simulation: teams, spacecraft, ground objects, scripted events, scoring objectives, and scoring questions.
 
 ---
 
@@ -40,6 +40,7 @@ Every scenario JSON has this shape. **Every section is optional** except `teams`
     "space":         [ ... ]
   },
   "events":          [ ... ],
+  "objectives":      [ ... ],
   "questions":       [ ... ]
 }
 ```
@@ -58,6 +59,7 @@ Every scenario JSON has this shape. **Every section is optional** except `teams`
 | `objects.ground` | Vessels, text labels, and other passive ground actors | [ground-objects.md](ground-objects.md) |
 | `objects.space` | Passive orbital objects (bare spacecraft, no controller/components) | [space-objects.md](space-objects.md) |
 | `events` | Scripted failures and GPS effects on the simulation timeline | [events.md](events.md) |
+| `objectives` | Point awards triggered by a spacecraft parameter reaching a condition | [objectives.md](objectives.md) |
 | `questions` | Q&A scoring (text, number, select, checkbox) | [questions.md](questions.md) |
 | (recipes) | End-to-end annotated patterns for common scenario shapes | [recipes.md](recipes.md) |
 
@@ -107,6 +109,7 @@ There are two important exceptions to "any casing works":
 
 - The **`questions[]` `type` field** is matched case-insensitively but must be one of `text`, `number` (alias `numeric`), `select`, `checkbox`. See [questions.md](questions.md).
 - The **`events[]` `Data` keys** must match the property names the event type expects (whitespace in the key is ignored). `"Stuck Index"` and `"StuckIndex"` both work, but `"stuckindex"` does **not** if the canonical name is `StuckIndex`. See [events.md](events.md).
+- The **`objectives[]` `variable` value** has spaces stripped before it is matched against the property name, so `"Charge Fraction"` and `"ChargeFraction"` both reach `ChargeFraction`. Punctuation and spelling still have to be exact. See [objectives.md](objectives.md#choosing-a-variable).
 
 Trailing commas, comments, and bare keys are **not** allowed: Studio uses a strict JSON parser. Lint your file before loading.
 
@@ -125,7 +128,8 @@ When the scenario JSON is loaded (Studio UI scenario picker or admin/scenario AP
 7. `docking[]` places and docks the configured chaser craft onto their target ports (after all craft are built).
 8. `objects.ground[]` instantiates vessels / text actors, and `objects.space[]` instantiates passive orbital objects.
 9. `events[]` are registered on the simulation event queue (they fire later, on `Time`).
-10. `questions[]` are stored on the subsystem and exposed to teams via [`list_questions`](../api-reference/ground-requests.md#list_questions).
+10. `objectives[]` are staged, then fanned out into one watcher per matching component once the craft exist. An objective that binds to nothing is kept and retried on the next construction rather than discarded.
+11. `questions[]` are stored on the subsystem and exposed to teams via [`list_questions`](../api-reference/ground-requests.md#list_questions).
 
 If a section fails to parse, Studio logs the error and continues with the next section. **Always check the Studio log after loading**: silent partial loads are a common authoring trap.
 
@@ -187,7 +191,8 @@ When generating a scenario from a brief, work in this order. Each step is small 
 5. **More spacecraft and collections**: duplicate the first spacecraft, vary `id` / `name` / `orbit`, and assign each to a team via collections.
 6. **Ground objects**: add vessels, labels, and decorations to support imagery exercises. See [ground-objects.md](ground-objects.md).
 7. **Events**: add scripted failures *one at a time*. Test each by lowering its `Time` and watching the admin event stream. See [events.md](events.md).
-8. **Questions**: add scoring questions only after the scenario shape is stable; broken JSON in a question hides scoring entirely for that question. See [questions.md](questions.md).
+8. **Objectives**: add point awards for what the teams have to achieve, usually one per event you added in step 7. Check each one is not already satisfied at `t=0`. See [objectives.md](objectives.md).
+9. **Questions**: add scoring questions only after the scenario shape is stable; broken JSON in a question hides scoring entirely for that question. See [questions.md](questions.md).
 
 Patterns for whole-scenario shapes (counter-piracy, telemetry-drop, docking, GPS denial) are documented in [recipes.md](recipes.md).
 

@@ -315,8 +315,19 @@ When generating a scenario from a brief, follow this checklist top-to-bottom. Ea
 - For training scenarios, pair every fault with a recovery-prompting follow-up event (or document the recovery in `description`).
 - Sort events in the JSON in chronological `Time` order for readability.
 - Empty `Assets: []` means *every spacecraft*. Use a single-element list (`["ALPHA"]`) for per-team faults.
+- A class `Target` hits every component of that class. Add `Target Name` to fail one of them, which is what you want when operators are meant to work out *which* panel or wheel went bad.
 
-### 6. Questions
+### 6. Objectives
+
+- Write one objective per thing the brief says a team has to *achieve*, usually alongside the event that creates the need for it.
+- Take the `variable` name from the component's class reference or Studio's objective editor. Inventing one produces an objective that binds to nothing and says nothing about it.
+- **Check the condition is false at `t=0`.** An objective that already holds when the run starts pays out immediately for doing nothing, which is the single most common authoring mistake here.
+- Use `target name` to tie an objective to the same component the matching event broke.
+- Scope with `assets` whenever the fleet is mixed; an unscoped objective binds to every craft that happens to resolve.
+- Leave `"repeatable": false` unless the task genuinely can be repeated for value. Once-only is per team, not per craft.
+- Negative `award.points` is how a penalty is written. See [`objectives.md`](./objectives.md).
+
+### 7. Questions
 
 - Always set `score` per question. Aim for a round total (50, 100).
 - Use `number` with a sensible `tolerance` and explicit `unit`.
@@ -325,7 +336,7 @@ When generating a scenario from a brief, follow this checklist top-to-bottom. Ea
 - Avoid checkbox questions where one wrong tick collapses to zero score unless that strictness is intentional. See the scoring rules in [`questions.md`](./questions.md).
 - Question IDs are auto-assigned in load order; do not hand-write them.
 
-### 7. Validation Pass
+### 8. Validation Pass
 
 - Lint the JSON (no trailing commas, no comments).
 - Load the file in Studio and watch the log for parse errors. Studio continues past failed sections: silent partial loads are common.
@@ -334,6 +345,7 @@ When generating a scenario from a brief, follow this checklist top-to-bottom. Ea
   - Every spacecraft listed in `list_assets` for its team.
   - Every component name reachable via `list_entity`.
   - Every event listed in `admin_get_scenario_events`.
+  - Every objective appears on the Studio timeline under each spacecraft it applies to.
   - Every question shows up in `list_questions`.
 
 If something is missing, the most likely culprits (in order) are:
@@ -343,8 +355,9 @@ If something is missing, the most likely culprits (in order) are:
 3. An `Assets[]` referencing a spacecraft `id` that doesn't exist: event no-ops.
 4. An `events.Data.Type` mismatch (`"Spoofing"` vs `"spoof"`): event errors out at runtime.
 5. A `team.collection` that doesn't exist in `assets.collections[]`: team has no spacecraft.
+6. An `objectives[].variable` that doesn't exist on the target: the objective binds to nothing and never appears on the timeline.
 
-### 8. Iterate on the Timing
+### 9. Iterate on the Timing
 
 - Lower `simulation.speed` (e.g. `100`) for fast iteration; raise for fidelity.
 - Lower `events[i].Time` while testing so faults fire early.
@@ -356,5 +369,6 @@ If something is missing, the most likely culprits (in order) are:
 
 - [`README.md`](./README.md): the index, with the loading order Studio applies.
 - [`events.md`](./events.md): full event reference.
+- [`objectives.md`](./objectives.md): full objective reference.
 - [`questions.md`](./questions.md): full Q&A reference.
 - `space-range-scripts/scenarios/Orbital Intel/orbital_intel.json`: most complete shipped example.

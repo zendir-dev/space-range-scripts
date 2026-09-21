@@ -234,10 +234,34 @@ If that throws, check whether `Commands` is the literal string `"[]"` (empty lis
 1. `Enabled: false` on the event.
 2. Trigger time hasn't been reached. Pausing extends real time but not simulation time: check the actual sim clock.
 3. The `Target` string doesn't match any component / error model in the loaded build.
+4. `Target Name` is set and no component of that class carries that name. The event resolves the class fine and then narrows to nothing, so it no-ops silently.
 
 **Diagnostic.** Run [`admin_get_scenario_events`](../api-reference/admin-requests.md#admin_get_scenario_events). The response lists every parsed event; if your event is missing, the JSON failed to parse it.
 
-**Fix.** Compare `Target` strings against the working examples in `orbital_intel.json`. Use exact spelling.
+**Fix.** Compare `Target` strings against the working examples in `orbital_intel.json`. Use exact spelling. When `Target Name` is set, check it against `components[].name` on the assets in `Assets`: the match ignores case and spaces but nothing else, so punctuation must line up.
+
+### "An Objective Never Awards Any Points."
+
+**Likely causes**:
+
+1. The `variable` name doesn't exist on the target. This is by far the most common cause, and it is silent: the objective binds to nothing at all.
+2. The `target` resolves to nothing, or `target name` narrowed it to nothing.
+3. The variable is not a watchable type. Only bools, ints, floats, enums and vectors can be watched; strings and arrays cannot.
+4. The craft has no team to pay. Neutral craft and fully hidden teams are skipped.
+5. `"operation": "=="` against a continuously varying float. The tolerance is `1e-6`, so it effectively never matches.
+6. A bool `value` that isn't the literal text `"true"`. `"1"` reads as false.
+7. It already fired. With `"repeatable": false` a team earns the objective once per run, no matter how many of their craft satisfy it.
+8. Its `min_time` / `max_time` window is not currently active.
+
+**Diagnostic.** Look at the Studio timeline. A bound objective appears as a row under every spacecraft it applies to; an objective you cannot find anywhere never bound. Then check the score log for an award claimed earlier than you expected.
+
+**Fix.** Confirm the variable name in Studio's objective editor, which lists every variable the chosen target exposes. The full list of causes is at [Scenario reference → when an objective never scores](../scenarios/objectives.md#when-an-objective-never-scores).
+
+### "An Objective Was Awarded Immediately at Scenario Start."
+
+The condition was already true when the run began. `"Charge Fraction >= 0.2"` is free points on a battery that starts at `0.5`.
+
+**Fix.** Either pair the objective with the event that puts the craft into the state teams have to recover from, pick a threshold the scenario cannot start on the correct side of, or add `min_time` so scoring begins later. Resetting the run clears the award history, so you can retest immediately.
 
 ### "I Changed the Scenario JSON but Studio Is Still Using the Old One."
 

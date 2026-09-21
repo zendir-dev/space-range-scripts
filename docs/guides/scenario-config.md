@@ -32,6 +32,7 @@ The top-level shape of every scenario is:
     "space":         [ ... ]
   },
   "events":          [ ... ],
+  "objectives":      [ ... ],
   "questions":       [ ... ]
 }
 ```
@@ -393,6 +394,7 @@ Studio fires these on the simulation timeline. They're how an instructor injects
 | `Interval` | `number` (sim s) | Repeat period. Ignored when `Repeat` is `false`. |
 | `Type` | `string` | `Spacecraft`, `GPS`, or `Cyber` (case-insensitive; `failure` is accepted as an alias for `Spacecraft`). Selects the action handler. |
 | `Target` | `string` | `Spacecraft`: component name, class alias, or `"<Component>-<ErrorModel>"`. Hyphenated names such as `"Thruster 4 (-X)"` match as a whole before any error-model split. `Cyber`: currently `Spacecraft`. `GPS`: ignored. |
+| `Target Name` | `string` | `Spacecraft`: narrows a class-based `Target` to the components with this `components[].name`, matched ignoring case and spaces. Omit or leave empty to affect every component of the class. Ignored by `GPS` and `Cyber`. |
 | `Assets` | `string[]` | Spacecraft IDs to target (`Spacecraft`/`Cyber`). Empty array = "every spacecraft". Ignored by `GPS`. |
 | `Data` | `object` | Type/target-specific parameters. `Spacecraft`: component/error-model properties. `GPS`: `Data.Type`=`Spoofing`/`Jamming`, with `Action` for jamming. `Cyber`: telemetry tamper schema (`APID`, optional `SubType`, `Offset Bytes`, `Payload`, `Encoding`, `Expiry Seconds`, `Clear On Reset`). |
 
@@ -407,11 +409,67 @@ The most useful Spacecraft `Target` forms:
 | `Transmitter-TransmitterPacketCorruptionErrorModel` | Packet corruption (`Packet Corruption Fraction`). |
 | `Computer-GuidanceComputerNoiseErrorModel` | Pointing error (`Noise Factor`, `Randomize`). |
 
+Each of these hits every component of that class on the spacecraft. To fail one panel out of four rather than all of them, add `Target Name` alongside `Target`; see [Scenario reference → restricting an event to one component](../scenarios/events.md#restricting-an-event-to-one-component).
+
 GPS events configure spoofing regions and jamming sources on the global GPS subsystem; see [Scenario reference → events](../scenarios/events.md#gps-events) for the full schema.
 
 Cyber events configure APID-targeted telemetry byte overlays (for packet-forensics/cyber scenarios); see [Scenario reference → events](../scenarios/events.md#cyber-events) for full schema and examples.
 
 When you're authoring events, fire one at a time during testing: failure cascades are easy to write and hard to debug. To list every event in the loaded scenario at runtime, an admin can call [`admin_get_scenario_events`](../api-reference/admin-requests.md#admin_get_scenario_events).
+
+---
+
+## `objectives[]`: Parameter-Triggered Scoring
+
+Optional. An objective is the mirror image of an event. An event runs on the clock and changes the spacecraft; an objective watches the spacecraft and awards points to the team that owns it. This is how a scenario scores what a team *did*, as opposed to [`questions[]`](#questions-qa-scoring), which score what they worked out.
+
+```json
+"objectives": [
+  {
+    "enabled":     true,
+    "name":        "Battery Recovered",
+    "description": "Restore the battery to at least 80% charge.",
+    "type":        "spacecraft",
+    "assets":      [],
+    "target":      "Battery",
+    "target name": "",
+    "variable":    "Charge Fraction",
+    "operation":   ">=",
+    "value":       "0.8",
+    "award": {
+      "points":     25.0,
+      "repeatable": false
+    }
+  }
+]
+```
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `enabled` | `bool` | Set `false` to keep the objective in the file but inactive. |
+| `name` | `string` | Label shown on the timeline, and the fallback award reason. |
+| `description` | `string` | What the team needs to do. Shown to operators unless `hidden` is true. |
+| `type` | `string` | Only `spacecraft` is implemented. Reserved for the same set as an event's `Type`. |
+| `assets` | `string[]` | Spacecraft IDs the objective applies to. Empty array = "every spacecraft". |
+| `target` | `string` | Component name, class alias, or `"<Component>-<Model>"` to watch a model on it. Resolves exactly like an event's `Target`. |
+| `target name` | `string` | Narrows a class-based `target` to the components with this `components[].name`, ignoring case and spaces. |
+| `variable` | `string` | Reflected property on the target to compare. Spaces are stripped, so `"Charge Fraction"` and `"ChargeFraction"` are the same. |
+| `operation` | `string` | One of `>=`, `<=`, `>`, `<`, `==`, `!=`, `passes`. Long names such as `larger_equal` also work. |
+| `value` | `string` | Threshold, written as a string. For a bool, only the text `"true"` means true. |
+| `min_time` | `number` | Optional simulation time after which the objective may score. Omit it for no lower bound. |
+| `max_time` | `number` | Optional simulation time before which the objective may score. Omit it for no upper bound. |
+| `award.points` | `number` | Points added to the owning team's score. Negative values are how a penalty is written. |
+| `award.repeatable` | `bool` | `false` (default) means the team earns it at most once per run. |
+| `hidden` | `bool` | `true` still scores in Studio. Operators see its point value, but its name and description are withheld until their team completes it. |
+
+Three things surprise people the first time:
+
+- **You write one objective, not one per team.** Studio expands it into a watcher on every matching component of every craft it applies to, and pays whichever team owns the craft. A once-only objective is claimed once *per team*, no matter how many of their craft or components satisfy it.
+- **It fires on the transition, not while the condition holds.** Points are awarded on the step the condition becomes true, and the objective re-arms only after the condition stops holding.
+- **A condition that already holds at `t=0` is claimed immediately.** "Battery above 20%" is free points if the battery starts at 50%. Pair recovery objectives with the event that causes the fault.
+- **Time bounds gate the condition.** `min_time` alone means `time > min_time`, `max_time` alone means `time < max_time`, and both form an inclusive range. The generated native event combines the timer and parameter condition with AND. See [the full objective time-window reference](../scenarios/objectives.md#limiting-an-objective-by-time).
+
+The full reference, including which variable types can be watched and a troubleshooting list for an objective that never scores, is at [Scenario reference → objectives](../scenarios/objectives.md).
 
 ---
 
@@ -541,8 +599,9 @@ A practical workflow when authoring or editing a scenario:
 3. Build out `teams` and `assets`. Get one team flying with one spacecraft first.
 4. Add `objects.ground[]` decorations as the scenario narrative requires.
 5. Add `events[]` last: they're the easiest to break things with. Test each event individually by setting a small `Time` and watching the admin event stream.
-6. Add `questions[]` only after the rest of the scenario is stable.
-7. Lint your JSON. Studio's parser is strict; trailing commas and bare keys will fail to load.
+6. Add `objectives[]` for the events you just added, so there is something to score. Run the scenario for a few seconds and check nobody was paid at `t=0`.
+7. Add `questions[]` only after the rest of the scenario is stable.
+8. Lint your JSON. Studio's parser is strict; trailing commas and bare keys will fail to load.
 
 To verify a scenario will load cleanly, run it once in Studio against a single test client (the Operator UI is fastest). Watch for:
 
@@ -550,6 +609,7 @@ To verify a scenario will load cleanly, run it once in Studio against a single t
 - Every spacecraft listed in `assets.space[]` shows up in [`list_assets`](../api-reference/ground-requests.md#list_assets) for its team.
 - Every component name on a spacecraft is reachable via [`list_entity`](../api-reference/ground-requests.md#list_entity).
 - Every scripted event appears in [`admin_get_scenario_events`](../api-reference/admin-requests.md#admin_get_scenario_events).
+- Every objective appears on the Studio timeline, under each spacecraft it applies to. An objective that shows up nowhere did not bind to anything: see [objectives → when an objective never scores](../scenarios/objectives.md#when-an-objective-never-scores).
 
 If any of those don't match, the JSON did not load fully; fix the scenario file before continuing.
 
