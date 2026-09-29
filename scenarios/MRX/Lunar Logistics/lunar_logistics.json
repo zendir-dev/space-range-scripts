@@ -1662,7 +1662,7 @@
 		{
 			"section": "Fuel Operations",
 			"title": "How much fuel is needed to fill the Lunar Gateway hub port tank to full capacity?",
-			"description": "While docked, open the Transfer Valve and transfer propellant through the fuel transfer until the hub port tank stops accepting fuel.",
+			"description": "While docked, open the Transfer Valve and transfer propellant through the fuel transfer until the hub port tank stops accepting fuel. Make sure you are calculating the fuel going through the transfer valve and not the fuel coming out of the fuel tank.",
 			"type": "number",
 			"answer": {
 				"unit": "kg",
@@ -1724,8 +1724,8 @@
 			"type": "number",
 			"answer": {
 				"unit": "dB",
-				"value": 47.98,
-				"tolerance": 2.0,
+				"value": 48,
+				"tolerance": 2,
 				"reason": "The maximum downlink SNR from the Microsat to the Deep Space Network is approximately 48 dB.",
 				"score": 8
 			}
