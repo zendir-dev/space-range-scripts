@@ -1,6 +1,6 @@
 {
 	"metadata": {
-		"name": "Demonstration",
+		"name": "Lunar Logistics Demonstration",
 		"description": "This scenario tests teams' ability to perform lunar logistics operations with a central hub spacecraft. This includes docked procedures, such as fuel transfer and power sharing, as well as undocking and debris inspection."
 	},
 	"simulation": {

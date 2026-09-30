@@ -1,14 +1,14 @@
 {
 	"metadata": {
-		"name": "Tutorial Exercise",
-		"description": "This is a tutorial scenario designed to introduce participants to the basics of the Space Range simulation environment. It includes a simple spacecraft in orbit around Earth, with a few basic components and a single ground station. The scenario also includes a few example questions to help participants get familiar with the types of questions they may encounter in the competition."
+		"name": "Tutorial Exercise (Long)",
+		"description": "A longer introductory scenario with the same spacecraft, orbit, and starting configuration as the 15-minute Tutorial. The session runs for 30 minutes and adds extra telemetry, orbit, and observation tasks, including a ground marking off the coast of Perth."
 	},
 	"simulation": {
 		"epoch": "2026/04/15 07:30:00",
-		"speed": 3.0,
+		"speed": 2.0,
 		"step_size": 0.1,
 		"integrator": "Euler",
-		"end_time": 2700.0
+		"end_time": 3600.0
 	},
 	"universe": {
 		"atmosphere": false,
@@ -20,10 +20,11 @@
 	},
 	"ground_stations": {
 		"locations": [
+			"New York",
 			"Paris",
 			"Dubai",
 			"Singapore",
-			"Sydney",
+			"Melbourne",
 			"Auckland"
 		],
 		"min_elevation": 0,
@@ -135,7 +136,7 @@
 						45.0,
 						220.0,
 						0,
-						80.0
+						60.0
 					],
 					"offset": [
 						0.0,
@@ -143,7 +144,7 @@
 						0.0,
 						0.0,
 						0.0,
-						1.0
+						0.1
 					]
 				},
 				"physics": {
@@ -185,7 +186,7 @@
 					"safe_fraction": 0.1,
 					"capture_tax": 0.001,
 					"downlink_tax": 0.01,
-					"ping_interval": 20.0,
+					"ping_interval": 10.0,
 					"reset_interval": 60.0,
 					"jamming_multiplier": 100.0,
 					"enable_rpo_software": false
@@ -434,6 +435,20 @@
 					"heading": 90.0,
 					"speed": 0.0
 				}
+			},
+			{
+				"id": "GO_002",
+				"type": "text",
+				"name": "Ground Marker",
+				"planet": "Earth",
+				"latitude": -33.0,
+				"longitude": 110.0,
+				"altitude": 3,
+				"scale": 100000,
+				"color": "#FFFFFF",
+				"data": {
+					"text": "HORIZON"
+				}
 			}
 		]
 	},
@@ -441,13 +456,13 @@
 	"questions": [
 		{
 			"section": "Telemetry & Health",
-			"title": "What is the minimum downlink effective signal-to-noise ratio with the ground station?",
+			"title": "What is the minimum non-zero downlink effective signal-to-noise ratio with the ground station?",
 			"description": "While your spacecraft is in contact with a visible ground station, read the downlink signal-to-noise ratio from the Link Budget panel in Telemetry. Report the value in dB.",
 			"type": "number",
 			"answer": {
 				"unit": "dB",
 				"value": 90.0,
-				"tolerance": 10.0,
+				"tolerance": 3.0,
 				"reason": "Read the downlink SNR from the Link Budget panel when the spacecraft is visible to a ground station. Validate the exact value via scenario dry-run.",
 				"score": 10
 			}
@@ -482,8 +497,8 @@
 		},
 		{
 			"section": "Observations",
-			"title": "What colour is the ship found near the Arabian Sea?",
-			"description": "A ship is located off the west coast of India, in the Arabian Sea. Use guidance pointing and your camera to capture an image of the vessel and identify its hull colour.",
+			"title": "What color is the ship found near the Arabian Sea?",
+			"description": "A ship is located off the west coast of India, in the Arabian Sea. Use guidance pointing and your camera to capture an image of the vessel and identify its hull color.",
 			"type": "select",
 			"answer": {
 				"options": [
@@ -493,12 +508,62 @@
 					"Yellow"
 				],
 				"value": 3,
-				"reason": "The vessel at this location is configured with a yellow hull colour.",
+				"reason": "The vessel at this location is configured with a yellow hull color.",
 				"score": 10
 			}
 		},
 		{
 			"section": "Observations",
+			"title": "What is the latitude of the vessel in the Arabian Sea?",
+			"description": "Locate the ship off the west coast of India on the Map or in camera imagery. Report its latitude in degrees, to within 2 degrees.",
+			"type": "number",
+			"answer": {
+				"unit": "deg",
+				"value": 19.8,
+				"tolerance": 2.0,
+				"reason": "The vessel is configured at 19.8 degrees latitude.",
+				"score": 10
+			}
+		},
+		{
+			"section": "Observations",
+			"title": "What is the longitude of the vessel in the Arabian Sea?",
+			"description": "Locate the ship off the west coast of India on the Map or in camera imagery. Report its longitude in degrees, to within 2 degrees.",
+			"type": "number",
+			"answer": {
+				"unit": "deg",
+				"value": 63.6,
+				"tolerance": 2.0,
+				"reason": "The vessel is configured at 63.6 degrees longitude.",
+				"score": 10
+			}
+		},
+		{
+			"section": "Observations",
+			"title": "What word is painted on the ground off the coast of Perth?",
+			"description": "A large word is marked on the water off the coast of Perth, Western Australia. Use guidance pointing and your camera to image the marking and report the word it spells.",
+			"type": "text",
+			"answer": {
+				"value": "HORIZON",
+				"reason": "The ground text object off the coast of Perth at 33 S, 110 E is configured to spell HORIZON.",
+				"score": 10
+			}
+		},
+		{
+			"section": "Orbit & Payload",
+			"title": "What is the inclination of the spacecraft's orbit?",
+			"description": "Use GPS telemetry or plotted position data to determine the inclination of your spacecraft's orbit. Report the value in degrees.",
+			"type": "number",
+			"answer": {
+				"unit": "deg",
+				"value": 45.0,
+				"tolerance": 1.0,
+				"reason": "The configured inclination is 45 degrees.",
+				"score": 10
+			}
+		},
+		{
+			"section": "Orbit & Payload",
 			"title": "What is the semi-major axis of the spacecraft's orbit?",
 			"description": "Use GPS telemetry or plotted position data to determine the semi-major axis of your spacecraft's orbit. Report the value in km to the nearest 100 km.",
 			"type": "number",
@@ -507,6 +572,31 @@
 				"value": 7500.0,
 				"tolerance": 100.0,
 				"reason": "The configured semi-major axis is 7500 km. This can be derived from GPS telemetry.",
+				"score": 10
+			}
+		},
+		{
+			"section": "Orbit & Payload",
+			"title": "Which ground stations were in contact during this scenario?",
+			"description": "Use the Map and link telemetry to identify every ground station that had contact with the spacecraft during the session. Select all that apply.",
+			"type": "checkbox",
+			"answer": {
+				"options": [
+					"Auckland",
+					"Dubai",
+					"New York",
+					"Paris",
+					"Melbourne",
+					"Singapore"
+				],
+				"value": [
+					1,
+					2,
+					3,
+					4,
+					5
+				],
+				"reason": "Dubai, New York, Paris, Melbourne, and Singapore were in contact during the session. Auckland was not.",
 				"score": 10
 			}
 		}

@@ -963,6 +963,42 @@
 			}
 		}
 	],
+	"objectives": [
+		{
+			"enabled": true,
+			"name": "Battery Charged",
+			"description": "Charge the battery to at least 90%. Recover from the 50% starting state so the platform has a healthy energy reserve for the rest of the collection campaign.",
+			"type": "spacecraft",
+			"assets": [],
+			"target": "Battery",
+			"target name": "",
+			"variable": "Charge Fraction",
+			"operation": ">=",
+			"value": "0.90",
+			"award": {
+				"points": 20.0,
+				"repeatable": false
+			},
+			"hidden": false
+		},
+		{
+			"enabled": true,
+			"name": "Battery Depleted",
+			"description": "Keep battery charge above 15%. Letting it fall below this threshold fails to maintain a valid battery life and puts the platform at risk.",
+			"type": "spacecraft",
+			"assets": [],
+			"target": "Battery",
+			"target name": "",
+			"variable": "Charge Fraction",
+			"operation": "<",
+			"value": "0.15",
+			"award": {
+				"points": -30.0,
+				"repeatable": false
+			},
+			"hidden": false
+		}
+	],
 	"questions": [
 		{
 			"section": "Red Sea (Counter-Piracy)",
