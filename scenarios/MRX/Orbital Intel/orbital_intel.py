@@ -15,8 +15,8 @@ not the frequencies they started with.
 The scenario configuration is read from ``orbital_intel.json`` in this
 script's directory (override path via CLI argument).
 
-Run from the project root:
-    python "scenarios/Orbital Intel/orbital_intel.py"
+The ``src`` package is located by walking up from this file, so the script
+can be run from any working directory after the scenario folder moves.
 """
 
 import sys
@@ -24,10 +24,27 @@ import os
 import argparse
 
 _SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-_PROJECT_ROOT = os.path.abspath(os.path.join(_SCRIPT_DIR, "../.."))
+
+
+def _find_project_root(start: str) -> str:
+    """Return the space-range-scripts root that contains ``src/``."""
+    current = os.path.abspath(start)
+    while True:
+        if os.path.isfile(os.path.join(current, "src", "__init__.py")):
+            return current
+        parent = os.path.dirname(current)
+        if parent == current:
+            raise RuntimeError(
+                "Could not find the space-range-scripts root (a folder containing "
+                f"src/) by walking up from {start}."
+            )
+        current = parent
+
+
+_PROJECT_ROOT = _find_project_root(_SCRIPT_DIR)
 
 # Ensure the project root is on sys.path so ``from src import ...`` works
-# regardless of the current working directory.
+# regardless of the current working directory or how deep this file sits.
 if _PROJECT_ROOT not in sys.path:
     sys.path.insert(0, _PROJECT_ROOT)
 

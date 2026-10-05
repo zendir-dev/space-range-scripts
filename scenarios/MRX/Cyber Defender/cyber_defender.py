@@ -38,9 +38,8 @@ through admin queries.
 
 Phases 0 / 1 / 3 are passive — they fire from ``events[]`` in the JSON.
 
-Run from the project root:
-
-    python "scenarios/Cyber Defender/cyber_defender.py"
+The ``src`` package is located by walking up from this file, so the script
+can be run from any working directory after the scenario folder moves.
 """
 
 import argparse
@@ -48,7 +47,24 @@ import os
 import sys
 
 _SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-_PROJECT_ROOT = os.path.abspath(os.path.join(_SCRIPT_DIR, "../.."))
+
+
+def _find_project_root(start: str) -> str:
+    """Return the space-range-scripts root that contains ``src/``."""
+    current = os.path.abspath(start)
+    while True:
+        if os.path.isfile(os.path.join(current, "src", "__init__.py")):
+            return current
+        parent = os.path.dirname(current)
+        if parent == current:
+            raise RuntimeError(
+                "Could not find the space-range-scripts root (a folder containing "
+                f"src/) by walking up from {start}."
+            )
+        current = parent
+
+
+_PROJECT_ROOT = _find_project_root(_SCRIPT_DIR)
 
 if _PROJECT_ROOT not in sys.path:
     sys.path.insert(0, _PROJECT_ROOT)

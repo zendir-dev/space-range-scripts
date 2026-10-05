@@ -122,6 +122,16 @@
 			"frequency": 561,
 			"collection": "Main",
 			"color": "#00FFFF"
+		},
+		{
+			"enabled": true,
+			"id": 152837,
+			"password": "6JCMFR",
+			"name": "Team Red",
+			"key": 238,
+			"frequency": 847,
+			"collection": "Main",
+			"color": "#FF0000"
 		}
 	],
 	"assets": {
@@ -316,7 +326,11 @@
 							"Resolution": [
 								1024,
 								1024
-							]
+							],
+							"Min Field Of View": 1.0,
+							"Field Of View": 45.0,
+							"Max Field Of View": 60.0,
+							"Focusing Distance": 1000000.0
 						}
 					},
 					{
@@ -468,6 +482,7 @@
 				"controller": {
 					"safe_fraction": 0.1,
 					"capture_tax": 0.001,
+					"reset_tax": 0.0,
 					"downlink_tax": 0.005,
 					"ping_interval": 20.0,
 					"reset_interval": 60.0,
@@ -1098,7 +1113,7 @@
 		{
 			"section": "Coast of Venezuela (AIS Verification)",
 			"title": "Which vessel, as per the AIS data provided located near Venezuela, is lying about its heading direction?",
-			"description": "Refer to the AIS data provided in your mission brief.",
+			"description": "Refer to the AIS data provided in your mission brief. North is 0 degrees, East is 90 degrees, South is 180 degrees, and West is 270 degrees. The triangular end of the vessel is the bow, and the flat end of the vessel is the stern.",
 			"type": "select",
 			"answer": {
 				"options": [
@@ -1169,7 +1184,7 @@
 				"value": [
 					6
 				],
-				"reason": "Downlink jamming occured over the Dubai and Easter Island ground stations, as evidenced by the low signal to noise ratio and data loss observed in the telemetry data received from those stations.",
+				"reason": "Downlink jamming occured over only over Singapore, as evidenced by the low signal to noise ratio and data loss observed in the telemetry data received from that station.",
 				"score": 4
 			}
 		},
@@ -1217,7 +1232,7 @@
 		{
 			"section": "Rogue Spacecraft",
 			"title": "What is the frequency (MHz) of the Rogue Spacecraft's transmitter?",
-			"description": "Using your electromagnetic sensor onboard, identify the frequency of the rogue spacecraft's transmitter that is causing interference with your spacecraft's communication systems. You may need to orient your sensor in the correct direction to get a more accurate reading.",
+			"description": "Using your electromagnetic sensor onboard, identify the frequency of the rogue spacecraft's communications transmitter. This is not the jammer that is causing interference, but it's own communicator. You may need to orient your electromagnetic sensor in the correct direction to get a more accurate reading.",
 			"type": "number",
 			"answer": {
 				"unit": "MHz",
@@ -1230,7 +1245,7 @@
 		{
 			"section": "Orbital Operations",
 			"title": "During operations a component failure occurred on the spacecraft. What component failed?",
-			"description": "Using the telemetry data, identify which component on the spacecraft experienced a failure during operations.",
+			"description": "Using the telemetry data, identify which component on the spacecraft experienced a failure during operations. Once identified, resetting that component may fix the issue.",
 			"type": "select",
 			"answer": {
 				"options": [
