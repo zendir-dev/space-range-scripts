@@ -628,7 +628,7 @@
 				"color": "#00FF00",
 				"data": {
 					"heading": 76,
-					"speed": 10.0
+					"speed": 11.0
 				}
 			},
 			{
@@ -642,7 +642,7 @@
 				"scale": 120,
 				"color": "#00FF00",
 				"data": {
-					"heading": 86.0,
+					"heading": 54.0,
 					"speed": 10.0
 				}
 			},
@@ -657,7 +657,7 @@
 				"scale": 120,
 				"color": "#00FF00",
 				"data": {
-					"heading": 77.0,
+					"heading": 103.0,
 					"speed": 10.0
 				}
 			},
@@ -673,7 +673,7 @@
 				"color": "#00FF00",
 				"data": {
 					"heading": 81.0,
-					"speed": 7.0
+					"speed": 8.0
 				}
 			},
 			{
@@ -717,8 +717,8 @@
 				"scale": 120,
 				"color": "#00FF00",
 				"data": {
-					"heading": 330.0,
-					"speed": 6.0
+					"heading": 333.0,
+					"speed": 14.0
 				}
 			},
 			{
@@ -726,14 +726,14 @@
 				"type": "vessel",
 				"name": "IR01",
 				"planet": "Earth",
-				"latitude": 13,
-				"longitude": 43.1,
+				"latitude": 13.5,
+				"longitude": 42.8,
 				"altitude": 1,
 				"scale": 60,
 				"color": "#FFFF00",
 				"data": {
-					"heading": 270.0,
-					"speed": 0.0
+					"heading": 145.0,
+					"speed": 4.0
 				}
 			},
 			{
@@ -756,14 +756,14 @@
 				"type": "vessel",
 				"name": "US02",
 				"planet": "Earth",
-				"latitude": 14,
+				"latitude": 14.4,
 				"longitude": 42.2,
 				"altitude": 1,
 				"scale": 60,
 				"color": "#00ffff",
 				"data": {
-					"heading": 350.0,
-					"speed": 6.0
+					"heading": 3.0,
+					"speed": 4.0
 				}
 			},
 			{
@@ -1207,13 +1207,13 @@
 		},
 		{
 			"section": "Rogue Spacecraft",
-			"title": "What is the minimum signal-to-noise ratio experienced by the ground station during the inteference anomaly?",
+			"title": "What is the minimum non-zero signal-to-noise ratio experienced by the ground station during the inteference anomaly?",
 			"description": "This will be in dB.",
 			"type": "number",
 			"answer": {
 				"unit": "dB",
 				"value": 15.0,
-				"tolerance": 2.0,
+				"tolerance": 3.0,
 				"reason": "This is done by analyzing the telemetry data received from the ground stations during the interference anomaly, where a significant drop in signal strength is observed, resulting in a minimum signal-to-noise ratio of around 15 dB at the affected ground stations.",
 				"score": 4
 			}

@@ -58,6 +58,7 @@ Historical data
 Simulation control
 : [`admin_get_simulation`](#admin_get_simulation): current run state & speed.
 : [`admin_set_simulation`](#admin_set_simulation): play / pause / stop / change speed.
+: [`admin_set_telemetry`](#admin_set_telemetry): force-set a team's frequency / key / bandwidth (lockout recovery).
 
 Scenario events
 : [`admin_get_scenario_events`](#admin_get_scenario_events): list scripted scenario events.
@@ -401,6 +402,74 @@ Common errors:
 
 - `Stopped` is destructive. Every team's downlinked data, ground events, schedules, and on-board state are wiped. The next session message will arrive with a new `instance` ID.
 - Setting `speed` while `state: Stopped` has no observable effect until the simulation is started.
+
+---
+
+## `admin_set_telemetry`
+
+Force-sets a team's RF frequency, encryption key, and/or bandwidth on the **ground station and every spacecraft** immediately. Unlike the team-side [`set_telemetry`](ground-requests.md#set_telemetry), this does **not** go through the RF uplink handshake: credentials are written straight onto the transmitter/receiver models and the team registry.
+
+Use this to recover a team that has locked itself out (ground and spacecraft on different keys or frequencies with no usable uplink left to reconcile them).
+
+**Request**
+
+```json
+{
+  "type": "admin_set_telemetry",
+  "req_id": 0,
+  "args": {
+    "team": "Red Team",
+    "frequency": 480.0,
+    "key": 17,
+    "bandwidth": 1.0
+  }
+}
+```
+
+| Argument | Required | Unit | Description |
+| --- | --- | --- | --- |
+| `team` | yes | — | Team name. Match against `teams[].name` from [`admin_list_entities`](#admin_list_entities). |
+| `frequency` | at least one of these three | MHz | New RF carrier frequency for the team. |
+| `key` | at least one of these three | — | New encryption key for the team. |
+| `bandwidth` | at least one of these three | MHz | New ground- and spacecraft-receiver bandwidth. |
+
+Omitted frequency/key fields keep their current team values. Bandwidth is only applied when explicitly provided (and positive).
+
+**Response**
+
+```json
+{
+  "type": "admin_set_telemetry",
+  "req_id": 0,
+  "args": {
+    "team": "Red Team",
+    "id": 1,
+    "frequency": 480.0,
+    "key": 17,
+    "bandwidth": 1.0
+  },
+  "success": true
+}
+```
+
+| Field | Description |
+| --- | --- |
+| `team`, `id` | Team identity after the update. |
+| `frequency`, `key` | Applied credentials (always present). |
+| `bandwidth` | Present only when the request included a positive `bandwidth`. |
+
+Common errors:
+
+- `"admin_set_telemetry requires args.team."`: missing team name.
+- `"Team with name '...' not found."`: unknown team (the synthetic Neutral group is not a real team and cannot be targeted).
+- `"admin_set_telemetry requires at least one of args.frequency, args.key, or args.bandwidth."`: empty change set.
+
+### Notes
+
+- Any in-flight team [`set_telemetry`](ground-requests.md#set_telemetry) ApplyAt is **cancelled** first, so a delayed retune cannot overwrite this force-set.
+- This updates the team registry via `UpdateTeam`, so ground TX/RX and every team spacecraft converge in one step.
+- Prefer the team's own `set_telemetry` when the uplink is healthy. Reserve `admin_set_telemetry` for instructor recovery.
+- Operator helper: `admin.setTelemetry({ team, frequency, key, bandwidth })`.
 
 ---
 

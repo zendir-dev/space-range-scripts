@@ -29,6 +29,7 @@ Both XOR-encrypted with the admin password. The full request set is documented i
 | Read any team's historical telemetry from the database | [`admin_query_data`](../api-reference/admin-requests.md#admin_query_data) |
 | Inspect the event log (every team's actions) | [`admin_query_events`](../api-reference/admin-requests.md#admin_query_events) and the `admin_event_triggered` push |
 | Pause, play, stop, and change speed of the simulation | [`admin_set_simulation`](../api-reference/admin-requests.md#admin_set_simulation) |
+| Force-set a team's frequency / key / bandwidth (lockout recovery) | [`admin_set_telemetry`](../api-reference/admin-requests.md#admin_set_telemetry) |
 | List the scripted scenario events | [`admin_get_scenario_events`](../api-reference/admin-requests.md#admin_get_scenario_events) |
 
 What admin **cannot** do directly:
@@ -37,7 +38,7 @@ What admin **cannot** do directly:
 - Read a team's encrypted `Downlink` payload contents without the team's password and Caesar key. (You can see the topic name and the message size, but not parse the body.)
 - Edit the loaded scenario at runtime. Scenario changes require editing the JSON and re-loading in Studio.
 
-In other words: **admin gives you visibility and timeline control, not impersonation.** This is the right model for instructors who must remain neutral.
+In other words: **admin gives you visibility, timeline control, and emergency RF credential recovery — not full impersonation.** This is the right model for instructors who must remain neutral.
 
 ---
 
@@ -276,10 +277,11 @@ Most likely a desynced Caesar key or frequency after a botched `encryption` rota
 
 Without impersonating the team, your options are:
 
+- **Force-set credentials.** Use [`admin_set_telemetry`](../api-reference/admin-requests.md#admin_set_telemetry) to write matching frequency/key (and optional bandwidth) onto the ground station and every spacecraft immediately — no RF uplink required. Best first recovery when ground and craft have drifted apart.
 - **Wait it out.** The `reset_interval` after an `encryption` command is finite; the spacecraft will reboot.
 - **Trigger a scenario event** that flips the failed component back via Studio's event mechanism (if your scenario includes such recovery events).
 - **Reset the simulation.** Nuclear option; only when one team's recovery is worth disrupting everyone else.
-- **Hand the team their own escape hatch.** Tell them to use [`set_telemetry`](../api-reference/ground-requests.md#set_telemetry) on the ground side to walk through plausible `(key, frequency)` combinations until they recover.
+- **Hand the team their own escape hatch.** Tell them to use [`set_telemetry`](../api-reference/ground-requests.md#set_telemetry) on the ground side to walk through plausible `(key, frequency)` combinations until they recover — only works if uplink is still available.
 
 ### A Team Is Jamming Everyone Unintentionally
 

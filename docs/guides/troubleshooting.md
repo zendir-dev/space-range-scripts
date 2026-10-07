@@ -179,7 +179,7 @@ cmd["Time"] = session["time"] + 60.0
 
 **Diagnostic.** Have an instructor run `admin_query_data` against your spacecraft and compare its outgoing `frequency` and `key` to your client's. Or `set_telemetry` on the ground side to your spacecraft's likely values and see if you start decoding.
 
-**Fix.** Reconcile the keys. If you can't, request a scenario reset.
+**Fix.** Reconcile the keys with [`set_telemetry`](../api-reference/ground-requests.md#set_telemetry) if uplink is still up. If the team is fully locked out, ask an instructor to run [`admin_set_telemetry`](../api-reference/admin-requests.md#admin_set_telemetry) to force-match ground and spacecraft credentials. If neither works, request a scenario reset.
 
 ### "Pings Arrive but `Commands` Is Missing."
 

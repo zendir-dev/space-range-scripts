@@ -293,7 +293,7 @@ Additional fields not shown above may appear in `uplink` / `downlink` depending 
 
 ## `set_telemetry`
 
-Change the team's RF frequency, Caesar key, and ground bandwidth. Internally this dispatches a [`telemetry`](spacecraft-commands.md#telemetry) command to every spacecraft and updates the ground receiver to match.
+Change the team's RF frequency, Caesar key, and ground bandwidth. Internally this dispatches a [`telemetry`](spacecraft-commands.md#telemetry) command to every reachable spacecraft, stamps a shared **ApplyAt** time on those commands, and retunes the ground station at the same instant (after light-time + transmission delay + buffer). If the RF packet is lost, the team registry still converges at ApplyAt so the team cannot permanently lock itself out.
 
 **Request**
 
@@ -314,22 +314,37 @@ Change the team's RF frequency, Caesar key, and ground bandwidth. Internally thi
 **Response**
 
 ```json
-{ "type": "set_telemetry", "req_id": 0, "args": {}, "success": true }
+{
+  "type": "set_telemetry",
+  "req_id": 0,
+  "args": {
+    "frequency": 480.0,
+    "key": 17,
+    "bandwidth": 1.0,
+    "apply_at": 742.5
+  },
+  "success": true
+}
 ```
 
-No arguments on success. On failure, common `error` values:
+| Field | Description |
+| --- | --- |
+| `frequency`, `key`, `bandwidth` | Values that will take effect at `apply_at`. |
+| `apply_at` | Simulation time (seconds) when ground and spacecraft both apply the change. |
 
-- `"Already changing telemetry settings. Please wait before making another change."`: a previous `set_telemetry` is still propagating; wait ~1 sim s.
-- `"Uplink not available. Cannot change telemetry settings at this time."`: the spacecraft is below the horizon or the link is jammed; try again on the next pass.
+On failure, common `error` values:
+
+- `"Already changing telemetry settings. Please wait before making another change."`: a previous `set_telemetry` is still waiting for its ApplyAt; wait until that time passes.
+- `"Uplink not available. Cannot change telemetry settings at this time."`: no team asset currently has a usable uplink; try again on the next pass.
 - `"No changes made to telemetry settings."`: every requested value matched the current setting.
 
 ### Notes
 
 - The change applies to **all** spacecraft on the team. There is no per-asset variant.
-- After a successful `set_telemetry`, expect a brief blackout while the spacecraft and ground both retune. Subscribe to the `event_triggered` push to see when the simulation acknowledges the update.
+- After a successful `set_telemetry`, expect a brief blackout until `apply_at` while both ends stay on the old credentials, then retune together.
+- If a team is already locked out with no uplink, an instructor can recover them with [`admin_set_telemetry`](admin-requests.md#admin_set_telemetry) (bypasses RF entirely).
 
 ---
-
 ## `transmit_bytes`
 
 Transmit arbitrary bytes from the ground transmitter at a chosen frequency, **bypassing** the team's normal RF encryption. Useful for jamming, decoy transmissions, or experimenting with custom waveforms in scenarios that require it.
